@@ -1,0 +1,5827 @@
+{
+  "artists": [
+    {
+      "Artist": "The Anchoret",
+      "avgplaycount": 345029,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "The Ocean",
+      "avgplaycount": 17138,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Shrine Of Denial",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Wombbath",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Puteraeon",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Patristic",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Ancient Death",
+      "avgplaycount": 2025,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Disembodiment",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Harvested",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Creatvre",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Phantom Spell",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Imperishable",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Falling Leaves",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Vittra",
+      "avgplaycount": 2025,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Vitriol",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Mega Colossus",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Selbst",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "MonDeGos",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Apocalyptica",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Nyktophobia",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "ColdCell",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Hauntologist",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Amiensus",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Dödsrit",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Isolert",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Weather Systems",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Mother of Graves",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Cemetery Skyline",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Noxis",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Sun Worship",
+      "avgplaycount": 2024,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Green Carnation",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "IOTUNN",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Seth",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Dormant Ordeal",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Kanonenfieber",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Fellowship",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Mazzaroth",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Wormhole",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Sacred Outcry",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Sworn",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Crow Black Sky",
+      "avgplaycount": 2023,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Nexion",
+      "avgplaycount": 2023,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Convocation",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Wayfarer",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Afterbirth",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Undeath",
+      "avgplaycount": 2022,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Replicant",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Stortregn",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "CELESTE",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Vorga",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Necrophagous",
+      "avgplaycount": 2022,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Sylvaine",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Tómarúm",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Luminous Vault",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Rammstein",
+      "avgplaycount": 2022,
+      "genres": [
+        "industrial metal",
+        "neue deutsche härte"
+      ],
+      "primaryGenre": "industrial metal"
+    },
+    {
+      "Artist": "IATT",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Wayward Dawn",
+      "avgplaycount": 2022,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Fractal Generator",
+      "avgplaycount": 2021,
+      "genres": [
+        "progressive metal",
+        "technical metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Havukruunu",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Panzerfaust",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Tomb Mold",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Omnivortex",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Disillusion",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Misotheist",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Suffering Hour",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Mare Cognitum",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Dordeduh",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Son of Sam",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Alustrium",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Crypta",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Interloper",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Night Crowned",
+      "avgplaycount": 2021,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Lantlôs",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Unreqvited",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Wolves in the Throne Room",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Headshrinker",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Duskmourn",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Trivium",
+      "avgplaycount": 2021,
+      "genres": [
+        "metalcore",
+        "thrash metal"
+      ],
+      "primaryGenre": "metalcore"
+    },
+    {
+      "Artist": "Noltem",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Worm",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "W.O.R.M.",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Churchburn",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "First Fragment",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Clouds",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Windfaerer",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Decline of the I",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Gaerea",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Faceless Burial",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Glare Of The Sun",
+      "avgplaycount": 2021,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Countless Skies",
+      "avgplaycount": 2020,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Lör",
+      "avgplaycount": 2020,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Soilwork",
+      "avgplaycount": 2020,
+      "genres": [
+        "melodic death metal",
+        "alternative metal"
+      ],
+      "primaryGenre": "melodic death metal"
+    },
+    {
+      "Artist": "Blood Incantation",
+      "avgplaycount": 2020,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Audn",
+      "avgplaycount": 2020,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Loviatar",
+      "avgplaycount": 2020,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Sweven",
+      "avgplaycount": 2020,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Cytotoxin",
+      "avgplaycount": 2020,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Misþyrming",
+      "avgplaycount": 2019,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Wilderun",
+      "avgplaycount": 2019,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Mayhem",
+      "avgplaycount": 2019,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Der Weg einer Freiheit",
+      "avgplaycount": 2019,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Impure Wilhelmina",
+      "avgplaycount": 2019,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "VOLA",
+      "avgplaycount": 2019,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Ashbringer",
+      "avgplaycount": 2019,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Hamferð",
+      "avgplaycount": 2019,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Kull",
+      "avgplaycount": 2019,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Paladin",
+      "avgplaycount": 2019,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Warforged",
+      "avgplaycount": 2019,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Emptiness",
+      "avgplaycount": 2018,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Soliloquium",
+      "avgplaycount": 2018,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Horizon Ablaze",
+      "avgplaycount": 2018,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Au Champ Des Morts",
+      "avgplaycount": 2017,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Taake",
+      "avgplaycount": 2017,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Loss",
+      "avgplaycount": 2017,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Départe",
+      "avgplaycount": 2016,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Hyperion",
+      "avgplaycount": 2016,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Aosoth",
+      "avgplaycount": 2015,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "VI",
+      "avgplaycount": 2015,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Artificial Brain",
+      "avgplaycount": 2014,
+      "genres": [
+        "industrial metal",
+        "electronic metal"
+      ],
+      "primaryGenre": "industrial metal"
+    },
+    {
+      "Artist": "Vehemenz",
+      "avgplaycount": 2014,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Sotajumala",
+      "avgplaycount": 2010,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Vreid",
+      "avgplaycount": 2004,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Black Sites",
+      "avgplaycount": 1957,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Aquilus",
+      "avgplaycount": 1896,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Godthrymm",
+      "avgplaycount": 1895,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Xoth",
+      "avgplaycount": 1895,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Blaze of Perdition",
+      "avgplaycount": 1894,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Panopticon",
+      "avgplaycount": 1887,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Týr",
+      "avgplaycount": 1881,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Schammasch",
+      "avgplaycount": 1862,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Mithras",
+      "avgplaycount": 1848,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Calva Louise",
+      "avgplaycount": 1841,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Meer",
+      "avgplaycount": 1838,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Svart Crown",
+      "avgplaycount": 1834,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Arch Enemy",
+      "avgplaycount": 1825,
+      "genres": [
+        "melodic death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "melodic death metal"
+    },
+    {
+      "Artist": "LIK",
+      "avgplaycount": 1823,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "PLASMODULATED",
+      "avgplaycount": 1823,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Primordial",
+      "avgplaycount": 1817,
+      "genres": [
+        "folk metal",
+        "black metal"
+      ],
+      "primaryGenre": "folk metal"
+    },
+    {
+      "Artist": "Jord",
+      "avgplaycount": 1800,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Arstidir Lifsins",
+      "avgplaycount": 1799,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Waste of Space Orchestra",
+      "avgplaycount": 1795,
+      "genres": [
+        "atmospheric metal",
+        "post-metal"
+      ],
+      "primaryGenre": "atmospheric metal"
+    },
+    {
+      "Artist": "King Apathy",
+      "avgplaycount": 1795,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Psycroptic",
+      "avgplaycount": 1794,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Anchorite",
+      "avgplaycount": 1772,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Altars of Grief",
+      "avgplaycount": 1766,
+      "genres": [
+        "doom metal",
+        "atmospheric metal"
+      ],
+      "primaryGenre": "doom metal"
+    },
+    {
+      "Artist": "Shape Of Despair",
+      "avgplaycount": 1763,
+      "genres": [
+        "funeral doom",
+        "atmospheric doom"
+      ],
+      "primaryGenre": "funeral doom"
+    },
+    {
+      "Artist": "Demoniac",
+      "avgplaycount": 1749,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Deathspell Omega",
+      "avgplaycount": 1745,
+      "genres": [
+        "black metal",
+        "avant-garde metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Jade",
+      "avgplaycount": 1736,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Sun of the Sleepless",
+      "avgplaycount": 1729,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Cave Sermon",
+      "avgplaycount": 1688,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Vile Rites",
+      "avgplaycount": 1687,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Iron Maiden",
+      "avgplaycount": 1678,
+      "genres": [
+        "heavy metal",
+        "nwobhm"
+      ],
+      "primaryGenre": "heavy metal"
+    },
+    {
+      "Artist": "Ritual Ascension",
+      "avgplaycount": 1620,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "King Goat",
+      "avgplaycount": 1614,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Kvaen",
+      "avgplaycount": 1601,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Equipoise",
+      "avgplaycount": 1586,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Dark Tranquillity",
+      "avgplaycount": 1571,
+      "genres": [
+        "melodic death metal",
+        "progressive metal"
+      ],
+      "primaryGenre": "melodic death metal"
+    },
+    {
+      "Artist": "Wake",
+      "avgplaycount": 1554,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Kampfar",
+      "avgplaycount": 1553,
+      "genres": [
+        "black metal",
+        "folk metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Sermon",
+      "avgplaycount": 1546,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Anfauglir",
+      "avgplaycount": 1519,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Darkher",
+      "avgplaycount": 1517,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Wheel",
+      "avgplaycount": 1515,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Archspire",
+      "avgplaycount": 1514,
+      "genres": [
+        "technical death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "technical death metal"
+    },
+    {
+      "Artist": "Paara",
+      "avgplaycount": 1514,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Wormwood",
+      "avgplaycount": 1513,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Blut aus Nord",
+      "avgplaycount": 1494,
+      "genres": [
+        "avant-garde black metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "avant-garde black metal"
+    },
+    {
+      "Artist": "In Mourning",
+      "avgplaycount": 1456,
+      "genres": [
+        "doom metal",
+        "atmospheric metal"
+      ],
+      "primaryGenre": "doom metal"
+    },
+    {
+      "Artist": "Satyricon",
+      "avgplaycount": 1450,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Carcass",
+      "avgplaycount": 1447,
+      "genres": [
+        "death metal",
+        "grindcore"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Structure",
+      "avgplaycount": 1446,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Eternal Storm",
+      "avgplaycount": 1428,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "...And Oceans",
+      "avgplaycount": 1410,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Moonsorrow",
+      "avgplaycount": 1400,
+      "genres": [
+        "folk metal",
+        "black metal"
+      ],
+      "primaryGenre": "folk metal"
+    },
+    {
+      "Artist": "Violet Cold",
+      "avgplaycount": 1382,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Desolate Shrine",
+      "avgplaycount": 1377,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Kreator",
+      "avgplaycount": 1376,
+      "genres": [
+        "thrash metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "thrash metal"
+    },
+    {
+      "Artist": "Horrendous",
+      "avgplaycount": 1373,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Fires in the Distance",
+      "avgplaycount": 1349,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Non Est Deus",
+      "avgplaycount": 1349,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Serpent Of Old",
+      "avgplaycount": 1349,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Drudkh",
+      "avgplaycount": 1348,
+      "genres": [
+        "atmospheric black metal",
+        "folk metal"
+      ],
+      "primaryGenre": "atmospheric black metal"
+    },
+    {
+      "Artist": "Amorphis",
+      "avgplaycount": 1340,
+      "genres": [
+        "melodic death metal",
+        "folk metal"
+      ],
+      "primaryGenre": "melodic death metal"
+    },
+    {
+      "Artist": "Ulcerate",
+      "avgplaycount": 1325,
+      "genres": [
+        "death metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Nirvana",
+      "avgplaycount": 1282,
+      "genres": [
+        "grunge",
+        "alternative rock"
+      ],
+      "primaryGenre": "grunge"
+    },
+    {
+      "Artist": "Alestorm",
+      "avgplaycount": 1277,
+      "genres": [
+        "folk metal",
+        "power metal"
+      ],
+      "primaryGenre": "folk metal"
+    },
+    {
+      "Artist": "Mgła",
+      "avgplaycount": 1274,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "In Vain",
+      "avgplaycount": 1273,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Sabaton",
+      "avgplaycount": 1261,
+      "genres": [
+        "power metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "power metal"
+    },
+    {
+      "Artist": "Slugdge",
+      "avgplaycount": 1261,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Changeling",
+      "avgplaycount": 1215,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Vanishing Kids",
+      "avgplaycount": 1212,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Wardaemonic",
+      "avgplaycount": 1212,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Pain of Salvation",
+      "avgplaycount": 1210,
+      "genres": [
+        "progressive metal",
+        "progressive rock"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Dodecahedron",
+      "avgplaycount": 1210,
+      "genres": [
+        "avant-garde black metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "avant-garde black metal"
+    },
+    {
+      "Artist": "Beaten To Death",
+      "avgplaycount": 1173,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Aara",
+      "avgplaycount": 1157,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Gorillaz",
+      "avgplaycount": 1156,
+      "genres": [
+        "alternative hip hop",
+        "electronic"
+      ],
+      "primaryGenre": "alternative hip hop"
+    },
+    {
+      "Artist": "Outer Heaven",
+      "avgplaycount": 1156,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Altarage",
+      "avgplaycount": 1155,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Abstract Void",
+      "avgplaycount": 1155,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Blood Abscission",
+      "avgplaycount": 1141,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Darkest Era",
+      "avgplaycount": 1135,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Messa",
+      "avgplaycount": 1133,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Devenial Verdict",
+      "avgplaycount": 1125,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Wintersun",
+      "avgplaycount": 1104,
+      "genres": [
+        "melodic death metal",
+        "power metal"
+      ],
+      "primaryGenre": "melodic death metal"
+    },
+    {
+      "Artist": "Deafheaven",
+      "avgplaycount": 1101,
+      "genres": [
+        "blackgaze",
+        "post-black metal"
+      ],
+      "primaryGenre": "blackgaze"
+    },
+    {
+      "Artist": "Cult of Luna",
+      "avgplaycount": 1086,
+      "genres": [
+        "post-metal",
+        "atmospheric sludge"
+      ],
+      "primaryGenre": "post-metal"
+    },
+    {
+      "Artist": "Nightwish",
+      "avgplaycount": 1083,
+      "genres": [
+        "symphonic metal",
+        "power metal"
+      ],
+      "primaryGenre": "symphonic metal"
+    },
+    {
+      "Artist": "GOJIRA",
+      "avgplaycount": 1079,
+      "genres": [
+        "progressive metal",
+        "death metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "White Ward",
+      "avgplaycount": 1078,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Cradle of Filth",
+      "avgplaycount": 1051,
+      "genres": [
+        "symphonic black metal",
+        "gothic metal"
+      ],
+      "primaryGenre": "symphonic black metal"
+    },
+    {
+      "Artist": "Mastodon",
+      "avgplaycount": 1048,
+      "genres": [
+        "progressive metal",
+        "sludge metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Anthrax",
+      "avgplaycount": 1044,
+      "genres": [
+        "thrash metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "thrash metal"
+    },
+    {
+      "Artist": "MASTER BOOT RECORD",
+      "avgplaycount": 1044,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Morbid Angel",
+      "avgplaycount": 1039,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Counting Hours",
+      "avgplaycount": 1012,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Vredehammer",
+      "avgplaycount": 1012,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Aeternam",
+      "avgplaycount": 1011,
+      "genres": [
+        "metal",
+        "heavy metal"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Napalm Death",
+      "avgplaycount": 1010,
+      "genres": [
+        "grindcore",
+        "extreme metal"
+      ],
+      "primaryGenre": "grindcore"
+    },
+    {
+      "Artist": "Skeletonwitch",
+      "avgplaycount": 1009,
+      "genres": [
+        "blackened thrash",
+        "melodic black metal"
+      ],
+      "primaryGenre": "blackened thrash"
+    },
+    {
+      "Artist": "HIM",
+      "avgplaycount": 1005,
+      "genres": [
+        "gothic rock",
+        "love metal"
+      ],
+      "primaryGenre": "gothic rock"
+    },
+    {
+      "Artist": "Alcest",
+      "avgplaycount": 973,
+      "genres": [
+        "blackgaze",
+        "post-black metal"
+      ],
+      "primaryGenre": "blackgaze"
+    },
+    {
+      "Artist": "Anneke van Giersbergen",
+      "avgplaycount": 967,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Imperial Triumphant",
+      "avgplaycount": 959,
+      "genres": [
+        "avant-garde black metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "avant-garde black metal"
+    },
+    {
+      "Artist": "Carnosus",
+      "avgplaycount": 959,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Thy Catafalque",
+      "avgplaycount": 957,
+      "genres": [
+        "avant-garde metal",
+        "progressive metal"
+      ],
+      "primaryGenre": "avant-garde metal"
+    },
+    {
+      "Artist": "Slayer",
+      "avgplaycount": 956,
+      "genres": [
+        "thrash metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "thrash metal"
+    },
+    {
+      "Artist": "Akercocke",
+      "avgplaycount": 955,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Origin",
+      "avgplaycount": 949,
+      "genres": [
+        "technical death metal",
+        "brutal death metal"
+      ],
+      "primaryGenre": "technical death metal"
+    },
+    {
+      "Artist": "In the Woods...",
+      "avgplaycount": 945,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Sulphur Aeon",
+      "avgplaycount": 944,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Protest the Hero",
+      "avgplaycount": 934,
+      "genres": [
+        "progressive metal",
+        "mathcore"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Voices",
+      "avgplaycount": 930,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Khemmis",
+      "avgplaycount": 916,
+      "genres": [
+        "doom metal",
+        "traditional doom"
+      ],
+      "primaryGenre": "doom metal"
+    },
+    {
+      "Artist": "Ulver",
+      "avgplaycount": 896,
+      "genres": [
+        "experimental",
+        "black metal"
+      ],
+      "primaryGenre": "experimental"
+    },
+    {
+      "Artist": "Oceans of Slumber",
+      "avgplaycount": 867,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Woe",
+      "avgplaycount": 864,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Death",
+      "avgplaycount": 851,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Tomb Of Finland",
+      "avgplaycount": 823,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Gazpacho",
+      "avgplaycount": 820,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Opeth",
+      "avgplaycount": 810,
+      "genres": [
+        "progressive metal",
+        "death metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "At The Gates",
+      "avgplaycount": 808,
+      "genres": [
+        "melodic death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "melodic death metal"
+    },
+    {
+      "Artist": "Green Lung",
+      "avgplaycount": 808,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Dvne",
+      "avgplaycount": 804,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Immortal",
+      "avgplaycount": 800,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Anathema",
+      "avgplaycount": 779,
+      "genres": [
+        "progressive rock",
+        "atmospheric rock"
+      ],
+      "primaryGenre": "progressive rock"
+    },
+    {
+      "Artist": "Obituary",
+      "avgplaycount": 762,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Kendrick Lamar",
+      "avgplaycount": 739,
+      "genres": [
+        "hip hop",
+        "conscious rap"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Meshuggah",
+      "avgplaycount": 737,
+      "genres": [
+        "progressive metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Gorguts",
+      "avgplaycount": 732,
+      "genres": [
+        "technical death metal",
+        "avant-garde metal"
+      ],
+      "primaryGenre": "technical death metal"
+    },
+    {
+      "Artist": "Paradise Lost",
+      "avgplaycount": 722,
+      "genres": [
+        "doom metal",
+        "gothic metal"
+      ],
+      "primaryGenre": "doom metal"
+    },
+    {
+      "Artist": "Igorrr",
+      "avgplaycount": 711,
+      "genres": [
+        "experimental metal",
+        "electronic"
+      ],
+      "primaryGenre": "experimental metal"
+    },
+    {
+      "Artist": "Franz Ferdinand",
+      "avgplaycount": 695,
+      "genres": [
+        "indie rock",
+        "post-punk revival"
+      ],
+      "primaryGenre": "indie rock"
+    },
+    {
+      "Artist": "Fleshgod Apocalypse",
+      "avgplaycount": 695,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Ne Obliviscaris",
+      "avgplaycount": 674,
+      "genres": [
+        "progressive extreme metal",
+        "violin metal"
+      ],
+      "primaryGenre": "progressive extreme metal"
+    },
+    {
+      "Artist": "Tribulation",
+      "avgplaycount": 674,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Phobocosm",
+      "avgplaycount": 674,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Insomnium",
+      "avgplaycount": 673,
+      "genres": [
+        "melodic death metal",
+        "doom metal"
+      ],
+      "primaryGenre": "melodic death metal"
+    },
+    {
+      "Artist": "PMMP",
+      "avgplaycount": 654,
+      "genres": [
+        "finnish pop",
+        "alternative rock"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Pyrrhon",
+      "avgplaycount": 651,
+      "genres": [
+        "dissonant death metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "dissonant death metal"
+    },
+    {
+      "Artist": "Portal",
+      "avgplaycount": 643,
+      "genres": [
+        "dissonant death metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "dissonant death metal"
+    },
+    {
+      "Artist": "Inter Arma",
+      "avgplaycount": 623,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Persefone",
+      "avgplaycount": 621,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Borknagar",
+      "avgplaycount": 619,
+      "genres": [
+        "progressive black metal",
+        "viking metal"
+      ],
+      "primaryGenre": "progressive black metal"
+    },
+    {
+      "Artist": "Abbath",
+      "avgplaycount": 605,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Dynfari",
+      "avgplaycount": 589,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Hippotraktor",
+      "avgplaycount": 578,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "KAUAN",
+      "avgplaycount": 577,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Hevisaurus",
+      "avgplaycount": 575,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Soen",
+      "avgplaycount": 561,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Heretoir",
+      "avgplaycount": 559,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Solstafir",
+      "avgplaycount": 550,
+      "genres": [
+        "atmospheric rock",
+        "post-metal"
+      ],
+      "primaryGenre": "atmospheric rock"
+    },
+    {
+      "Artist": "U2",
+      "avgplaycount": 548,
+      "genres": [
+        "rock",
+        "post-punk"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Myrkur",
+      "avgplaycount": 547,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Kardashev",
+      "avgplaycount": 541,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Oranssi Pazuzu",
+      "avgplaycount": 525,
+      "genres": [
+        "psychedelic black metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "psychedelic black metal"
+    },
+    {
+      "Artist": "Dødheimsgard",
+      "avgplaycount": 516,
+      "genres": [
+        "avant-garde black metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "avant-garde black metal"
+    },
+    {
+      "Artist": "Stam1na",
+      "avgplaycount": 511,
+      "genres": [
+        "progressive metal",
+        "alternative metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Enslaved",
+      "avgplaycount": 504,
+      "genres": [
+        "progressive black metal",
+        "viking metal"
+      ],
+      "primaryGenre": "progressive black metal"
+    },
+    {
+      "Artist": "Muse",
+      "avgplaycount": 483,
+      "genres": [
+        "alternative rock",
+        "progressive rock"
+      ],
+      "primaryGenre": "alternative rock"
+    },
+    {
+      "Artist": "Anciients",
+      "avgplaycount": 467,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Sentenced",
+      "avgplaycount": 461,
+      "genres": [
+        "gothic metal",
+        "melodic death metal"
+      ],
+      "primaryGenre": "gothic metal"
+    },
+    {
+      "Artist": "Imperialist",
+      "avgplaycount": 450,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Ane Brun",
+      "avgplaycount": 427,
+      "genres": [
+        "indie folk",
+        "singer-songwriter"
+      ],
+      "primaryGenre": "indie folk"
+    },
+    {
+      "Artist": "Lapko",
+      "avgplaycount": 417,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Fleurety",
+      "avgplaycount": 399,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Korn",
+      "avgplaycount": 391,
+      "genres": [
+        "nu metal",
+        "alternative metal"
+      ],
+      "primaryGenre": "nu metal"
+    },
+    {
+      "Artist": "The Funeral Album",
+      "avgplaycount": 391,
+      "genres": [
+        "doom metal",
+        "atmospheric metal"
+      ],
+      "primaryGenre": "doom metal"
+    },
+    {
+      "Artist": "Seven Spires",
+      "avgplaycount": 379,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Barren Earth",
+      "avgplaycount": 356,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Yellow Eyes",
+      "avgplaycount": 337,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Paleface",
+      "avgplaycount": 336,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Kuolemanlaakso",
+      "avgplaycount": 336,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "My Dying Bride",
+      "avgplaycount": 321,
+      "genres": [
+        "doom metal",
+        "gothic metal"
+      ],
+      "primaryGenre": "doom metal"
+    },
+    {
+      "Artist": "Darkthrone",
+      "avgplaycount": 319,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Pillorian",
+      "avgplaycount": 288,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Arjen Lucassen's Guilt Machine",
+      "avgplaycount": 287,
+      "genres": [
+        "industrial metal",
+        "electronic metal"
+      ],
+      "primaryGenre": "industrial metal"
+    },
+    {
+      "Artist": "Faith No More",
+      "avgplaycount": 256,
+      "genres": [
+        "alternative metal",
+        "funk metal"
+      ],
+      "primaryGenre": "alternative metal"
+    },
+    {
+      "Artist": "URNE",
+      "avgplaycount": 256,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Thormesis",
+      "avgplaycount": 256,
+      "genres": [
+        "folk metal",
+        "atmospheric metal"
+      ],
+      "primaryGenre": "folk metal"
+    },
+    {
+      "Artist": "Dot Legacy",
+      "avgplaycount": 252,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Psychework",
+      "avgplaycount": 252,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Funeral Mist",
+      "avgplaycount": 252,
+      "genres": [
+        "doom metal",
+        "atmospheric metal"
+      ],
+      "primaryGenre": "doom metal"
+    },
+    {
+      "Artist": "Infera Bruo",
+      "avgplaycount": 252,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Morne",
+      "avgplaycount": 252,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Cynic",
+      "avgplaycount": 249,
+      "genres": [
+        "progressive death metal",
+        "jazz fusion"
+      ],
+      "primaryGenre": "progressive death metal"
+    },
+    {
+      "Artist": "Altar of Plagues",
+      "avgplaycount": 228,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Hanging Garden",
+      "avgplaycount": 225,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Devin Townsend Project",
+      "avgplaycount": 224,
+      "genres": [
+        "progressive metal",
+        "ambient metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Infuriate",
+      "avgplaycount": 224,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Swallow the Sun",
+      "avgplaycount": 218,
+      "genres": [
+        "doom metal",
+        "death doom"
+      ],
+      "primaryGenre": "doom metal"
+    },
+    {
+      "Artist": "Thränenkind",
+      "avgplaycount": 202,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Abhorrent",
+      "avgplaycount": 202,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Wormrot",
+      "avgplaycount": 202,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Devourment",
+      "avgplaycount": 202,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Arcturus",
+      "avgplaycount": 202,
+      "genres": [
+        "avant-garde black metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "avant-garde black metal"
+    },
+    {
+      "Artist": "Heads For The Dead",
+      "avgplaycount": 202,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Katatonia",
+      "avgplaycount": 198,
+      "genres": [
+        "progressive metal",
+        "doom metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Avenged Sevenfold",
+      "avgplaycount": 183,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Adele",
+      "avgplaycount": 183,
+      "genres": [
+        "pop",
+        "soul"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Full of Hell",
+      "avgplaycount": 183,
+      "genres": [
+        "grindcore",
+        "experimental"
+      ],
+      "primaryGenre": "grindcore"
+    },
+    {
+      "Artist": "Anaal Nathrakh",
+      "avgplaycount": 178,
+      "genres": [
+        "industrial black metal",
+        "grindcore"
+      ],
+      "primaryGenre": "industrial black metal"
+    },
+    {
+      "Artist": "Children of Bodom",
+      "avgplaycount": 159,
+      "genres": [
+        "melodic death metal",
+        "power metal"
+      ],
+      "primaryGenre": "melodic death metal"
+    },
+    {
+      "Artist": "Anneke van Giersbergen & Agua de Annique, Anneke van Giersbergen & Agua de Annique",
+      "avgplaycount": 155,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Inquisition",
+      "avgplaycount": 155,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Pestilence",
+      "avgplaycount": 155,
+      "genres": [
+        "technical death metal",
+        "progressive metal"
+      ],
+      "primaryGenre": "technical death metal"
+    },
+    {
+      "Artist": "Kontinuum",
+      "avgplaycount": 151,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Various Artists",
+      "avgplaycount": 135,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Queens of the Stone Age",
+      "avgplaycount": 134,
+      "genres": [
+        "stoner rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "stoner rock"
+    },
+    {
+      "Artist": "Gnarls Barkley",
+      "avgplaycount": 134,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Samael",
+      "avgplaycount": 133,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Diablo Swing Orchestra",
+      "avgplaycount": 128,
+      "genres": [
+        "avant-garde metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "avant-garde metal"
+    },
+    {
+      "Artist": "Grift",
+      "avgplaycount": 119,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "TOOL",
+      "avgplaycount": 118,
+      "genres": [
+        "progressive metal",
+        "alternative metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Ulthar",
+      "avgplaycount": 113,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Anna von Hausswolff",
+      "avgplaycount": 112,
+      "genres": [
+        "rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "rock"
+    },
+    {
+      "Artist": "Omnium Gatherum",
+      "avgplaycount": 96,
+      "genres": [
+        "melodic death metal",
+        "progressive metal"
+      ],
+      "primaryGenre": "melodic death metal"
+    },
+    {
+      "Artist": "Foo Fighters",
+      "avgplaycount": 96,
+      "genres": [
+        "alternative rock",
+        "post-grunge"
+      ],
+      "primaryGenre": "alternative rock"
+    },
+    {
+      "Artist": "Fear Factory",
+      "avgplaycount": 92,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Tenhi",
+      "avgplaycount": 84,
+      "genres": [
+        "neofolk",
+        "ambient"
+      ],
+      "primaryGenre": "neofolk"
+    },
+    {
+      "Artist": "Lana Del Rey",
+      "avgplaycount": 74,
+      "genres": [
+        "dream pop",
+        "alternative pop"
+      ],
+      "primaryGenre": "dream pop"
+    },
+    {
+      "Artist": "Devin Townsend",
+      "avgplaycount": 67,
+      "genres": [
+        "progressive metal",
+        "ambient metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Mew",
+      "avgplaycount": 53,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Florence + the Machine",
+      "avgplaycount": 50,
+      "genres": [
+        "indie pop",
+        "art pop"
+      ],
+      "primaryGenre": "indie pop"
+    },
+    {
+      "Artist": "Leprous",
+      "avgplaycount": 50,
+      "genres": [
+        "progressive metal",
+        "alternative metal"
+      ],
+      "primaryGenre": "progressive metal"
+    },
+    {
+      "Artist": "Kvelertak",
+      "avgplaycount": 48,
+      "genres": [
+        "black n roll",
+        "punk metal"
+      ],
+      "primaryGenre": "black n roll"
+    },
+    {
+      "Artist": "Emperor",
+      "avgplaycount": 47,
+      "genres": [
+        "black metal",
+        "symphonic black metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Rebekka Karijord",
+      "avgplaycount": 45,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Anna Ternheim",
+      "avgplaycount": 42,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Tiamat",
+      "avgplaycount": 30,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Cattle Decapitation",
+      "avgplaycount": 21,
+      "genres": [
+        "technical death metal",
+        "grindcore"
+      ],
+      "primaryGenre": "technical death metal"
+    },
+    {
+      "Artist": "Mobb Deep",
+      "avgplaycount": 16,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Luis Fonsi",
+      "avgplaycount": 15,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "AD NAUSEAM",
+      "avgplaycount": 15,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Cypress Hill",
+      "avgplaycount": 14,
+      "genres": [
+        "hip hop",
+        "west coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "GZA",
+      "avgplaycount": 13,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "The Crown",
+      "avgplaycount": 12,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Dr. Dre",
+      "avgplaycount": 12,
+      "genres": [
+        "hip hop",
+        "west coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "The Halo Effect",
+      "avgplaycount": 12,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "The Night Flight Orchestra",
+      "avgplaycount": 11,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "The Gentle Storm",
+      "avgplaycount": 11,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Ihsahn",
+      "avgplaycount": 9,
+      "genres": [
+        "progressive black metal",
+        "experimental metal"
+      ],
+      "primaryGenre": "progressive black metal"
+    },
+    {
+      "Artist": "The Midnight",
+      "avgplaycount": 9,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Robin Packalen",
+      "avgplaycount": 8,
+      "genres": [
+        "finnish pop",
+        "dance-pop"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "The Silver",
+      "avgplaycount": 8,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Outkast",
+      "avgplaycount": 8,
+      "genres": [
+        "hip hop",
+        "southern hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "The Eternal",
+      "avgplaycount": 7,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "The Deathtrip",
+      "avgplaycount": 7,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "The Committee",
+      "avgplaycount": 6,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Ghost",
+      "avgplaycount": 6,
+      "genres": [
+        "hard rock",
+        "heavy metal"
+      ],
+      "primaryGenre": "hard rock"
+    },
+    {
+      "Artist": "The Ruins Of Beverast",
+      "avgplaycount": 6,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "The Temple",
+      "avgplaycount": 6,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Wu-Tang Clan",
+      "avgplaycount": 5,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "The Mist From The Mountains",
+      "avgplaycount": 5,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "The Drowning",
+      "avgplaycount": 4,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "The Circle",
+      "avgplaycount": 4,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "The Smashing Pumpkins",
+      "avgplaycount": 3,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "The Gathering",
+      "avgplaycount": 3,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "A Tribe Called Quest",
+      "avgplaycount": 3,
+      "genres": [
+        "hip hop",
+        "alternative hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "An Abstract Illusion",
+      "avgplaycount": 3,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "A Swarm of the Sun",
+      "avgplaycount": 2,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "The Black Dahlia Murder",
+      "avgplaycount": 1,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "A Perfect Circle",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Snoop Dogg",
+      "avgplaycount": 1,
+      "genres": [
+        "hip hop",
+        "west coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Cheek",
+      "avgplaycount": 1,
+      "genres": [
+        "finnish rap",
+        "hip hop"
+      ],
+      "primaryGenre": "finnish rap"
+    },
+    {
+      "Artist": "Antti Tuisku",
+      "avgplaycount": 1,
+      "genres": [
+        "finnish pop",
+        "dance-pop"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Sanni",
+      "avgplaycount": 1,
+      "genres": [
+        "finnish pop",
+        "electropop"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "The Human Abstract",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Dysgnostic",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Downfall Of Gaia",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Úlfúð",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Bloodgutter",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Burial Hordes",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Cursebinder",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Aetherian",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Calligram",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "A Burial At Sea",
+      "avgplaycount": 1,
+      "genres": [
+        "metal",
+        "rock"
+      ],
+      "primaryGenre": "metal"
+    },
+    {
+      "Artist": "Turisas",
+      "avgplaycount": 0,
+      "genres": [
+        "folk metal",
+        "symphonic metal"
+      ],
+      "primaryGenre": "folk metal"
+    },
+    {
+      "Artist": "The Ominous Circle",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "St. Vincent",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Aseitas",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Taylor Swift",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "country pop"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Killing Joke",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Daniel Cavanagh",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Valdrin",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Abyssal",
+      "avgplaycount": 0,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Deströyer 666",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Inverloch",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Petter Carlsen",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Chelsea Wolfe",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Slow",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Winterfylleth",
+      "avgplaycount": 0,
+      "genres": [
+        "folk metal",
+        "atmospheric metal"
+      ],
+      "primaryGenre": "folk metal"
+    },
+    {
+      "Artist": "Dead To A Dying World",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Inculter",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Grey Heaven Fall",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Hallatar",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Ved Buens Ende",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Black Curse",
+      "avgplaycount": 0,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Lykke Li",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Trees of Eternity",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Spectral Voice",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Aephanemer",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Fvneral Fvkk",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Decapitated",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Martyrdöd",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "The xx",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Stellar Master Elite",
+      "avgplaycount": 0,
+      "genres": [
+        "atmospheric metal",
+        "post-metal"
+      ],
+      "primaryGenre": "atmospheric metal"
+    },
+    {
+      "Artist": "Gods Forsaken",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Bergraven",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Decembre Noir",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Un",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Krakow",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Khôrada",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Oubliette",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Hegemone",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "ISIS",
+      "avgplaycount": 0,
+      "genres": [
+        "post-metal",
+        "atmospheric sludge"
+      ],
+      "primaryGenre": "post-metal"
+    },
+    {
+      "Artist": "Vanum",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Kendrick Lamar, The Weeknd, SZA",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Our Oceans",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Ellie Goulding",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Vimur",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Unfathomable Ruination",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Hate Eternal",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Martti Servo & Napander",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Eppu Normaali",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Petri Nygård",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Irwin Goodman",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Lapinlahden Linnut",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Ruudolf",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Vexi Salmi",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Juha Vainio",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Jope Ruonansuu",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Jalmari Kolu Säätiö",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Hassisen Kone",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Pekka Ruuska",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Jukka Takalo",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Skandaali",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Tulenkantajat",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Poju",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Solistiyhtye Suomi",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Samuli Edelmann",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Martti Vainaa & Sallitut Aineet",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Steen1",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Mariska & Pahat Sudet & Mariska",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "M.A. Numminen",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Aarne Tenkanen",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Ismo Alanko",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Petri Nygard",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Lord Est",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Jestapa jepulis",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Stig",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Pate Mustajärvi",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Teuuo Loman",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Popeda",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Kari Tapio",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "JVG",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish rap",
+        "hip hop"
+      ],
+      "primaryGenre": "finnish rap"
+    },
+    {
+      "Artist": "Matti Nykänen",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Royal Philharmonic Orchestra & Claire Gibault",
+      "avgplaycount": 0,
+      "genres": [
+        "classical",
+        "orchestral"
+      ],
+      "primaryGenre": "classical"
+    },
+    {
+      "Artist": "Elisabeth Leonskaja",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Isaac Stern, Leonard Bernstein, William Vacchiano, Harold Gomberg & New York Philharmonic",
+      "avgplaycount": 0,
+      "genres": [
+        "classical",
+        "orchestral"
+      ],
+      "primaryGenre": "classical"
+    },
+    {
+      "Artist": "London Philharmonic Orchestra & David Parry",
+      "avgplaycount": 0,
+      "genres": [
+        "classical",
+        "orchestral"
+      ],
+      "primaryGenre": "classical"
+    },
+    {
+      "Artist": "London Philharmonic Orchestra",
+      "avgplaycount": 0,
+      "genres": [
+        "classical",
+        "orchestral"
+      ],
+      "primaryGenre": "classical"
+    },
+    {
+      "Artist": "Thomas Hampson, Michel Plasson, Orchestre National du Capitole de Toulouse, Angela Gheorghiu, Inva Mula & Roberto Alagna",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Concentus Musicus Wien, Elizabeth Gale, Marjana Lipovšek, Nikolaus Harnoncourt, Roderick Kennedy & Werner Hollweg",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Bournemouth Symphony Orchestra",
+      "avgplaycount": 0,
+      "genres": [
+        "classical",
+        "orchestral"
+      ],
+      "primaryGenre": "classical"
+    },
+    {
+      "Artist": "Ralph Kirshbaum",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Zbigniew Preisner",
+      "avgplaycount": 0,
+      "genres": [
+        "film score",
+        "classical"
+      ],
+      "primaryGenre": "film score"
+    },
+    {
+      "Artist": "Thomas Hampson, Sir Simon Rattle, Vienna Philharmonic & Barbara Bonney",
+      "avgplaycount": 0,
+      "genres": [
+        "classical",
+        "orchestral"
+      ],
+      "primaryGenre": "classical"
+    },
+    {
+      "Artist": "Marcus & Martinus",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Smurffit",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Elastinen",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish rap",
+        "hip hop"
+      ],
+      "primaryGenre": "finnish rap"
+    },
+    {
+      "Artist": "Rita Ora",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Kaija Koo",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Shawn Mendes & Camila Cabello",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Coldplay",
+      "avgplaycount": 0,
+      "genres": [
+        "alternative rock",
+        "pop rock"
+      ],
+      "primaryGenre": "alternative rock"
+    },
+    {
+      "Artist": "Darude",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "The Real Thing",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Eneferens",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Wachenfeldt",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Outre",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Death Grips",
+      "avgplaycount": 0,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Gang Starr",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Busta Rhymes",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "The Notorious B.I.G.",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Souls of Mischief",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "west coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Ice Cube",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "gangsta rap"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Geto Boys",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "southern hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Nas",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Inferi",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Carpe Noctem",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Cormorant",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "2Pac",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "west coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "LL COOL J",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Black Star",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "alternative hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Warren G",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "west coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Public Enemy",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "political hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Ol' Dirty Bastard",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "KRS-One",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Pharoahe Monch",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "The Roots",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "alternative hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Method Man",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "east coast hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Lauryn Hill",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "neo soul"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Deltron 3030",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "alternative hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Hieroglyphics",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "alternative hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Jonna Tervomaa",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Vienna Teng",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "System Of A Down",
+      "avgplaycount": 0,
+      "genres": [
+        "alternative metal",
+        "nu metal"
+      ],
+      "primaryGenre": "alternative metal"
+    },
+    {
+      "Artist": "Uada",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Nightmarer",
+      "avgplaycount": 0,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Mokoma",
+      "avgplaycount": 0,
+      "genres": [
+        "melodic death metal",
+        "thrash metal"
+      ],
+      "primaryGenre": "melodic death metal"
+    },
+    {
+      "Artist": "Sargeist",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Beyond Grace",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Black Royal",
+      "avgplaycount": 0,
+      "genres": [
+        "black metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "black metal"
+    },
+    {
+      "Artist": "Triptykon",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Agrimonia",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Tuomio & Kone",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Symbolic Death",
+      "avgplaycount": 0,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Behemoth",
+      "avgplaycount": 0,
+      "genres": [
+        "blackened death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "blackened death metal"
+    },
+    {
+      "Artist": "Mournful Congregation",
+      "avgplaycount": 0,
+      "genres": [
+        "funeral doom",
+        "death doom"
+      ],
+      "primaryGenre": "funeral doom"
+    },
+    {
+      "Artist": "Virus",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Wildernessking",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Collapse Of Light",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Diablo",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Vallenfyre",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Unto Others",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Svartidaudi",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Vainaja",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Calvin Harris",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Rebel Wizard",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Kriegsmaschine",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Kanye West",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "experimental hip hop"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Parius",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Them Crooked Vultures",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Omnerod",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Bolt Thrower",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Saturnus",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Sepultura",
+      "avgplaycount": 0,
+      "genres": [
+        "death metal",
+        "extreme metal"
+      ],
+      "primaryGenre": "death metal"
+    },
+    {
+      "Artist": "Westside Connection",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "DJ ILG",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "rap"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "koira",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Ax & Huligan",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Gasellit",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Turisti & Elastinen",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Vesa-Matti Loiri",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Suotana",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Purplape",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Blacflaco",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "SLIM3R",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "EMA & DONOEL",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Sexmane",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Blacflaco & Etta",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Leat'eq",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Jaxomy, Agatino Romero & Raffaella Carrà",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "alyona alyona & Jerry Heil",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Artemas",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Betsy & Сто-Личный Она-Нас",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Gabry Ponte, LUM!X & Prezioso",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Sylendanna",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "CTID",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Nebi",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "HurHur",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Nebulossa",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "DJ Quarantine",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "rap"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Benson Boone",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Joost",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Bambie Thug",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Coozii & Zeno",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Isac Elliot",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Kikattava Kakkiainen",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "CHROMANCE & Marcus Layton",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "HUTS",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Jore & Zpoppa",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Mother Mother",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "LDRR",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "RAPFAIJA",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "rap"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Laila!",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "GRAHAM",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Tungevaag & Raaban",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "ElyOtto",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Apulanta",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish rock",
+        "alternative rock"
+      ],
+      "primaryGenre": "finnish rock"
+    },
+    {
+      "Artist": "Tones And I",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "YoungBoy Never Broke Again",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Vicetone",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Portion Boys",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Disney",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "LXNGVX",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Oliver Tree & Robin Schulz",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Branu",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "XBOY GANG",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Rockit Music",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Parry Gripp",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Ricky Desktop",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Averagekidluke & Turisti",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "BASU",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Lil Nas X",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "rap"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "a_Sniper",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Dugzy & Trap Music Now",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "rap"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "W&W",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Ezkimo",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Costi",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Church of the Sea",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Blacflaco & Korelon",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Tommy Cash",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "hasN",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Betsy & Maria Iankovskaia",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "KAJ",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "RAPFAIJA & SATUSETÄ",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "rap"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Turisti",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Juice Leskinen Slam",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Fröbelin Palikat",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "GIMS",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "GXMZ & Repsaj",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Clovis Reyes",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "Sayfalse, Scythermane & TRXSHBXY",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "spelox",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "LXNGVX & MC GW",
+      "avgplaycount": 0,
+      "genres": [
+        "hip hop",
+        "rap"
+      ],
+      "primaryGenre": "hip hop"
+    },
+    {
+      "Artist": "Wibe",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Poca Pipoca",
+      "avgplaycount": 0,
+      "genres": [
+        "finnish pop",
+        "finnish music"
+      ],
+      "primaryGenre": "finnish pop"
+    },
+    {
+      "Artist": "JVG & Ege Zulu",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Helloween",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Averagekidluke",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Cledos",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Hexrot",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    },
+    {
+      "Artist": "Barbarous",
+      "avgplaycount": 0,
+      "genres": [
+        "pop",
+        "contemporary"
+      ],
+      "primaryGenre": "pop"
+    }
+  ],
+  "totalArtists": 646,
+  "columns": [
+    "Artist",
+    "avgplaycount",
+    "primaryGenre",
+    "genres"
+  ],
+  "createdAt": "2025-09-23T07:26:12.042Z",
+  "source": "Apple Music Library + Comprehensive Genre Classification"
+}
