@@ -75,7 +75,7 @@ export default function StressSelector({ title, onSelectionChange, selection, di
         style={{
           background: playfulMode
             ? 'linear-gradient(180deg, #fb7185 0%, #fb7185 15%, #f87171 29%, #fb923c 43%, #fbbf24 57%, #fde047 72%, #a3e635 86%, #7dd3fc 100%)'
-            : 'linear-gradient(180deg, #991b1b 0%, #991b1b 15%, #ef4444 29%, #f97316 43%, #eab308 57%, #84cc16 72%, #22c55e 86%, #10b981 100%)',
+            : 'linear-gradient(180deg, #18181b 0%, #27272a 15%, #3f3f46 29%, #52525b 43%, #71717a 57%, #a1a1aa 72%, #d4d4d8 86%, #f4f4f5 100%)',
           borderColor: playfulMode ? 'rgba(251, 191, 36, 0.4)' : 'rgba(63, 63, 70, 0.5)',
           boxShadow: playfulMode
             ? '0 4px 20px rgba(251, 191, 36, 0.2), inset 0 1px 0 rgba(255,255,255,0.2)'

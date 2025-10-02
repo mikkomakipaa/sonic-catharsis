@@ -44,10 +44,21 @@ export default function Home() {
     setReasoning(null);
     setPlaylist(null);
 
+    // Map stress level string to numeric intensity (matches StressSelector component)
+    const stressIntensityMap: Record<string, number> = {
+      'none': 0,           // Intolerable lightness
+      'mild': 1,           // Low
+      'light-moderate': 2, // Optimum
+      'normal': 3,         // Moderate
+      'moderate-heavy': 4, // Overload
+      'heavy': 5,          // Burnout
+      'multi-climax': 6    // Multi-climax
+    };
+
     // Create emotion and stress data for assistant context
     const emotionData = {
       primary: primarySelection.emotion,
-      stressLevel: stressLevel || null,
+      stressLevel: stressLevel ? stressIntensityMap[stressLevel] : null,
       event: eventDescription.trim() || null
     };
 
@@ -138,7 +149,9 @@ export default function Home() {
 
     } catch (error) {
       console.error('Error processing emotion analysis:', error);
-      setReasoning('Failed to analyze emotional state. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to analyze emotional state. Please try again.';
+      setReasoning(`Error: ${errorMessage}`);
+      setCause(errorMessage);
       setIsAnalyzing(false);
     } finally {
       setIsProcessing(false);
@@ -311,7 +324,7 @@ export default function Home() {
                 : "bg-zinc-800 text-zinc-300 border border-zinc-700 hover:border-zinc-600"
             )}
           >
-            {playfulMode ? '🌈 Party Mode!' : '🎨 Theme'}
+            {playfulMode ? '🌈 Party Mode!' : '🌙 Dark Mode'}
           </button>
         </header>
 
@@ -457,13 +470,13 @@ export default function Home() {
           </div>
 
           {/* MIDDLE COLUMN - Reasoning */}
-          <div className="xl:col-span-5">
+          <div className="xl:col-span-4">
             {(cause || choice || subgenre) ? (
               <div
                 className={cn(
                   "backdrop-blur-sm rounded-xl border h-full flex flex-col transition-all duration-500",
                   playfulMode
-                    ? "bg-white/70 border-purple-300 shadow-2xl shadow-purple-500/30"
+                    ? "bg-white/60 border-pink-300 shadow-2xl shadow-pink-500/30"
                     : "bg-zinc-800/50 border-zinc-700"
                 )}
                 style={!playfulMode ? {
@@ -477,7 +490,7 @@ export default function Home() {
               >
                 <div className={cn(
                   "p-3 border-b transition-colors duration-500",
-                  playfulMode ? "border-purple-200" : "border-zinc-700"
+                  playfulMode ? "border-pink-200" : "border-zinc-700"
                 )}>
                   <h2
                     className={cn(
@@ -533,7 +546,7 @@ export default function Home() {
                       </div>
                       <p className={cn(
                         "leading-relaxed text-sm transition-colors duration-500",
-                        playfulMode ? "text-gray-900 font-medium" : "text-zinc-100"
+                        playfulMode ? "text-gray-900 font-medium" : "text-zinc-50"
                       )}>{cause}</p>
                     </div>
                   )}
@@ -576,7 +589,7 @@ export default function Home() {
                       </div>
                       <p className={cn(
                         "leading-relaxed text-sm transition-colors duration-500",
-                        playfulMode ? "text-gray-900 font-medium" : "text-zinc-100"
+                        playfulMode ? "text-gray-900 font-medium" : "text-zinc-50"
                       )}>{choice}</p>
                     </div>
                   )}
@@ -619,13 +632,13 @@ export default function Home() {
           </div>
 
           {/* RIGHT COLUMN - Playlist */}
-          <div className="xl:col-span-2">
+          <div className="xl:col-span-3">
             {playlist ? (
               <div
                 className={cn(
                   "backdrop-blur-sm rounded-xl border h-full flex flex-col transition-all duration-500",
                   playfulMode
-                    ? "bg-white/70 border-indigo-300 shadow-2xl shadow-indigo-500/30"
+                    ? "bg-white/60 border-pink-300 shadow-2xl shadow-pink-500/30"
                     : "bg-zinc-800/50 border-zinc-700"
                 )}
                 style={!playfulMode ? {
@@ -639,20 +652,20 @@ export default function Home() {
               >
                 <div className={cn(
                   "p-3 border-b transition-colors duration-500",
-                  playfulMode ? "border-indigo-200" : "border-zinc-700"
+                  playfulMode ? "border-pink-200" : "border-zinc-700"
                 )}>
                   <div className="flex items-center gap-2">
                     <Music
                       className={cn(
                         "h-5 w-5 transition-colors duration-500",
-                        playfulMode ? "text-indigo-600" : "text-red-500"
+                        playfulMode ? "text-pink-600" : "text-red-500"
                       )}
-                      style={{ filter: playfulMode ? 'drop-shadow(0 0 4px rgba(79, 70, 229, 0.5))' : 'drop-shadow(0 0 4px rgba(239,68,68,0.5))' }}
+                      style={{ filter: playfulMode ? 'drop-shadow(0 0 4px rgba(219, 39, 119, 0.5))' : 'drop-shadow(0 0 4px rgba(239,68,68,0.5))' }}
                     />
                     <h2
                       className={cn(
                         "text-lg font-bold tracking-wide transition-colors duration-500",
-                        playfulMode ? "text-indigo-900" : "text-white"
+                        playfulMode ? "text-pink-900" : "text-white"
                       )}
                       style={{ letterSpacing: '0.05em' }}
                     >
