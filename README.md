@@ -2,9 +2,9 @@
 
 Metal Music Emotion Matching Application - AI-powered emotion detection with personalized metal music curation.
 
-<img width="1288" height="800" alt="image" src="https://github.com/user-attachments/assets/5448d66b-eb71-42ee-bd85-94c3392b2e08" />
+<img width="1282" height="801" alt="image" src="https://github.com/user-attachments/assets/59bf8462-b63e-481c-a0ae-90dfabff350e" />
 
-<img width="1269" height="700" alt="Screenshot 2025-10-01 at 22 11 41" src="https://github.com/user-attachments/assets/34342892-eaef-4ba1-ad20-c7cceaca8031" />
+<img width="1277" height="807" alt="image" src="https://github.com/user-attachments/assets/905e67c4-b89b-4e6a-902d-14a6241dd846" />
 
 
 ## Overview
@@ -17,7 +17,7 @@ Sonic Catharsis analyzes your emotional state through an interactive UI and cura
 - **Stress Level Selector**: 7-level philosophical stress intensity scale (none → overload)
 - **Two-Agent AI System**:
   - **Agent 1 (Emotion Matcher)**: Psychologist + metal aficionado mapping emotions to subgenres via matrix
-  - **Agent 2 (Music Curator)**: 20-track playlist curator using enriched artist database
+  - **Agent 2 (Music Curator)**: 20 Curated artists using enriched artist database
 - **Mapping Matrix**: 96 emotion/stress combinations → specific metal subgenres
 - **Metal Subgenre Matching**: Intelligent mapping to 30+ nuanced subgenres (thrash, doom, black, power, etc.)
 - **Artist Database**: Curated metal artist collection with genre classifications
