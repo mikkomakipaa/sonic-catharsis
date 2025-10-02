@@ -4,8 +4,6 @@ Metal Music Emotion Matching Application - AI-powered emotion detection with per
 
 <img width="1282" height="801" alt="image" src="https://github.com/user-attachments/assets/59bf8462-b63e-481c-a0ae-90dfabff350e" />
 
-<img width="1277" height="807" alt="image" src="https://github.com/user-attachments/assets/905e67c4-b89b-4e6a-902d-14a6241dd846" />
-
 
 ## Overview
 
