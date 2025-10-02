@@ -106,9 +106,7 @@ soniccatharsis/
 
 ### Metal Subgenres (30+ Mapped Genres)
 
-**Core 10**: death, black, power, doom, thrash, progressive, symphonic, folk, industrial, nu-metal
-
-**Extended Subgenres** (via mapping matrix):
+**Subgenres** (via mapping matrix):
 - **Doom Family**: gothic doom, melodic doom, funeral doom, drone doom, death/doom
 - **Black Family**: depressive black, suicidal black, epic black, blackened power/death
 - **Power Family**: epic power, speed metal, progressive power
