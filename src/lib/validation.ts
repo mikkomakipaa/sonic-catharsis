@@ -23,7 +23,7 @@ export const EmotionDataSchema = z.object({
   primary: z.enum(CoreEmotions as [string, ...string[]], {
     errorMap: () => ({ message: 'Invalid emotion type' })
   }),
-  stressLevel: z.number().min(0).max(7).nullable().optional(),
+  stressLevel: z.number().min(0).max(7).nullable().optional(), // 0-7 to match mapping matrix
   event: z.string().max(500).nullable().optional()
 });
 

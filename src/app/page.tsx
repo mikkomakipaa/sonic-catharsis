@@ -44,7 +44,7 @@ export default function Home() {
     setReasoning(null);
     setPlaylist(null);
 
-    // Map stress level string to numeric intensity (matches StressSelector component)
+    // Map stress level string to numeric intensity (matches StressSelector component and mapping matrix)
     const stressIntensityMap: Record<string, number> = {
       'none': 0,           // Intolerable lightness
       'mild': 1,           // Low
@@ -52,7 +52,8 @@ export default function Home() {
       'normal': 3,         // Moderate
       'moderate-heavy': 4, // Overload
       'heavy': 5,          // Burnout
-      'multi-climax': 6    // Multi-climax
+      'intense': 6,        // Intense (if used)
+      'multi-climax': 7    // Multi-climax (highest stress)
     };
 
     // Create emotion and stress data for assistant context
