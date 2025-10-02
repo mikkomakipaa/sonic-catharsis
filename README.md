@@ -2,6 +2,8 @@
 
 Metal Music Emotion Matching Application - AI-powered emotion detection with personalized metal music curation.
 
+<img width="1288" height="800" alt="image" src="https://github.com/user-attachments/assets/5448d66b-eb71-42ee-bd85-94c3392b2e08" />
+
 <img width="1269" height="700" alt="Screenshot 2025-10-01 at 22 11 41" src="https://github.com/user-attachments/assets/34342892-eaef-4ba1-ad20-c7cceaca8031" />
 
 
