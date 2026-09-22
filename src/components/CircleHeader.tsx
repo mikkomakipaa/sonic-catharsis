@@ -11,7 +11,7 @@ export default function CircleHeader({ circle, align = 'center' }: CircleHeaderP
     <div
       className={cn('flex items-baseline gap-4', align === 'left' ? 'justify-start' : 'justify-center')}
     >
-      <span className="font-mono text-[44px] leading-none" style={{ color: circle.color, textShadow: `0 0 32px ${circle.color}` }}>
+      <span className="font-mono text-[44px] leading-none" style={{ color: circle.color, textShadow: `0 0 18px ${circle.color}55` }}>
         {circle.roman}
       </span>
       <h2 className="text-3xl uppercase tracking-widest font-bold leading-none" style={{ color: circle.color }}>

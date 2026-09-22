@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import { Download } from 'lucide-react';
-import { Circle, STRESS_TIERS } from '@/lib/theme';
+import { Circle, TOTAL_INTENSITY_LEVELS } from '@/lib/theme';
 import { EmotionType } from '@/types';
 
 interface ReceiptCardProps {
@@ -28,11 +28,11 @@ function formatDateTime(): { date: string; time: string } {
 
 export default function ReceiptCard({ circle, emotion, stressLevel, damageScore, subgenre }: ReceiptCardProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const tier = STRESS_TIERS[stressLevel];
   const { date, time } = formatDateTime();
 
   const itemLabel = emotion.toUpperCase();
-  const tierLabel = tier.label.toUpperCase();
+  // Plain 1-11 intensity, not a thematic tier name — one unambiguous scale.
+  const tierLabel = `${stressLevel + 1}/${TOTAL_INTENSITY_LEVELS}`;
   const genreLine = subgenre ? subgenre.toUpperCase() : null;
 
   // Never a fabricated single video — a YouTube search for the actual
@@ -94,7 +94,7 @@ export default function ReceiptCard({ circle, emotion, stressLevel, damageScore,
   })();
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col items-center gap-3.5">
       <svg
         ref={svgRef}
         width={RECEIPT_WIDTH}
@@ -158,7 +158,7 @@ export default function ReceiptCard({ circle, emotion, stressLevel, damageScore,
             NO REFUNDS. NO REMORSE.
           </text>
           <text x={RECEIPT_WIDTH / 2} y="252" textAnchor="middle" fontSize="8" fill="#6b6b66">
-            NO CATHARSIS, ACTUALLY.
+            SCIENTIFICALLY PROVEN TO FUNCTION.
           </text>
 
           {/* QR — scan for a YouTube search of the actual curated subgenre */}
@@ -173,8 +173,10 @@ export default function ReceiptCard({ circle, emotion, stressLevel, damageScore,
 
       <button
         onClick={handleDownload}
-        className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-zinc-400 hover:text-zinc-200 transition-colors duration-200"
-        style={{ letterSpacing: '0.05em' }}
+        className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide transition-colors duration-200"
+        style={{ letterSpacing: '0.05em', color: '#a6a297' }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = '#726f66')}
+        onMouseLeave={(e) => (e.currentTarget.style.color = '#a6a297')}
       >
         <Download className="h-3.5 w-3.5" />
         Download Receipt

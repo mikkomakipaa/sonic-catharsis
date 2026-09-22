@@ -1,32 +1,59 @@
+import { cn } from '@/lib/utils';
+
 interface RiteHeaderProps {
   onGoHome?: () => void;
+  showHeadline?: boolean;
 }
 
-export default function RiteHeader({ onGoHome }: RiteHeaderProps) {
+// Reframed masthead: a quiet kicker (the wordmark/"go home" control) above
+// the actual hero statement, in the new calm palette — replacing the
+// blackletter blood-red logo treatment. The hero statement itself only
+// belongs to the selection screen — later screens (analysis, descent) keep
+// just the kicker as a quiet nav element, not the "how are you feeling"
+// question that's already been answered.
+export default function RiteHeader({ onGoHome, showHeadline = true }: RiteHeaderProps) {
   return (
-    <header className="text-center mb-6">
-      <h1>
-        <button
-          type="button"
-          onClick={onGoHome}
-          disabled={!onGoHome}
-          aria-label="Sonic Catharsis — back to start"
-          className="text-6xl font-normal tracking-wide leading-tight text-transparent bg-clip-text bg-gradient-to-b from-red-400 via-red-500 to-red-700 transition-opacity duration-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-white/60 focus-visible:outline-offset-4"
+    <header className={cn('text-center', showHeadline ? 'mb-6' : 'mb-4')}>
+      <button
+        type="button"
+        onClick={onGoHome}
+        disabled={!onGoHome}
+        aria-label="Sonic Catharsis — back to start"
+        className="uppercase transition-opacity duration-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4"
+        style={{
+          fontFamily: 'var(--font-plex-sans, sans-serif)',
+          fontSize: 11,
+          letterSpacing: '0.18em',
+          color: '#a6a297',
+          background: 'transparent',
+          border: 'none',
+          padding: 0,
+          cursor: onGoHome ? 'pointer' : 'default',
+        }}
+        onMouseEnter={(e) => onGoHome && (e.currentTarget.style.color = '#726f66')}
+        onMouseLeave={(e) => (e.currentTarget.style.color = '#a6a297')}
+      >
+        Sonic Catharsis
+      </button>
+
+      {showHeadline && (
+        <h1
+          className="mt-3"
           style={{
-            letterSpacing: '0.04em',
-            textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 0 24px rgba(239, 68, 68, 0.5)',
-            fontFamily: 'var(--font-shadow-prayer), system-ui, sans-serif',
-            fontWeight: 400,
-            lineHeight: '1.2',
-            cursor: onGoHome ? 'pointer' : 'default',
+            fontFamily: 'var(--font-fraunces, serif)',
+            fontWeight: 500,
+            fontSize: 'clamp(26px, 5vw, 34px)',
+            lineHeight: 1.25,
+            color: '#2f2e2b',
+            maxWidth: '22ch',
+            margin: '12px auto 0',
           }}
-          onMouseEnter={(e) => onGoHome && (e.currentTarget.style.opacity = '0.85')}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
         >
-          SONIC CATHARSIS
-        </button>
-      </h1>
-      <div className="h-0.5 w-32 mx-auto mt-4 bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-60" />
+          How are you feeling today?
+        </h1>
+      )}
+
+      <div className="h-px w-16 mx-auto mt-4" style={{ background: '#e6e2d8' }} />
     </header>
   );
 }

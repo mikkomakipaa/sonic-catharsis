@@ -229,9 +229,11 @@ export default function Home() {
   return (
     <div
       ref={pageRef}
-      className="min-h-screen text-white relative bg-black"
+      className="min-h-screen relative"
       style={
         {
+          background: '#f7f5f0',
+          color: '#2f2e2b',
           '--rite-accent': riteAccent.accent,
           '--rite-border': riteAccent.border,
           '--rite-glow': riteAccent.glow,
@@ -249,7 +251,7 @@ export default function Home() {
       />
 
       <div className="container mx-auto px-6 pt-8 pb-4 max-w-7xl relative">
-        <RiteHeader onGoHome={resetSelections} />
+        <RiteHeader onGoHome={resetSelections} showHeadline={step === 'selection'} />
 
         {step === 'selection' && (
           <ScreenSelection

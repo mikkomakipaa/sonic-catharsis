@@ -19,19 +19,25 @@ export const PANEL_SHADOW = {
 // popped out of it with a raised bevel.
 export const EMBED_SHADOW = 'inset 0 2px 5px rgba(0,0,0,0.65), inset 0 -1px 0 rgba(255,255,255,0.03)';
 
-// Primary call-to-action (Submit / Descend) — reads as a threshold to step
-// through rather than a neon UI button: darker interior, thin edge, and the
-// glow sits mostly below it instead of an even glow on all four sides.
-export const CTA_BACKGROUND = 'linear-gradient(180deg, rgba(127,29,29,0.18) 0%, rgba(9,9,11,0.95) 100%)';
-export const CTA_SHADOW =
-  'inset 0 1px 2px rgba(0,0,0,0.6), inset 0 0 0 0.5px rgba(239,68,68,0.21), 0 10px 28px rgba(239,68,68,0.25)';
-export const CTA_TEXT_SHADOW = '0 0 12px rgba(239,68,68,0.6)';
+// Primary call-to-action (Submit / Descend) — a refined matte solid, not a
+// glossy/neon treatment or a bordered-outline button: deep brown-black with
+// a soft shadow and a warm coral/amber text accent for contrast.
+export const CTA_BACKGROUND = '#241a17';
+export const CTA_SHADOW = '0 4px 14px -4px rgba(36,26,23,0.45)';
+export const CTA_TEXT_SHADOW = 'none';
+export const CTA_TEXT_COLOR = '#e8a672';
 
 // --- Intensity tiers (0-10, "these go to eleven") --------------------------
 // The wheel's radial drag snaps directly to one of these 11 indices — no
 // separate string-label layer, the tier index *is* the stress value sent to
 // the matcher API. Single source of truth for label + color per tier.
 export const MAX_STRESS_INTENSITY = 10;
+// UI-facing intensity is always shown as a plain 1-11 number (never the
+// thematic tier label below) to avoid a second, ambiguous "emotional" label
+// competing with the wheel's actual emotion readout. The thematic labels
+// stay in STRESS_TIERS/STRESS_VALUE_TO_LABEL purely as descriptive context
+// fed to the matcher/curator prompts — not for display.
+export const TOTAL_INTENSITY_LEVELS = MAX_STRESS_INTENSITY + 1;
 
 export const STRESS_TIERS: { label: string; color: string }[] = [
   { label: 'Intolerable lightness', color: '#10b981' },

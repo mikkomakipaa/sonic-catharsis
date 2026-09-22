@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Dices } from 'lucide-react';
 import { EmotionType, EmotionWheelSelection } from '@/types';
 import { cn } from '@/lib/utils';
-import { EASE, STRESS_TIERS, MAX_STRESS_INTENSITY } from '@/lib/theme';
+import { EASE, STRESS_TIERS, MAX_STRESS_INTENSITY, TOTAL_INTENSITY_LEVELS } from '@/lib/theme';
 
 interface EmotionWheelProps {
   onSelectionChange: (selection: EmotionWheelSelection | null) => void;
@@ -26,6 +26,13 @@ const EMOTIONS: { type: EmotionType; color: string; description: string }[] = [
   { type: 'anticipation', color: '#f97316', description: 'Anticipation' },
 ];
 
+// Radii below are calibrated against the wheel's base (unscaled) footprint,
+// BASE_WHEEL_SIZE. The wheel itself shrinks on narrow viewports (see the
+// responsive width classes below), so every consumer of these constants
+// must scale by the wheel's actual-rendered-size / BASE_WHEEL_SIZE ratio —
+// otherwise touch distance on a shrunk mobile wheel would desync from the
+// intensity tiers computed against the full-size numbers.
+const BASE_WHEEL_SIZE = 320;
 const MIN_RADIUS = 27;
 const MAX_RADIUS = 160;
 const GLYPH_RADIUS = 120;
@@ -36,15 +43,17 @@ const ELEVEN_TIER = MAX_STRESS_INTENSITY;
 const NORMAL_MAX_TIER = ELEVEN_TIER - 1;
 const ELEVEN_RADIUS = MAX_RADIUS + 45;
 
-function radiusForTier(tier: number): number {
-  if (tier >= ELEVEN_TIER) return ELEVEN_RADIUS;
-  return MIN_RADIUS + (tier / NORMAL_MAX_TIER) * (MAX_RADIUS - MIN_RADIUS);
+function radiusForTier(tier: number, scale = 1): number {
+  const base = tier >= ELEVEN_TIER ? ELEVEN_RADIUS : MIN_RADIUS + (tier / NORMAL_MAX_TIER) * (MAX_RADIUS - MIN_RADIUS);
+  return base * scale;
 }
 
-function tierForDistance(distance: number): number {
-  if (distance > MAX_RADIUS) return ELEVEN_TIER;
-  const clamped = Math.min(Math.max(distance, MIN_RADIUS), MAX_RADIUS);
-  return Math.round(((clamped - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS)) * NORMAL_MAX_TIER);
+function tierForDistance(distance: number, scale = 1): number {
+  const min = MIN_RADIUS * scale;
+  const max = MAX_RADIUS * scale;
+  if (distance > max) return ELEVEN_TIER;
+  const clamped = Math.min(Math.max(distance, min), max);
+  return Math.round(((clamped - min) / (max - min)) * NORMAL_MAX_TIER);
 }
 
 function selectionForIndexAndTier(index: number, tier: number): EmotionWheelSelection {
@@ -95,23 +104,41 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
   const [isMounted, setIsMounted] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragTier, setDragTier] = useState<number | null>(null);
+  // Ratio of the wheel's actual rendered size to BASE_WHEEL_SIZE — stays 1
+  // at the desktop/tablet size and shrinks on narrow mobile viewports (see
+  // the responsive width classes below). Selection positions are always
+  // stored in base (unscaled) units and multiplied by this at render time,
+  // so drag math and glyph placement stay in sync at any wheel size.
+  const [wheelScale, setWheelScale] = useState(1);
   const wheelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    const node = wheelRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.borderBoxSize?.[0]?.inlineSize ?? entry.contentRect.width;
+      if (width > 0) setWheelScale(width / BASE_WHEEL_SIZE);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   const updateFromPointer = useCallback((clientX: number, clientY: number, index: number) => {
     const rect = wheelRef.current?.getBoundingClientRect();
     if (!rect) return;
 
+    const scale = rect.width / BASE_WHEEL_SIZE;
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const dx = clientX - centerX;
     const dy = clientY - centerY;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    const tier = tierForDistance(distance);
-    const snappedRadius = radiusForTier(tier);
+    const tier = tierForDistance(distance, scale);
+    const snappedRadius = radiusForTier(tier); // stored in base units
 
     const angle = (index * 360) / EMOTIONS.length;
     const radian = (angle * Math.PI) / 180;
@@ -187,23 +214,27 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
   const activeTierInfo = activeTier !== null ? STRESS_TIERS[activeTier] : null;
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col items-center gap-2">
       <div
         ref={wheelRef}
         className={cn(
-          "relative w-80 h-80 rounded-full border",
+          // Desktop diameter trimmed ~9% (320px -> 292px) for better vertical
+          // balance; the wheelScale ResizeObserver below keeps every radius,
+          // ring, and glyph position proportional automatically.
+          "relative w-64 h-64 sm:w-[292px] sm:h-[292px] rounded-full border",
           disabled && "opacity-50 cursor-not-allowed",
           !disabled && "cursor-pointer"
         )}
         style={{
-          // Warm obsidian-red instead of flat zinc grey, matching the
-          // page's blood-red palette rather than reading as a neutral UI dial.
-          background: 'radial-gradient(circle at 30% 30%, rgba(46,20,20,1) 0%, rgba(26,13,13,1) 55%, rgba(9,9,11,1) 100%)',
+          // Deep charcoal/espresso instead of the old obsidian-red — dark
+          // and rich enough to stay the page's hero instrument, but warm
+          // rather than a black/red metal treatment.
+          background: 'radial-gradient(circle at 30% 30%, #3a2a26 0%, #241a17 55%, #16110f 100%)',
           boxShadow:
             activeTier === ELEVEN_TIER
-              ? `0 0 0 1px ${STRESS_TIERS[ELEVEN_TIER].color}, 0 0 28px 6px ${STRESS_TIERS[ELEVEN_TIER].color}60, 0 4px 12px rgba(0,0,0,0.6)`
-              : 'var(--rite-glow, 0 0 0 0.5px rgba(255,255,255,0.05)), 0 4px 12px rgba(0,0,0,0.6)',
-          borderColor: activeTier === ELEVEN_TIER ? STRESS_TIERS[ELEVEN_TIER].color : 'var(--rite-border, rgba(63, 63, 70, 0.6))',
+              ? `0 0 0 1px ${STRESS_TIERS[ELEVEN_TIER].color}, 0 0 16px 3px ${STRESS_TIERS[ELEVEN_TIER].color}40, 0 4px 12px rgba(0,0,0,0.4)`
+              : '0 0 0 0.5px rgba(90,74,62,0.4), 0 4px 12px rgba(0,0,0,0.35)',
+          borderColor: activeTier === ELEVEN_TIER ? STRESS_TIERS[ELEVEN_TIER].color : 'rgba(90,74,62,0.5)',
           borderWidth: '1px',
           touchAction: 'none',
           transition: `border-color 0.3s ${EASE}, box-shadow 0.3s ${EASE}`,
@@ -213,7 +244,7 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
             high(dark red) so radial position always carries a visible
             meaning, not just an invisible drag distance. */}
         {STRESS_TIERS.slice(0, ELEVEN_TIER).map((tier, i) => {
-          const r = radiusForTier(i);
+          const r = radiusForTier(i, wheelScale);
           const isActiveRing = activeTier === i;
           return (
             <div
@@ -223,7 +254,7 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
                 width: `${r * 2}px`,
                 height: `${r * 2}px`,
                 transform: 'translate(-50%, -50%)',
-                border: `1px solid ${tier.color}${isActiveRing ? '55' : '10'}`,
+                border: `1px solid ${tier.color}${isActiveRing ? '60' : '30'}`,
                 transition: `border-color 0.2s ${EASE}`,
               }}
             />
@@ -236,12 +267,12 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
         <div
           className={cn('absolute top-1/2 left-1/2 rounded-full pointer-events-none', activeTier === ELEVEN_TIER && 'rite-eleven-pulse')}
           style={{
-            width: `${ELEVEN_RADIUS * 2}px`,
-            height: `${ELEVEN_RADIUS * 2}px`,
+            width: `${ELEVEN_RADIUS * 2 * wheelScale}px`,
+            height: `${ELEVEN_RADIUS * 2 * wheelScale}px`,
             transform: 'translate(-50%, -50%)',
-            border: `${activeTier === ELEVEN_TIER ? 2 : 1}px dashed ${STRESS_TIERS[ELEVEN_TIER].color}${activeTier === ELEVEN_TIER ? 'cc' : '18'}`,
+            border: `${activeTier === ELEVEN_TIER ? 2 : 1}px dashed ${STRESS_TIERS[ELEVEN_TIER].color}${activeTier === ELEVEN_TIER ? 'aa' : '2a'}`,
             color: STRESS_TIERS[ELEVEN_TIER].color,
-            boxShadow: activeTier === ELEVEN_TIER ? `0 0 32px 4px ${STRESS_TIERS[ELEVEN_TIER].color}80` : 'none',
+            boxShadow: activeTier === ELEVEN_TIER ? `0 0 18px 3px ${STRESS_TIERS[ELEVEN_TIER].color}50` : 'none',
             transition: `border-color 0.2s ${EASE}, box-shadow 0.2s ${EASE}`,
           }}
         />
@@ -255,9 +286,9 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
               background: 'radial-gradient(circle at 50% 40%, rgba(9,9,11,1) 0%, rgba(24,24,27,0.9) 100%)',
               boxShadow:
                 activeTier === ELEVEN_TIER
-                  ? `inset 0 2px 6px rgba(0,0,0,0.7), inset 0 0 0 1px ${STRESS_TIERS[ELEVEN_TIER].color}, 0 0 24px 4px ${STRESS_TIERS[ELEVEN_TIER].color}90`
+                  ? `inset 0 2px 6px rgba(0,0,0,0.7), inset 0 0 0 1px ${STRESS_TIERS[ELEVEN_TIER].color}, 0 0 14px 2px ${STRESS_TIERS[ELEVEN_TIER].color}55`
                   : selection
-                  ? `inset 0 2px 6px rgba(0,0,0,0.7), inset 0 0 0 0.5px rgba(255,255,255,0.06), 0 0 14px var(--rite-accent, rgba(239,68,68,0.35))`
+                  ? `inset 0 2px 6px rgba(0,0,0,0.7), inset 0 0 0 0.5px rgba(255,255,255,0.06), 0 0 8px var(--rite-accent, rgba(239,68,68,0.2))`
                   : 'inset 0 2px 6px rgba(0,0,0,0.7), inset 0 0 0 0.5px rgba(255,255,255,0.04)',
             }}
           >
@@ -297,38 +328,41 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
         {isMounted && EMOTIONS.map((emotion, index) => {
           const angle = (index * 360) / EMOTIONS.length;
           const radian = (angle * Math.PI) / 180;
-          const restX = Math.round(Math.cos(radian) * GLYPH_RADIUS * 100) / 100;
-          const restY = Math.round(Math.sin(radian) * GLYPH_RADIUS * 100) / 100;
+          const restX = Math.round(Math.cos(radian) * GLYPH_RADIUS * wheelScale * 100) / 100;
+          const restY = Math.round(Math.sin(radian) * GLYPH_RADIUS * wheelScale * 100) / 100;
 
           const isSelected = selection?.emotion === emotion.type;
           const isHovered = hoveredEmotion === emotion.type;
           const atEleven = isSelected && selection?.stressLevel === ELEVEN_TIER;
-          const x = isSelected && selection ? selection.position.x : restX;
-          const y = isSelected && selection ? selection.position.y : restY;
+          // selection.position is stored in base (unscaled) units — scale to
+          // the wheel's current rendered size here.
+          const x = isSelected && selection ? selection.position.x * wheelScale : restX;
+          const y = isSelected && selection ? selection.position.y * wheelScale : restY;
 
           return (
             <button
               key={emotion.type}
               type="button"
-              aria-label={`${emotion.description}${isSelected ? `, ${activeTierInfo?.label}` : ''}`}
+              aria-label={`${emotion.description}${isSelected && activeTier !== null ? `, intensity ${activeTier === ELEVEN_TIER ? TOTAL_INTENSITY_LEVELS : activeTier + 1} of ${TOTAL_INTENSITY_LEVELS}` : ''}`}
               disabled={disabled}
               className={cn(
                 "absolute w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transform-gpu z-20",
                 "focus-visible:outline focus-visible:outline-1 focus-visible:outline-white/60 focus-visible:outline-offset-2",
-                isSelected ? "scale-125" : "hover:scale-110 active:scale-105 transition-transform duration-200",
+                isSelected ? "scale-110" : "hover:scale-[1.08] active:scale-105 transition-transform duration-200",
                 atEleven && "rite-eleven-pulse",
                 disabled && "cursor-not-allowed hover:scale-100"
               )}
               style={{
-                background: atEleven ? STRESS_TIERS[ELEVEN_TIER].color : isSelected || isHovered ? emotion.color : 'rgba(24,24,27,0.85)',
+                background: atEleven ? STRESS_TIERS[ELEVEN_TIER].color : isSelected || isHovered ? emotion.color : 'rgba(148,141,127,0.18)',
                 color: isSelected || isHovered ? '#0a0a0a' : emotion.color,
+                filter: isSelected && !atEleven ? 'saturate(0.72)' : undefined,
                 boxShadow: atEleven
-                  ? `0 0 20px 4px ${STRESS_TIERS[ELEVEN_TIER].color}`
+                  ? `0 0 12px 2px ${STRESS_TIERS[ELEVEN_TIER].color}90`
                   : isSelected
-                  ? `0 0 16px ${emotion.color}80, 0 2px 8px rgba(0,0,0,0.4)`
+                  ? `0 0 6px ${emotion.color}38, 0 2px 5px rgba(0,0,0,0.22)`
                   : isHovered
-                  ? `0 0 12px ${emotion.color}60, 0 2px 6px rgba(0,0,0,0.3)`
-                  : 'inset 0 1px 3px rgba(0,0,0,0.5), inset 0 0 0 0.5px rgba(255,255,255,0.04)',
+                  ? `0 0 5px ${emotion.color}30, 0 2px 4px rgba(0,0,0,0.18)`
+                  : 'inset 0 1px 3px rgba(0,0,0,0.4), inset 0 0 0 0.5px rgba(255,255,255,0.03)',
                 border: atEleven ? '1px solid white' : isSelected ? `1px solid ${emotion.color}` : 'none',
                 left: `calc(50% + ${x}px - 24px)`,
                 top: `calc(50% + ${y}px - 24px)`,
@@ -346,7 +380,7 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
 
               {isHovered && !disabled && (
                 <div
-                  className="fixed whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-150"
+                  className="absolute whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-150"
                   style={{
                     background: 'rgba(0,0,0,0.95)',
                     backdropFilter: 'blur(8px)',
@@ -354,9 +388,9 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
                     borderRadius: '2px',
                     padding: '6px 10px',
                     boxShadow: `0 4px 12px rgba(0,0,0,0.4), 0 0 8px ${emotion.color}20`,
-                    zIndex: 9999,
+                    zIndex: 30,
                     left: '50%',
-                    top: `calc(50% + ${y}px - 64px)`,
+                    bottom: 'calc(100% + 10px)',
                     transform: 'translateX(-50%)',
                   }}
                 >
@@ -381,32 +415,40 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
 
       </div>
 
-      {/* Live intensity readout below the wheel — always visible while
-          dragging or once a tier is set, not just an implicit position. */}
+      {/* Compact, secondary status line — the wheel + center hub already
+          carry the selection, this is just a quiet confirmation, not a
+          second status block competing with it. */}
       {activeTierInfo && (
-        <p
-          className={cn(
-            'text-center uppercase tracking-wide',
-            activeTier === ELEVEN_TIER ? 'text-sm font-extrabold rite-eleven-pulse' : 'text-xs font-medium'
-          )}
-          style={{ letterSpacing: '0.05em', color: activeTierInfo.color }}
-        >
-          {activeTierInfo.label} <span className="text-zinc-600">({activeTier === ELEVEN_TIER ? 11 : activeTier}/{MAX_STRESS_INTENSITY})</span>
-        </p>
-      )}
+        <div className="flex items-center gap-2.5">
+          <p
+            className={cn(
+              'text-center uppercase tracking-wide',
+              activeTier === ELEVEN_TIER ? 'text-sm font-extrabold rite-eleven-pulse' : 'text-[11px] font-medium'
+            )}
+            style={{ letterSpacing: '0.04em', color: '#a6a297' }}
+          >
+            Intensity:{' '}
+            <span style={{ color: activeTierInfo.color, fontWeight: 700 }}>
+              {activeTier === ELEVEN_TIER ? TOTAL_INTENSITY_LEVELS : (activeTier ?? 0) + 1}/{TOTAL_INTENSITY_LEVELS}
+            </span>
+          </p>
 
-      {selection && !disabled && (
-        <button
-          onClick={clearSelection}
-          className="text-xs font-medium uppercase tracking-wide text-zinc-400 hover:text-zinc-300 transition-colors duration-200"
-          style={{ letterSpacing: '0.05em', opacity: 0.55, transition: `color 0.2s ${EASE}, opacity 0.2s ${EASE}` }}
-        >
-          Clear
-        </button>
+          {selection && !disabled && (
+            <button
+              onClick={clearSelection}
+              className="text-[10px] font-medium uppercase tracking-wide transition-colors duration-200"
+              style={{ letterSpacing: '0.04em', color: '#a6a297', transition: `color 0.2s ${EASE}` }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#726f66')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#a6a297')}
+            >
+              Clear
+            </button>
+          )}
+        </div>
       )}
 
       {!selection && !disabled && (
-        <p className="text-xs text-center opacity-60 text-zinc-500">Click and drag an emotion — distance from center sets intensity</p>
+        <p className="text-[11px] text-center" style={{ color: '#a6a297' }}>Click and drag an emotion — distance from center sets intensity</p>
       )}
     </div>
   );

@@ -78,11 +78,11 @@
 @keyframes rite-page-flinch {
   0% {
     transform: translateX(0);
-    background-color: #000;
+    background-color: #f7f5f0;
   }
   20% {
     transform: translateX(-4px);
-    background-color: rgba(239, 68, 68, 0.05);
+    background-color: rgba(239, 68, 68, 0.08);
   }
   45% {
     transform: translateX(4px);
@@ -92,7 +92,7 @@
   }
   100% {
     transform: translateX(0);
-    background-color: #000;
+    background-color: #f7f5f0;
   }
 }
 

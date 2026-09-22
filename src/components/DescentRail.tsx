@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { cn } from '@/lib/utils';
 import { SURFACE, CIRCLES, EASE } from '@/lib/theme';
 
 interface DescentRailProps {
@@ -25,7 +24,7 @@ export default function DescentRail({ activeIndex }: DescentRailProps) {
   return (
     <div className="w-full">
       <div className="overflow-x-auto scrollbar-none -mx-1 px-1">
-        <div className="relative border-t border-white/10 min-w-max sm:min-w-0">
+        <div className="relative min-w-max sm:min-w-0" style={{ borderTop: '1px solid #e6e2d8' }}>
           <div className="flex justify-between -mt-[3px]">
             {BANDS.map((band, i) => {
               const isActive = i === activeIndex;
@@ -40,8 +39,8 @@ export default function DescentRail({ activeIndex }: DescentRailProps) {
                   <div
                     className="w-1.5 h-1.5 rounded-full transition-all duration-500"
                     style={{
-                      background: isActive ? band.color : isPast ? 'rgba(161,161,170,0.35)' : 'rgba(255,255,255,0.08)',
-                      boxShadow: isActive ? `0 0 10px 1px ${band.color}, 0 0 3px ${band.color}` : 'none',
+                      background: isActive ? band.color : isPast ? 'rgba(111,143,124,0.55)' : '#e6e2d8',
+                      boxShadow: isActive ? `0 0 0 3px ${band.color}26` : 'none',
                       transform: isActive ? 'scale(1.8)' : 'scale(1)',
                       transitionTimingFunction: EASE,
                     }}
@@ -51,22 +50,23 @@ export default function DescentRail({ activeIndex }: DescentRailProps) {
                     style={{
                       fontSize: isActive ? '13px' : '11px',
                       fontWeight: isActive ? 700 : 400,
-                      color: isActive ? band.color : isPast ? '#71717a' : '#3f3f46',
-                      textShadow: isActive ? `0 0 14px ${band.color}90` : 'none',
+                      color: isActive ? band.color : isPast ? '#726f66' : '#a6a297',
                     }}
                   >
                     {band.roman}
                   </span>
-                  <span
-                    className={cn('text-[9px] uppercase tracking-wide mt-0.5 whitespace-nowrap', !isActive && 'hidden sm:block')}
-                    style={{
-                      color: isActive ? 'white' : isPast ? '#52525b' : '#27272a',
-                      fontWeight: isActive ? 700 : 500,
-                      letterSpacing: '0.05em',
-                    }}
-                  >
-                    {band.name}
-                  </span>
+                  {/* Only the active stage spells out its name — every
+                      other stage is just its numeral, so the rail reads as
+                      a progression at a glance instead of a wall of
+                      colliding labels. */}
+                  {isActive && (
+                    <span
+                      className="text-[9px] uppercase tracking-wide mt-0.5 whitespace-nowrap"
+                      style={{ color: '#2b2a26', fontWeight: 700, letterSpacing: '0.05em' }}
+                    >
+                      {band.name}
+                    </span>
+                  )}
                 </div>
               );
             })}
