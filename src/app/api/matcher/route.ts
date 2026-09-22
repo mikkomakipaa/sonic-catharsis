@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { MatcherRequestSchema, validateRequest } from '@/lib/validation';
+import { getDeterministicGenre } from '@/lib/genre-mapping';
+import { STRESS_VALUE_TO_LABEL, calculateDamageScore } from '@/lib/theme';
+import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const MATCHER_PROMPT_ID = 'pmpt_68d3d94dbcd88197a948cb969863042c062ab4eee2638625';
+const MATCHER_MODEL = 'gpt-4.1';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,13 +26,6 @@ export async function POST(request: NextRequest) {
 
     const { emotionData } = validation.data!;
 
-    if (!MATCHER_PROMPT_ID) {
-      return NextResponse.json(
-        { error: 'Matcher Prompt ID not configured' },
-        { status: 500 }
-      );
-    }
-
     if (!emotionData) {
       return NextResponse.json(
         { error: 'Emotion data is required' },
@@ -37,17 +33,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use OpenAI Responses API with required variables
+    // The prompt expects a stress *description* ("Overload", "Moderate", ...)
+    // that it maps to a number internally per its own persona — not our raw
+    // numeric intensity. Also: use a null check, not `||`, since a valid
+    // stress value of 0 ("Intolerable lightness") is falsy and would
+    // otherwise be silently treated as "no stress level selected".
+    const stressLabel = emotionData.stressLevel != null ? STRESS_VALUE_TO_LABEL[emotionData.stressLevel] ?? 'none' : 'none';
+
+    // The genre is never left to the AI's judgment — it's a deterministic
+    // (emotion, stress) lookup so the curated artists always match the
+    // circle the user sees themselves descending into. Computed up front
+    // and handed to the model as a given, so its "cause"/"choice" prose
+    // can't reference a different subgenre than the one actually used to
+    // curate artists later.
+    const deterministicGenre = getDeterministicGenre(emotionData.primary, emotionData.stressLevel ?? null);
+
+    // "The gap" — when a near-nonexistent event description still produces
+    // maxed-out damage, the funniest cause isn't inventing drama for a
+    // trivial input, it's the app noticing its own disproportionate
+    // reaction. Trivial = under 15 chars (covers "cold coffee" and leaving
+    // the field empty alike).
+    const damageScore = calculateDamageScore(emotionData.primary, emotionData.stressLevel ?? null);
+    const trimmedEvent = (emotionData.event || '').trim();
+    const isGapMoment = trimmedEvent.length < 15 && damageScore >= 1000;
+    const gapDirective = isGapMoment
+      ? `\n\nSPECIAL CASE: The event description is trivial ("${trimmedEvent || 'nothing typed at all'}") yet Emotional Damage calculated at the max, 1000/1000. For "cause" ONLY, do not invent drama about the event — instead call out this exact mismatch directly, in the same dark comic voice: how little was given versus how much the app is dramatizing it. Keep "choice" normal.`
+      : '';
+
+    // Use OpenAI Responses API with in-repo instructions (no hosted Prompt
+    // Object) — variables are embedded directly in the input text instead.
     const response = await openai.responses.create({
-      input: `Analyze emotional state: ${emotionData.primary}, stress level: ${emotionData.stressLevel || 'none'}${emotionData.event ? `, event: ${emotionData.event}` : ''}`,
-      prompt: {
-        id: MATCHER_PROMPT_ID,
-        variables: {
-          emotion: emotionData.primary,
-          stress_level: emotionData.stressLevel?.toString() || 'none',
-          event: emotionData.event || 'none'
-        }
-      }
+      model: MATCHER_MODEL,
+      instructions: MATCHER_INSTRUCTIONS,
+      input: `emotion: ${emotionData.primary}\nstress_level: ${stressLabel}\nevent: ${emotionData.event || 'none'}\nsubgenre: ${deterministicGenre.genre}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences.${gapDirective}`,
     });
 
     // Handle different response formats
@@ -69,17 +87,12 @@ export async function POST(request: NextRequest) {
     if (!responseText && Array.isArray(response.output)) {
       // Try to find a text response in the array
       for (const item of response.output) {
-        if (item.content && Array.isArray(item.content)) {
-          const textContent = item.content.find(c => c.type === 'output_text' || c.text);
-          if (textContent && textContent.text) {
+        if (item.type === 'message' && Array.isArray(item.content)) {
+          const textContent = item.content.find(c => c.type === 'output_text');
+          if (textContent && textContent.type === 'output_text' && textContent.text) {
             responseText = textContent.text;
             break;
           }
-        }
-        // Direct text property on the item
-        if (item.text) {
-          responseText = item.text;
-          break;
         }
       }
     }
@@ -99,28 +112,11 @@ export async function POST(request: NextRequest) {
       if (jsonMatch) {
         analysisResult = JSON.parse(jsonMatch[0]);
       } else {
-        // Fallback: try to extract key information from text
-
-        // Look for mentions of specific subgenres in the text
-        const subgenrePatterns = [
-          /black metal/i,
-          /brutal death metal/i,
-          /death metal/i,
-          /symphonic metal/i,
-          /power metal/i,
-          /doom metal/i,
-          /thrash metal/i,
-          /progressive metal/i
-        ];
-
-        let detectedSubgenre = 'metal'; // fallback
-        for (const pattern of subgenrePatterns) {
-          const match = responseText.match(pattern);
-          if (match) {
-            detectedSubgenre = match[0].toLowerCase();
-            break;
-          }
-        }
+        // Fallback: try to extract key information from text. The subgenre
+        // is never guessed from free text here — it's already deterministic
+        // (see deterministicGenre above), so the fallback only needs to
+        // salvage the cause/choice prose.
+        const detectedSubgenre = deterministicGenre.genre;
 
         // Try to extract cause and choice from existing text response
         const paragraphs = responseText.split('\n\n').filter(p => p.trim());
@@ -160,7 +156,7 @@ export async function POST(request: NextRequest) {
         analysisResult = {
           subgenre: detectedSubgenre,
           primary_emotion: emotionData.primary,
-          stress_level: emotionData.stressLevel || 'none',
+          stress_level: stressLabel,
           cause: cause || 'Professional burnout and organizational stress',
           choice: choice || `${detectedSubgenre} provides cathartic relief for the current emotional state`
         };
@@ -180,6 +176,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Belt-and-suspenders: force the field to the deterministic value even
+    // if the model ignored the instruction and echoed something else back.
+    analysisResult.subgenre = deterministicGenre.genre;
+
     return NextResponse.json({
       analysis: analysisResult,
       reasoning: responseText, // Include full response text for backward compatibility
@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    // Matcher API error occurred
+    console.error('Matcher API error:', error);
     return NextResponse.json(
       { error: 'Failed to process emotional analysis' },
       { status: 500 }

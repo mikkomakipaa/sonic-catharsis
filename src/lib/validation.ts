@@ -1,15 +1,9 @@
 import { z } from 'zod';
 
-// Core emotion types based on the 12-emotion model
+// Plutchik's 8 basic emotions, as 4 opposing pairs
 export const CoreEmotions = [
-  // Happy quadrant
-  'happy', 'excited', 'content',
-  // Sad quadrant
-  'sad', 'tired', 'inconsolable',
-  // Angry quadrant
-  'angry', 'enraged', 'hysterical',
-  // Calm quadrant
-  'calm', 'worried', 'energetic'
+  'joy', 'trust', 'fear', 'surprise',
+  'sadness', 'disgust', 'anger', 'anticipation'
 ] as const;
 
 // Metal subgenres
@@ -20,10 +14,10 @@ export const MetalSubgenres = [
 
 // Emotion data validation schema
 export const EmotionDataSchema = z.object({
-  primary: z.enum(CoreEmotions as [string, ...string[]], {
+  primary: z.enum(CoreEmotions, {
     errorMap: () => ({ message: 'Invalid emotion type' })
   }),
-  stressLevel: z.number().min(0).max(7).nullable().optional(), // 0-7 to match mapping matrix
+  stressLevel: z.number().min(0).max(10).nullable().optional(), // 0-10 to match mapping matrix
   event: z.string().max(500).nullable().optional()
 });
 
@@ -45,13 +39,6 @@ export const AnalysisSchema = z.object({
 export const CuratorRequestSchema = z.object({
   analysis: AnalysisSchema,
   emotionData: EmotionDataSchema
-});
-
-// Emotion assistant request schema
-export const EmotionAssistantRequestSchema = z.object({
-  message: z.string().min(1).max(2000, 'Message too long'),
-  threadId: z.string().optional(),
-  emotionData: EmotionDataSchema.optional()
 });
 
 // Validation helper function

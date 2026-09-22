@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { CuratorRequestSchema, validateRequest } from '@/lib/validation';
+import { STRESS_VALUE_TO_LABEL } from '@/lib/theme';
+import { CURATOR_INSTRUCTIONS } from '@/lib/prompts';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const CURATOR_PROMPT_ID = 'pmpt_68d3d91a1af08194997b0de975ffee350667df88badd5a8e';
+const CURATOR_MODEL = 'gpt-4.1';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,13 +25,6 @@ export async function POST(request: NextRequest) {
 
     const { analysis, emotionData } = validation.data!;
 
-    if (!CURATOR_PROMPT_ID) {
-      return NextResponse.json(
-        { error: 'Curator Prompt ID not configured' },
-        { status: 500 }
-      );
-    }
-
     if (!analysis || !emotionData) {
       return NextResponse.json(
         { error: 'Analysis and emotion data are required' },
@@ -37,18 +32,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use OpenAI Responses API with all required variables
+    // Same fix as the matcher route: send the stress *description* the
+    // prompt expects, and use a null check so a valid 0 value ("Intolerable
+    // lightness") isn't mistaken for "no stress level selected".
+    const stressLabel = emotionData.stressLevel != null ? STRESS_VALUE_TO_LABEL[emotionData.stressLevel] ?? 'none' : 'none';
+
+    const subgenre = analysis.subgenre || 'metal';
+
+    // Trying the model's own artist knowledge unconstrained by a code-side
+    // candidate pool — see the note in lib/prompts.ts for why.
     const response = await openai.responses.create({
-      input: `Create playlist for emotion: ${emotionData.primary}, stress: ${emotionData.stressLevel || 'none'}, subgenre: ${analysis.subgenre}${emotionData.event ? `, event: ${emotionData.event}` : ''}`,
-      prompt: {
-        id: CURATOR_PROMPT_ID,
-        variables: {
-          subgenre: analysis.subgenre || 'metal',
-          primary_emotion: emotionData.primary,
-          stress_level: emotionData.stressLevel?.toString() || 'none',
-          event: emotionData.event || 'none'
-        }
-      }
+      model: CURATOR_MODEL,
+      instructions: CURATOR_INSTRUCTIONS,
+      input: `subgenre: ${subgenre}\nprimary_emotion: ${emotionData.primary}\nstress_level: ${stressLabel}\nevent: ${emotionData.event || 'none'}`,
     });
 
     // Handle different response formats
@@ -68,11 +64,14 @@ export async function POST(request: NextRequest) {
 
     if (!responseText) {
       // No response text found in expected format
+      console.error('No response text from OpenAI');
       return NextResponse.json(
         { error: 'No response received from AI' },
         { status: 500 }
       );
     }
+
+    console.log('OpenAI Response Text:', responseText.substring(0, 500)); // Log first 500 chars for debugging
 
     // Parse structured JSON response for artist-based format
     let playlistResult = null;
@@ -85,12 +84,6 @@ export async function POST(request: NextRequest) {
         if (parsed.Selection && Array.isArray(parsed.Selection)) {
           playlistResult = {
             artists: parsed.Selection
-          };
-        }
-        // Handle old playlist format for backward compatibility
-        else if (parsed.playlist && Array.isArray(parsed.playlist)) {
-          playlistResult = {
-            playlist: parsed.playlist
           };
         }
         // Handle direct array of artists
@@ -185,26 +178,25 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (!playlistResult || (!playlistResult.artists && !playlistResult.playlist)) {
+    if (!playlistResult || !playlistResult.artists) {
+      console.error('Failed to parse playlist. Response text:', responseText.substring(0, 1000));
+      console.error('PlaylistResult:', playlistResult);
       return NextResponse.json(
-        { error: 'No structured playlist received' },
+        {
+          error: 'No structured playlist received',
+          debug: {
+            responsePreview: responseText.substring(0, 200),
+            playlistResult: playlistResult
+          }
+        },
         { status: 500 }
       );
     }
 
-    // Return artist-based or legacy format
-    if (playlistResult.artists) {
-      return NextResponse.json({
-        artists: playlistResult.artists,
-        type: 'artists'
-      });
-    } else {
-      // Legacy song-based format for backward compatibility
-      return NextResponse.json({
-        playlist: playlistResult.playlist,
-        type: 'songs'
-      });
-    }
+    return NextResponse.json({
+      artists: playlistResult.artists,
+      type: 'artists'
+    });
 
   } catch (error) {
     // Curator API error occurred
