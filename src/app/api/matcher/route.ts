@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { MatcherRequestSchema, validateRequest } from '@/lib/validation';
 import { getDeterministicGenre } from '@/lib/genre-mapping';
-import { STRESS_VALUE_TO_LABEL, calculateDamageScore, getActiveCircle } from '@/lib/theme';
+import { STRESS_VALUE_TO_LABEL, getActiveStage } from '@/lib/theme';
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 
 const MATCHER_MODEL = 'gpt-4.1';
@@ -44,31 +44,30 @@ export async function POST(request: NextRequest) {
     // otherwise be silently treated as "no stress level selected".
     const stressLabel = emotionData.stressLevel != null ? STRESS_VALUE_TO_LABEL[emotionData.stressLevel] ?? 'none' : 'none';
 
-    // The same deterministic (emotion, stress) -> Circle lookup the analysis
+    // The same deterministic (emotion, stress) -> Stage lookup the analysis
     // screen already uses for its "Diagnosis: EMOTION, Code {roman}" display
     // — computed again here so the model can be told the exact condition
     // name it's expected to reference, in sync with what's on screen.
-    const circle = getActiveCircle(emotionData.primary, emotionData.stressLevel ?? null);
-    const condition = `Stage ${circle.roman} — ${circle.name}`;
+    const stage = getActiveStage(emotionData.primary, emotionData.stressLevel ?? null);
+    const condition = `Stage ${stage.roman} — ${stage.name}`;
 
     // The genre is never left to the AI's judgment — it's a deterministic
     // (emotion, stress) lookup so the curated artists always match the
-    // circle the user sees themselves descending into. Computed up front
+    // stage the user sees themselves descending into. Computed up front
     // and handed to the model as a given, so its "cause"/"choice" prose
     // can't reference a different subgenre than the one actually used to
     // curate artists later.
     const deterministicGenre = getDeterministicGenre(emotionData.primary, emotionData.stressLevel ?? null);
 
-    // "The gap" — when a near-nonexistent event description still produces
-    // maxed-out damage, the funniest cause isn't inventing drama for a
+    // "The gap" — when a near-nonexistent event description still lands the
+    // most severe stage, the funniest cause isn't inventing drama for a
     // trivial input, it's the app noticing its own disproportionate
     // reaction. Trivial = under 15 chars (covers "cold coffee" and leaving
     // the field empty alike).
-    const damageScore = calculateDamageScore(emotionData.primary, emotionData.stressLevel ?? null);
     const trimmedEvent = (emotionData.event || '').trim();
-    const isGapMoment = trimmedEvent.length < 15 && damageScore >= 1000;
+    const isGapMoment = trimmedEvent.length < 15 && stage.index === 9;
     const gapDirective = isGapMoment
-      ? `\n\nSPECIAL CASE: The event description is trivial ("${trimmedEvent || 'nothing typed at all'}") yet Emotional Damage calculated at the max, 1000/1000. For "cause" ONLY, do not invent drama about the event — instead call out this exact mismatch directly, in the same dark comic voice: how little was given versus how much the app is dramatizing it. Keep "choice" normal.`
+      ? `\n\nSPECIAL CASE: The event description is trivial ("${trimmedEvent || 'nothing typed at all'}") yet the app has diagnosed the most severe stage there is (${condition}). For "cause" ONLY, do not invent drama about the event — instead call out this exact mismatch directly, in the same dark comic voice: how little was given versus how much the app is dramatizing it. Keep "choice" normal.`
       : '';
 
     // Use OpenAI Responses API with in-repo instructions (no hosted Prompt

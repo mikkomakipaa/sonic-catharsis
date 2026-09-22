@@ -1,7 +1,7 @@
 // THE RITE — shared design tokens, copy, and pure helpers for the redesigned UI.
 // No JSX here; consumed by page.tsx and the panel/selector components.
 
-import type { EmotionType, StressLevel } from '@/types';
+import type { EmotionType } from '@/types';
 
 export const EASE = 'cubic-bezier(0.25, 1, 0.5, 1)';
 
@@ -63,25 +63,6 @@ export const STRESS_VALUE_TO_LABEL: Record<number, string> = Object.fromEntries(
   STRESS_TIERS.map((tier, index) => [index, tier.label])
 );
 
-// --- Emotional Damage Score -------------------------------------------------
-const EMOTION_BASE_SCORE: Record<EmotionType, number> = {
-  trust: 100,
-  joy: 200,
-  anticipation: 300,
-  surprise: 400,
-  fear: 550,
-  sadness: 600,
-  disgust: 700,
-  anger: 850,
-};
-
-export function calculateDamageScore(emotion: EmotionType, stressLevel: StressLevel | null): number {
-  const baseScore = EMOTION_BASE_SCORE[emotion] ?? 500;
-  const stressValue = stressLevel ?? 0;
-  const stressMultiplier = (stressValue / MAX_STRESS_INTENSITY) * 400;
-  return Math.min(Math.round(baseScore + stressMultiplier), 1000);
-}
-
 export const LOADING_MESSAGES = {
   analyzing: [
     'Summoning the void...',
@@ -115,21 +96,21 @@ export function pickRandom<T>(items: readonly T[]): T {
 // Tiers III, IV, VI, and IX borrow the study's own terms (perusvitutus,
 // keskivaikea vitutus, syvävitutus, vitutus maximus); the rest are original
 // but built in the same register — not claimed as verbatim study language.
-export interface Circle {
+export interface Stage {
   index: number; // 0 = surface (nothing selected yet), 1-9 = the stages
   roman: string;
   name: string;
   color: string; // hex
 }
 
-export const SURFACE: Circle = {
+export const SURFACE: Stage = {
   index: 0,
   roman: '—',
   name: 'The Surface',
   color: '#52525b',
 };
 
-export const CIRCLES: Circle[] = [
+export const STAGES: Stage[] = [
   { index: 1, roman: 'I', name: 'Lievä ärsytys', color: '#71717a' },
   { index: 2, roman: 'II', name: 'Kytevä vitutus', color: '#a855f7' },
   { index: 3, roman: 'III', name: 'Perusvitutus', color: '#4d7c0f' },
@@ -141,13 +122,13 @@ export const CIRCLES: Circle[] = [
   { index: 9, roman: 'IX', name: 'Vitutus maximus', color: '#7dd3fc' },
 ];
 
-// --- Deterministic circle selection: (emotion, stressValue) -> Circle -------
-// Each emotion has a fixed "base" stage (ascending severity, reusing
-// EMOTION_BASE_SCORE, with one deliberate swap: sadness sits at IX instead
-// of the next emotion in severity order, because stage IX is meant to read
-// as cold and numb, not just "most severe" — frozen grief fits an icy
-// "vitutus maximus" better than hot fury or revulsion).
-const EMOTION_BASE_CIRCLE: Record<EmotionType, number> = {
+// --- Deterministic stage selection: (emotion, stressValue) -> Stage --------
+// Each emotion has a fixed "base" stage (ascending severity), with one
+// deliberate swap: sadness sits at IX instead of the next emotion in
+// severity order, because stage IX is meant to read as cold and numb, not
+// just "most severe" — frozen grief fits an icy "vitutus maximus" better
+// than hot fury or revulsion.
+const EMOTION_BASE_STAGE: Record<EmotionType, number> = {
   trust: 1, // Lievä ärsytys
   joy: 2, // Kytevä vitutus
   anticipation: 3, // Perusvitutus
@@ -158,21 +139,21 @@ const EMOTION_BASE_CIRCLE: Record<EmotionType, number> = {
   sadness: 9, // Vitutus maximus
 };
 
-// Stress tier (0-10) shifts the base circle up/down by up to 2, continuous
+// Stress tier (0-10) shifts the base stage up/down by up to 2, continuous
 // rather than a lookup table since every tier index is now a valid value;
-// midpoint (5, "Burnout") leaves the emotion's own base circle unchanged.
+// midpoint (5, "Burnout") leaves the emotion's own base stage unchanged.
 function stressOffset(stressValue: number): number {
   return Math.round(((stressValue - 5) / 5) * 2);
 }
 
-export function getActiveCircle(emotion: EmotionType | null, stressValue: number | null): Circle {
+export function getActiveStage(emotion: EmotionType | null, stressValue: number | null): Stage {
   if (!emotion) return SURFACE;
   const offset = stressOffset(stressValue ?? 5);
-  const idx = Math.min(9, Math.max(1, EMOTION_BASE_CIRCLE[emotion] + offset));
-  return CIRCLES[idx - 1];
+  const idx = Math.min(9, Math.max(1, EMOTION_BASE_STAGE[emotion] + offset));
+  return STAGES[idx - 1];
 }
 
-// --- Circle-driven accent color ---------------------------------------------
+// --- Stage-driven accent color -----------------------------------------------
 type RGB = readonly [number, number, number];
 
 function hexToRgb(hex: string): RGB {
@@ -192,12 +173,12 @@ export interface RiteAccent {
 }
 
 // combinedIntensity: 0..1, blend of selected emotion intensity + stress level.
-// The color itself comes from the active circle; intensity only controls how
+// The color itself comes from the active stage; intensity only controls how
 // strongly it glows, so descending further makes the *existing* mood more
 // intense rather than sliding along one continuous red ramp.
-export function computeCircleAccent(circle: Circle, combinedIntensity: number): RiteAccent {
+export function computeStageAccent(stage: Stage, combinedIntensity: number): RiteAccent {
   const clamped = Math.min(Math.max(combinedIntensity, 0), 1);
-  const rgb = hexToRgb(circle.color);
+  const rgb = hexToRgb(stage.color);
   const glowAlpha = 0.25 + clamped * 0.5;
   const glowSize = Math.round(16 + clamped * 32);
   return {

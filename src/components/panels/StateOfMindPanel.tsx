@@ -109,7 +109,7 @@ export default function StateOfMindPanel({
           ) : (
             <>
               <ArrowDownToLine className="h-4 w-4" />
-              <span className="font-bold">Begin Descent</span>
+              <span className="font-bold">Begin Diagnosis</span>
             </>
           )}
         </button>

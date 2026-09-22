@@ -2,7 +2,7 @@
 
 import { Music, Radio } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Circle, PANEL_BASE_CLASS, PANEL_SHADOW } from '@/lib/theme';
+import { Stage, PANEL_BASE_CLASS, PANEL_SHADOW } from '@/lib/theme';
 import { EmotionType, Playlist } from '@/types';
 import CassetteLoader from '@/components/CassetteLoader';
 
@@ -12,7 +12,7 @@ interface ResultsPanelProps {
   isAnalyzing: boolean;
   reasoning: string | null;
   emotion?: EmotionType | null;
-  circle?: Circle | null;
+  stage?: Stage | null;
 }
 
 function formatDate(): string {
@@ -25,7 +25,7 @@ const PAPER_BG = '#e8e4d8';
 const PAPER_INK = '#2a2a28';
 const PAPER_MUTED = '#6b6b66';
 
-export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, emotion, circle }: ResultsPanelProps) {
+export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, emotion, stage }: ResultsPanelProps) {
   if (!playlist) {
     return (
       <div className={cn(PANEL_BASE_CLASS, "h-full flex items-center justify-center")} style={PANEL_SHADOW}>
@@ -76,9 +76,9 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         <span>DATE: {formatDate()}</span>
       </div>
 
-      {circle && circle.index > 0 && (
+      {stage && stage.index > 0 && (
         <div className="px-5 pb-2 text-[9px]">
-          CONDITION: STAGE {circle.roman} — {circle.name.toUpperCase()}
+          CONDITION: STAGE {stage.roman} — {stage.name.toUpperCase()}
         </div>
       )}
 

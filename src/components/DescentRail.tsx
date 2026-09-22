@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { SURFACE, CIRCLES, EASE } from '@/lib/theme';
+import { SURFACE, STAGES, EASE } from '@/lib/theme';
 
 interface DescentRailProps {
-  activeIndex: number; // 0 = surface, 1-9 = circle depth
+  activeIndex: number; // 0 = surface, 1-9 = stage depth
 }
 
-const BANDS = [SURFACE, ...CIRCLES];
+const BANDS = [SURFACE, ...STAGES];
 
 // Horizontal progress rail, shared by the analysis and descent screens —
 // replaces the old vertical DescentShaft sidebar. A thin baseline connector

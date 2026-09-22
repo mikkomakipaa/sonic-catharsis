@@ -10,8 +10,8 @@ import {
   MAX_STRESS_INTENSITY,
   LOADING_MESSAGES,
   pickRandom,
-  getActiveCircle,
-  computeCircleAccent,
+  getActiveStage,
+  computeStageAccent,
 } from '@/lib/theme';
 
 type ArtistItem = string | { artist?: string; name?: string; link?: string };
@@ -54,11 +54,11 @@ export default function Home() {
     return stressValue !== null ? stressValue / MAX_STRESS_INTENSITY : 0;
   }, [stressValue]);
 
-  const circle = useMemo(
-    () => getActiveCircle(primarySelection?.emotion ?? null, stressValue),
+  const stage = useMemo(
+    () => getActiveStage(primarySelection?.emotion ?? null, stressValue),
     [primarySelection?.emotion, stressValue]
   );
-  const riteAccent = useMemo(() => computeCircleAccent(circle, combinedIntensity), [circle, combinedIntensity]);
+  const riteAccent = useMemo(() => computeStageAccent(stage, combinedIntensity), [stage, combinedIntensity]);
 
   // Page-level "flinch" when the user drags into ELEVEN — a hard shake +
   // one-frame red flash, triggered once per rising edge (not on every
@@ -268,7 +268,7 @@ export default function Home() {
 
         {step === 'analysis' && (
           <ScreenAnalysis
-            circle={circle}
+            stage={stage}
             primarySelection={primarySelection}
             cause={cause}
             choice={choice}
@@ -283,7 +283,7 @@ export default function Home() {
 
         {step === 'descent' && (
           <ScreenDescent
-            circle={circle}
+            stage={stage}
             primarySelection={primarySelection}
             playlist={playlist}
             isProcessing={isProcessing}

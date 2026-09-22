@@ -1,14 +1,14 @@
 'use client';
 
 import { Pill, ArrowLeft, RefreshCw } from 'lucide-react';
-import { calculateDamageScore, EASE, Circle } from '@/lib/theme';
+import { EASE, Stage } from '@/lib/theme';
 import { EmotionWheelSelection } from '@/types';
-import CircleHeader from '@/components/CircleHeader';
+import StageHeader from '@/components/StageHeader';
 import DescentRail from '@/components/DescentRail';
 import CassetteLoader from '@/components/CassetteLoader';
 
 interface ScreenAnalysisProps {
-  circle: Circle;
+  stage: Stage;
   primarySelection: EmotionWheelSelection | null;
   cause: string | null;
   choice: string | null;
@@ -30,7 +30,7 @@ const STEEL = '#8a8577';
 const CORAL = '#bd5d4c';
 
 export default function ScreenAnalysis({
-  circle,
+  stage,
   primarySelection,
   cause,
   choice,
@@ -41,33 +41,18 @@ export default function ScreenAnalysis({
   onRetry,
   onBack,
 }: ScreenAnalysisProps) {
-  const damageScore = primarySelection ? calculateDamageScore(primarySelection.emotion, primarySelection.stressLevel) : 0;
   const emotionLabel = primarySelection ? primarySelection.emotion.toUpperCase() : 'UNKNOWN';
 
   const hasResult = Boolean(cause || choice);
 
   return (
     <div className="flex flex-col max-w-3xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]">
-      {/* Identity + damage + descent read as one connected header system,
-          not three separate bands — the rail sits close underneath instead
-          of floating with its own equal-weight gap. */}
+      {/* Identity + descent read as one connected header system — the rail
+          sits close underneath instead of floating with its own gap. */}
       <div className="flex flex-col gap-3">
-        <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] items-start gap-x-4 gap-y-2">
-          <CircleHeader circle={circle} align="left" />
-          {primarySelection && (
-            <div className="justify-self-start sm:justify-self-end text-left sm:text-right">
-              <span className="text-xs font-semibold uppercase tracking-wide" style={{ letterSpacing: '0.08em', color: CORAL }}>
-                Emotional Damage
-              </span>
-              <div className="text-4xl font-bold font-mono tabular-nums mt-1" style={{ color: CORAL }}>
-                {damageScore}
-                <span className="text-sm opacity-60 ml-1">/1000</span>
-              </div>
-            </div>
-          )}
-        </div>
+        <StageHeader stage={stage} align="left" />
 
-        <DescentRail activeIndex={circle.index} />
+        <DescentRail activeIndex={stage.index} />
       </div>
 
       <div className="mt-6">
@@ -115,7 +100,7 @@ export default function ScreenAnalysis({
               </div>
 
               <div className="flex gap-6 flex-wrap" style={{ fontSize: 11, color: INK_SOFT, margin: '10px 0 4px' }}>
-                <span><b style={{ color: INK, fontWeight: 600 }}>Diagnosis:</b> {emotionLabel}, Code {circle.roman}</span>
+                <span><b style={{ color: INK, fontWeight: 600 }}>Diagnosis:</b> {emotionLabel}, Code {stage.roman}</span>
                 <span><b style={{ color: INK, fontWeight: 600 }}>Attending:</b> Dr. Catharsis, M.D.</span>
               </div>
 

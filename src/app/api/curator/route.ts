@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { CuratorRequestSchema, validateRequest } from '@/lib/validation';
-import { STRESS_VALUE_TO_LABEL, getActiveCircle } from '@/lib/theme';
+import { STRESS_VALUE_TO_LABEL, getActiveStage } from '@/lib/theme';
 import { CURATOR_INSTRUCTIONS } from '@/lib/prompts';
 
 const CURATOR_MODEL = 'gpt-4.1';
@@ -45,8 +45,8 @@ export async function POST(request: NextRequest) {
     // both use — recomputed here (rather than threaded through `analysis`)
     // so the curator has the condition as calibration context without
     // touching the matcher's JSON contract.
-    const circle = getActiveCircle(emotionData.primary, emotionData.stressLevel ?? null);
-    const condition = `Stage ${circle.roman} — ${circle.name}`;
+    const stage = getActiveStage(emotionData.primary, emotionData.stressLevel ?? null);
+    const condition = `Stage ${stage.roman} — ${stage.name}`;
 
     const subgenre = analysis.subgenre || 'metal';
 

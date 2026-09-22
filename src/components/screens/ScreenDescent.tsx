@@ -2,15 +2,15 @@
 
 import { RefreshCw, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { calculateDamageScore, Circle, EASE } from '@/lib/theme';
+import { Stage, EASE } from '@/lib/theme';
 import { EmotionWheelSelection, Playlist } from '@/types';
 import ResultsPanel from '@/components/panels/ResultsPanel';
-import CircleHeader from '@/components/CircleHeader';
+import StageHeader from '@/components/StageHeader';
 import DescentRail from '@/components/DescentRail';
 import ReceiptCard from '@/components/ReceiptCard';
 
 interface ScreenDescentProps {
-  circle: Circle;
+  stage: Stage;
   primarySelection: EmotionWheelSelection | null;
   playlist: Playlist | null;
   isProcessing: boolean;
@@ -22,7 +22,7 @@ interface ScreenDescentProps {
 }
 
 export default function ScreenDescent({
-  circle,
+  stage,
   primarySelection,
   playlist,
   isProcessing,
@@ -32,31 +32,15 @@ export default function ScreenDescent({
   onReset,
   onBack,
 }: ScreenDescentProps) {
-  const damageScore = primarySelection ? calculateDamageScore(primarySelection.emotion, primarySelection.stressLevel) : 0;
-
   return (
     <div className="flex flex-col max-w-3xl mx-auto animate-[rite-reveal_0.6s_cubic-bezier(0.25,1,0.5,1)_both]">
-      {/* Same header cluster as the analysis screen — same left axis, same
-          Emotional Damage placement — so this reads as a continuation of
-          the same descent, not a separate results page. Identity + damage
-          + rail grouped tightly as one connected top system. */}
+      {/* Same header cluster as the analysis screen — same left axis — so
+          this reads as a continuation of the same descent, not a separate
+          results page. Identity + rail grouped as one connected system. */}
       <div className="flex flex-col gap-3">
-        <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] items-start gap-x-4 gap-y-2">
-          <CircleHeader circle={circle} align="left" />
-          {primarySelection && (
-            <div className="justify-self-start sm:justify-self-end text-left sm:text-right">
-              <span className="text-xs font-semibold uppercase tracking-wide" style={{ letterSpacing: '0.08em', color: '#bd5d4c' }}>
-                Emotional Damage
-              </span>
-              <div className="text-4xl font-bold font-mono tabular-nums mt-1" style={{ color: '#bd5d4c' }}>
-                {damageScore}
-                <span className="text-sm opacity-60 ml-1">/1000</span>
-              </div>
-            </div>
-          )}
-        </div>
+        <StageHeader stage={stage} align="left" />
 
-        <DescentRail activeIndex={circle.index} />
+        <DescentRail activeIndex={stage.index} />
       </div>
 
       {playlist && (
@@ -78,15 +62,14 @@ export default function ScreenDescent({
           isAnalyzing={isAnalyzing}
           reasoning={reasoning}
           emotion={primarySelection?.emotion}
-          circle={circle}
+          stage={stage}
         />
 
         {playlist && primarySelection && (
           <ReceiptCard
-            circle={circle}
+            stage={stage}
             emotion={primarySelection.emotion}
             stressLevel={primarySelection.stressLevel}
-            damageScore={damageScore}
             subgenre={subgenre}
           />
         )}

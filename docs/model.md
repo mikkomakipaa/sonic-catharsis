@@ -34,17 +34,31 @@ exact thing wrong.
   IX   Vitutus maximus
   ```
 
-- emotional_damage_score and stage are separate derived concepts computed
-  from the same (emotion, intensity) pair but shown independently: damage
-  is a 0–1000 number (per-emotion base score + intensity multiplier), stage
-  is the Roman-numeral diagnosis label.
+- stage (I–IX) is the single derived severity classification for a session.
+  It is computed deterministically from emotion + intensity and is used for
+  receipt/diagnosis framing and presentation.
+
+- Intensity remains the user's direct 1–10 / hidden 11 input. Stage is the
+  app's interpretation of that intensity in the context of the selected
+  emotion:
+  ```
+  Emotion   = what kind of feeling
+  Intensity = how strong it feels
+  Stage     = what Sonic Catharsis calls that combination
+  Subgenre  = what it sounds like
+  ```
+
+- There is no separate numeric "Emotional Damage" score anymore — it was
+  another transformation of the same (emotion, intensity) pair, competing
+  with stage for attention without adding information. The *phrase*
+  "Emotional Damage" may still appear as flavor copy (e.g. "EMOTIONAL
+  DAMAGE ASSESSMENT COMPLETE"), but it is not a data variable.
 
 - Derive when useful:
   - subgenre (deterministic emotion+intensity → genre lookup; never left to
     model judgment — the model is handed the subgenre, not asked to pick it)
   - fallback genre (used if the primary genre's artist pool runs thin)
   - artist recommendation (exactly 10 real, existing artists per session)
-  - damage score (0–1000)
 
 - Session state (current emotion/intensity/stage) and any longer-term user
   baseline are separate concepts — there is currently no persisted baseline;
@@ -64,8 +78,8 @@ exact thing wrong.
 
 - Emotions, glyphs, field positions: `src/components/EmotionWheel.tsx`
 - Intensity scale, slider, hidden 11th tier: `src/lib/theme.ts` (`MAX_STRESS_INTENSITY`, `TOTAL_INTENSITY_LEVELS`, `STRESS_TIERS`), `src/components/IntensitySlider.tsx`
-- Stage (Circle) names + deterministic emotion→stage mapping: `src/lib/theme.ts` (`CIRCLES`, `getActiveCircle`)
-- Damage score formula: `src/lib/theme.ts` (`calculateDamageScore`)
+- Stage names + deterministic emotion→stage mapping: `src/lib/theme.ts` (`STAGES`, `getActiveStage`)
+- Stage header display: `src/components/StageHeader.tsx`
 - Deterministic subgenre + fallback lookup: `src/lib/genre-mapping.ts`
 - Matcher/curator model instructions: `src/lib/prompts.ts`
 - Vitutus study citation QR: `src/components/ReceiptCard.tsx`

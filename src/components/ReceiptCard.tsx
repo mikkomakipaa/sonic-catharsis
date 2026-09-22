@@ -3,23 +3,22 @@
 import { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import { Download } from 'lucide-react';
-import { Circle, MAX_STRESS_INTENSITY, TOTAL_INTENSITY_LEVELS } from '@/lib/theme';
+import { Stage, MAX_STRESS_INTENSITY, TOTAL_INTENSITY_LEVELS } from '@/lib/theme';
 import { EmotionType } from '@/types';
 
 interface ReceiptCardProps {
-  circle: Circle;
+  stage: Stage;
   emotion: EmotionType;
   stressLevel: number;
-  damageScore: number;
   subgenre?: string | null;
 }
 
 const RECEIPT_WIDTH = 300;
-const RECEIPT_HEIGHT = 420;
+const RECEIPT_HEIGHT = 382;
 const STUDY_QR_SIZE = 66;
 // Permanent citation — always the same URL, not tied to the session's
 // emotion/subgenre, since it's the real source for the "vitutus" scale
-// used throughout the app (see CIRCLES in lib/theme.ts). The receipt's
+// used throughout the app (see STAGES in lib/theme.ts). The receipt's
 // only QR code.
 const VITUTUS_STUDY_URL = 'https://emotion.utu.fi/wp-content/uploads/2022/04/LN_JH_Vitutus_22.pdf';
 
@@ -31,7 +30,7 @@ function formatDateTime(): { date: string; time: string } {
   };
 }
 
-export default function ReceiptCard({ circle, emotion, stressLevel, damageScore, subgenre }: ReceiptCardProps) {
+export default function ReceiptCard({ stage, emotion, stressLevel, subgenre }: ReceiptCardProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const { date, time } = formatDateTime();
 
@@ -75,7 +74,7 @@ export default function ReceiptCard({ circle, emotion, stressLevel, damageScore,
         const pngUrl = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = pngUrl;
-        a.download = `sonic-catharsis-receipt-${damageScore}.png`;
+        a.download = `sonic-catharsis-receipt-stage-${stage.roman.toLowerCase()}.png`;
         a.click();
         URL.revokeObjectURL(pngUrl);
       }, 'image/png');
@@ -141,49 +140,42 @@ export default function ReceiptCard({ circle, emotion, stressLevel, damageScore,
             </>
           )}
 
-          <text x="18" y="130" fontSize="10">1x CIRCLE {circle.roman} — {circle.name.toUpperCase()}</text>
+          <text x="18" y="130" fontSize="10">1x STAGE {stage.roman} — {stage.name.toUpperCase()}</text>
 
           <line x1="18" y1="146" x2={RECEIPT_WIDTH - 18} y2="146" stroke="#2a2a28" strokeWidth="1" strokeDasharray="2 2" />
 
-          <text x="18" y="168" fontSize="12" fontWeight="bold">EMOTIONAL DAMAGE</text>
-          <text x={RECEIPT_WIDTH - 18} y="168" textAnchor="end" fontSize="12" fontWeight="bold">
-            {damageScore}/1000
-          </text>
-
-          <line x1="18" y1="184" x2={RECEIPT_WIDTH - 18} y2="184" stroke="#2a2a28" strokeWidth="1" strokeDasharray="2 2" />
-
-          <text x={RECEIPT_WIDTH / 2} y="210" textAnchor="middle" fontSize="9">
+          <text x={RECEIPT_WIDTH / 2} y="172" textAnchor="middle" fontSize="9">
             THANK YOU FOR PROCESSING YOUR VITUTUS AT
           </text>
-          <text x={RECEIPT_WIDTH / 2} y="222" textAnchor="middle" fontSize="9" fontWeight="bold">
+          <text x={RECEIPT_WIDTH / 2} y="184" textAnchor="middle" fontSize="9" fontWeight="bold">
             SONIC CATHARSIS
           </text>
-          <text x={RECEIPT_WIDTH / 2} y="240" textAnchor="middle" fontSize="8" fill="#6b6b66">
+          <text x={RECEIPT_WIDTH / 2} y="202" textAnchor="middle" fontSize="8" fill="#6b6b66">
             NO REFUNDS. NO REMORSE.
           </text>
-          <text x={RECEIPT_WIDTH / 2} y="252" textAnchor="middle" fontSize="8" fill="#6b6b66">
+          <text x={RECEIPT_WIDTH / 2} y="214" textAnchor="middle" fontSize="8" fill="#6b6b66">
             SCIENTIFICALLY PROVEN TO FUNCTION.
           </text>
 
           {/* Permanent citation — the real (tongue-in-cheek) academic source
               for the "vitutus" scale used throughout the app. Same QR/URL
               on every receipt, regardless of session. */}
-          <text x={RECEIPT_WIDTH / 2} y="278" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#6b6b66" letterSpacing="1">
+          <text x={RECEIPT_WIDTH / 2} y="240" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#6b6b66" letterSpacing="1">
             THE VITUTUS STUDY
           </text>
           {studyQrDataUrl && (
             <image
               href={studyQrDataUrl}
               x={(RECEIPT_WIDTH - STUDY_QR_SIZE) / 2}
-              y="288"
+              y="250"
               width={STUDY_QR_SIZE}
               height={STUDY_QR_SIZE}
             />
           )}
-          <text x={RECEIPT_WIDTH / 2} y={288 + STUDY_QR_SIZE + 16} textAnchor="middle" fontSize="8" letterSpacing="1">
+          <text x={RECEIPT_WIDTH / 2} y={250 + STUDY_QR_SIZE + 16} textAnchor="middle" fontSize="8" letterSpacing="1">
             SCAN TO READ THE SOURCE
           </text>
-          <text x={RECEIPT_WIDTH / 2} y={288 + STUDY_QR_SIZE + 30} textAnchor="middle" fontSize="7.5" fill="#6b6b66" letterSpacing="0.5">
+          <text x={RECEIPT_WIDTH / 2} y={250 + STUDY_QR_SIZE + 30} textAnchor="middle" fontSize="7.5" fill="#6b6b66" letterSpacing="0.5">
             UNIVERSITY OF TURKU · 2022
           </text>
         </g>
