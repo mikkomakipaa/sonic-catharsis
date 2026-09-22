@@ -2,17 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { MatcherRequestSchema, validateRequest } from '@/lib/validation';
 import { getDeterministicGenre } from '@/lib/genre-mapping';
-import { STRESS_VALUE_TO_LABEL, calculateDamageScore } from '@/lib/theme';
+import { STRESS_VALUE_TO_LABEL, calculateDamageScore, getActiveCircle } from '@/lib/theme';
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 const MATCHER_MODEL = 'gpt-4.1';
 
 export async function POST(request: NextRequest) {
   try {
+    // Constructed inside the handler, not at module scope — module scope
+    // runs during Next.js's build-time "Collecting page data" step, before
+    // OPENAI_API_KEY is necessarily available, and the SDK throws
+    // immediately on a missing key, failing the build itself.
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     const body = await request.json();
 
     // Validate request data
@@ -40,6 +44,13 @@ export async function POST(request: NextRequest) {
     // otherwise be silently treated as "no stress level selected".
     const stressLabel = emotionData.stressLevel != null ? STRESS_VALUE_TO_LABEL[emotionData.stressLevel] ?? 'none' : 'none';
 
+    // The same deterministic (emotion, stress) -> Circle lookup the analysis
+    // screen already uses for its "Diagnosis: EMOTION, Code {roman}" display
+    // — computed again here so the model can be told the exact condition
+    // name it's expected to reference, in sync with what's on screen.
+    const circle = getActiveCircle(emotionData.primary, emotionData.stressLevel ?? null);
+    const condition = `Stage ${circle.roman} — ${circle.name}`;
+
     // The genre is never left to the AI's judgment — it's a deterministic
     // (emotion, stress) lookup so the curated artists always match the
     // circle the user sees themselves descending into. Computed up front
@@ -65,7 +76,7 @@ export async function POST(request: NextRequest) {
     const response = await openai.responses.create({
       model: MATCHER_MODEL,
       instructions: MATCHER_INSTRUCTIONS,
-      input: `emotion: ${emotionData.primary}\nstress_level: ${stressLabel}\nevent: ${emotionData.event || 'none'}\nsubgenre: ${deterministicGenre.genre}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences.${gapDirective}`,
+      input: `emotion: ${emotionData.primary}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nsubgenre: ${deterministicGenre.genre}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. Name the condition ("${condition}") directly at least once across the two fields.${gapDirective}`,
     });
 
     // Handle different response formats

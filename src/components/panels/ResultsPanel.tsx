@@ -85,7 +85,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
       <div className="mx-5" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
 
       <div className="px-5 py-3 text-[9px] uppercase" style={{ color: PAPER_MUTED, letterSpacing: '0.5px' }}>
-        Sig: Take ten (10) bands. Repeat descent as needed. No known cure.
+        Sig: Take ten (10) bands. Repeat as needed. No known cure.
       </div>
 
       <div className="mx-5" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />

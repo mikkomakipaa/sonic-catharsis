@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { EASE, CTA_BACKGROUND, CTA_SHADOW, CTA_TEXT_SHADOW, CTA_TEXT_COLOR } from '@/lib/theme';
 import { EmotionWheelSelection } from '@/types';
 import EmotionWheel from '@/components/EmotionWheel';
+import IntensitySlider from '@/components/IntensitySlider';
 
 interface StateOfMindPanelProps {
   primarySelection: EmotionWheelSelection | null;
@@ -33,9 +34,22 @@ export default function StateOfMindPanel({
     <div className="flex flex-col items-center">
       {/* No card surface — the wheel sits directly on the page background as
           the page's main instrument, not a widget boxed inside a panel.
-          Emotion and intensity are a single wheel: angle picks the emotion,
-          radial drag distance snaps to an intensity tier. */}
+          Emotion and intensity are two separate controls now: the wheel
+          picks the emotion only, the slider underneath dials intensity —
+          decoupled so each interaction stays legible on its own. */}
       <EmotionWheel selection={primarySelection} onSelectionChange={onPrimarySelectionChange} />
+
+      <div className="mt-4">
+        <IntensitySlider
+          value={primarySelection?.stressLevel ?? null}
+          disabled={!primarySelection}
+          onChange={(tier) => {
+            if (!primarySelection) return;
+            onPrimarySelectionChange({ ...primarySelection, stressLevel: tier });
+          }}
+          onClear={() => onPrimarySelectionChange(null)}
+        />
+      </div>
 
       <div className="mt-4 w-full max-w-2xl">
         <div className="flex flex-col items-center">
@@ -51,7 +65,7 @@ export default function StateOfMindPanel({
                 if (canSubmit) onSubmit();
               }
             }}
-            placeholder="What minor inconvenience shattered your fragile peace today?"
+            placeholder="What exactly ruined an otherwise perfectly acceptable day?"
             className="w-full px-5 py-4 rounded-md text-sm text-center resize-none focus:outline-none focus:ring-1 transition-all duration-200 font-normal focus:ring-[#c98a4b]/30 placeholder-zinc-500"
             style={{
               fontFamily: 'var(--font-geist-sans)',

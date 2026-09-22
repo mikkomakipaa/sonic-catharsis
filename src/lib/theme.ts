@@ -107,14 +107,16 @@ export function pickRandom<T>(items: readonly T[]): T {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-// --- The Nine Circles -------------------------------------------------------
-// Dante's actual arc, not a made-up one: it gets *hotter* through the middle
-// circles (fire, brimstone) then genuinely *colder* at the very bottom —
-// Circle IX is Cocytus, the frozen lake at the center of the earth. That
-// inversion is the whole point: the deepest, most intense state should not
-// just be "more red," it should be a different temperature altogether.
+// --- The Nine Stages of Vitutus ----------------------------------------------
+// Replaces the old Dante circle names. "Vitutus" is Finnish slang for a
+// simmering, absurd, distinctly Finnish flavor of irritation/pissed-off-ness
+// — grounded in a real (tongue-in-cheek) academic instrument, the
+// "Vitutusviisari" ("vitutus gauge"), see the study QR on ReceiptCard.
+// Tiers III, IV, VI, and IX borrow the study's own terms (perusvitutus,
+// keskivaikea vitutus, syvävitutus, vitutus maximus); the rest are original
+// but built in the same register — not claimed as verbatim study language.
 export interface Circle {
-  index: number; // 0 = surface (nothing selected yet), 1-9 = the circles
+  index: number; // 0 = surface (nothing selected yet), 1-9 = the stages
   roman: string;
   name: string;
   color: string; // hex
@@ -128,32 +130,32 @@ export const SURFACE: Circle = {
 };
 
 export const CIRCLES: Circle[] = [
-  { index: 1, roman: 'I', name: 'Limbo', color: '#71717a' },
-  { index: 2, roman: 'II', name: 'Lust', color: '#a855f7' },
-  { index: 3, roman: 'III', name: 'Gluttony', color: '#4d7c0f' },
-  { index: 4, roman: 'IV', name: 'Greed', color: '#ca8a04' },
-  { index: 5, roman: 'V', name: 'Wrath', color: '#7f1d1d' },
-  { index: 6, roman: 'VI', name: 'Heresy', color: '#ea580c' },
-  { index: 7, roman: 'VII', name: 'Violence', color: '#dc2626' },
-  { index: 8, roman: 'VIII', name: 'Fraud', color: '#a16207' },
-  { index: 9, roman: 'IX', name: 'Treachery', color: '#7dd3fc' },
+  { index: 1, roman: 'I', name: 'Lievä ärsytys', color: '#71717a' },
+  { index: 2, roman: 'II', name: 'Kytevä vitutus', color: '#a855f7' },
+  { index: 3, roman: 'III', name: 'Perusvitutus', color: '#4d7c0f' },
+  { index: 4, roman: 'IV', name: 'Keskivaikea vitutus', color: '#ca8a04' },
+  { index: 5, roman: 'V', name: 'Kova vitutus', color: '#7f1d1d' },
+  { index: 6, roman: 'VI', name: 'Syvävitutus', color: '#ea580c' },
+  { index: 7, roman: 'VII', name: 'Raivovitutus', color: '#dc2626' },
+  { index: 8, roman: 'VIII', name: 'Täysvitutus', color: '#a16207' },
+  { index: 9, roman: 'IX', name: 'Vitutus maximus', color: '#7dd3fc' },
 ];
 
 // --- Deterministic circle selection: (emotion, stressValue) -> Circle -------
-// Each emotion has a fixed "base" circle (ascending severity, reusing
+// Each emotion has a fixed "base" stage (ascending severity, reusing
 // EMOTION_BASE_SCORE, with one deliberate swap: sadness sits at IX instead
-// of the next emotion in severity order, because Circle IX is meant to be
-// cold and numb, not just "most severe" — frozen grief fits Cocytus better
-// than hot fury or revulsion).
+// of the next emotion in severity order, because stage IX is meant to read
+// as cold and numb, not just "most severe" — frozen grief fits an icy
+// "vitutus maximus" better than hot fury or revulsion).
 const EMOTION_BASE_CIRCLE: Record<EmotionType, number> = {
-  trust: 1, // Limbo
-  joy: 2, // Lust
-  anticipation: 3, // Gluttony
-  surprise: 4, // Greed
-  fear: 5, // Wrath
-  disgust: 6, // Heresy
-  anger: 7, // Violence
-  sadness: 9, // Treachery
+  trust: 1, // Lievä ärsytys
+  joy: 2, // Kytevä vitutus
+  anticipation: 3, // Perusvitutus
+  surprise: 4, // Keskivaikea vitutus
+  fear: 5, // Kova vitutus
+  disgust: 6, // Syvävitutus
+  anger: 7, // Raivovitutus
+  sadness: 9, // Vitutus maximus
 };
 
 // Stress tier (0-10) shifts the base circle up/down by up to 2, continuous

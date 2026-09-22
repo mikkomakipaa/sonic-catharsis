@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import { Download } from 'lucide-react';
-import { Circle, TOTAL_INTENSITY_LEVELS } from '@/lib/theme';
+import { Circle, MAX_STRESS_INTENSITY, TOTAL_INTENSITY_LEVELS } from '@/lib/theme';
 import { EmotionType } from '@/types';
 
 interface ReceiptCardProps {
@@ -15,8 +15,13 @@ interface ReceiptCardProps {
 }
 
 const RECEIPT_WIDTH = 300;
-const RECEIPT_HEIGHT = 432;
-const QR_SIZE = 66;
+const RECEIPT_HEIGHT = 420;
+const STUDY_QR_SIZE = 66;
+// Permanent citation — always the same URL, not tied to the session's
+// emotion/subgenre, since it's the real source for the "vitutus" scale
+// used throughout the app (see CIRCLES in lib/theme.ts). The receipt's
+// only QR code.
+const VITUTUS_STUDY_URL = 'https://emotion.utu.fi/wp-content/uploads/2022/04/LN_JH_Vitutus_22.pdf';
 
 function formatDateTime(): { date: string; time: string } {
   const now = new Date();
@@ -31,20 +36,19 @@ export default function ReceiptCard({ circle, emotion, stressLevel, damageScore,
   const { date, time } = formatDateTime();
 
   const itemLabel = emotion.toUpperCase();
-  // Plain 1-11 intensity, not a thematic tier name — one unambiguous scale.
-  const tierLabel = `${stressLevel + 1}/${TOTAL_INTENSITY_LEVELS}`;
+  // Plain numeric intensity, not a thematic tier name — one unambiguous
+  // scale, always out of 10 except the deliberately scale-breaking ELEVEN
+  // tier, which reads "11/10" on purpose (see EmotionWheel).
+  const tierLabel = `${stressLevel === MAX_STRESS_INTENSITY ? TOTAL_INTENSITY_LEVELS : stressLevel + 1}/${MAX_STRESS_INTENSITY}`;
   const genreLine = subgenre ? subgenre.toUpperCase() : null;
 
-  // Never a fabricated single video — a YouTube search for the actual
-  // curated subgenre always resolves to something real.
-  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  // Fixed citation QR — same URL every receipt, generated once.
+  const [studyQrDataUrl, setStudyQrDataUrl] = useState<string | null>(null);
   useEffect(() => {
-    const query = subgenre || `${emotion} metal`;
-    const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-    QRCode.toDataURL(searchUrl, { margin: 0, width: QR_SIZE * 4, color: { dark: '#2a2a28', light: '#00000000' } })
-      .then(setQrDataUrl)
-      .catch(() => setQrDataUrl(null));
-  }, [subgenre, emotion]);
+    QRCode.toDataURL(VITUTUS_STUDY_URL, { margin: 0, width: STUDY_QR_SIZE * 4, color: { dark: '#2a2a28', light: '#00000000' } })
+      .then(setStudyQrDataUrl)
+      .catch(() => setStudyQrDataUrl(null));
+  }, []);
 
   const handleDownload = () => {
     const svg = svgRef.current;
@@ -149,7 +153,7 @@ export default function ReceiptCard({ circle, emotion, stressLevel, damageScore,
           <line x1="18" y1="184" x2={RECEIPT_WIDTH - 18} y2="184" stroke="#2a2a28" strokeWidth="1" strokeDasharray="2 2" />
 
           <text x={RECEIPT_WIDTH / 2} y="210" textAnchor="middle" fontSize="9">
-            THANK YOU FOR SHOPPING AT
+            THANK YOU FOR PROCESSING YOUR VITUTUS AT
           </text>
           <text x={RECEIPT_WIDTH / 2} y="222" textAnchor="middle" fontSize="9" fontWeight="bold">
             SONIC CATHARSIS
@@ -161,12 +165,26 @@ export default function ReceiptCard({ circle, emotion, stressLevel, damageScore,
             SCIENTIFICALLY PROVEN TO FUNCTION.
           </text>
 
-          {/* QR — scan for a YouTube search of the actual curated subgenre */}
-          {qrDataUrl && (
-            <image href={qrDataUrl} x={(RECEIPT_WIDTH - QR_SIZE) / 2} y="270" width={QR_SIZE} height={QR_SIZE} />
+          {/* Permanent citation — the real (tongue-in-cheek) academic source
+              for the "vitutus" scale used throughout the app. Same QR/URL
+              on every receipt, regardless of session. */}
+          <text x={RECEIPT_WIDTH / 2} y="278" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#6b6b66" letterSpacing="1">
+            THE VITUTUS STUDY
+          </text>
+          {studyQrDataUrl && (
+            <image
+              href={studyQrDataUrl}
+              x={(RECEIPT_WIDTH - STUDY_QR_SIZE) / 2}
+              y="288"
+              width={STUDY_QR_SIZE}
+              height={STUDY_QR_SIZE}
+            />
           )}
-          <text x={RECEIPT_WIDTH / 2} y="352" textAnchor="middle" fontSize="8" letterSpacing="1">
-            SCAN FOR YOUR PRESCRIBED SOUND
+          <text x={RECEIPT_WIDTH / 2} y={288 + STUDY_QR_SIZE + 16} textAnchor="middle" fontSize="8" letterSpacing="1">
+            SCAN TO READ THE SOURCE
+          </text>
+          <text x={RECEIPT_WIDTH / 2} y={288 + STUDY_QR_SIZE + 30} textAnchor="middle" fontSize="7.5" fill="#6b6b66" letterSpacing="0.5">
+            UNIVERSITY OF TURKU · 2022
           </text>
         </g>
       </svg>

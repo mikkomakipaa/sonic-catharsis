@@ -1,17 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { CuratorRequestSchema, validateRequest } from '@/lib/validation';
-import { STRESS_VALUE_TO_LABEL } from '@/lib/theme';
+import { STRESS_VALUE_TO_LABEL, getActiveCircle } from '@/lib/theme';
 import { CURATOR_INSTRUCTIONS } from '@/lib/prompts';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 const CURATOR_MODEL = 'gpt-4.1';
 
 export async function POST(request: NextRequest) {
   try {
+    // Constructed inside the handler, not at module scope — module scope
+    // runs during Next.js's build-time "Collecting page data" step, before
+    // OPENAI_API_KEY is necessarily available, and the SDK throws
+    // immediately on a missing key, failing the build itself.
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     const body = await request.json();
 
     // Validate request data
@@ -37,6 +41,13 @@ export async function POST(request: NextRequest) {
     // lightness") isn't mistaken for "no stress level selected".
     const stressLabel = emotionData.stressLevel != null ? STRESS_VALUE_TO_LABEL[emotionData.stressLevel] ?? 'none' : 'none';
 
+    // Same deterministic lookup the matcher route and the analysis screen
+    // both use — recomputed here (rather than threaded through `analysis`)
+    // so the curator has the condition as calibration context without
+    // touching the matcher's JSON contract.
+    const circle = getActiveCircle(emotionData.primary, emotionData.stressLevel ?? null);
+    const condition = `Stage ${circle.roman} — ${circle.name}`;
+
     const subgenre = analysis.subgenre || 'metal';
 
     // Trying the model's own artist knowledge unconstrained by a code-side
@@ -44,7 +55,7 @@ export async function POST(request: NextRequest) {
     const response = await openai.responses.create({
       model: CURATOR_MODEL,
       instructions: CURATOR_INSTRUCTIONS,
-      input: `subgenre: ${subgenre}\nprimary_emotion: ${emotionData.primary}\nstress_level: ${stressLabel}\nevent: ${emotionData.event || 'none'}`,
+      input: `subgenre: ${subgenre}\nprimary_emotion: ${emotionData.primary}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}`,
     });
 
     // Handle different response formats

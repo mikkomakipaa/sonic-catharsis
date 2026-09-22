@@ -41,7 +41,7 @@ export default function ScreenDescent({
           the same descent, not a separate results page. Identity + damage
           + rail grouped tightly as one connected top system. */}
       <div className="flex flex-col gap-3">
-        <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] items-start gap-x-4 gap-y-2 max-w-xl">
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] items-start gap-x-4 gap-y-2">
           <CircleHeader circle={circle} align="left" />
           {primarySelection && (
             <div className="justify-self-start sm:justify-self-end text-left sm:text-right">
