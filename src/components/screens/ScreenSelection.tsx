@@ -1,13 +1,13 @@
 'use client';
 
-import { EmotionWheelSelection } from '@/types';
+import { TriggerSelection } from '@/types';
 import StateOfMindPanel from '@/components/panels/StateOfMindPanel';
 
 interface ScreenSelectionProps {
-  primarySelection: EmotionWheelSelection | null;
-  onPrimarySelectionChange: (selection: EmotionWheelSelection | null) => void;
-  eventDescription: string;
-  onEventDescriptionChange: (value: string) => void;
+  selection: TriggerSelection | null;
+  onSelectionChange: (selection: TriggerSelection | null) => void;
+  incidentText: string;
+  onIncidentTextChange: (value: string) => void;
   isProcessing: boolean;
   canSubmit: boolean;
   onSubmit: () => void;
@@ -18,10 +18,10 @@ export default function ScreenSelection(props: ScreenSelectionProps) {
   return (
     <div className="max-w-3xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]">
       <StateOfMindPanel
-        primarySelection={props.primarySelection}
-        onPrimarySelectionChange={props.onPrimarySelectionChange}
-        eventDescription={props.eventDescription}
-        onEventDescriptionChange={props.onEventDescriptionChange}
+        selection={props.selection}
+        onSelectionChange={props.onSelectionChange}
+        incidentText={props.incidentText}
+        onIncidentTextChange={props.onIncidentTextChange}
         isProcessing={props.isProcessing}
         canSubmit={props.canSubmit}
         onSubmit={props.onSubmit}

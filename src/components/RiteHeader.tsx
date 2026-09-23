@@ -5,12 +5,14 @@ interface RiteHeaderProps {
   showHeadline?: boolean;
 }
 
-// Reframed masthead: a quiet kicker (the wordmark/"go home" control) above
-// the actual hero statement, in the new calm palette — replacing the
-// blackletter blood-red logo treatment. The hero statement itself only
-// belongs to the selection screen — later screens (analysis, descent) keep
-// just the kicker as a quiet nav element, not the "how are you feeling"
-// question that's already been answered.
+// Reframed masthead: just the quiet kicker (the wordmark/"go home" control),
+// in the new calm palette — replacing the blackletter blood-red logo
+// treatment. No hero question here — the incident text prompt in
+// StateOfMindPanel is the page's dominant first interaction (situation-
+// first, not emotion-first; see docs/model.md), so this header doesn't
+// duplicate or precede it with a framing question of its own. `showHeadline`
+// only controls the selection screen's extra breathing room below the
+// kicker now, not a second heading.
 export default function RiteHeader({ onGoHome, showHeadline = true }: RiteHeaderProps) {
   return (
     <header className={cn('text-center', showHeadline ? 'mb-6' : 'mb-4')}>
@@ -33,24 +35,7 @@ export default function RiteHeader({ onGoHome, showHeadline = true }: RiteHeader
         Sonic Catharsis
       </button>
 
-      {showHeadline && (
-        <h1
-          className="mt-3"
-          style={{
-            fontFamily: 'var(--font-fraunces, serif)',
-            fontWeight: 500,
-            fontSize: 'clamp(26px, 5vw, 34px)',
-            lineHeight: 1.25,
-            color: '#2f2e2b',
-            maxWidth: '22ch',
-            margin: '12px auto 0',
-          }}
-        >
-          How are you feeling today?
-        </h1>
-      )}
-
-      <div className="h-px w-16 mx-auto mt-4" style={{ background: '#e6e2d8' }} />
+      <div className={cn('h-px w-16 mx-auto', showHeadline ? 'mt-6' : 'mt-4')} style={{ background: '#e6e2d8' }} />
     </header>
   );
 }

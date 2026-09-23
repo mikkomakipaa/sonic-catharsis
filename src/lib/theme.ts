@@ -66,7 +66,7 @@ export const STRESS_TIERS: { label: string; color: string }[] = [
   { label: 'Point of No Return', color: '#581c87' },
   // ELEVEN breaks the low->high color ramp on purpose — it sits outside the
   // normal radial band entirely, so it gets a shock color instead of the
-  // next shade of dark red, matching the special emphasis in EmotionWheel.
+  // next shade of dark red, matching the special emphasis in the CTA.
   { label: 'ELEVEN', color: '#fbbf24' },
 ];
 

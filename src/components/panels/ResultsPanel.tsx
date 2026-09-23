@@ -2,7 +2,7 @@
 
 import { Music, Radio } from 'lucide-react';
 import { Stage } from '@/lib/theme';
-import { EmotionType, Playlist } from '@/types';
+import { Playlist } from '@/types';
 import CassetteLoader from '@/components/CassetteLoader';
 
 interface ResultsPanelProps {
@@ -10,7 +10,7 @@ interface ResultsPanelProps {
   isProcessing: boolean;
   isAnalyzing: boolean;
   reasoning: string | null;
-  emotion?: EmotionType | null;
+  triggerLabel?: string | null;
   stage?: Stage | null;
 }
 
@@ -23,7 +23,7 @@ function formatDate(): string {
 const PAPER_BG = '#e8e4d8';
 const PAPER_INK = '#2a2a28';
 
-export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, emotion, stage }: ResultsPanelProps) {
+export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage }: ResultsPanelProps) {
   if (!playlist) {
     return (
       <div
@@ -76,7 +76,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
       <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
 
       <div className="flex items-center justify-between px-5 max-[480px]:px-6 py-2 text-[9px] max-[480px]:text-[12px]">
-        <span>PATIENT: {(emotion || 'unknown').toUpperCase()}</span>
+        <span>PATIENT: {(triggerLabel || 'unknown').toUpperCase()}</span>
         <span>DATE: {formatDate()}</span>
       </div>
 

@@ -11,7 +11,7 @@ interface IntensitySliderProps {
   disabled?: boolean;
 }
 
-// Intensity, decoupled from the emotion wheel — a discrete horizontal dial
+// Intensity, decoupled from the classification grid — a discrete horizontal dial
 // with 10 visible snap points (tiers 0-9). ELEVEN is deliberately NOT one
 // of them: dragging (or holding an arrow key) past the last tick, into the
 // quiet space beyond the track, breaks the scale on purpose — same secret
@@ -96,7 +96,7 @@ export default function IntensitySlider({ value, onChange, onClear, disabled = f
           // opacity on the control itself, not by fading this text too —
           // stacking both makes genuinely meaningful copy unreadable.
           <span className="ml-auto text-[10px] uppercase" style={{ letterSpacing: '0.04em', color: '#5c584f' }}>
-            Pick an emotion first
+            Pick a category first
           </span>
         ) : (
           <div className="ml-auto flex items-center gap-2.5">

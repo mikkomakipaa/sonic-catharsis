@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { EmotionWheelSelection, Playlist } from '@/types';
+import { TriggerSelection, TriggerType, Playlist } from '@/types';
+import { triggerToEmotion, getTriggerMeta } from '@/lib/trigger';
 import RiteHeader from '@/components/RiteHeader';
 import ScreenSelection from '@/components/screens/ScreenSelection';
 import ScreenAnalysis from '@/components/screens/ScreenAnalysis';
@@ -17,8 +18,16 @@ import {
 type ArtistItem = string | { artist?: string; name?: string; link?: string };
 type Step = 'selection' | 'analysis' | 'descent';
 
+// The shape sent to /api/matcher and /api/curator — still keyed on the
+// internal EmotionType vocabulary the deterministic genre-mapping engine
+// expects. `primary` is derived from the user's trigger pick via
+// triggerToEmotion() (lib/trigger.ts), never asked for directly — see that
+// file for why this translation layer exists.
 interface EmotionData {
-  primary: EmotionWheelSelection['emotion'];
+  primary: ReturnType<typeof triggerToEmotion>;
+  // The user's actual selection, sent alongside its lossy `primary`
+  // translation — see lib/trigger.ts for why both are needed.
+  trigger: TriggerType;
   stressLevel: number | null;
   event: string | null;
 }
@@ -26,11 +35,11 @@ interface EmotionData {
 export default function Home() {
   const [step, setStep] = useState<Step>('selection');
 
-  // Emotion + intensity are a single selection now — the wheel's radial
-  // drag distance snaps to the stress tier, replacing the old separate
-  // stress vial entirely.
-  const [primarySelection, setPrimarySelection] = useState<EmotionWheelSelection | null>(null);
-  const [eventDescription, setEventDescription] = useState<string>('');
+  // Trigger + intensity are a single selection — what kind of frustration it
+  // was, and how strongly it's hitting. Emotion never enters the frontend
+  // model; it's derived only at the API boundary.
+  const [selection, setSelection] = useState<TriggerSelection | null>(null);
+  const [incidentText, setIncidentText] = useState<string>('');
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -47,16 +56,18 @@ export default function Home() {
   const [pendingAnalysis, setPendingAnalysis] = useState<unknown>(null);
   const [pendingEmotionData, setPendingEmotionData] = useState<EmotionData | null>(null);
 
-  // Intensity-driven accent color: the wheel's own stress tier now carries
-  // the whole signal, no separate emotion-intensity axis to blend in.
-  const stressValue = primarySelection ? primarySelection.stressLevel : null;
+  const triggerLabel = selection ? getTriggerMeta(selection.trigger).label : null;
+
+  // Intensity-driven accent color: the slider's own tier carries the whole
+  // signal, independent of which trigger was picked.
+  const intensityValue = selection ? selection.intensity : null;
   const combinedIntensity = useMemo(() => {
-    return stressValue !== null ? stressValue / MAX_STRESS_INTENSITY : 0;
-  }, [stressValue]);
+    return intensityValue !== null ? intensityValue / MAX_STRESS_INTENSITY : 0;
+  }, [intensityValue]);
 
   const stage = useMemo(
-    () => getActiveStage(primarySelection?.emotion ?? null, stressValue),
-    [primarySelection?.emotion, stressValue]
+    () => getActiveStage(selection ? triggerToEmotion(selection.trigger) : null, intensityValue),
+    [selection, intensityValue]
   );
   const riteAccent = useMemo(() => computeStageAccent(stage, combinedIntensity), [stage, combinedIntensity]);
 
@@ -64,12 +75,12 @@ export default function Home() {
   // one-frame red flash, triggered once per rising edge (not on every
   // pointermove while already past the edge). Toggles a class directly via
   // ref + forced reflow instead of React state, so it never remounts the
-  // interactive tree mid-drag (which would kill the wheel's active drag).
+  // interactive tree mid-drag (which would kill the slider's active drag).
   const pageRef = useRef<HTMLDivElement>(null);
   const wasAtElevenRef = useRef(false);
 
   useEffect(() => {
-    const atEleven = stressValue === MAX_STRESS_INTENSITY;
+    const atEleven = intensityValue === MAX_STRESS_INTENSITY;
     if (atEleven && !wasAtElevenRef.current && pageRef.current) {
       const el = pageRef.current;
       el.classList.remove('rite-page-flinch');
@@ -77,12 +88,12 @@ export default function Home() {
       el.classList.add('rite-page-flinch');
     }
     wasAtElevenRef.current = atEleven;
-  }, [stressValue]);
+  }, [intensityValue]);
 
   // Step 1 of the rite: analyze the input. Stops here and waits for the user
   // to choose to descend — it never advances on its own.
-  const startAssistantWithWheelData = async () => {
-    if (!primarySelection) return;
+  const startAssistant = async () => {
+    if (!selection) return;
 
     setStep('analysis');
     setIsProcessing(true);
@@ -96,9 +107,10 @@ export default function Home() {
     setLoadingMessage(pickRandom(LOADING_MESSAGES.analyzing));
 
     const emotionData: EmotionData = {
-      primary: primarySelection.emotion,
-      stressLevel: primarySelection.stressLevel,
-      event: eventDescription.trim() || null,
+      primary: triggerToEmotion(selection.trigger),
+      trigger: selection.trigger,
+      stressLevel: selection.intensity,
+      event: incidentText.trim() || null,
     };
 
     try {
@@ -121,8 +133,8 @@ export default function Home() {
       setPendingAnalysis(matcherData.analysis);
       setPendingEmotionData(emotionData);
     } catch (error) {
-      console.error('Error processing emotion analysis:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to analyze emotional state. Please try again.';
+      console.error('Error processing incident analysis:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to analyze incident. Please try again.';
       setAnalysisError(errorMessage);
     } finally {
       setIsAnalyzing(false);
@@ -177,7 +189,7 @@ export default function Home() {
         setPlaylist({
           id: `ai-generated-${Date.now()}`,
           name: 'Curated Artists',
-          description: `10 curated artists for ${pendingEmotionData.primary} mood`,
+          description: `10 curated artists for ${triggerLabel ?? 'this'}`,
           tracks,
         });
       }
@@ -192,8 +204,8 @@ export default function Home() {
 
   const resetSelections = () => {
     setStep('selection');
-    setPrimarySelection(null);
-    setEventDescription('');
+    setSelection(null);
+    setIncidentText('');
     setPlaylist(null);
     setReasoning(null);
     setCause(null);
@@ -205,14 +217,14 @@ export default function Home() {
   };
 
   const clearInputs = () => {
-    setPrimarySelection(null);
-    setEventDescription('');
+    setSelection(null);
+    setIncidentText('');
   };
 
   // Back from the analysis screen: return to selection but keep the
-  // existing emotion/stress picks so the user can just adjust and resubmit,
-  // rather than a full reset. Clears the analysis result state so `canSubmit`
-  // re-enables (it's gated on `!reasoning`).
+  // existing trigger/intensity picks so the user can just adjust and
+  // resubmit, rather than a full reset. Clears the analysis result state so
+  // `canSubmit` re-enables (it's gated on `!reasoning`).
   const goBackToSelection = () => {
     setStep('selection');
     setPlaylist(null);
@@ -224,7 +236,7 @@ export default function Home() {
     setPendingEmotionData(null);
   };
 
-  const canSubmit = Boolean(primarySelection) && !isProcessing && !reasoning;
+  const canSubmit = Boolean(selection) && !isProcessing && !reasoning;
 
   return (
     <div
@@ -255,13 +267,13 @@ export default function Home() {
 
         {step === 'selection' && (
           <ScreenSelection
-            primarySelection={primarySelection}
-            onPrimarySelectionChange={setPrimarySelection}
-            eventDescription={eventDescription}
-            onEventDescriptionChange={setEventDescription}
+            selection={selection}
+            onSelectionChange={setSelection}
+            incidentText={incidentText}
+            onIncidentTextChange={setIncidentText}
             isProcessing={isProcessing}
             canSubmit={canSubmit}
-            onSubmit={startAssistantWithWheelData}
+            onSubmit={startAssistant}
             onReset={clearInputs}
           />
         )}
@@ -269,14 +281,14 @@ export default function Home() {
         {step === 'analysis' && (
           <ScreenAnalysis
             stage={stage}
-            primarySelection={primarySelection}
+            triggerLabel={triggerLabel}
             cause={cause}
             choice={choice}
             isAnalyzing={isAnalyzing}
             loadingMessage={loadingMessage}
             error={analysisError}
             onContinue={beginDescent}
-            onRetry={startAssistantWithWheelData}
+            onRetry={startAssistant}
             onBack={goBackToSelection}
           />
         )}
@@ -284,7 +296,8 @@ export default function Home() {
         {step === 'descent' && (
           <ScreenDescent
             stage={stage}
-            primarySelection={primarySelection}
+            selection={selection}
+            triggerLabel={triggerLabel}
             playlist={playlist}
             isProcessing={isProcessing}
             isAnalyzing={isAnalyzing}

@@ -3,62 +3,49 @@
 import { ArrowDownToLine, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EASE, CTA_BACKGROUND, CTA_SHADOW, CTA_TEXT_SHADOW, CTA_TEXT_COLOR } from '@/lib/theme';
-import { EmotionWheelSelection } from '@/types';
-import EmotionWheel from '@/components/EmotionWheel';
+import { TriggerSelection } from '@/types';
+import ClassificationGrid from '@/components/ClassificationGrid';
 import IntensitySlider from '@/components/IntensitySlider';
 
 interface StateOfMindPanelProps {
-  primarySelection: EmotionWheelSelection | null;
-  onPrimarySelectionChange: (selection: EmotionWheelSelection | null) => void;
-  eventDescription: string;
-  onEventDescriptionChange: (value: string) => void;
+  selection: TriggerSelection | null;
+  onSelectionChange: (selection: TriggerSelection | null) => void;
+  incidentText: string;
+  onIncidentTextChange: (value: string) => void;
   isProcessing: boolean;
   canSubmit: boolean;
   onSubmit: () => void;
   onReset: () => void;
 }
 
+// Situation-first flow: incident (language) -> trigger (visual
+// classification) -> intensity (magnitude). The text field is the dominant
+// first interaction, not a comment bolted onto a selector — see
+// docs/model.md for the full rationale behind this ordering.
 export default function StateOfMindPanel({
-  primarySelection,
-  onPrimarySelectionChange,
-  eventDescription,
-  onEventDescriptionChange,
+  selection,
+  onSelectionChange,
+  incidentText,
+  onIncidentTextChange,
   isProcessing,
   canSubmit,
   onSubmit,
   onReset,
 }: StateOfMindPanelProps) {
-  const showReset = Boolean(primarySelection || eventDescription);
+  const showReset = Boolean(selection || incidentText);
 
   return (
     <div className="flex flex-col items-center">
-      {/* No card surface — the wheel sits directly on the page background as
-          the page's main instrument, not a widget boxed inside a panel.
-          Emotion and intensity are two separate controls now: the wheel
-          picks the emotion only, the slider underneath dials intensity —
-          decoupled so each interaction stays legible on its own. */}
-      <EmotionWheel selection={primarySelection} onSelectionChange={onPrimarySelectionChange} />
-
-      <div className="mt-4">
-        <IntensitySlider
-          value={primarySelection?.stressLevel ?? null}
-          disabled={!primarySelection}
-          onChange={(tier) => {
-            if (!primarySelection) return;
-            onPrimarySelectionChange({ ...primarySelection, stressLevel: tier });
-          }}
-          onClear={() => onPrimarySelectionChange(null)}
-        />
-      </div>
-
-      <div className="mt-4 w-full max-w-2xl">
+      {/* The incident — what happened. This is the page's dominant first
+          interaction, not an optional comment attached to a selector. */}
+      <div className="w-full max-w-2xl">
         <div className="flex flex-col items-center">
           <label className="text-[10px] font-medium uppercase text-center mb-1.5" style={{ letterSpacing: '0.02em', color: '#5c584f' }}>
             What petty injustice did you endure today?
           </label>
           <textarea
-            value={eventDescription}
-            onChange={(e) => onEventDescriptionChange(e.target.value)}
+            value={incidentText}
+            onChange={(e) => onIncidentTextChange(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -77,10 +64,42 @@ export default function StateOfMindPanel({
               transition: `all 0.2s ${EASE}`,
             }}
           />
-          <p className="text-[10px] text-center mt-1.5" style={{ letterSpacing: '0.02em', color: '#5c584f' }}>
-            Press Enter to submit · Shift+Enter for a new line
-          </p>
         </div>
+      </div>
+
+      {/* Classification — what kind of frustration this is. A 3x3 checkbox
+          matrix, the visual centerpiece of the page; no separate "trigger"
+          label needed, the question above the grid already explains the
+          control. */}
+      <p
+        className="text-center uppercase mt-8"
+        style={{ fontSize: '11px', letterSpacing: '0.1em', fontWeight: 600, color: '#7d7869' }}
+      >
+        What kind of bullshit was it?
+      </p>
+      <div className="mt-4 w-full">
+        <ClassificationGrid selection={selection} onSelectionChange={onSelectionChange} />
+      </div>
+
+      {/* Intensity — how strongly it's affecting them. Quieter and more
+          compact than the trigger grid above; a separate, independent
+          axis, not a proxy for which trigger was picked. */}
+      <p
+        className="text-center uppercase mt-5"
+        style={{ fontSize: '10px', letterSpacing: '0.08em', fontWeight: 600, color: '#7d7869' }}
+      >
+        How bad is it?
+      </p>
+      <div className="mt-2">
+        <IntensitySlider
+          value={selection?.intensity ?? null}
+          disabled={!selection}
+          onChange={(tier) => {
+            if (!selection) return;
+            onSelectionChange({ ...selection, intensity: tier });
+          }}
+          onClear={() => onSelectionChange(null)}
+        />
       </div>
 
       <div className="mt-6 flex flex-col items-center gap-3">

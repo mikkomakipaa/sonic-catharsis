@@ -12,10 +12,24 @@ export const MetalSubgenres = [
   'progressive', 'symphonic', 'folk', 'industrial', 'nu-metal'
 ] as const;
 
+// The 8 frustration trigger types + the catch-all 9th category, mirroring
+// TriggerType (src/types/index.ts) as a runtime-checkable const array, same
+// pattern as CoreEmotions above.
+export const TriggerTypes = [
+  'injustice', 'failure', 'conflict', 'helplessness', 'overload',
+  'exhaustion', 'uncertainty', 'absurdity', 'unclassified',
+] as const;
+
 // Emotion data validation schema
 export const EmotionDataSchema = z.object({
   primary: z.enum(CoreEmotions, {
     errorMap: () => ({ message: 'Invalid emotion type' })
+  }),
+  // The user's actual selected category — sent alongside `primary` (its lossy
+  // legacy-emotion translation) so the Matcher can reason from what the user
+  // really chose, not just its compatibility-shim mapping. See lib/trigger.ts.
+  trigger: z.enum(TriggerTypes, {
+    errorMap: () => ({ message: 'Invalid trigger type' })
   }),
   stressLevel: z.number().min(0).max(10).nullable().optional(), // 0-10 to match mapping matrix
   event: z.string().max(500).nullable().optional()
@@ -26,11 +40,35 @@ export const MatcherRequestSchema = z.object({
   emotionData: EmotionDataSchema
 });
 
-// Analysis result schema
+// Sonic profile: 5 closed-vocabulary dimensions the Matcher derives from
+// incident text + trigger + intensity, calibrating both subgenre choice
+// and the Curator's picks within that subgenre. Each is an ordered enum
+// (least -> most intense) so it's usable as structured calibration input, not
+// free prose the model could phrase inconsistently. Dimension counts are
+// deliberately not forced to match (4 for most, 5 for weight) — matching real
+// distinctions rather than symmetry for its own sake.
+export const ActivationLevels = ['restrained', 'driving', 'aggressive', 'overwhelming'] as const;
+export const AgencyLevels = ['surrender', 'immersion', 'assertion', 'confrontation'] as const;
+export const FrictionLevels = ['smooth', 'textured', 'abrasive', 'confrontational'] as const;
+export const CognitiveDensityLevels = ['direct', 'primitive', 'complex', 'disorienting'] as const;
+export const WeightLevels = ['light', 'propulsive', 'heavy', 'oppressive', 'crushing'] as const;
+
+export const SonicProfileSchema = z.object({
+  activation: z.enum(ActivationLevels),
+  agency: z.enum(AgencyLevels),
+  friction: z.enum(FrictionLevels),
+  cognitive_density: z.enum(CognitiveDensityLevels),
+  weight: z.enum(WeightLevels),
+});
+
+// Analysis result schema — the Matcher's OUTPUT contract. No primary_emotion/
+// stress_level here: the app already has those values client-side, so the
+// LLM isn't asked to echo them back (state-transport anti-pattern). subgenre
+// is now the model's own reasoned pick (informed by an anchor, not dictated
+// by one) rather than an echoed deterministic value.
 export const AnalysisSchema = z.object({
   subgenre: z.string(),
-  primary_emotion: z.string(),
-  stress_level: z.union([z.number(), z.string()]),
+  sonic_profile: SonicProfileSchema,
   cause: z.string().optional(),
   choice: z.string().optional()
 });

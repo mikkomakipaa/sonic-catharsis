@@ -4,11 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import { Download } from 'lucide-react';
 import { Stage, MAX_STRESS_INTENSITY, TOTAL_INTENSITY_LEVELS } from '@/lib/theme';
-import { EmotionType } from '@/types';
 
 interface ReceiptCardProps {
   stage: Stage;
-  emotion: EmotionType;
+  triggerLabel: string;
   stressLevel: number;
   subgenre?: string | null;
 }
@@ -30,14 +29,14 @@ function formatDateTime(): { date: string; time: string } {
   };
 }
 
-export default function ReceiptCard({ stage, emotion, stressLevel, subgenre }: ReceiptCardProps) {
+export default function ReceiptCard({ stage, triggerLabel, stressLevel, subgenre }: ReceiptCardProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const { date, time } = formatDateTime();
 
-  const itemLabel = emotion.toUpperCase();
+  const itemLabel = triggerLabel.toUpperCase();
   // Plain numeric intensity, not a thematic tier name — one unambiguous
   // scale, always out of 10 except the deliberately scale-breaking ELEVEN
-  // tier, which reads "11/10" on purpose (see EmotionWheel).
+  // tier, which reads "11/10" on purpose (see IntensitySlider).
   const tierLabel = `${stressLevel === MAX_STRESS_INTENSITY ? TOTAL_INTENSITY_LEVELS : stressLevel + 1}/${MAX_STRESS_INTENSITY}`;
   const genreLine = subgenre ? subgenre.toUpperCase() : null;
 

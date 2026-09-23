@@ -102,24 +102,6 @@
   }
 }
 
-/* Constellation wheel's center core — an almost imperceptible ambient
-   "breathing" glow so the dark field doesn't feel static, without being an
-   obvious animation. Gated on prefers-reduced-motion. */
-@keyframes rite-constellation-breathe {
-  0%, 100% {
-    opacity: 0.85;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .rite-constellation-breathe {
-    animation: rite-constellation-breathe 4.5s ease-in-out infinite;
-  }
-}
-
 /* Bootleg-cassette loader — reel spin + tape "draining" from the left reel
    into the right one (opposite phase). Gated on prefers-reduced-motion;
    reduced-motion users get a static cassette instead of no loader at all. */

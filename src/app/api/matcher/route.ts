@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { MatcherRequestSchema, validateRequest } from '@/lib/validation';
+import { AnalysisSchema, MatcherRequestSchema, validateRequest } from '@/lib/validation';
 import { getDeterministicGenre } from '@/lib/genre-mapping';
 import { STRESS_VALUE_TO_LABEL, getActiveStage } from '@/lib/theme';
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
@@ -51,13 +51,15 @@ export async function POST(request: NextRequest) {
     const stage = getActiveStage(emotionData.primary, emotionData.stressLevel ?? null);
     const condition = `Stage ${stage.roman} — ${stage.name}`;
 
-    // The genre is never left to the AI's judgment — it's a deterministic
-    // (emotion, stress) lookup so the curated artists always match the
-    // stage the user sees themselves descending into. Computed up front
-    // and handed to the model as a given, so its "cause"/"choice" prose
-    // can't reference a different subgenre than the one actually used to
-    // curate artists later.
-    const deterministicGenre = getDeterministicGenre(emotionData.primary, emotionData.stressLevel ?? null);
+    // A stabilizing prior, not a forced answer: the same deterministic
+    // (emotion, stress) lookup as before, but now handed to the model as
+    // anchor_subgenre — a strong default it should stay close to unless the
+    // incident text gives it a specific reason to deviate. This keeps most
+    // readings clustered the way they were under the old fully-deterministic
+    // scheme (and preserves its invented-microgenre flavor text at high
+    // intensity), while letting incident content actually influence genre
+    // selection, which the old forced-override version never allowed.
+    const anchorGenre = getDeterministicGenre(emotionData.primary, emotionData.stressLevel ?? null);
 
     // "The gap" — when a near-nonexistent event description still lands the
     // most severe stage, the funniest cause isn't inventing drama for a
@@ -75,7 +77,7 @@ export async function POST(request: NextRequest) {
     const response = await openai.responses.create({
       model: MATCHER_MODEL,
       instructions: MATCHER_INSTRUCTIONS,
-      input: `emotion: ${emotionData.primary}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nsubgenre: ${deterministicGenre.genre}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. Name the condition ("${condition}") directly at least once across the two fields.${gapDirective}`,
+      input: `legacy_emotion: ${emotionData.primary}\ntrigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\n\nKeep "cause" to its ~150-word target — no longer. Keep "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. Name the condition ("${condition}") directly at least once across the two fields.${gapDirective}`,
     });
 
     // Handle different response formats
@@ -123,10 +125,18 @@ export async function POST(request: NextRequest) {
         analysisResult = JSON.parse(jsonMatch[0]);
       } else {
         // Fallback: try to extract key information from text. The subgenre
-        // is never guessed from free text here — it's already deterministic
-        // (see deterministicGenre above), so the fallback only needs to
-        // salvage the cause/choice prose.
-        const detectedSubgenre = deterministicGenre.genre;
+        // falls back to the anchor here — the fallback only needs to
+        // salvage the cause/choice prose. sonic_profile has no incident-
+        // specific signal to recover from free text, so it gets a neutral
+        // default; AnalysisSchema requires the field to be present.
+        const detectedSubgenre = anchorGenre.genre;
+        const fallbackSonicProfile = {
+          activation: 'driving' as const,
+          agency: 'assertion' as const,
+          friction: 'abrasive' as const,
+          cognitive_density: 'direct' as const,
+          weight: 'heavy' as const,
+        };
 
         // Try to extract cause and choice from existing text response
         const paragraphs = responseText.split('\n\n').filter(p => p.trim());
@@ -165,8 +175,7 @@ export async function POST(request: NextRequest) {
         // Create fallback result with extracted cause and choice
         analysisResult = {
           subgenre: detectedSubgenre,
-          primary_emotion: emotionData.primary,
-          stress_level: stressLabel,
+          sonic_profile: fallbackSonicProfile,
           cause: cause || 'Professional burnout and organizational stress',
           choice: choice || `${detectedSubgenre} provides cathartic relief for the current emotional state`
         };
@@ -186,9 +195,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Belt-and-suspenders: force the field to the deterministic value even
-    // if the model ignored the instruction and echoed something else back.
-    analysisResult.subgenre = deterministicGenre.genre;
+    // Safety net only — fills in the anchor if the model's response is
+    // missing/empty, never overrides a subgenre it actually chose. The old
+    // version forced this every time; that's exactly the "never left to the
+    // AI's judgment" behavior this change intentionally moves away from.
+    analysisResult.subgenre = analysisResult.subgenre || anchorGenre.genre;
+
+    // Validate the shape before it can reach the Curator — a malformed
+    // sonic_profile (wrong enum token, missing key) is far easier to
+    // diagnose and recover from here than after it's already failed
+    // CuratorRequestSchema validation downstream.
+    const parsedAnalysis = AnalysisSchema.safeParse(analysisResult);
+    if (!parsedAnalysis.success) {
+      analysisResult.sonic_profile = {
+        activation: 'driving',
+        agency: 'assertion',
+        friction: 'abrasive',
+        cognitive_density: 'direct',
+        weight: 'heavy',
+      };
+      const retryParsed = AnalysisSchema.safeParse(analysisResult);
+      if (!retryParsed.success) {
+        return NextResponse.json(
+          { error: 'Received a malformed analysis response' },
+          { status: 500 }
+        );
+      }
+    }
 
     return NextResponse.json({
       analysis: analysisResult,

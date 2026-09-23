@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { CuratorRequestSchema, validateRequest } from '@/lib/validation';
-import { STRESS_VALUE_TO_LABEL, getActiveStage } from '@/lib/theme';
 import { CURATOR_INSTRUCTIONS } from '@/lib/prompts';
 
 const CURATOR_MODEL = 'gpt-4.1';
@@ -36,26 +35,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Same fix as the matcher route: send the stress *description* the
-    // prompt expects, and use a null check so a valid 0 value ("Intolerable
-    // lightness") isn't mistaken for "no stress level selected".
-    const stressLabel = emotionData.stressLevel != null ? STRESS_VALUE_TO_LABEL[emotionData.stressLevel] ?? 'none' : 'none';
-
-    // Same deterministic lookup the matcher route and the analysis screen
-    // both use — recomputed here (rather than threaded through `analysis`)
-    // so the curator has the condition as calibration context without
-    // touching the matcher's JSON contract.
-    const stage = getActiveStage(emotionData.primary, emotionData.stressLevel ?? null);
-    const condition = `Stage ${stage.roman} — ${stage.name}`;
-
     const subgenre = analysis.subgenre || 'metal';
+    const sonicProfile = analysis.sonic_profile;
 
+    // Curator gets only the finished sonic direction — no emotion, stress
+    // label, condition, or event. That interpretation work is entirely the
+    // Matcher's job now; Curator's job is purely "given this sound, find 10
+    // real matching artists." `emotionData` is still accepted on the request
+    // (CuratorRequestSchema) and unused here — see validation.ts for why it's
+    // kept rather than trimmed.
+    //
     // Trying the model's own artist knowledge unconstrained by a code-side
     // candidate pool — see the note in lib/prompts.ts for why.
     const response = await openai.responses.create({
       model: CURATOR_MODEL,
       instructions: CURATOR_INSTRUCTIONS,
-      input: `subgenre: ${subgenre}\nprimary_emotion: ${emotionData.primary}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}`,
+      input: `subgenre: ${subgenre}\nactivation: ${sonicProfile.activation}\nagency: ${sonicProfile.agency}\nfriction: ${sonicProfile.friction}\ncognitive_density: ${sonicProfile.cognitive_density}\nweight: ${sonicProfile.weight}`,
     });
 
     // Handle different response formats

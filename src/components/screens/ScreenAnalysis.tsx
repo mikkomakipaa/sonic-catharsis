@@ -2,14 +2,13 @@
 
 import { Pill, ArrowLeft, RefreshCw } from 'lucide-react';
 import { EASE, Stage } from '@/lib/theme';
-import { EmotionWheelSelection } from '@/types';
 import StageHeader from '@/components/StageHeader';
 import DescentRail from '@/components/DescentRail';
 import CassetteLoader from '@/components/CassetteLoader';
 
 interface ScreenAnalysisProps {
   stage: Stage;
-  primarySelection: EmotionWheelSelection | null;
+  triggerLabel: string | null;
   cause: string | null;
   choice: string | null;
   isAnalyzing: boolean;
@@ -31,7 +30,7 @@ const CORAL = '#bd5d4c';
 
 export default function ScreenAnalysis({
   stage,
-  primarySelection,
+  triggerLabel,
   cause,
   choice,
   isAnalyzing,
@@ -41,7 +40,7 @@ export default function ScreenAnalysis({
   onRetry,
   onBack,
 }: ScreenAnalysisProps) {
-  const emotionLabel = primarySelection ? primarySelection.emotion.toUpperCase() : 'UNKNOWN';
+  const diagnosisLabel = triggerLabel ? triggerLabel.toUpperCase() : 'UNKNOWN';
 
   const hasResult = Boolean(cause || choice);
 
@@ -108,7 +107,7 @@ export default function ScreenAnalysis({
               </div>
 
               <div className="flex gap-6 flex-wrap" style={{ fontSize: 11, color: INK_SOFT, margin: '10px 0 4px' }}>
-                <span><b style={{ color: INK, fontWeight: 600 }}>Diagnosis:</b> {emotionLabel}, Code {stage.roman}</span>
+                <span><b style={{ color: INK, fontWeight: 600 }}>Diagnosis:</b> {diagnosisLabel}, Code {stage.roman}</span>
                 <span><b style={{ color: INK, fontWeight: 600 }}>Attending:</b> Dr. Catharsis, M.D.</span>
               </div>
 

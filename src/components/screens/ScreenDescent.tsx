@@ -3,7 +3,7 @@
 import { RefreshCw, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Stage, EASE } from '@/lib/theme';
-import { EmotionWheelSelection, Playlist } from '@/types';
+import { TriggerSelection, Playlist } from '@/types';
 import ResultsPanel from '@/components/panels/ResultsPanel';
 import StageHeader from '@/components/StageHeader';
 import DescentRail from '@/components/DescentRail';
@@ -11,7 +11,8 @@ import ReceiptCard from '@/components/ReceiptCard';
 
 interface ScreenDescentProps {
   stage: Stage;
-  primarySelection: EmotionWheelSelection | null;
+  selection: TriggerSelection | null;
+  triggerLabel: string | null;
   playlist: Playlist | null;
   isProcessing: boolean;
   isAnalyzing: boolean;
@@ -23,7 +24,8 @@ interface ScreenDescentProps {
 
 export default function ScreenDescent({
   stage,
-  primarySelection,
+  selection,
+  triggerLabel,
   playlist,
   isProcessing,
   isAnalyzing,
@@ -61,15 +63,15 @@ export default function ScreenDescent({
           isProcessing={isProcessing}
           isAnalyzing={isAnalyzing}
           reasoning={reasoning}
-          emotion={primarySelection?.emotion}
+          triggerLabel={triggerLabel}
           stage={stage}
         />
 
-        {playlist && primarySelection && (
+        {playlist && selection && (
           <ReceiptCard
             stage={stage}
-            emotion={primarySelection.emotion}
-            stressLevel={primarySelection.stressLevel}
+            triggerLabel={triggerLabel ?? 'unknown'}
+            stressLevel={selection.intensity}
             subgenre={subgenre}
           />
         )}
