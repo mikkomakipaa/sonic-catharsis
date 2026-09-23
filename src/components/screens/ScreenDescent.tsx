@@ -37,7 +37,7 @@ export default function ScreenDescent({
       {/* Same header cluster as the analysis screen — same left axis — so
           this reads as a continuation of the same descent, not a separate
           results page. Identity + rail grouped as one connected system. */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 max-[480px]:gap-2">
         <StageHeader stage={stage} align="left" />
 
         <DescentRail activeIndex={stage.index} />
@@ -45,8 +45,8 @@ export default function ScreenDescent({
 
       {playlist && (
         <p
-          className="text-center uppercase mt-7 mb-3"
-          style={{ fontSize: 10.5, letterSpacing: '0.14em', color: '#a6a297', fontWeight: 600 }}
+          className="text-center uppercase mt-7 max-[480px]:mt-4 mb-3 max-[480px]:mb-2 text-[10.5px] max-[480px]:text-[14px] tracking-[0.14em] max-[480px]:tracking-[0.16em] text-[#7d7869] max-[480px]:text-[#726f66]"
+          style={{ fontWeight: 600 }}
         >
           Prescribed Treatment
         </p>
@@ -80,9 +80,9 @@ export default function ScreenDescent({
           <button
             onClick={onBack}
             className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide transition-colors duration-200"
-            style={{ letterSpacing: '0.05em', color: '#a6a297', transition: `color 0.2s ${EASE}` }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#726f66')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#a6a297')}
+            style={{ letterSpacing: '0.05em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
           >
             <ArrowLeft className="h-3 w-3" />
             Back to Analysis

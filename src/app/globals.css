@@ -204,3 +204,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* RiteHeader's "SONIC CATHARSIS" kicker — pale enough to read as decorative
+   on desktop, but that's too low-contrast at mobile sizes where it's often
+   the only nav control on screen. Media-query (not JS) so the existing
+   hover/mouseleave color toggle keeps working unmodified. */
+.rite-kicker {
+  color: #7d7869; /* TEXT_TERTIARY */
+}
+@media (max-width: 480px) {
+  .rite-kicker {
+    color: #726f66;
+  }
+}

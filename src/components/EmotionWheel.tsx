@@ -335,7 +335,10 @@ export default function EmotionWheel({ onSelectionChange, selection, disabled = 
         const visualSize = Math.round((isSelected ? 46 : 38) * emotion.weight);
         const scale = isSelected ? 1 : isHovered ? 1.07 : 1;
 
-        const labelColor = isSelected ? '#2f2e2b' : isHovered ? '#726f66' : '#a6a297';
+        // Emotion names are functional interaction labels, not decorative
+        // metadata — TEXT_SECONDARY at rest, not the pale TEXT_DECORATIVE
+        // tone reserved for connector lines/dust.
+        const labelColor = isSelected ? '#2f2e2b' : isHovered ? '#3f3b33' : '#5c584f';
 
         return (
           <div

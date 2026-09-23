@@ -184,9 +184,9 @@ export default function ReceiptCard({ stage, emotion, stressLevel, subgenre }: R
       <button
         onClick={handleDownload}
         className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide transition-colors duration-200"
-        style={{ letterSpacing: '0.05em', color: '#a6a297' }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = '#726f66')}
-        onMouseLeave={(e) => (e.currentTarget.style.color = '#a6a297')}
+        style={{ letterSpacing: '0.05em', color: '#5c584f' }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
+        onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
       >
         <Download className="h-3.5 w-3.5" />
         Download Receipt

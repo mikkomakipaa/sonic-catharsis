@@ -19,19 +19,16 @@ export default function RiteHeader({ onGoHome, showHeadline = true }: RiteHeader
         onClick={onGoHome}
         disabled={!onGoHome}
         aria-label="Sonic Catharsis — back to start"
-        className="uppercase transition-opacity duration-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4"
+        className="rite-kicker uppercase transition-opacity duration-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 text-[11px] max-[480px]:text-[14px] tracking-[0.18em] max-[480px]:tracking-[0.14em]"
         style={{
           fontFamily: 'var(--font-plex-sans, sans-serif)',
-          fontSize: 11,
-          letterSpacing: '0.18em',
-          color: '#a6a297',
           background: 'transparent',
           border: 'none',
           padding: 0,
           cursor: onGoHome ? 'pointer' : 'default',
         }}
         onMouseEnter={(e) => onGoHome && (e.currentTarget.style.color = '#726f66')}
-        onMouseLeave={(e) => (e.currentTarget.style.color = '#a6a297')}
+        onMouseLeave={(e) => (e.currentTarget.style.color = '')}
       >
         Sonic Catharsis
       </button>

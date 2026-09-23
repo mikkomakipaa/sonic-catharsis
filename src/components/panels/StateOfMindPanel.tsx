@@ -53,7 +53,7 @@ export default function StateOfMindPanel({
 
       <div className="mt-4 w-full max-w-2xl">
         <div className="flex flex-col items-center">
-          <label className="text-[10px] font-medium uppercase text-center mb-1.5" style={{ letterSpacing: '0.02em', color: '#6b675e' }}>
+          <label className="text-[10px] font-medium uppercase text-center mb-1.5" style={{ letterSpacing: '0.02em', color: '#5c584f' }}>
             What petty injustice did you endure today?
           </label>
           <textarea
@@ -66,7 +66,7 @@ export default function StateOfMindPanel({
               }
             }}
             placeholder="What exactly ruined an otherwise perfectly acceptable day?"
-            className="w-full px-5 py-4 rounded-md text-sm text-center resize-none focus:outline-none focus:ring-1 transition-all duration-200 font-normal focus:ring-[#c98a4b]/30 placeholder-zinc-500"
+            className="w-full px-5 py-4 rounded-md text-sm text-center resize-none focus:outline-none focus:ring-1 transition-all duration-200 font-normal focus:ring-[#c98a4b]/30 placeholder-[#726c5d]"
             style={{
               fontFamily: 'var(--font-geist-sans)',
               lineHeight: '1.5',
@@ -77,7 +77,7 @@ export default function StateOfMindPanel({
               transition: `all 0.2s ${EASE}`,
             }}
           />
-          <p className="text-[10px] text-zinc-600 text-center mt-1.5" style={{ letterSpacing: '0.02em' }}>
+          <p className="text-[10px] text-center mt-1.5" style={{ letterSpacing: '0.02em', color: '#5c584f' }}>
             Press Enter to submit · Shift+Enter for a new line
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function StateOfMindPanel({
             transition: `all 0.2s ${EASE}`,
             letterSpacing: '0.08em',
             background: canSubmit ? CTA_BACKGROUND : '#f2efe7',
-            color: canSubmit ? CTA_TEXT_COLOR : '#a6a297',
+            color: canSubmit ? CTA_TEXT_COLOR : '#5c584f',
             border: canSubmit ? 'none' : '1px solid #e6e2d8',
             boxShadow: canSubmit ? CTA_SHADOW : 'none',
             textShadow: canSubmit ? CTA_TEXT_SHADOW : undefined,
@@ -118,9 +118,9 @@ export default function StateOfMindPanel({
           <button
             onClick={onReset}
             className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide transition-colors duration-200"
-            style={{ letterSpacing: '0.05em', color: '#a6a297', transition: `color 0.2s ${EASE}` }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#726f66')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#a6a297')}
+            style={{ letterSpacing: '0.05em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
           >
             <RefreshCw className="h-3.5 w-3.5" />
             Reset

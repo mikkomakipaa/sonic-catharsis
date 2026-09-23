@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { cn } from '@/lib/utils';
 import { SURFACE, STAGES, EASE } from '@/lib/theme';
 
 interface DescentRailProps {
@@ -37,7 +38,7 @@ export default function DescentRail({ activeIndex }: DescentRailProps) {
                   className="flex-1 flex flex-col items-center px-2 min-w-[40px]"
                 >
                   <div
-                    className="w-1.5 h-1.5 rounded-full transition-all duration-500"
+                    className="w-1.5 h-1.5 rounded-full transition-all duration-500 max-[480px]:w-2 max-[480px]:h-2"
                     style={{
                       background: isActive ? band.color : isPast ? 'rgba(111,143,124,0.55)' : '#e6e2d8',
                       boxShadow: isActive ? `0 0 0 3px ${band.color}26` : 'none',
@@ -45,23 +46,27 @@ export default function DescentRail({ activeIndex }: DescentRailProps) {
                       transitionTimingFunction: EASE,
                     }}
                   />
+                  {/* Font sizes as Tailwind classes (not inline) so the
+                      max-[480px] mobile variant can bump them up without a
+                      separate JS breakpoint check. */}
                   <span
-                    className="font-mono mt-2 transition-all duration-300"
-                    style={{
-                      fontSize: isActive ? '13px' : '11px',
-                      fontWeight: isActive ? 700 : 400,
-                      color: isActive ? band.color : isPast ? '#726f66' : '#a6a297',
-                    }}
+                    className={cn(
+                      'font-mono mt-2 transition-all duration-300 max-[480px]:text-[13px]',
+                      isActive ? 'text-[13px] max-[480px]:text-[15px] font-bold' : 'text-[11px] font-normal'
+                    )}
+                    style={{ color: isActive ? band.color : isPast ? '#726f66' : '#7d7869' }}
                   >
                     {band.roman}
                   </span>
-                  {/* Only the active stage spells out its name — every
-                      other stage is just its numeral, so the rail reads as
-                      a progression at a glance instead of a wall of
-                      colliding labels. */}
+                  {/* Only the active stage spells out its name on desktop —
+                      on mobile the StageHeader directly above already shows
+                      the same name at large size, so repeating it here would
+                      be pure duplication; every other stage stays numeral-only
+                      either way so the rail reads as a progression at a
+                      glance instead of a wall of colliding labels. */}
                   {isActive && (
                     <span
-                      className="text-[9px] uppercase tracking-wide mt-0.5 whitespace-nowrap"
+                      className="text-[9px] uppercase tracking-wide mt-0.5 whitespace-nowrap max-[480px]:hidden"
                       style={{ color: '#2b2a26', fontWeight: 700, letterSpacing: '0.05em' }}
                     >
                       {band.name}

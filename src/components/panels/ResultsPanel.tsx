@@ -1,8 +1,7 @@
 'use client';
 
 import { Music, Radio } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Stage, PANEL_BASE_CLASS, PANEL_SHADOW } from '@/lib/theme';
+import { Stage } from '@/lib/theme';
 import { EmotionType, Playlist } from '@/types';
 import CassetteLoader from '@/components/CassetteLoader';
 
@@ -23,23 +22,25 @@ function formatDate(): string {
 // artifact handed over together — a diagnosis and its prescription.
 const PAPER_BG = '#e8e4d8';
 const PAPER_INK = '#2a2a28';
-const PAPER_MUTED = '#6b6b66';
 
 export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, emotion, stage }: ResultsPanelProps) {
   if (!playlist) {
     return (
-      <div className={cn(PANEL_BASE_CLASS, "h-full flex items-center justify-center")} style={PANEL_SHADOW}>
-        <div className="text-center p-8 text-zinc-500">
+      <div
+        className="h-full flex items-center justify-center rounded-md"
+        style={{ background: '#f2efe7', border: '1px solid #e6e2d8' }}
+      >
+        <div className="text-center p-8">
           {isProcessing && !isAnalyzing && reasoning ? (
             <>
               <CassetteLoader className="mx-auto mb-4" />
-              <h3 className="text-sm font-semibold mb-2 tracking-wide">Almost there</h3>
+              <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>Almost there</h3>
             </>
           ) : (
             <>
-              <Music className="h-10 w-10 mx-auto mb-4 opacity-40 text-zinc-600" />
-              <h3 className="text-sm font-semibold mb-2 uppercase tracking-wide">Artists</h3>
-              <p className="text-xs opacity-70">Complete analysis first</p>
+              <Music className="h-10 w-10 mx-auto mb-4" style={{ color: '#7d7869' }} />
+              <h3 className="text-sm font-semibold mb-2 uppercase tracking-wide" style={{ color: '#2f2e2b' }}>Artists</h3>
+              <p className="text-xs" style={{ color: '#7d7869' }}>Complete analysis first</p>
             </>
           )}
         </div>
@@ -59,75 +60,90 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
       }}
     >
       {/* Pad header — a prescription, not a database row */}
-      <div className="flex items-start justify-between px-5 pt-5 pb-3">
+      <div className="flex items-start justify-between px-5 max-[480px]:px-6 pt-5 pb-3">
         <div className="text-3xl font-bold leading-none" style={{ color: '#7f1d1d' }}>℞</div>
         <div className="text-right">
-          <div className="text-sm font-bold tracking-wide">SONIC CATHARSIS</div>
-          <div className="text-[8px] uppercase tracking-wide mt-0.5" style={{ color: PAPER_MUTED, letterSpacing: '1px' }}>
+          <div className="text-sm max-[480px]:text-base font-bold tracking-wide">SONIC CATHARSIS</div>
+          <div
+            className="text-[8px] max-[480px]:text-[11px] uppercase tracking-wide mt-0.5 text-[#6b6b66] max-[480px]:text-[#4a4a46]"
+            style={{ letterSpacing: '1px' }}
+          >
             Licensed Catharsis Practitioner
           </div>
         </div>
       </div>
 
-      <div className="mx-5" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
+      <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
 
-      <div className="flex items-center justify-between px-5 py-2 text-[9px]">
+      <div className="flex items-center justify-between px-5 max-[480px]:px-6 py-2 text-[9px] max-[480px]:text-[12px]">
         <span>PATIENT: {(emotion || 'unknown').toUpperCase()}</span>
         <span>DATE: {formatDate()}</span>
       </div>
 
       {stage && stage.index > 0 && (
-        <div className="px-5 pb-2 text-[9px]">
+        <div className="px-5 max-[480px]:px-6 pb-2 text-[9px] max-[480px]:text-[12px]">
           CONDITION: STAGE {stage.roman} — {stage.name.toUpperCase()}
         </div>
       )}
 
-      <div className="mx-5" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
+      <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
 
-      <div className="px-5 py-3 text-[9px] uppercase" style={{ color: PAPER_MUTED, letterSpacing: '0.5px' }}>
+      <div
+        className="px-5 max-[480px]:px-6 py-3 text-[9px] max-[480px]:text-[12px] uppercase text-[#6b6b66] max-[480px]:text-[#4a4a46]"
+        style={{ letterSpacing: '0.5px' }}
+      >
         Sig: Take ten (10) bands. Repeat as needed. No known cure.
       </div>
 
-      <div className="mx-5" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
+      <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
 
       {/* The bands themselves, styled as line items on the pad */}
-      <div className="px-5">
+      <div className="px-5 max-[480px]:px-6">
         {playlist.tracks.map((track, index) => (
           <div
             key={track.id}
-            className="flex items-center py-2.5"
+            className="flex items-center py-2.5 max-[480px]:py-0 max-[480px]:min-h-[64px]"
             style={{
               borderTop: index > 0 ? `1px dotted ${PAPER_INK}` : 'none',
               borderTopColor: index > 0 ? `${PAPER_INK}33` : undefined,
               animationDelay: `${index * 60}ms`,
             }}
           >
-            <span className="text-[10px] tabular-nums shrink-0 w-5" style={{ color: PAPER_MUTED }}>
+            <span className="text-[10px] max-[480px]:text-[13px] tabular-nums shrink-0 w-5 text-[#6b6b66] max-[480px]:text-[#4a4a46]">
               {index + 1}.
             </span>
-            <span className="min-w-0 flex-1 truncate text-[13px] font-bold ml-1">{track.name}</span>
+            <span className="min-w-0 flex-1 truncate text-[13px] max-[480px]:text-[16px] font-bold ml-1">{track.name}</span>
+            {/* Outer <a> is the touch target — 44x44 minimum on mobile —
+                while the visible circle stays small, centered inside it. */}
             <a
               href={track.bandcampUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center w-5 h-5 rounded-full shrink-0 ml-2"
+              className="relative flex items-center justify-center shrink-0 ml-2 w-5 h-5 max-[480px]:w-11 max-[480px]:h-11"
               title="Listen on Bandcamp"
-              style={{ border: `1px solid #7f1d1d80`, color: '#7f1d1d' }}
             >
-              <Radio className="h-2.5 w-2.5" />
+              <span
+                className="flex items-center justify-center w-5 h-5 rounded-full"
+                style={{ border: `1px solid #7f1d1d80`, color: '#7f1d1d' }}
+              >
+                <Radio className="h-2.5 w-2.5" />
+              </span>
             </a>
           </div>
         ))}
       </div>
 
-      <div className="mx-5 mt-2" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
+      <div className="mx-5 max-[480px]:mx-6 mt-2" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
 
       {/* Signature */}
-      <div className="px-5 py-4 text-right">
+      <div className="px-5 max-[480px]:px-6 py-4 text-right">
         <div className="text-lg italic" style={{ fontFamily: "'Brush Script MT', cursive", color: PAPER_INK }}>
           Dr. Catharsis
         </div>
-        <div className="text-[8px] uppercase tracking-wide" style={{ color: PAPER_MUTED, letterSpacing: '1px' }}>
+        <div
+          className="text-[8px] max-[480px]:text-[11px] uppercase tracking-wide text-[#6b6b66] max-[480px]:text-[#4a4a46]"
+          style={{ letterSpacing: '1px' }}
+        >
           M.D. (Metal Doctor) — refills: ∞
         </div>
       </div>

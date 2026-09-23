@@ -5,6 +5,20 @@ import type { EmotionType } from '@/types';
 
 export const EASE = 'cubic-bezier(0.25, 1, 0.5, 1)';
 
+// --- Neutral text tokens -----------------------------------------------------
+// Three intentional levels, not a gradient of "however faint felt right in
+// the moment" — the softer redesign drifted into using one pale decorative
+// tone (TEXT_DECORATIVE below) for actual functional text (labels,
+// instructions, disabled states), which reads as "faded ink" rather than
+// the intended "aged paper / editorial restraint." Rule of thumb: if it's
+// meaningful text a user needs to read, it's at least TEXT_SECONDARY —
+// TEXT_DECORATIVE is reserved for non-text structure (rules, borders,
+// inactive dots).
+export const TEXT_PRIMARY = '#2f2e2b'; // headings, entered/selected content
+export const TEXT_SECONDARY = '#5c584f'; // labels, interaction text, instructions, disabled-but-readable text
+export const TEXT_TERTIARY = '#7d7869'; // brand eyebrow, genuinely de-emphasized metadata
+export const TEXT_DECORATIVE = '#a6a297'; // NOT for text — divider lines, inactive dots, borders only
+
 // Shared "carved into obsidian" panel styling — no raised card edges, the
 // surface reads as recessed into the black page rather than a floating box.
 export const PANEL_BASE_CLASS =

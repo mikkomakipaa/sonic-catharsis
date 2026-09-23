@@ -49,7 +49,7 @@ export default function ScreenAnalysis({
     <div className="flex flex-col max-w-3xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]">
       {/* Identity + descent read as one connected header system — the rail
           sits close underneath instead of floating with its own gap. */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 max-[480px]:gap-2">
         <StageHeader stage={stage} align="left" />
 
         <DescentRail activeIndex={stage.index} />
@@ -57,18 +57,26 @@ export default function ScreenAnalysis({
 
       <div className="mt-6">
       {isAnalyzing || (!hasResult && !error) ? (
-        <div className="text-center py-10 text-zinc-500">
+        <div className="text-center py-10">
           <CassetteLoader className="mx-auto mb-4" />
-          <h3 className="text-sm font-semibold mb-2 tracking-wide">{loadingMessage}</h3>
-          <p className="text-xs opacity-70">This won&apos;t take long</p>
+          <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>{loadingMessage}</h3>
+          <p className="text-xs" style={{ color: '#7d7869' }}>This won&apos;t take long</p>
         </div>
       ) : error ? (
         <div className="flex flex-col gap-4 items-center text-center py-6">
-          <p className="text-sm text-red-400">{error}</p>
+          <p className="text-sm" style={{ color: '#bd5d4c' }}>{error}</p>
           <button
             onClick={onRetry}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-medium uppercase tracking-wide transition-all duration-200 rounded-sm active:scale-[0.98] bg-white/[0.03] hover:bg-white/[0.06] text-zinc-300"
-            style={{ letterSpacing: '0.05em', transition: `all 0.2s ${EASE}`, boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5), inset 0 0 0 0.5px rgba(255,255,255,0.05)' }}
+            className="flex items-center gap-2 px-4 py-2 text-xs font-medium uppercase tracking-wide transition-all duration-200 rounded-sm active:scale-[0.98]"
+            style={{
+              letterSpacing: '0.05em',
+              color: '#5c584f',
+              background: '#f2efe7',
+              border: '1px solid #e6e2d8',
+              transition: `all 0.2s ${EASE}`,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
           >
             <RefreshCw className="h-3.5 w-3.5" />
             Try Again
@@ -148,9 +156,9 @@ export default function ScreenAnalysis({
             <button
               onClick={onBack}
               className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide transition-colors duration-200"
-              style={{ letterSpacing: '0.05em', color: '#a6a297', transition: `color 0.2s ${EASE}` }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#726f66')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#a6a297')}
+              style={{ letterSpacing: '0.05em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
             >
               <ArrowLeft className="h-3 w-3" />
               Back to Selection
