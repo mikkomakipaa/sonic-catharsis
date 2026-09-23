@@ -90,7 +90,7 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
               onFocus={() => setHoveredType(c.type)}
               onBlur={() => setHoveredType(null)}
               className={cn(
-                'flex items-center gap-2.5 px-3 py-4 max-[480px]:px-2 text-left min-h-[44px]',
+                'flex items-center gap-2.5 px-3 py-2 max-[480px]:px-2 text-left min-h-[44px]',
                 'focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-[#c98a4b]/60',
                 !disabled && 'cursor-pointer',
                 disabled && 'cursor-not-allowed',
@@ -99,7 +99,7 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
               )}
               style={{
                 borderColor: '#e6e2d8',
-                background: isHovered && !isSelected ? 'rgba(201,138,75,0.05)' : 'transparent',
+                background: isSelected ? 'rgba(201,138,75,0.08)' : isHovered ? 'rgba(201,138,75,0.05)' : 'transparent',
                 transition: `background 0.2s ${EASE}`,
               }}
             >
@@ -122,9 +122,9 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
                 style={{
                   fontSize: '12px',
                   letterSpacing: '0.05em',
-                  fontWeight: isSelected ? 700 : 500,
+                  fontWeight: 500,
                   color: isSelected ? '#2f2e2b' : isHovered ? '#3f3b33' : '#5c584f',
-                  transition: `color 0.2s ${EASE}, font-weight 0.2s ${EASE}`,
+                  transition: `color 0.2s ${EASE}`,
                 }}
               >
                 {c.label}

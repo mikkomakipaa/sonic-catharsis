@@ -19,6 +19,17 @@ export const TEXT_SECONDARY = '#5c584f'; // labels, interaction text, instructio
 export const TEXT_TERTIARY = '#7d7869'; // brand eyebrow, genuinely de-emphasized metadata
 export const TEXT_DECORATIVE = '#a6a297'; // NOT for text — divider lines, inactive dots, borders only
 
+// Shared "section eyebrow" style for the landing page's three question
+// headers (incident label, classification prompt, intensity prompt) — one
+// token so all three stay visually identical instead of three separately
+// hand-tuned inline styles (which is how they drifted apart originally).
+export const SECTION_LABEL_STYLE = {
+  fontSize: '11px',
+  fontWeight: 600,
+  letterSpacing: '0.12em',
+  color: TEXT_TERTIARY,
+} as const;
+
 // Shared "carved into obsidian" panel styling — no raised card edges, the
 // surface reads as recessed into the black page rather than a floating box.
 export const PANEL_BASE_CLASS =

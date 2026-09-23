@@ -5,10 +5,9 @@ import { cn } from '@/lib/utils';
 import { EASE, STRESS_TIERS, MAX_STRESS_INTENSITY } from '@/lib/theme';
 
 interface IntensitySliderProps {
-  value: number | null; // 0-9 normal tier, or MAX_STRESS_INTENSITY for ELEVEN
+  value: number; // 0-9 normal tier, or MAX_STRESS_INTENSITY for ELEVEN
   onChange: (tier: number) => void;
   onClear: () => void;
-  disabled?: boolean;
 }
 
 // Intensity, decoupled from the classification grid — a discrete horizontal dial
@@ -16,6 +15,10 @@ interface IntensitySliderProps {
 // of them: dragging (or holding an arrow key) past the last tick, into the
 // quiet space beyond the track, breaks the scale on purpose — same secret
 // the wheel used to hide in its outer dashed halo, just relocated here.
+//
+// This only ever mounts once a category is picked (see StateOfMindPanel's
+// progressive disclosure), so there's no "nothing selected yet" state to
+// represent here — `value` is always a real tier.
 const ELEVEN_TIER = MAX_STRESS_INTENSITY;
 const NORMAL_MAX_TIER = ELEVEN_TIER - 1; // 9 — last visible tick
 const ELEVEN_ZONE_PX = 36; // how far past the track's right edge triggers it
@@ -38,7 +41,7 @@ function tierForClientX(clientX: number, rect: DOMRect): number {
   return Math.round((clamped / rect.width) * NORMAL_MAX_TIER);
 }
 
-export default function IntensitySlider({ value, onChange, onClear, disabled = false }: IntensitySliderProps) {
+export default function IntensitySlider({ value, onChange, onClear }: IntensitySliderProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
 
@@ -49,7 +52,6 @@ export default function IntensitySlider({ value, onChange, onClear, disabled = f
   }, [onChange]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    if (disabled) return;
     updateFromPointer(e.clientX);
     setDragging(true);
   };
@@ -69,7 +71,6 @@ export default function IntensitySlider({ value, onChange, onClear, disabled = f
   }, [dragging, updateFromPointer]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (disabled || value === null) return;
     if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
       e.preventDefault();
       // Holding right past the last normal tick is the keyboard route into
@@ -82,47 +83,37 @@ export default function IntensitySlider({ value, onChange, onClear, disabled = f
   };
 
   const atEleven = value === ELEVEN_TIER;
-  const tierInfo = value !== null ? STRESS_TIERS[value] : null;
-  const fillPct = value === null ? 0 : atEleven ? 100 : (value / NORMAL_MAX_TIER) * 100;
+  const tierInfo = STRESS_TIERS[value];
+  const fillPct = atEleven ? 100 : (value / NORMAL_MAX_TIER) * 100;
 
   return (
     <div className="w-full max-w-[280px] max-[480px]:max-w-full flex flex-col gap-2">
       <div className="flex items-center gap-3">
-        <span className="text-[10px] font-semibold uppercase" style={{ letterSpacing: '0.1em', color: '#5c584f' }}>
+        <span className="text-[10px] font-medium uppercase" style={{ letterSpacing: '0.1em', color: '#5c584f' }}>
           Intensity
         </span>
-        {disabled || value === null ? (
-          // Disabled state is communicated by the track/handle below (via
-          // opacity on the control itself, not by fading this text too —
-          // stacking both makes genuinely meaningful copy unreadable.
-          <span className="ml-auto text-[10px] uppercase" style={{ letterSpacing: '0.04em', color: '#5c584f' }}>
-            Pick a category first
+        <div className="ml-auto flex items-center gap-2.5">
+          <span
+            className={cn('text-[11px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
+            style={{ letterSpacing: '0.04em', color: tierInfo?.color }}
+          >
+            {atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/{MAX_STRESS_INTENSITY}
           </span>
-        ) : (
-          <div className="ml-auto flex items-center gap-2.5">
-            <span
-              className={cn('text-[11px] font-bold uppercase tracking-wide', atEleven && 'rite-eleven-pulse')}
-              style={{ letterSpacing: '0.04em', color: tierInfo?.color }}
-            >
-              {atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/{MAX_STRESS_INTENSITY}
-            </span>
-            <button
-              onClick={onClear}
-              className="text-[10px] font-medium uppercase tracking-wide transition-colors duration-200"
-              style={{ letterSpacing: '0.04em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
-            >
-              Clear
-            </button>
-          </div>
-        )}
+          <button
+            onClick={onClear}
+            className="text-[10px] font-medium uppercase transition-colors duration-200"
+            style={{ letterSpacing: '0.04em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
+          >
+            Clear
+          </button>
+        </div>
       </div>
 
       {/* Extra right padding reserves room for the handle to float past the
-          track's own edge when it breaks into the hidden ELEVEN zone.
-          Disabled dims the control itself, not the label row above. */}
-      <div className={cn('relative pr-9', disabled && 'opacity-50')} style={{ touchAction: 'none' }}>
+          track's own edge when it breaks into the hidden ELEVEN zone. */}
+      <div className="relative pr-9" style={{ touchAction: 'none' }}>
         {/* Outer wrapper IS the hit target — a generous (44px min on
             mobile) invisible band around the thin visual track, so touch
             precision doesn't depend on hitting a 6px-tall line. The ref
@@ -131,13 +122,12 @@ export default function IntensitySlider({ value, onChange, onClear, disabled = f
         <div
           ref={trackRef}
           role="slider"
-          tabIndex={disabled ? -1 : 0}
+          tabIndex={0}
           aria-label="Intensity"
           aria-valuemin={1}
           aria-valuemax={MAX_STRESS_INTENSITY}
-          aria-valuenow={value === null ? undefined : atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}
-          aria-disabled={disabled}
-          className={cn('relative flex items-center select-none max-[480px]:min-h-[44px]', !disabled && 'cursor-pointer')}
+          aria-valuenow={atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}
+          className="relative flex items-center select-none max-[480px]:min-h-[44px] cursor-pointer"
           onPointerDown={handlePointerDown}
           onKeyDown={handleKeyDown}
         >
@@ -163,7 +153,7 @@ export default function IntensitySlider({ value, onChange, onClear, disabled = f
                   width: i === value ? '9px' : '5px',
                   height: i === value ? '9px' : '5px',
                   transform: 'translate(-50%, -50%)',
-                  background: value !== null && i <= value && !atEleven ? '#fff8' : disabled ? '#00000022' : '#00000030',
+                  background: i <= value && !atEleven ? '#fff8' : '#00000030',
                   transition: `all 0.15s ${EASE}`,
                 }}
               />
@@ -173,40 +163,36 @@ export default function IntensitySlider({ value, onChange, onClear, disabled = f
                 edge with a pulsing glow once it crosses into ELEVEN. Sized
                 up slightly on mobile, with a soft halo (decorative only,
                 doesn't affect layout) for easier visual targeting. */}
-            {value !== null && (
-              <>
-                <div
-                  className="absolute top-1/2 rounded-full pointer-events-none hidden max-[480px]:block"
-                  style={{
-                    left: atEleven ? `calc(100% + ${HANDLE_ELEVEN_OFFSET}px)` : `${fillPct}%`,
-                    width: '38px',
-                    height: '38px',
-                    transform: 'translate(-50%, -50%)',
-                    background: `${tierInfo?.color ?? '#c9c4b6'}22`,
-                    transition: dragging ? 'none' : `left 0.15s ${EASE}, background 0.2s ${EASE}`,
-                  }}
-                />
-                <div
-                  className={cn(
-                    'absolute top-1/2 rounded-full pointer-events-none w-[18px] h-[18px] max-[480px]:w-5 max-[480px]:h-5',
-                    atEleven && 'rite-eleven-pulse'
-                  )}
-                  style={{
-                    left: atEleven ? `calc(100% + ${HANDLE_ELEVEN_OFFSET}px)` : `${fillPct}%`,
-                    transform: 'translate(-50%, -50%)',
-                    background: tierInfo?.color,
-                    border: atEleven ? '1px solid white' : '2px solid #f7f5f0',
-                    boxShadow: atEleven ? `0 0 12px 2px ${tierInfo?.color}90` : '0 1px 3px rgba(0,0,0,0.3)',
-                    transition: dragging ? 'none' : `left 0.15s ${EASE}, background 0.2s ${EASE}`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {atEleven && <HornsSigil className="w-3 h-3" style={{ color: 'white' }} />}
-                </div>
-              </>
-            )}
+            <div
+              className="absolute top-1/2 rounded-full pointer-events-none hidden max-[480px]:block"
+              style={{
+                left: atEleven ? `calc(100% + ${HANDLE_ELEVEN_OFFSET}px)` : `${fillPct}%`,
+                width: '38px',
+                height: '38px',
+                transform: 'translate(-50%, -50%)',
+                background: `${tierInfo?.color ?? '#c9c4b6'}22`,
+                transition: dragging ? 'none' : `left 0.15s ${EASE}, background 0.2s ${EASE}`,
+              }}
+            />
+            <div
+              className={cn(
+                'absolute top-1/2 rounded-full pointer-events-none w-[18px] h-[18px] max-[480px]:w-5 max-[480px]:h-5',
+                atEleven && 'rite-eleven-pulse'
+              )}
+              style={{
+                left: atEleven ? `calc(100% + ${HANDLE_ELEVEN_OFFSET}px)` : `${fillPct}%`,
+                transform: 'translate(-50%, -50%)',
+                background: tierInfo?.color,
+                border: atEleven ? '1px solid white' : '2px solid #f7f5f0',
+                boxShadow: atEleven ? `0 0 12px 2px ${tierInfo?.color}90` : '0 1px 3px rgba(0,0,0,0.3)',
+                transition: dragging ? 'none' : `left 0.15s ${EASE}, background 0.2s ${EASE}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {atEleven && <HornsSigil className="w-3 h-3" style={{ color: 'white' }} />}
+            </div>
           </div>
         </div>
       </div>

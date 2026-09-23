@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ArrowDownToLine, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { EASE, CTA_BACKGROUND, CTA_SHADOW, CTA_TEXT_SHADOW, CTA_TEXT_COLOR } from '@/lib/theme';
+import { EASE, CTA_BACKGROUND, CTA_SHADOW, CTA_TEXT_SHADOW, CTA_TEXT_COLOR, SECTION_LABEL_STYLE, TEXT_TERTIARY } from '@/lib/theme';
 import { TriggerSelection } from '@/types';
 import ClassificationGrid from '@/components/ClassificationGrid';
 import IntensitySlider from '@/components/IntensitySlider';
@@ -19,10 +19,30 @@ interface StateOfMindPanelProps {
   onReset: () => void;
 }
 
+// Single shared style for all three "question eyebrow" headers on this
+// screen — see SECTION_LABEL_STYLE in theme.ts. Renders identically for the
+// incident label, classification prompt, and intensity prompt instead of
+// three separately-tuned inline styles. `as="label"` keeps the incident
+// header as a real <label> (kept for the existing accessibility intent)
+// while the other two stay plain <p> eyebrows.
+function SectionLabel({ children, className, as = 'p' }: { children: ReactNode; className?: string; as?: 'p' | 'label' }) {
+  const Tag = as;
+  return (
+    <Tag className={cn('text-center uppercase', className)} style={SECTION_LABEL_STYLE}>
+      {children}
+    </Tag>
+  );
+}
+
 // Situation-first flow: incident (language) -> trigger (visual
 // classification) -> intensity (magnitude). The text field is the dominant
 // first interaction, not a comment bolted onto a selector — see
 // docs/model.md for the full rationale behind this ordering.
+//
+// Progressive disclosure: the intensity section and the submit/reset
+// buttons only mount once a category is picked. Showing a disabled slider
+// and a disabled "Begin Diagnosis" button before there's anything to submit
+// read as an unfinished form rather than a form that isn't done yet.
 export default function StateOfMindPanel({
   selection,
   onSelectionChange,
@@ -42,9 +62,9 @@ export default function StateOfMindPanel({
           interaction, not an optional comment attached to a selector. */}
       <div className="w-full max-w-2xl">
         <div className="flex flex-col items-center">
-          <label className="text-[10px] font-medium uppercase text-center mb-1.5" style={{ letterSpacing: '0.02em', color: '#5c584f' }}>
+          <SectionLabel as="label" className="mb-1.5">
             What petty injustice did you endure today?
-          </label>
+          </SectionLabel>
           <textarea
             value={incidentText}
             onChange={(e) => onIncidentTextChange(e.target.value)}
@@ -83,81 +103,84 @@ export default function StateOfMindPanel({
           matrix, the visual centerpiece of the page; no separate "trigger"
           label needed, the question above the grid already explains the
           control. */}
-      <p
-        className="text-center uppercase mt-8 max-[480px]:mt-5"
-        style={{ fontSize: '11px', letterSpacing: '0.1em', fontWeight: 600, color: '#7d7869' }}
-      >
-        What kind of bullshit was it?
-      </p>
+      <SectionLabel className="mt-8 max-[480px]:mt-5">What kind of bullshit was it?</SectionLabel>
       <div className="mt-4 w-full">
         <ClassificationGrid selection={selection} onSelectionChange={onSelectionChange} />
       </div>
 
-      {/* Intensity — how strongly it's affecting them. Quieter and more
-          compact than the trigger grid above; a separate, independent
-          axis, not a proxy for which trigger was picked. */}
-      <p
-        className="text-center uppercase mt-5"
-        style={{ fontSize: '10px', letterSpacing: '0.08em', fontWeight: 600, color: '#7d7869' }}
-      >
-        How bad is it?
-      </p>
-      <div className="mt-2">
-        <IntensitySlider
-          value={selection?.intensity ?? null}
-          disabled={!selection}
-          onChange={(tier) => {
-            if (!selection) return;
-            onSelectionChange({ ...selection, intensity: tier });
-          }}
-          onClear={() => onSelectionChange(null)}
-        />
-      </div>
+      {/* Only shown before a category is picked — once selected, the next
+          section takes over as guidance and this would just be clutter. */}
+      {!selection && (
+        <p className="text-center mt-3 text-[11px]" style={{ color: TEXT_TERTIARY }}>
+          Pick the closest one. Clinical accuracy is not required.
+        </p>
+      )}
 
-      <div className="mt-6 flex flex-col items-center gap-3">
+      {/* Intensity + submit only reveal once a category exists — nothing
+          to dial in or submit before then. */}
+      {selection && (
+        <div className="flex flex-col items-center animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
+          {/* Intensity — how strongly it's affecting them. Quieter and more
+              compact than the trigger grid above; a separate, independent
+              axis, not a proxy for which trigger was picked. */}
+          <SectionLabel className="mt-5">How bad is it?</SectionLabel>
+          <div className="mt-2">
+            <IntensitySlider
+              value={selection.intensity}
+              onChange={(tier) => onSelectionChange({ ...selection, intensity: tier })}
+              onClear={() => onSelectionChange(null)}
+            />
+          </div>
+
+          <div className="mt-6">
+            <button
+              onClick={onSubmit}
+              disabled={!canSubmit}
+              className={cn(
+                "px-10 py-4 font-semibold text-sm uppercase tracking-wide transition-all duration-200 flex items-center justify-center gap-2 rounded-lg active:scale-[0.98]",
+                canSubmit ? undefined : "cursor-not-allowed"
+              )}
+              style={{
+                transition: `all 0.2s ${EASE}`,
+                letterSpacing: '0.08em',
+                background: canSubmit ? CTA_BACKGROUND : '#f2efe7',
+                color: canSubmit ? CTA_TEXT_COLOR : '#5c584f',
+                border: canSubmit ? 'none' : '1px solid #e6e2d8',
+                boxShadow: canSubmit ? CTA_SHADOW : 'none',
+                textShadow: canSubmit ? CTA_TEXT_SHADOW : undefined,
+              }}
+            >
+              {isProcessing ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-transparent border-t-current"></div>
+                  <span>Analyzing...</span>
+                </>
+              ) : (
+                <>
+                  <ArrowDownToLine className="h-4 w-4" />
+                  <span>Begin Diagnosis</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Independent of the reveal above — stays available whenever there's
+          any input to clear, even just typed text with no category picked
+          yet, not only once the submit button exists. */}
+      {showReset && (
         <button
-          onClick={onSubmit}
-          disabled={!canSubmit}
-          className={cn(
-            "px-10 py-4 font-semibold text-sm uppercase tracking-wide transition-all duration-200 flex items-center justify-center gap-2 rounded-lg active:scale-[0.98]",
-            canSubmit ? undefined : "cursor-not-allowed"
-          )}
-          style={{
-            transition: `all 0.2s ${EASE}`,
-            letterSpacing: '0.08em',
-            background: canSubmit ? CTA_BACKGROUND : '#f2efe7',
-            color: canSubmit ? CTA_TEXT_COLOR : '#5c584f',
-            border: canSubmit ? 'none' : '1px solid #e6e2d8',
-            boxShadow: canSubmit ? CTA_SHADOW : 'none',
-            textShadow: canSubmit ? CTA_TEXT_SHADOW : undefined,
-          }}
+          onClick={onReset}
+          className="mt-6 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide transition-colors duration-200"
+          style={{ letterSpacing: '0.05em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
+          onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
         >
-          {isProcessing ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-transparent border-t-current"></div>
-              <span className="font-bold">Analyzing...</span>
-            </>
-          ) : (
-            <>
-              <ArrowDownToLine className="h-4 w-4" />
-              <span className="font-bold">Begin Diagnosis</span>
-            </>
-          )}
+          <RefreshCw className="h-3.5 w-3.5" />
+          Reset
         </button>
-
-        {showReset && (
-          <button
-            onClick={onReset}
-            className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide transition-colors duration-200"
-            style={{ letterSpacing: '0.05em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
-          >
-            <RefreshCw className="h-3.5 w-3.5" />
-            Reset
-          </button>
-        )}
-      </div>
+      )}
     </div>
   );
 }
