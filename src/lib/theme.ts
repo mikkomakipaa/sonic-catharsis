@@ -137,33 +137,37 @@ export const STAGES: Stage[] = [
 ];
 
 // --- Deterministic stage selection: (emotion, stressValue) -> Stage --------
-// Each emotion has a fixed "base" stage (ascending severity), with one
-// deliberate swap: sadness sits at IX instead of the next emotion in
-// severity order, because stage IX is meant to read as cold and numb, not
-// just "most severe" — frozen grief fits an icy "vitutus maximus" better
-// than hot fury or revulsion.
-const EMOTION_BASE_STAGE: Record<EmotionType, number> = {
-  trust: 1, // Lievä ärsytys
-  joy: 2, // Kytevä vitutus
-  anticipation: 3, // Perusvitutus
-  surprise: 4, // Keskivaikea vitutus
-  fear: 5, // Kova vitutus
-  disgust: 6, // Syvävitutus
-  anger: 7, // Raivovitutus
-  sadness: 9, // Vitutus maximus
+// Intensity (the user's own "how bad is it" 0-10 slider) is the dominant
+// driver — it alone spans nearly the full I-IX range. Emotion only applies a
+// small flavor tilt on top, never a hard floor or ceiling. An earlier
+// version gave each emotion a widely-spread "base" stage (1 through 9) and
+// let stress only nudge it by +/-2: that trapped every emotion in a narrow
+// band regardless of reported intensity — trust could never exceed Stage
+// III even at max intensity, sadness could never drop below Stage VII even
+// at the minimum, anger's floor alone was Stage V. A "2/10" injustice
+// reading landed on Stage V (Kova vitutus) purely because anger's base was
+// high, not because the user reported anything severe. Tilts are kept small
+// (+/-1, sadness +2) so the emotion's character still comes through without
+// overriding what the user actually said.
+const EMOTION_STAGE_TILT: Record<EmotionType, number> = {
+  trust: -1,
+  joy: -1,
+  anticipation: 0,
+  surprise: 0,
+  fear: 1,
+  disgust: 1,
+  anger: 1,
+  // Sadness keeps its own deliberate skew toward the top — stage IX is
+  // meant to read as cold and numb, not just "most severe," and frozen
+  // grief fits an icy "vitutus maximus" better than hot fury or revulsion.
+  sadness: 2,
 };
-
-// Stress tier (0-10) shifts the base stage up/down by up to 2, continuous
-// rather than a lookup table since every tier index is now a valid value;
-// midpoint (5, "Burnout") leaves the emotion's own base stage unchanged.
-function stressOffset(stressValue: number): number {
-  return Math.round(((stressValue - 5) / 5) * 2);
-}
 
 export function getActiveStage(emotion: EmotionType | null, stressValue: number | null): Stage {
   if (!emotion) return SURFACE;
-  const offset = stressOffset(stressValue ?? 5);
-  const idx = Math.min(9, Math.max(1, EMOTION_BASE_STAGE[emotion] + offset));
+  const intensity = stressValue ?? 5;
+  const intensityStage = 1 + (intensity / MAX_STRESS_INTENSITY) * 8; // 0-10 -> 1-9, continuous
+  const idx = Math.min(9, Math.max(1, Math.round(intensityStage + EMOTION_STAGE_TILT[emotion])));
   return STAGES[idx - 1];
 }
 
