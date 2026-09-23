@@ -13,9 +13,15 @@ const MATCHER_MODEL = 'gpt-4.1';
 // e.g. writing "Stage I — Lievä ärsytys" while the app's own rail/header
 // show Stage II) gets corrected to the one actually diagnosed, the same
 // safety-net spirit as the subgenre fallback below.
+// \b after the roman-numeral group is load-bearing: JS regex alternation
+// matches the first successful branch, not the longest, and "V" and "I"
+// both appear earlier in this list than "VII"/"VIII"/"IX" — without a
+// boundary, "Stage VII" matched only the "V" inside it (leaving "II —
+// Raivovitutus" dangling and un-replaced) or "Stage IX" matched only the
+// leading "I". The \b forces backtracking to the full numeral.
 const STAGE_NAMES_PATTERN = STAGES.map((s) => s.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
 const CONDITION_MENTION_PATTERN = new RegExp(
-  `Stage\\s+(?:I|II|III|IV|V|VI|VII|VIII|IX)(?:\\s*[—-]\\s*(?:${STAGE_NAMES_PATTERN}))?`,
+  `Stage\\s+(?:I|II|III|IV|V|VI|VII|VIII|IX)\\b(?:\\s*[—-]\\s*(?:${STAGE_NAMES_PATTERN}))?`,
   'gi'
 );
 
