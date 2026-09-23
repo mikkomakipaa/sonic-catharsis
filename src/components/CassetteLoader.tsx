@@ -64,10 +64,12 @@ export default function CassetteLoader({ className }: CassetteLoaderProps) {
       <circle cx="30" cy="30" r="10" fill="none" stroke={TAPE} strokeWidth="4" className="rite-cassette-drain-left" opacity="0.8" />
       <circle cx="90" cy="30" r="10" fill="none" stroke={TAPE} strokeWidth="4" className="rite-cassette-drain-right" opacity="0.8" />
 
-      {/* Label */}
-      <rect x="30" y="56" width="60" height="14" rx="1.5" fill={LABEL_BG} />
-      <text x="60" y="66" textAnchor="middle" fontSize="7" fontFamily="'Courier New', monospace" fill={LABEL_TEXT} letterSpacing="1">
-        SIDE A
+      {/* Label — widened from the original "SIDE A" rect to fit the longer
+          band name; bold weight so it reads as the release's actual
+          identity, not a generic tape-deck caption. */}
+      <rect x="22" y="56" width="76" height="14" rx="1.5" fill={LABEL_BG} />
+      <text x="60" y="66" textAnchor="middle" fontSize="6.5" fontWeight="700" fontFamily="'Courier New', monospace" fill={LABEL_TEXT} letterSpacing="0.5">
+        GOREWINTER
       </text>
     </svg>
   );
