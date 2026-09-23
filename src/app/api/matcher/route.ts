@@ -2,10 +2,27 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { AnalysisSchema, MatcherRequestSchema, validateRequest } from '@/lib/validation';
 import { getDeterministicGenre } from '@/lib/genre-mapping';
-import { STRESS_VALUE_TO_LABEL, getActiveStage } from '@/lib/theme';
+import { STRESS_VALUE_TO_LABEL, getActiveStage, STAGES } from '@/lib/theme';
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 
 const MATCHER_MODEL = 'gpt-4.1';
+
+// Matches "Stage <roman>" optionally followed by "— <Finnish stage name>",
+// so any wrong stage the model names in cause/choice prose (it's told to
+// name the condition, but nothing stops it hallucinating a different one —
+// e.g. writing "Stage I — Lievä ärsytys" while the app's own rail/header
+// show Stage II) gets corrected to the one actually diagnosed, the same
+// safety-net spirit as the subgenre fallback below.
+const STAGE_NAMES_PATTERN = STAGES.map((s) => s.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+const CONDITION_MENTION_PATTERN = new RegExp(
+  `Stage\\s+(?:I|II|III|IV|V|VI|VII|VIII|IX)(?:\\s*[—-]\\s*(?:${STAGE_NAMES_PATTERN}))?`,
+  'gi'
+);
+
+function enforceCondition(text: string, condition: string): string {
+  if (!text) return text;
+  return text.replace(CONDITION_MENTION_PATTERN, condition);
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -200,6 +217,13 @@ export async function POST(request: NextRequest) {
     // version forced this every time; that's exactly the "never left to the
     // AI's judgment" behavior this change intentionally moves away from.
     analysisResult.subgenre = analysisResult.subgenre || anchorGenre.genre;
+
+    // Correct any wrong stage the model named — cause/choice text is prose
+    // the model writes freely, so it can drift from `condition` (the one
+    // fact that must match what's already on screen) even though the model
+    // is instructed to use it verbatim.
+    analysisResult.cause = enforceCondition(analysisResult.cause, condition);
+    analysisResult.choice = enforceCondition(analysisResult.choice, condition);
 
     // Validate the shape before it can reach the Curator — a malformed
     // sonic_profile (wrong enum token, missing key) is far easier to
