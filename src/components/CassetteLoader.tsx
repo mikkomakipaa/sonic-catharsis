@@ -21,7 +21,10 @@ interface CassetteLoaderProps {
 // context it's in — the full-screen analysis loader and the narrower
 // prescription-card loader — without a single hardcoded size overflowing
 // the tighter one. `max-w-[280px]` is just a ceiling for wide phones.
-const SIZE_CLASSES = 'w-4/5 max-w-[280px] aspect-[3/2] sm:w-[140px] sm:max-w-none';
+// Desktop's 220px is a fixed value (not relative, unlike mobile) since it
+// still needs to fit the prescription card's loading state — max-w-sm
+// (384px) minus that card's p-8 padding leaves ~320px available there.
+const SIZE_CLASSES = 'w-4/5 max-w-[280px] aspect-[3/2] sm:w-[220px] sm:max-w-none';
 
 const SHELL = '#2f231f';
 const SHELL_BORDER = '#5a4a42';
