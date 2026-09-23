@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 
 interface CassetteLoaderProps {
   className?: string;
+  label?: string;
 }
 
 // The hero element of the loading state, not a decorative icon — sized
@@ -42,7 +43,7 @@ function Reel({ cx, cy, spinDelay }: { cx: number; cy: number; spinDelay: string
   );
 }
 
-export default function CassetteLoader({ className }: CassetteLoaderProps) {
+export default function CassetteLoader({ className, label = 'GOREWINTER' }: CassetteLoaderProps) {
   return (
     <svg
       viewBox="0 0 120 80"
@@ -69,7 +70,7 @@ export default function CassetteLoader({ className }: CassetteLoaderProps) {
           identity, not a generic tape-deck caption. */}
       <rect x="22" y="56" width="76" height="14" rx="1.5" fill={LABEL_BG} />
       <text x="60" y="66" textAnchor="middle" fontSize="6.5" fontWeight="700" fontFamily="'Courier New', monospace" fill={LABEL_TEXT} letterSpacing="0.5">
-        GOREWINTER
+        {label}
       </text>
     </svg>
   );
