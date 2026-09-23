@@ -96,12 +96,12 @@ export default function IntensitySlider({ value, onChange, onClear }: IntensityS
   return (
     <div className="w-full max-w-[280px] max-[480px]:max-w-full flex flex-col gap-2">
       <div className="flex items-center gap-3">
-        <span className="text-[10px] font-medium uppercase" style={{ letterSpacing: '0.1em', color: '#5c584f' }}>
+        <span className="text-[12px] font-medium uppercase" style={{ letterSpacing: '0.1em', color: '#5c584f' }}>
           {isFinnish ? 'Vitutusmittari' : 'Intensity'}
         </span>
         <div className="ml-auto flex items-center gap-2.5">
           <span
-            className={cn('text-[11px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
+            className={cn('text-[13px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
             style={{ letterSpacing: '0.04em', color: tierInfo?.color }}
           >
             {isFinnish
