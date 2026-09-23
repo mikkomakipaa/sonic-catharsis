@@ -23,11 +23,15 @@ export const TEXT_DECORATIVE = '#a6a297'; // NOT for text — divider lines, ina
 // headers (incident label, classification prompt, intensity prompt) — one
 // token so all three stay visually identical instead of three separately
 // hand-tuned inline styles (which is how they drifted apart originally).
+// These are questions, not captions: weight 700 and TEXT_SECONDARY (not
+// TEXT_TERTIARY) give them more authority than the answer/category labels
+// below them, which stay at 500 — a deliberate question > answer contrast,
+// not a mistake to reconcile with the category labels' weight.
 export const SECTION_LABEL_STYLE = {
   fontSize: '11px',
-  fontWeight: 600,
+  fontWeight: 700,
   letterSpacing: '0.12em',
-  color: TEXT_TERTIARY,
+  color: TEXT_SECONDARY,
 } as const;
 
 // Shared "carved into obsidian" panel styling — no raised card edges, the
