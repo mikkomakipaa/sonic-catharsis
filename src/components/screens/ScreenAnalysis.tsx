@@ -123,7 +123,6 @@ export default function ScreenAnalysis({
 
               <div className="flex gap-6 flex-wrap text-[11px] max-[480px]:text-[12px]" style={{ color: INK_SOFT, margin: '10px 0 4px' }}>
                 <span><b style={{ color: INK, fontWeight: 600 }}>Diagnosis:</b> {diagnosisLabel}, Code {stage.roman}</span>
-                <span><b style={{ color: INK, fontWeight: 600 }}>Attending:</b> Dr. Catharsis, M.D.</span>
               </div>
 
               {cause && (
