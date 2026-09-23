@@ -51,7 +51,11 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
   return (
     <div
       key={playlist.id}
-      className="w-full max-w-sm rounded-sm animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]"
+      // Wider cap on mobile (~440px, this is the payoff of the whole
+      // interaction and should dominate the screen there) than on desktop
+      // (max-w-sm/384px, where it sits side-by-side with the receipt and
+      // shouldn't balloon past a reasonable document width).
+      className="w-full max-w-[440px] sm:max-w-sm rounded-sm animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]"
       style={{
         background: PAPER_BG,
         color: PAPER_INK,
@@ -75,13 +79,13 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
 
       <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
 
-      <div className="flex items-center justify-between px-5 max-[480px]:px-6 py-2 text-[9px] max-[480px]:text-[12px]">
+      <div className="flex items-center justify-between px-5 max-[480px]:px-6 py-2 text-[9px] max-[480px]:text-[13px]">
         <span>PATIENT: {(triggerLabel || 'unknown').toUpperCase()}</span>
         <span>DATE: {formatDate()}</span>
       </div>
 
       {stage && stage.index > 0 && (
-        <div className="px-5 max-[480px]:px-6 pb-2 text-[9px] max-[480px]:text-[12px]">
+        <div className="px-5 max-[480px]:px-6 pb-2 text-[9px] max-[480px]:text-[13px]">
           CONDITION: STAGE {stage.roman} — {stage.name.toUpperCase()}
         </div>
       )}
@@ -89,7 +93,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
       <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
 
       <div
-        className="px-5 max-[480px]:px-6 py-3 text-[9px] max-[480px]:text-[12px] uppercase text-[#6b6b66] max-[480px]:text-[#4a4a46]"
+        className="px-5 max-[480px]:px-6 py-3 text-[9px] max-[480px]:text-[13px] uppercase text-[#6b6b66] max-[480px]:text-[#4a4a46]"
         style={{ letterSpacing: '0.5px' }}
       >
         Sig: Take ten (10) bands. Repeat as needed. No known cure.
