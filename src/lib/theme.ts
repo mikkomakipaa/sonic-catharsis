@@ -136,38 +136,26 @@ export const STAGES: Stage[] = [
   { index: 9, roman: 'IX', name: 'Vitutus maximus', color: '#7dd3fc' },
 ];
 
-// --- Deterministic stage selection: (emotion, stressValue) -> Stage --------
-// Intensity (the user's own "how bad is it" 0-10 slider) is the dominant
-// driver — it alone spans nearly the full I-IX range. Emotion only applies a
-// small flavor tilt on top, never a hard floor or ceiling. An earlier
-// version gave each emotion a widely-spread "base" stage (1 through 9) and
-// let stress only nudge it by +/-2: that trapped every emotion in a narrow
-// band regardless of reported intensity — trust could never exceed Stage
-// III even at max intensity, sadness could never drop below Stage VII even
-// at the minimum, anger's floor alone was Stage V. A "2/10" injustice
-// reading landed on Stage V (Kova vitutus) purely because anger's base was
-// high, not because the user reported anything severe. Tilts are kept small
-// (+/-1, sadness +2) so the emotion's character still comes through without
-// overriding what the user actually said.
-const EMOTION_STAGE_TILT: Record<EmotionType, number> = {
-  trust: -1,
-  joy: -1,
-  anticipation: 0,
-  surprise: 0,
-  fear: 1,
-  disgust: 1,
-  anger: 1,
-  // Sadness keeps its own deliberate skew toward the top — stage IX is
-  // meant to read as cold and numb, not just "most severe," and frozen
-  // grief fits an icy "vitutus maximus" better than hot fury or revulsion.
-  sadness: 2,
-};
-
+// --- Deterministic stage selection: stressValue -> Stage --------------------
+// Intensity (the user's own "how bad is it" 0-10 slider) is the *only*
+// driver — no per-emotion tilt. An earlier version gave each emotion a
+// widely-spread "base" stage and let stress only nudge it by +/-2 (or, in a
+// later revision, a small +/-1/+2 tilt on top of intensity): both versions
+// let two people who report the same intensity land on different stage
+// numbers depending on which emotion they picked, which drifted out of sync
+// with getDeterministicGenre()'s own per-emotion severity curve in
+// genre-mapping.ts once that curve was independently smoothed (tier 5 tuned
+// to read as "genuinely moderate" for every emotion). Emotion's character
+// now comes through entirely via the genre table's own per-emotion,
+// per-tier entries — this stage number is a plain, emotion-agnostic reading
+// of "how deep" so it can never disagree with the rail/header that display
+// it, or read more/less extreme than the genre curve implies at the same
+// intensity.
 export function getActiveStage(emotion: EmotionType | null, stressValue: number | null): Stage {
   if (!emotion) return SURFACE;
   const intensity = stressValue ?? 5;
   const intensityStage = 1 + (intensity / MAX_STRESS_INTENSITY) * 8; // 0-10 -> 1-9, continuous
-  const idx = Math.min(9, Math.max(1, Math.round(intensityStage + EMOTION_STAGE_TILT[emotion])));
+  const idx = Math.min(9, Math.max(1, Math.round(intensityStage)));
   return STAGES[idx - 1];
 }
 
