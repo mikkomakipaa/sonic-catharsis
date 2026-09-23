@@ -53,7 +53,12 @@ export default function StateOfMindPanel({
               }
             }}
             placeholder="What exactly ruined an otherwise perfectly acceptable day?"
-            className="w-full px-5 py-4 rounded-md text-sm text-center resize-none focus:outline-none focus:ring-1 transition-all duration-200 font-normal focus:ring-[#c98a4b]/30 placeholder-[#726c5d]"
+            // text-sm (14px) is below iOS Safari's 16px auto-zoom threshold
+            // for focused text inputs — it zooms in on focus and doesn't
+            // zoom back out on blur. max-[480px]:text-base keeps this at
+            // 16px on the phone widths where that kicks in, leaving desktop
+            // typography untouched.
+            className="w-full px-5 py-4 rounded-md text-sm max-[480px]:text-base text-center resize-none focus:outline-none focus:ring-1 transition-all duration-200 font-normal focus:ring-[#c98a4b]/30 placeholder-[#726c5d]"
             style={{
               fontFamily: 'var(--font-geist-sans)',
               lineHeight: '1.5',
