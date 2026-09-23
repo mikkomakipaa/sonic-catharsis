@@ -28,6 +28,14 @@ const INK_SOFT = '#4a473f';
 const STEEL = '#8a8577';
 const CORAL = '#bd5d4c';
 
+// "Get Prescription" button only — a filled pale terracotta/prescription-
+// pink treatment, distinct from the cream-fill/coral-outline pattern used
+// elsewhere, so this one CTA reads as the ritual's actual pivot action.
+const RX_BUTTON_BG = '#f3e2dc';
+const RX_BUTTON_BG_HOVER = '#eed3ca';
+const RX_BUTTON_BORDER = '#c99184';
+const RX_BUTTON_TEXT = '#7a3d2e';
+
 export default function ScreenAnalysis({
   stage,
   triggerLabel,
@@ -160,22 +168,24 @@ export default function ScreenAnalysis({
           </div>
 
           {/* Narrow, centered action — a ritual step, not a form submit
-              control spanning the page. Cream fill, thin coral border. */}
+              control spanning the page. Filled pale terracotta, not the
+              cream-fill/coral-outline pattern other buttons use — this is
+              the ritual's actual pivot action. */}
           <button
             onClick={onContinue}
             className="mt-7 mx-auto w-full max-w-[280px] py-3.5 font-semibold text-sm uppercase tracking-wide transition-all duration-200 flex items-center justify-center gap-2 rounded-lg active:scale-[0.98]"
             style={{
               transition: `all 0.2s ${EASE}`,
               letterSpacing: '0.08em',
-              background: PAPER_LIGHT,
-              color: CORAL,
-              border: `1px solid ${CORAL}`,
-              boxShadow: 'none',
+              background: RX_BUTTON_BG,
+              color: RX_BUTTON_TEXT,
+              border: `1px solid ${RX_BUTTON_BORDER}`,
+              boxShadow: `0 2px 6px -2px ${RX_BUTTON_BORDER}40`,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = `${CORAL}14`)}
-            onMouseLeave={(e) => (e.currentTarget.style.background = PAPER_LIGHT)}
+            onMouseEnter={(e) => (e.currentTarget.style.background = RX_BUTTON_BG_HOVER)}
+            onMouseLeave={(e) => (e.currentTarget.style.background = RX_BUTTON_BG)}
           >
-            <Pill className="h-4 w-4" />
+            <Pill className="h-4 w-4" style={{ color: CORAL }} />
             Get Prescription
           </button>
 
