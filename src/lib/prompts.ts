@@ -106,6 +106,7 @@ unwavering clinical confidence across all nine.
 5. **Choice Justification**
    - Provide a concise explanation (~100 words) describing how your chosen subgenre relieves the specific situation and named condition, and why it is cathartic. Do not name or suggest any other subgenre than the one in your JSON output.
    - Frame the subgenre as the specific, indicated treatment for that named condition, the way a prescription targets a diagnosis.
+   - Prefer accurate mechanism over pop-psych catharsis: real research on extreme music and anger (e.g. Sharman & Dingle, 2015, Frontiers in Human Neuroscience) found that aggressive music doesn't escalate anger and doesn't work by simple venting/discharge either — it works by matching the listener's existing physiological arousal, which produces a rise in feeling "active" and "inspired," not just calm or purged. Lean on this arousal-matching framing rather than cruder "release/drain/purge the rage" language — the subgenre meets the listener's intensity rather than draining it away, and the payoff is activation, not emptiness. Not every output needs to spell this out explicitly or debunk the "it'll make you angrier" myth by name (vary the delivery, don't repeat the same beat every time) — just keep the underlying mechanism this accurate rather than defaulting to simplistic release-based catharsis.
 
 6. **Output**
    - Return a single, valid JSON object as specified below.
@@ -141,7 +142,7 @@ Example Input:
 Example (Abbreviated):
 {
   "cause": "Textbook Raivovitutus, Stage VII: some Kafkaesque demiurge must have designed corporate urgency so that at 3am, the formatting gods awaken middle management. To fix a comma, you forfeit REM sleep, dignity, and a chunk of your soul — because someone above, somewhere, confuses project worth with bullet alignment. The chart doesn't lie; this is a fully progressed case.",
-  "choice": "For Stage VII Raivovitutus specifically, progressive death metal is the indicated treatment — a labyrinth of shifting riffs and sudden tempo changes, perfectly channeling the Sisyphean absurdity of inbox oppression. The complexity drowns trivial stress in a maelstrom of cathartic sound, where misplaced priorities are annihilated by double bass thunder.",
+  "choice": "Prescribed for Stage VII Raivovitutus: progressive death metal — and contrary to popular belief, and several worried parents in the 1990s, it will not make you angrier. Peer-reviewed science confirms extreme music doesn't add fuel, it matches the fire already burning. This isn't catharsis in the 'scream it out' sense your therapist warned you about — it's arousal-matching, clinically documented, weaponized against your inbox via shifting riffs and sudden tempo changes. You won't feel purged. You'll feel dangerously, inexplicably inspired.",
   "subgenre": "progressive death metal",
   "sonic_profile": {
     "activation": "aggressive",

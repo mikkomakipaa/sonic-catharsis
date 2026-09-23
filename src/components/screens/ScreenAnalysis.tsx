@@ -143,6 +143,20 @@ export default function ScreenAnalysis({
                   <p className="m-0 max-w-[62ch] min-w-0 break-words text-[13.5px] max-[480px]:text-[19px] leading-[1.55]" style={{ color: INK_SOFT }}>{choice}</p>
                 </div>
               )}
+
+              {/* Second "real" citation, same deadpan-legitimate spirit as
+                  the Vitutus study QR on ReceiptCard — small print, no QR
+                  this time, easy to skim past unless you're actually
+                  reading the fine print. Echoes the "matching, not venting"
+                  beat from the choice text above. */}
+              {choice && (
+                <p
+                  className="uppercase m-0 mt-4 pt-3 text-[8.5px] max-[480px]:text-[10px] leading-[1.5]"
+                  style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.03em', color: STEEL, borderTop: `1px solid ${INK}1a` }}
+                >
+                  Treatment protocol per Sharman &amp; Dingle (2015), Front. Hum. Neurosci. — extreme music does not escalate anger; it matches it.
+                </p>
+              )}
             </div>
           </div>
 
