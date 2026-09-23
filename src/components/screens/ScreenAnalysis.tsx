@@ -61,8 +61,12 @@ export default function ScreenAnalysis({
 
       <div className={isLoading ? undefined : 'mt-6'}>
       {isLoading ? (
-        <div className="text-center py-10">
-          <CassetteLoader className="mx-auto mb-4" />
+        // min-h + flex centering (not the page shell's min-h-dvh — this is
+        // a transient, non-scrolling state, so it doesn't carry the same
+        // Safari toolbar-jump risk) so the loader sits in the visual middle
+        // of the screen instead of pinned to the top with dead space below.
+        <div className="min-h-[65dvh] flex flex-col items-center justify-center text-center">
+          <CassetteLoader className="mx-auto mb-6" />
           <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>{loadingMessage}</h3>
           <p className="text-xs" style={{ color: '#7d7869' }}>This won&apos;t take long</p>
         </div>
