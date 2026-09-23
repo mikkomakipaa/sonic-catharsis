@@ -1,6 +1,6 @@
 'use client';
 
-import { Pill, ArrowLeft, RefreshCw } from 'lucide-react';
+import { ArrowLeft, RefreshCw } from 'lucide-react';
 import { EASE, Stage } from '@/lib/theme';
 import StageHeader from '@/components/StageHeader';
 import DescentRail from '@/components/DescentRail';
@@ -26,7 +26,6 @@ const PAPER_LIGHT = '#f6f3ea';
 const INK = '#2b2a26';
 const INK_SOFT = '#4a473f';
 const STEEL = '#8a8577';
-const CORAL = '#bd5d4c';
 
 // "Get Prescription" button only — a filled pale terracotta/prescription-
 // pink treatment, distinct from the cream-fill/coral-outline pattern used
@@ -35,6 +34,26 @@ const RX_BUTTON_BG = '#f3e2dc';
 const RX_BUTTON_BG_HOVER = '#eed3ca';
 const RX_BUTTON_BORDER = '#c99184';
 const RX_BUTTON_TEXT = '#7a3d2e';
+
+// Two-tone capsule for the Get Prescription button — flat colors (no
+// gradient) split down the capsule's own long axis, matching a real pill's
+// two halves rather than a generic single-color outline icon.
+function CapsuleIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <defs>
+        <clipPath id="capsuleClip">
+          <rect x="2" y="9" width="20" height="6" rx="3" transform="rotate(-45 12 12)" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#capsuleClip)">
+        <rect x="2" y="9" width="10" height="6" fill="#c85f4d" transform="rotate(-45 12 12)" />
+        <rect x="12" y="9" width="10" height="6" fill="#e59a5b" transform="rotate(-45 12 12)" />
+      </g>
+      <rect x="2" y="9" width="20" height="6" rx="3" fill="none" stroke="#a8503f" strokeWidth="1.2" transform="rotate(-45 12 12)" />
+    </svg>
+  );
+}
 
 export default function ScreenAnalysis({
   stage,
@@ -185,7 +204,7 @@ export default function ScreenAnalysis({
             onMouseEnter={(e) => (e.currentTarget.style.background = RX_BUTTON_BG_HOVER)}
             onMouseLeave={(e) => (e.currentTarget.style.background = RX_BUTTON_BG)}
           >
-            <Pill className="h-4 w-4" style={{ color: CORAL }} />
+            <CapsuleIcon className="h-4 w-4" />
             Get Prescription
           </button>
 
