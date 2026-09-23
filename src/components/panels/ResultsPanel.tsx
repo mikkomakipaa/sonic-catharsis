@@ -25,11 +25,12 @@ const PAPER_INK = '#2a2a28';
 
 export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage }: ResultsPanelProps) {
   if (!playlist) {
+    // No background/border box — matches the analysis screen's own loading
+    // state (ScreenAnalysis.tsx), which is plain, so a loading state never
+    // looks like two different treatments depending on which screen it's
+    // on. See docs/design_guidelines.md → Loading States.
     return (
-      <div
-        className="h-full flex items-center justify-center rounded-md"
-        style={{ background: '#f2efe7', border: '1px solid #e6e2d8' }}
-      >
+      <div className="h-full flex items-center justify-center">
         <div className="text-center p-8">
           {isProcessing && !isAnalyzing && reasoning ? (
             <>

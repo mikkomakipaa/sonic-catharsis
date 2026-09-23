@@ -143,7 +143,7 @@ Use these; don't create parallel versions.
 
 **IntensitySlider** — only ever mounts once a category is selected (see Progressive Disclosure below); no "disabled" visual state exists for it. Discrete 0–9 dial + a hidden "ELEVEN" zone past the track's right edge.
 
-**CassetteLoader** (`CassetteLoader.tsx`) — the loading-state hero element, not a decorative icon: `w-32` (128px) mobile / `140px` desktop, spinning reels + draining tape, a bold monospace label (`label` prop, defaults to `"GOREWINTER"`). Use a second instance with a different `label` when a loading state represents more than one thing happening (see `ResultsPanel.tsx`'s dual-cassette "Almost there" state) — don't invent a different loader for that case.
+**CassetteLoader** (`CassetteLoader.tsx`) — the loading-state hero element, not a decorative icon: `aspect-[3/2]`, sized `w-4/5` (capped `max-w-[280px]`) on mobile so it scales to whichever container it's in, fixed `220px` on desktop; spinning reels + draining tape, a bold monospace label (`label` prop, defaults to `"GOREWINTER"`; `ResultsPanel.tsx`'s "Almost there" state passes `"INEARTHED"` so the two loading moments read as distinct releases, not a repeated asset). See Loading States below for the no-background-box rule shared by both usages.
 
 **Document cards** — three variants, each self-contained:
 - **Epicrisis** (`ScreenAnalysis.tsx`): cause/choice diagnosis text, paper `#f6f3ea`.
@@ -166,6 +166,14 @@ The landing page reveals in stages rather than showing the full form (including 
 3. Reset stays available independent of that reveal — it must work the moment there's *any* input to clear (even just typed text, no category yet).
 
 Apply this same principle to any future multi-step input: don't show a disabled control for a step that isn't reachable yet — don't render it at all until it's reachable.
+
+---
+
+## Loading States
+
+There are two cassette-loader moments in the app (the analysis screen's own full-screen loading state, and `ResultsPanel`'s "Almost there" state while the curator call is in flight) — **both are plain, no background/border box.** `ScreenAnalysis.tsx`'s loading state was always plain; `ResultsPanel.tsx`'s used to sit inside a `bg-[#f2efe7] border` box, which made the two loading moments read as two different treatments depending on which screen you were on. Fixed by removing the box, not by adding one to the other — a loading state is a transient, content-free moment; it doesn't need card chrome.
+
+**Rule:** any future loading state reuses this plain treatment (centered column, no card wrapper) unless there's a specific reason a given screen's loading state needs to look like a document/card (none currently do).
 
 ---
 
