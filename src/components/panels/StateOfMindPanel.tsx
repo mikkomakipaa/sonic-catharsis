@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { ArrowDownToLine, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EASE, CTA_BACKGROUND, CTA_SHADOW, CTA_TEXT_SHADOW, CTA_TEXT_COLOR } from '@/lib/theme';
@@ -33,6 +34,7 @@ export default function StateOfMindPanel({
   onReset,
 }: StateOfMindPanelProps) {
   const showReset = Boolean(selection || incidentText);
+  const [isIncidentFocused, setIsIncidentFocused] = useState(false);
 
   return (
     <div className="flex flex-col items-center">
@@ -52,7 +54,12 @@ export default function StateOfMindPanel({
                 if (canSubmit) onSubmit();
               }
             }}
-            placeholder="What exactly ruined an otherwise perfectly acceptable day?"
+            onFocus={() => setIsIncidentFocused(true)}
+            onBlur={() => setIsIncidentFocused(false)}
+            // Cleared on focus, not just on typing — the placeholder is
+            // instructional copy for the empty state, not something that
+            // should still crowd the box once the user has tapped in.
+            placeholder={isIncidentFocused ? '' : 'What exactly ruined an otherwise perfectly acceptable day?'}
             // text-sm (14px) is below iOS Safari's 16px auto-zoom threshold
             // for focused text inputs — it zooms in on focus and doesn't
             // zoom back out on blur. max-[480px]:text-base keeps this at
