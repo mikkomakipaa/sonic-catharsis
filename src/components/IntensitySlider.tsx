@@ -44,6 +44,13 @@ function tierForClientX(clientX: number, rect: DOMRect): number {
 export default function IntensitySlider({ value, onChange, onClear }: IntensitySliderProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
+  // Vitutusmittari easter egg — undetectable server-side, so this starts
+  // false (matching SSR) and only flips after mount if the browser's own
+  // locale is Finnish. Nothing else about the control changes.
+  const [isFinnish, setIsFinnish] = useState(false);
+  useEffect(() => {
+    setIsFinnish(navigator.language?.toLowerCase().startsWith('fi') ?? false);
+  }, []);
 
   const updateFromPointer = useCallback((clientX: number) => {
     const rect = trackRef.current?.getBoundingClientRect();
@@ -90,14 +97,16 @@ export default function IntensitySlider({ value, onChange, onClear }: IntensityS
     <div className="w-full max-w-[280px] max-[480px]:max-w-full flex flex-col gap-2">
       <div className="flex items-center gap-3">
         <span className="text-[10px] font-medium uppercase" style={{ letterSpacing: '0.1em', color: '#5c584f' }}>
-          Intensity
+          {isFinnish ? 'Vitutusmittari' : 'Intensity'}
         </span>
         <div className="ml-auto flex items-center gap-2.5">
           <span
             className={cn('text-[11px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
             style={{ letterSpacing: '0.04em', color: tierInfo?.color }}
           >
-            {atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/{MAX_STRESS_INTENSITY}
+            {isFinnish
+              ? tierInfo?.labelFi
+              : `${atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/${MAX_STRESS_INTENSITY}`}
           </span>
           <button
             onClick={onClear}

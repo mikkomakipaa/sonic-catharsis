@@ -68,21 +68,26 @@ export const MAX_STRESS_INTENSITY = 10;
 // fed to the matcher/curator prompts — not for display.
 export const TOTAL_INTENSITY_LEVELS = MAX_STRESS_INTENSITY + 1;
 
-export const STRESS_TIERS: { label: string; color: string }[] = [
-  { label: 'Intolerable lightness', color: '#10b981' },
-  { label: 'Low', color: '#22c55e' },
-  { label: 'Optimum', color: '#84cc16' },
-  { label: 'Moderate', color: '#eab308' },
-  { label: 'Overload', color: '#f97316' },
-  { label: 'Burnout', color: '#ea580c' },
-  { label: 'Breaking Point', color: '#dc2626' },
-  { label: 'Multi-climax', color: '#991b1b' },
-  { label: 'Total Meltdown', color: '#7f1d1d' },
-  { label: 'Point of No Return', color: '#581c87' },
+// labelFi: an undocumented "Vitutusmittari" easter egg — real, colloquial
+// Finnish anger-escalation slang, distinct from the STAGES' own "vitutus"
+// compounds (Kytevä vitutus, Raivovitutus, etc.) so the two vocabularies
+// don't collide. Only ever shown to a detected fi-* browser locale — see
+// IntensitySlider.tsx. Never sent to the matcher/curator prompts.
+export const STRESS_TIERS: { label: string; labelFi: string; color: string }[] = [
+  { label: 'Intolerable lightness', labelFi: 'Turhauma', color: '#10b981' },
+  { label: 'Low', labelFi: 'Kiukku', color: '#22c55e' },
+  { label: 'Optimum', labelFi: 'Ärsytys', color: '#84cc16' },
+  { label: 'Moderate', labelFi: 'Suutus', color: '#eab308' },
+  { label: 'Overload', labelFi: 'Vituttaa', color: '#f97316' },
+  { label: 'Burnout', labelFi: 'Raivo', color: '#ea580c' },
+  { label: 'Breaking Point', labelFi: 'Täysi raivo', color: '#dc2626' },
+  { label: 'Multi-climax', labelFi: 'Vimma', color: '#991b1b' },
+  { label: 'Total Meltdown', labelFi: 'Vittuuntuminen', color: '#7f1d1d' },
+  { label: 'Point of No Return', labelFi: 'Täysvittuuntuminen', color: '#581c87' },
   // ELEVEN breaks the low->high color ramp on purpose — it sits outside the
   // normal radial band entirely, so it gets a shock color instead of the
   // next shade of dark red, matching the special emphasis in the CTA.
-  { label: 'ELEVEN', color: '#fbbf24' },
+  { label: 'ELEVEN', labelFi: 'Ylivitutus', color: '#fbbf24' },
 ];
 
 // The matcher/curator prompts expect a human-readable stress *description*
