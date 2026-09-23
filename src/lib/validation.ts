@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// Plutchik's 8 basic emotions, as 4 opposing pairs
+// 8 basic emotions, as 4 opposing pairs
 export const CoreEmotions = [
   'joy', 'trust', 'fear', 'surprise',
   'sadness', 'disgust', 'anger', 'anticipation'

@@ -44,14 +44,14 @@ export function getTriggerMeta(type: TriggerType): TriggerMeta {
   return meta;
 }
 
-// Deliberate 1:1 anchor into the existing Plutchik-keyed engine — chosen for
+// Deliberate 1:1 anchor into the existing emotion-keyed engine — chosen for
 // tonal fit, not severity. E.g. absurdity -> joy lets a darkly funny, low-
 // stakes situation land in the wry/upbeat corner of the genre matrix instead
 // of being forced into "anger" just because it's still annoying.
-// `unclassified` isn't a real 9th Plutchik emotion — it reuses `trust`
-// (exhaustion's anchor), the mildest/lowest-stage emotion in the map, as a
-// deliberately neutral default for a situation the user declined to
-// classify rather than inventing a spurious distinct reading for it.
+// `unclassified` isn't a real 9th emotion in the engine's vocabulary — it
+// reuses `trust` (exhaustion's anchor), the mildest/lowest-stage emotion in
+// the map, as a deliberately neutral default for a situation the user
+// declined to classify rather than inventing a spurious distinct reading for it.
 const TRIGGER_TO_EMOTION: Record<TriggerType, EmotionType> = {
   injustice: 'anger',
   conflict: 'disgust',

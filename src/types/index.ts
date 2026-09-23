@@ -28,7 +28,7 @@ export interface TriggerSelection {
 }
 
 // --- Internal recommendation-engine model ------------------------------------
-// Plutchik's 8 basic emotions. This is NOT the user-facing input model above
+// 8 basic emotions, as 4 opposing pairs. This is NOT the user-facing input model above
 // — nothing in the UI asks "which emotion". It's the vocabulary the
 // deterministic genre-mapping engine, matcher/curator prompts, and API
 // contracts are still keyed on. TriggerType is translated into this via

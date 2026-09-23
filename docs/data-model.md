@@ -54,7 +54,7 @@ artifact of the same top value, not a new intensity level.
 ## 2. Translation layer — Trigger → legacy Emotion
 
 The recommendation engine (Stage computation, the anchor genre table, the
-Matcher/Curator prompts) is still keyed on Plutchik's 8 basic emotions
+Matcher/Curator prompts) is still keyed on 8 basic emotions
 (`CoreEmotionType` / `EmotionType`, `src/types/index.ts`), because rewriting
 that engine wasn't in scope when the input model changed from
 emotion-first to situation-first. `trigger.ts`'s `triggerToEmotion()` is the
@@ -68,7 +68,7 @@ conflict: 'disgust',     exhaustion: 'trust',
 failure: 'sadness',      uncertainty: 'anticipation',
 helplessness: 'fear',    absurdity: 'joy',
 unclassified: 'trust',   // reuses exhaustion's anchor — a deliberately
-                         // neutral default, not a real 9th Plutchik emotion
+                         // neutral default, not a real 9th emotion
 ```
 
 Both the trigger *and* its legacy-emotion translation are sent to the

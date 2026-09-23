@@ -137,7 +137,7 @@ uncertainty · absurdity · unclassified
 ```
 
 Internally, each trigger has a compatibility translation into one of
-Plutchik's 8 basic emotions (`triggerToEmotion()`, `src/lib/trigger.ts`) —
+8 basic emotions (`triggerToEmotion()`, `src/lib/trigger.ts`) —
 the recommendation engine's Stage formula and anchor genre table are still
 keyed on that internal vocabulary, but the Matcher is told explicitly to
 weigh the user's actual trigger and incident text over this lossy

@@ -1,6 +1,6 @@
 // Now serves as the Matcher's anchor_subgenre — a stabilizing prior, not a
 // forced answer (see src/app/api/matcher/route.ts and src/lib/prompts.ts).
-// Plutchik's 8 basic emotions x 11 intensity tiers (0-10, "these go to
+// 8 basic emotions x 11 intensity tiers (0-10, "these go to
 // eleven"). joy/sadness/anger tiers 0-7 are copied verbatim from
 // data/full_mapping_matrix.json (happy/sad/angry rows); everything else —
 // tiers 8-10 for every emotion, and all 11 tiers for trust/fear/disgust/
