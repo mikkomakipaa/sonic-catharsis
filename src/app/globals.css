@@ -145,16 +145,6 @@
   }
 }
 
-/* Hides the scrollbar on the horizontally-scrollable Descent rail (mobile)
-   while keeping the element scrollable. */
-.scrollbar-none {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-
 /* THE RITE — obsidian/blood-red palette. No light mode. */
 :root {
   --radius: 0.375rem;

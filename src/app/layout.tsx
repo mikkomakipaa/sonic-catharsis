@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Special_Elite, IBM_Plex_Sans, IBM_Plex_Mono, Fraunces } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -50,6 +50,15 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   title: "Sonic Catharsis",
   description: "AI-powered emotion detection with personalized metal music curation",
+};
+
+// viewport-fit=cover lets the page reach under the iOS Safari safe areas
+// instead of leaving a hard edge there; userScalable stays enabled (never
+// disable pinch-zoom).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

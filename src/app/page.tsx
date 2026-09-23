@@ -241,7 +241,7 @@ export default function Home() {
   return (
     <div
       ref={pageRef}
-      className="min-h-screen relative"
+      className="min-h-dvh relative"
       style={
         {
           background: '#f7f5f0',

@@ -7,9 +7,16 @@
 // so the shell reads as a deliberate espresso-toned object against the
 // cream page background instead of a flat, hard-to-parse dark box.
 
+import { cn } from '@/lib/utils';
+
 interface CassetteLoaderProps {
   className?: string;
 }
+
+// The hero element of the loading state, not a decorative icon — sized
+// accordingly. 120x80 viewBox (3:2) kept exact via aspect-ratio so width
+// alone drives sizing at each breakpoint.
+const SIZE_CLASSES = 'w-32 h-[85.3px] sm:w-[140px] sm:h-[93.3px]';
 
 const SHELL = '#2f231f';
 const SHELL_BORDER = '#5a4a42';
@@ -39,8 +46,7 @@ export default function CassetteLoader({ className }: CassetteLoaderProps) {
   return (
     <svg
       viewBox="0 0 120 80"
-      className={className}
-      style={{ width: '64px', height: '43px' }}
+      className={cn(SIZE_CLASSES, className)}
       aria-hidden="true"
     >
       {/* Shell */}

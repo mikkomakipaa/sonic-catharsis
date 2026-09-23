@@ -33,7 +33,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         <div className="text-center p-8">
           {isProcessing && !isAnalyzing && reasoning ? (
             <>
-              <CassetteLoader className="mx-auto mb-4" />
+              <CassetteLoader className="mx-auto mb-6" />
               <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>Almost there</h3>
             </>
           ) : (

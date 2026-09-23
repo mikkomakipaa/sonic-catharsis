@@ -127,7 +127,7 @@ export default function ScreenAnalysis({
                   <h3 className="uppercase m-0 font-bold text-[13px] max-[480px]:text-[15px]" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.07em', marginBottom: 8 }}>
                     1. Incident Summary
                   </h3>
-                  <p className="m-0 max-w-[62ch] text-[13.5px] max-[480px]:text-[19px] leading-[1.55]" style={{ color: INK_SOFT }}>{cause}</p>
+                  <p className="m-0 max-w-[62ch] min-w-0 break-words text-[13.5px] max-[480px]:text-[19px] leading-[1.55]" style={{ color: INK_SOFT }}>{cause}</p>
                 </div>
               )}
 
@@ -136,7 +136,7 @@ export default function ScreenAnalysis({
                   <h3 className="uppercase m-0 font-bold text-[13px] max-[480px]:text-[15px]" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.07em', marginBottom: 8 }}>
                     2. Recommended Corrective Action
                   </h3>
-                  <p className="m-0 max-w-[62ch] text-[13.5px] max-[480px]:text-[19px] leading-[1.55]" style={{ color: INK_SOFT }}>{choice}</p>
+                  <p className="m-0 max-w-[62ch] min-w-0 break-words text-[13.5px] max-[480px]:text-[19px] leading-[1.55]" style={{ color: INK_SOFT }}>{choice}</p>
                 </div>
               )}
             </div>

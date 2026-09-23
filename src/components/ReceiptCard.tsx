@@ -96,13 +96,19 @@ export default function ReceiptCard({ stage, triggerLabel, stressLevel, subgenre
   })();
 
   return (
-    <div className="flex flex-col items-center gap-3.5">
+    <div className="flex flex-col items-center gap-3.5 w-full">
+      {/* Wrapper caps the receipt at its natural size on wide screens but
+          lets it shrink on any viewport narrower than RECEIPT_WIDTH + the
+          page gutters — the SVG itself scales via width/height set to
+          100%/auto against its viewBox, so nothing here can force
+          horizontal overflow. */}
       <svg
         ref={svgRef}
-        width={RECEIPT_WIDTH}
-        height={RECEIPT_HEIGHT}
+        width="100%"
+        height="auto"
         viewBox={`0 0 ${RECEIPT_WIDTH} ${RECEIPT_HEIGHT}`}
         xmlns="http://www.w3.org/2000/svg"
+        className="w-full max-w-[300px] min-w-0"
         style={{ filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.6))' }}
       >
         <rect x="0" y="0" width={RECEIPT_WIDTH} height={RECEIPT_HEIGHT - 10} fill="#e8e4d8" />
