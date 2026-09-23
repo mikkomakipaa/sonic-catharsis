@@ -52,7 +52,7 @@ export default function ScreenAnalysis({
           "Summoning the void..." undercuts the reveal. Header + rail only
           mount once there's an actual result (or an error) to anchor them. */}
       {!isLoading && (
-        <div className="flex flex-col gap-3 max-[480px]:gap-2">
+        <div className="flex flex-col gap-1.5 max-[480px]:gap-1">
           <StageHeader stage={stage} align="left" />
 
           <DescentRail activeIndex={stage.index} />

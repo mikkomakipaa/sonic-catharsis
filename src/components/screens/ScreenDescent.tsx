@@ -39,7 +39,7 @@ export default function ScreenDescent({
       {/* Same header cluster as the analysis screen — same left axis — so
           this reads as a continuation of the same descent, not a separate
           results page. Identity + rail grouped as one connected system. */}
-      <div className="flex flex-col gap-3 max-[480px]:gap-2">
+      <div className="flex flex-col gap-1.5 max-[480px]:gap-1">
         <StageHeader stage={stage} align="left" />
 
         <DescentRail activeIndex={stage.index} />

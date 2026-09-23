@@ -54,20 +54,11 @@ export default function DescentRail({ activeIndex }: DescentRailProps) {
                 >
                   {band.roman}
                 </span>
-                {/* Only the active stage spells out its name on desktop —
-                    on mobile the StageHeader directly above already shows
-                    the same name at large size, so repeating it here would
-                    be pure duplication; every other stage stays numeral-only
-                    either way so the rail reads as a progression at a
-                    glance instead of a wall of colliding labels. */}
-                {isActive && (
-                  <span
-                    className="text-[9px] uppercase tracking-wide mt-0.5 whitespace-nowrap max-[480px]:hidden"
-                    style={{ color: '#2b2a26', fontWeight: 700, letterSpacing: '0.05em' }}
-                  >
-                    {band.name}
-                  </span>
-                )}
+                {/* No active-stage name label here (there used to be one,
+                    desktop-only) — StageHeader directly above already shows
+                    the name at large size, so this was pure duplication.
+                    Every band stays numeral-only so the rail reads as a
+                    progression at a glance, not a wall of labels. */}
               </div>
             );
           })}
