@@ -1,10 +1,22 @@
-// Deterministic (emotion, stressValue) -> genre lookup, replacing the AI's
-// own subgenre pick. Plutchik's 8 basic emotions x 11 intensity tiers (0-10,
-// "these go to eleven"). joy/sadness/anger tiers 0-7 are copied verbatim
-// from data/full_mapping_matrix.json (happy/sad/angry rows); everything else
-// — tiers 8-10 for every emotion, and all 11 tiers for trust/fear/disgust/
+// Now serves as the Matcher's anchor_subgenre — a stabilizing prior, not a
+// forced answer (see src/app/api/matcher/route.ts and src/lib/prompts.ts).
+// Plutchik's 8 basic emotions x 11 intensity tiers (0-10, "these go to
+// eleven"). joy/sadness/anger tiers 0-7 are copied verbatim from
+// data/full_mapping_matrix.json (happy/sad/angry rows); everything else —
+// tiers 8-10 for every emotion, and all 11 tiers for trust/fear/disgust/
 // anticipation/surprise — is drafted content, reviewed and approved in
 // conversation rather than lifted from that file.
+//
+// Tiers 3-6 for fear/surprise/sadness/disgust/anger were retuned: the
+// original curve reached genuinely extreme-metal territory (raw/depressive/
+// suicidal black metal, brutal death metal, deathgrind) by tier 5 — the
+// midpoint, and also ClassificationGrid's DEFAULT_TIER, i.e. what most
+// submissions land on unless the user deliberately drags the slider. Tiers
+// 0-2 and 7-10 are unchanged; only the middle was smoothed so tier 5 reads
+// as genuinely moderate rather than already near-maximal. joy/trust/
+// anticipation weren't touched — their tier-5 anchors were already moderate
+// (progressive power metal / atmospheric prog metal / progressive death
+// metal respectively).
 
 import type { EmotionType } from '@/types';
 
@@ -44,10 +56,10 @@ const GENRE_MAP: Record<EmotionType, Record<number, GenreEntry>> = {
     0: { genre: 'gothic doom', fallback: 'atmospheric doom' },
     1: { genre: 'atmospheric black metal', fallback: 'gothic doom' },
     2: { genre: 'symphonic black metal', fallback: 'atmospheric black metal' },
-    3: { genre: 'dark ambient black metal', fallback: 'depressive black metal' },
-    4: { genre: 'depressive black metal', fallback: 'raw black metal' },
-    5: { genre: 'raw black metal', fallback: 'harsh noise black' },
-    6: { genre: 'black metal/noise hybrid', fallback: 'harsh drone' },
+    3: { genre: 'dark ambient black metal', fallback: 'atmospheric black metal' },
+    4: { genre: 'melodic black metal', fallback: 'dark ambient black metal' },
+    5: { genre: 'gothic black metal', fallback: 'melodic black metal' },
+    6: { genre: 'cold black metal', fallback: 'gothic black metal' },
     7: { genre: 'horror ambient/black fusion', fallback: 'harsh noise' },
     8: { genre: 'black noise', fallback: 'horror ambient/black fusion' },
     9: { genre: 'harsh noise wall', fallback: 'black noise' },
@@ -57,10 +69,10 @@ const GENRE_MAP: Record<EmotionType, Record<number, GenreEntry>> = {
     0: { genre: 'folk metal', fallback: 'power metal' },
     1: { genre: 'progressive metal', fallback: 'folk metal' },
     2: { genre: 'avant-garde metal', fallback: 'progressive metal' },
-    3: { genre: 'mathcore', fallback: 'avant-garde metal' },
-    4: { genre: 'technical death metal', fallback: 'mathcore' },
-    5: { genre: 'avant-garde death/black', fallback: 'technical death metal' },
-    6: { genre: 'dissonant black/prog fusion', fallback: 'avant-garde death' },
+    3: { genre: 'progressive metalcore', fallback: 'avant-garde metal' },
+    4: { genre: 'mathcore', fallback: 'progressive metalcore' },
+    5: { genre: 'technical death metal', fallback: 'mathcore' },
+    6: { genre: 'avant-garde death/black', fallback: 'technical death metal' },
     7: { genre: 'experimental noise/mathcore fusion', fallback: 'harsh noise' },
     8: { genre: 'dissonant death metal', fallback: 'experimental noise/mathcore fusion' },
     9: { genre: 'avant-garde grindcore', fallback: 'dissonant death metal' },
@@ -71,9 +83,9 @@ const GENRE_MAP: Record<EmotionType, Record<number, GenreEntry>> = {
     1: { genre: 'melodic doom', fallback: 'atmospheric doom' },
     2: { genre: 'death/doom', fallback: 'gothic metal' },
     3: { genre: 'funeral doom', fallback: 'sludge doom' },
-    4: { genre: 'atmospheric sludge', fallback: 'depressive black metal' },
-    5: { genre: 'depressive black metal', fallback: 'drone doom' },
-    6: { genre: 'suicidal black metal', fallback: 'dark ambient' },
+    4: { genre: 'atmospheric sludge', fallback: 'funeral doom' },
+    5: { genre: 'melancholic doom metal', fallback: 'atmospheric sludge' },
+    6: { genre: 'depressive black metal', fallback: 'melancholic doom metal' },
     7: { genre: 'harsh drone/black ambient', fallback: 'noise doom' },
     8: { genre: 'funeral drone', fallback: 'harsh drone/black ambient' },
     9: { genre: 'extreme doom drone', fallback: 'funeral drone' },
@@ -83,10 +95,10 @@ const GENRE_MAP: Record<EmotionType, Record<number, GenreEntry>> = {
     0: { genre: 'sludge metal', fallback: 'groove metal' },
     1: { genre: 'groove metal', fallback: 'sludge metal' },
     2: { genre: 'death/sludge', fallback: 'blackened sludge' },
-    3: { genre: 'brutal death metal', fallback: 'slam death' },
-    4: { genre: 'slam death', fallback: 'goregrind' },
-    5: { genre: 'deathgrind', fallback: 'slam' },
-    6: { genre: 'goregrind', fallback: 'noisegrind' },
+    3: { genre: 'blackened sludge', fallback: 'death/sludge' },
+    4: { genre: 'groove death metal', fallback: 'blackened sludge' },
+    5: { genre: 'brutal death metal', fallback: 'groove death metal' },
+    6: { genre: 'slam death', fallback: 'brutal death metal' },
     7: { genre: 'harsh noise/grind fusion', fallback: 'grindcore' },
     8: { genre: 'mincecore', fallback: 'harsh noise/grind fusion' },
     9: { genre: 'powerviolence', fallback: 'mincecore' },
@@ -98,8 +110,8 @@ const GENRE_MAP: Record<EmotionType, Record<number, GenreEntry>> = {
     2: { genre: 'death/thrash', fallback: 'melodic death' },
     3: { genre: 'melodic death metal', fallback: 'thrash' },
     4: { genre: 'blackened thrash', fallback: 'death metal' },
-    5: { genre: 'brutal death metal', fallback: 'slam' },
-    6: { genre: 'black metal', fallback: 'deathgrind' },
+    5: { genre: 'death metal', fallback: 'blackened thrash' },
+    6: { genre: 'brutal death metal', fallback: 'death metal' },
     7: { genre: 'war metal', fallback: 'grindcore' },
     8: { genre: 'war black metal', fallback: 'war metal' },
     9: { genre: 'bestial black metal', fallback: 'war black metal' },
