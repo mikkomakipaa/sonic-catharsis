@@ -143,7 +143,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
           className="text-[8px] max-[480px]:text-[11px] uppercase tracking-wide text-[#6b6b66] max-[480px]:text-[#4a4a46]"
           style={{ letterSpacing: '1px' }}
         >
-          M.D. (Metal Doctor) — refills: ∞
+          M.D. (Metal Doctor)
         </div>
       </div>
     </div>
