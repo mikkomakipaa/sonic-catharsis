@@ -1,32 +1,56 @@
 # Sonic Catharsis
 
-Metal Music Emotion Matching Application - AI-powered emotion detection with personalized metal music curation.
+A situation-first web app that turns a petty, everyday grievance into a
+clinically-deadpan "diagnosis" and a matching metal prescription — powered by
+a two-agent AI pipeline that derives a sonic profile from what you actually
+typed, not just two dropdowns.
 
 <img width="1287" height="797" alt="image" src="https://github.com/user-attachments/assets/ca3659ee-5793-461c-a853-9f2a5354a7a4" />
 
-
 ## Overview
 
-Sonic Catharsis analyzes your emotional state through an interactive UI and curates metal music recommendations that match your mood. The application uses a two-agent architecture combining OpenAI's GPT-4 for emotion analysis with intelligent metal subgenre matching.
+You describe an incident in your own words, pick the closest of 9 frustration
+categories (a 3×3 checkbox grid — not an emotion wheel), and rate how bad it
+is on a 0–10 scale. From there:
+
+1. **Matcher** reads your incident text and category, derives a 5-dimension
+   sonic profile (activation, agency, friction, cognitive density, weight),
+   picks a metal subgenre, and writes a darkly comic "Epicrisis" — a
+   diagnosis (`Stage I–IX`, Finnish "Vitutus" terminology) plus a
+   prescription rationale.
+2. **Curator** takes that sonic profile and subgenre and finds 10 real,
+   existing artists that deliver it — nothing else.
+
+Full architecture and derivation details live in [`docs/data-model.md`](docs/data-model.md)
+and [`docs/formulas.md`](docs/formulas.md).
 
 ## Features
 
-- **12-Emotion Wheel**: Interactive circular selector covering the full emotional spectrum
-- **Stress Level Selector**: 7-level philosophical stress intensity scale (none → overload)
-- **Two-Agent AI System**:
-  - **Agent 1 (Emotion Matcher)**: Psychologist + metal aficionado mapping emotions to subgenres via matrix
-  - **Agent 2 (Music Curator)**: 20 Curated artists using enriched artist database
-- **Mapping Matrix**: 96 emotion/stress combinations → specific metal subgenres
-- **Metal Subgenre Matching**: Intelligent mapping to 30+ nuanced subgenres (thrash, doom, black, power, etc.)
-- **Artist Database**: Curated metal artist collection with genre classifications
-- **Cathartic Reasoning**: Each recommendation includes psychological explanation + stress relief advice
+- **Situation-first intake**: a free-text incident field is the dominant
+  first interaction — not a category picker pretending to know how you feel.
+- **Trigger classification grid**: 9 categories (injustice, failure,
+  conflict, helplessness, overload, exhaustion, uncertainty, absurdity,
+  unclassified) as a plain, pseudo-clinical checkbox matrix.
+- **Two-agent AI pipeline**: Matcher (incident → sonic profile + subgenre +
+  diagnosis) and Curator (sonic profile + subgenre → 10 real artists),
+  entirely separate concerns — Curator never sees the incident, emotion, or
+  diagnosis.
+- **Anchor-guided, not hardcoded, genre selection**: a deterministic
+  `(emotion, intensity)` lookup table provides a stabilizing prior, but the
+  model can deviate from it when the incident text warrants it — genre isn't
+  a rigid 1:1 mapping.
+- **The Nine Stages of Vitutus**: a deterministic I–IX severity scale
+  (loosely inspired by a real, tongue-in-cheek Finnish "vitutus" study,
+  cited via QR on every receipt) computed from intensity and category.
+- **No fabricated links**: the Curator returns `null` rather than guessing a
+  plausible-looking Bandcamp URL when it isn't sure one exists.
 
 ## Tech Stack
 
-- **Frontend**: Next.js 15 + React + TypeScript
-- **Styling**: Tailwind CSS with glassmorphism design
-- **AI**: OpenAI GPT-4 for emotion detection
-- **Data**: Curated metal artist database with genre mappings
+- **Frontend**: Next.js 15 (App Router) + React + TypeScript + Tailwind CSS
+- **AI**: OpenAI Responses API (GPT-4.1), instructions owned in-repo
+  (`src/lib/prompts.ts`) — not hosted OpenAI Prompt Objects
+- **Validation**: Zod schemas for every API request/response shape
 - **Deployment**: Vercel-ready
 
 ## Getting Started
@@ -61,139 +85,149 @@ Visit [http://localhost:3001](http://localhost:3001) to use the application.
 ```
 soniccatharsis/
 ├── src/
-│   ├── app/                 # Next.js App Router
-│   │   ├── page.tsx         # Main UI
-│   │   ├── layout.tsx       # Root layout
-│   │   └── api/            # API Routes
-│   │       ├── matcher/route.ts      # Emotion analysis
-│   │       ├── curator/route.ts      # Music curation
-│   │       └── emotion-assistant/route.ts
+│   ├── app/
+│   │   ├── page.tsx                  # Orchestration: selection → analysis → descent
+│   │   ├── layout.tsx
+│   │   └── api/
+│   │       ├── matcher/route.ts      # Agent 1: incident → sonic profile + subgenre + diagnosis
+│   │       └── curator/route.ts      # Agent 2: sonic profile + subgenre → 10 artists
 │   ├── components/
-│   │   ├── EmotionWheel.tsx          # 12-emotion selector
-│   │   └── StressSelector.tsx        # Stress level slider
+│   │   ├── ClassificationGrid.tsx    # 3x3 trigger-category checkbox matrix
+│   │   ├── IntensitySlider.tsx       # 0-10 intensity control (hidden 11th "ELEVEN" tier)
+│   │   ├── StageHeader.tsx           # "Stage VII — Raivovitutus" display
+│   │   ├── DescentRail.tsx           # I-IX progress rail
+│   │   ├── ReceiptCard.tsx           # Printable receipt (Vitutus study QR)
+│   │   ├── panels/                   # StateOfMindPanel, ResultsPanel
+│   │   └── screens/                  # ScreenSelection, ScreenAnalysis, ScreenDescent
 │   ├── lib/
-│   │   ├── agent-orchestrator.ts     # Two-agent coordinator
-│   │   ├── openai-emotion-agent.ts   # OpenAI integration
-│   │   ├── metal-music-agent.ts      # Genre selector
-│   │   ├── emotion-mapping.ts        # Emotion→Genre mappings
-│   │   └── validation.ts             # Input validation schemas
+│   │   ├── trigger.ts                # Trigger category metadata + legacy-emotion translation
+│   │   ├── theme.ts                  # Stage (Vitutus) formula, design tokens
+│   │   ├── genre-mapping.ts          # Deterministic anchor genre table
+│   │   ├── prompts.ts                # In-repo Matcher/Curator instructions
+│   │   ├── validation.ts             # Zod schemas (Trigger, sonic profile, API contracts)
+│   │   └── artist-library.ts         # Unused — see docs/data-model.md
 │   └── types/
-│       └── index.ts                  # TypeScript definitions
-├── data/                    # Essential data files
-│   ├── full_mapping_matrix.json      # 96 emotion/stress mappings
-│   ├── artists-simple.json           # Artist database
-│   └── artists-complete-genres.json  # Genre classifications
-├── docs/                    # Documentation
-│   ├── API_AGENTS.md               # Agent architecture
-│   ├── SECURITY_REVIEW.md          # Security audit
+│       └── index.ts                  # TriggerType, TriggerSelection, EmotionType, Playlist
+├── data/                             # Legacy — superseded, see note below
+├── docs/
+│   ├── data-model.md                 # Data shapes: Trigger, Stage, sonic profile, API contracts
+│   ├── formulas.md                   # Stage formula + anchor genre table + tuning history
+│   ├── model.md                      # Superseded — points to the two docs above
+│   ├── SECURITY_REVIEW.md
 │   └── SECURITY_FIXES_IMPLEMENTED.md
-├── public/                  # Static assets
-└── package.json            # Dependencies (runtime only)
+└── package.json
 ```
 
-## Emotion Model
+> **`data/*.json` are legacy.** `full_mapping_matrix.json` was the original
+> source for part of the anchor genre table (now a static TS lookup in
+> `genre-mapping.ts`, not read from JSON at runtime). The artist JSON files
+> and `src/lib/artist-library.ts` are unreferenced — the Curator uses the
+> model's own artist knowledge, unconstrained by a code-side candidate pool.
+> Neither is read by the running app.
 
-### 12 Core Emotions (4 Quadrants)
+## The Trigger Model
 
-- **Happy Quadrant**: happy, excited, content
-- **Sad Quadrant**: sad, tired, inconsolable
-- **Angry Quadrant**: angry, enraged, hysterical
-- **Calm Quadrant**: calm, worried, energetic
+Not an emotion wheel — a situation-first classification. Users describe an
+**incident** in free text, then pick the closest of 9 **trigger** categories:
 
-### Stress Levels (8 Levels)
-
-- `none`, `mild`, `light-moderate`, `normal`, `somewhat heavy`, `heavy`, `intense`, `overload`
-
-### Metal Subgenres (30+ Mapped Genres)
-
-**Subgenres** (via mapping matrix):
-- **Doom Family**: gothic doom, melodic doom, funeral doom, drone doom, death/doom
-- **Black Family**: depressive black, suicidal black, epic black, blackened power/death
-- **Power Family**: epic power, speed metal, progressive power
-- **Death Family**: melodic death, progressive death, technical death
-- **Experimental**: avant-garde, mathcore, noise, drone, dark ambient
-
-### Mapping Matrix
-
-**File**: `app/data/full_mapping_matrix.json` (96 combinations)
-
-Each emotion/stress pair maps to a specific subgenre:
-```json
-{
-  "emotion": "angry",
-  "stress_level": "heavy",
-  "genre": "thrash metal",
-  "fallback_genre": "death metal"
-}
 ```
+injustice · failure · conflict
+helplessness · overload · exhaustion
+uncertainty · absurdity · unclassified
+```
+
+Internally, each trigger has a compatibility translation into one of
+Plutchik's 8 basic emotions (`triggerToEmotion()`, `src/lib/trigger.ts`) —
+the recommendation engine's Stage formula and anchor genre table are still
+keyed on that internal vocabulary, but the Matcher is told explicitly to
+weigh the user's actual trigger and incident text over this lossy
+translation. See [`docs/data-model.md`](docs/data-model.md) for the full
+translation table.
+
+**Intensity** is 0–10 (displayed `1/10`–`10/10`, plus a hidden 11th
+position at the same top value, displayed as `11/10` to deliberately break
+the printed scale).
+
+**Stage** (the "Vitutus" diagnosis, I–IX) is computed deterministically from
+intensity and the translated emotion — intensity is the dominant driver,
+spanning nearly the full range on its own; emotion only applies a small
+flavor tilt. See [`docs/formulas.md`](docs/formulas.md) for the exact
+formula and the floor/ceiling bug it replaced.
 
 ## API Endpoints
 
-### POST /api/matcher (Agent 1: Emotion Matcher)
+### POST /api/matcher (Agent 1: interpretation + sonic matching)
 
-Maps emotion/stress to metal subgenre using `full_mapping_matrix.json`.
+**Request**:
 
-**Agent 1 Persona**: Self-made psychologist, extreme metal aficionado offering cathartic relief
-
-**Input**:
 ```json
 {
   "emotionData": {
-    "primary": "angry",          // 12 core emotions
-    "stressLevel": 6,             // 0-7 scale
-    "event": "Work deadline"      // Optional context
+    "primary": "anger",
+    "trigger": "injustice",
+    "stressLevel": 7,
+    "event": "Manager took credit for my project in the all-hands meeting."
   }
 }
 ```
 
-**Output**:
+**Response**:
+
 ```json
 {
   "analysis": {
-    "subgenre": "thrash metal",
-    "primary_emotion": "angry",
-    "stress_level": 6,
-    "cause": "High-pressure work environment causing aggressive tension",
-    "choice": "Thrash metal's rapid-fire precision provides cathartic energy outlet"
+    "subgenre": "death metal",
+    "sonic_profile": {
+      "activation": "aggressive",
+      "agency": "confrontation",
+      "friction": "abrasive",
+      "cognitive_density": "direct",
+      "weight": "heavy"
+    },
+    "cause": "This is textbook Raivovitutus, Stage VII...",
+    "choice": "Death metal is the indicated treatment..."
   },
-  "reasoning": "Your anger under heavy stress demands aggressive musical catharsis. Thrash metal's relentless speed and precision mirror your need to channel frustration into controlled aggression...",
-  "subgenre": "thrash metal"
+  "reasoning": "...",
+  "cause": "...",
+  "choice": "...",
+  "subgenre": "death metal"
 }
 ```
 
-### POST /api/curator (Agent 2: Music Curator)
+`subgenre` is the model's own reasoned pick, guided by a deterministic
+`(emotion, intensity)` anchor table (a stabilizing prior, not a forced
+answer) — never a hardcoded `trigger → genre` rule.
 
-Curates 20-track playlist from enriched artist database.
+### POST /api/curator (Agent 2: sound → artists)
 
-**Agent 2 Guardrails**:
-- Exactly 20 unique tracks
-- Each track from different artist
-- Leverages `artists-musicbrainz-enriched.json` + `artists-openai-enriched.json`
+**Request**:
 
-**Input**:
 ```json
 {
   "analysis": {
-    "subgenre": "thrash metal",
-    "primary_emotion": "angry",
-    "stress_level": 6
+    "subgenre": "death metal",
+    "sonic_profile": { "activation": "aggressive", "agency": "confrontation", "friction": "abrasive", "cognitive_density": "direct", "weight": "heavy" }
   },
-  "emotionData": { /* original user input */ }
+  "emotionData": { "primary": "anger", "trigger": "injustice", "stressLevel": 7, "event": "..." }
 }
 ```
 
-**Output**:
+**Response**:
+
 ```json
 {
   "artists": [
-    {"artist": "Slayer", "link": "https://music.apple.com/search?term=Slayer"},
-    {"artist": "Metallica", "link": "https://music.apple.com/search?term=Metallica"},
-    {"artist": "Testament", "link": "https://music.apple.com/search?term=Testament"}
-    // ... 17 more unique artists
+    { "artist": "Napalm Death", "link": "https://napalmdeath.bandcamp.com" },
+    { "artist": "Undeath", "link": null },
+    { "artist": "Deathspell Omega", "link": "https://deathspellomega.bandcamp.com" }
   ],
   "type": "artists"
 }
 ```
+
+Exactly 10 artists, all real and distinct. `link` is `null` rather than a
+guessed URL when the Curator isn't confident one exists — the client falls
+back to a Bandcamp search link in that case.
 
 ## Development
 
