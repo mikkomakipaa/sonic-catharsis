@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     const response = await openai.responses.create({
       model: MATCHER_MODEL,
       instructions: MATCHER_INSTRUCTIONS,
-      input: `legacy_emotion: ${emotionData.primary}\ntrigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\n\nKeep "cause" to its ~150-word target — no longer. Keep "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. Name the condition ("${condition}") directly at least once across the two fields.${gapDirective}`,
+      input: `legacy_emotion: ${emotionData.primary}\ntrigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. Name the condition ("${condition}") directly at least once across the two fields.${gapDirective}`,
     });
 
     // Handle different response formats

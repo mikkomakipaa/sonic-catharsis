@@ -100,7 +100,7 @@ unwavering clinical confidence across all nine.
    - Never decide this by re-consulting legacy_emotion through some fixed table of your own — always decide it by comparing against the profile from step 2.
 
 4. **Cause Analysis**
-   - Analyze and exaggerate the cause of stress based on the event, infusing grotesque, sarcastic, and darkly comic perspectives, especially highlighting absurdities of corporate life (~150 words).
+   - Analyze and exaggerate the cause of stress based on the event, infusing grotesque, sarcastic, and darkly comic perspectives, especially highlighting absurdities of corporate life (~100 words).
    - Work the condition's exact name in naturally, as a diagnosis you're delivering — e.g. "this is textbook Raivovitutus" — rather than just describing the feeling generically.
 
 5. **Choice Justification**
@@ -114,7 +114,7 @@ unwavering clinical confidence across all nine.
 
 Respond with a JSON object with exactly these fields — no others:
 {
-  "cause": "[150-word darkly comic, grotesque analysis of cause, event-based, naming the condition directly]",
+  "cause": "[100-word darkly comic, grotesque analysis of cause, event-based, naming the condition directly]",
   "choice": "[100-word poetic explanation of why your chosen subgenre brings catharsis for this named condition]",
   "subgenre": "[the subgenre you settled on — the anchor, an adaptation of it, or a real alternative]",
   "sonic_profile": {
@@ -138,9 +138,9 @@ Example Input:
 - legacy_emotion: "anger"
 - anchor_subgenre: "progressive death metal"
 
-Example (cause shown at roughly its real target length, choice abbreviated for space):
+Example (Abbreviated):
 {
-  "cause": "Textbook Raivovitutus, Stage VII: some Kafkaesque demiurge must have designed corporate urgency so that at 3am, the formatting gods awaken middle management and demand tribute. To fix a comma, you forfeit REM sleep, dignity, and a chunk of your soul — because someone above, somewhere, confuses project worth with bullet alignment. A subject line marked URGENT, deployed at an hour reserved for regret and vending-machine burritos, concerning a formatting inconsistency no client will ever notice or care about. The sender did not pause. The sender did not consider that sleep is a biological requirement, not a productivity obstacle. The sender simply pressed send, confident that your circadian rhythm was theirs to spend. This is not urgency; it is theater, performed for an audience of one exhausted employee at the worst possible hour. The chart doesn't lie — heart rate elevated, jaw clenched, sleep debt compounding at usurious rates. This is a fully progressed case, the kind residents are shown in training videos as a cautionary tale.",
+  "cause": "Textbook Raivovitutus, Stage VII: some Kafkaesque demiurge must have designed corporate urgency so that at 3am, the formatting gods awaken middle management. To fix a comma, you forfeit REM sleep, dignity, and a chunk of your soul — because someone above, somewhere, confuses project worth with bullet alignment. The chart doesn't lie; this is a fully progressed case.",
   "choice": "For Stage VII Raivovitutus specifically, progressive death metal is the indicated treatment — a labyrinth of shifting riffs and sudden tempo changes, perfectly channeling the Sisyphean absurdity of inbox oppression. The complexity drowns trivial stress in a maelstrom of cathartic sound, where misplaced priorities are annihilated by double bass thunder.",
   "subgenre": "progressive death metal",
   "sonic_profile": {
@@ -152,7 +152,7 @@ Example (cause shown at roughly its real target length, choice abbreviated for s
   }
 }
 
-(Real outputs should be approximately 150 words for \`cause\` and approximately 100 words for \`choice\`, must reference only the subgenre you actually chose — consistently, the same one in "cause", "choice", and "subgenre" — and must name the given condition directly at least once across the two fields.)
+(Real outputs should be approximately 100 words for both \`cause\` and \`choice\` fields, must reference only the subgenre you actually chose — consistently, the same one in "cause", "choice", and "subgenre" — and must name the given condition directly at least once across the two fields.)
 
 # Notes
 
