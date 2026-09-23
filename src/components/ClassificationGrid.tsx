@@ -58,11 +58,21 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
       aria-label="What kind of bullshit was it?"
       className={cn('w-full max-w-xl mx-auto', disabled && 'opacity-50')}
     >
-      <div className="grid grid-cols-3">
+      <div className="grid grid-cols-3 max-[480px]:grid-cols-2">
         {TRIGGER_TYPES.map((c, index) => {
           const isSelected = selection?.trigger === c.type;
           const isHovered = hoveredType === c.type;
-          const row = Math.floor(index / 3);
+          // Row-divider borders have to be computed per breakpoint since the
+          // grid itself reflows from 3 columns (desktop) to 2 (mobile) —
+          // a border-t class based on a single column count would land on
+          // the wrong cells at the other breakpoint. `border-t` (no prefix)
+          // covers indices that need a divider at BOTH breakpoints; the
+          // `max-[480px]:border-t` case below covers indices that only
+          // start a new row once the grid narrows to 2 columns.
+          const desktopRow = Math.floor(index / 3);
+          const mobileRow = Math.floor(index / 2);
+          const needsBorder = desktopRow > 0;
+          const needsMobileOnlyBorder = !needsBorder && mobileRow > 0;
 
           return (
             <button
@@ -84,10 +94,11 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
                 'focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-[#c98a4b]/60',
                 !disabled && 'cursor-pointer',
                 disabled && 'cursor-not-allowed',
-                row > 0 && 'border-t'
+                needsBorder && 'border-t',
+                needsMobileOnlyBorder && 'max-[480px]:border-t'
               )}
               style={{
-                borderColor: row > 0 ? '#e6e2d8' : undefined,
+                borderColor: '#e6e2d8',
                 background: isHovered && !isSelected ? 'rgba(201,138,75,0.05)' : 'transparent',
                 transition: `background 0.2s ${EASE}`,
               }}

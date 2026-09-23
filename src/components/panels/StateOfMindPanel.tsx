@@ -72,7 +72,7 @@ export default function StateOfMindPanel({
           label needed, the question above the grid already explains the
           control. */}
       <p
-        className="text-center uppercase mt-8"
+        className="text-center uppercase mt-8 max-[480px]:mt-5"
         style={{ fontSize: '11px', letterSpacing: '0.1em', fontWeight: 600, color: '#7d7869' }}
       >
         What kind of bullshit was it?

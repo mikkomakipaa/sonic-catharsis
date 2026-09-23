@@ -43,19 +43,24 @@ export default function ScreenAnalysis({
   const diagnosisLabel = triggerLabel ? triggerLabel.toUpperCase() : 'UNKNOWN';
 
   const hasResult = Boolean(cause || choice);
+  const isLoading = isAnalyzing || (!hasResult && !error);
 
   return (
     <div className="flex flex-col max-w-3xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]">
-      {/* Identity + descent read as one connected header system — the rail
-          sits close underneath instead of floating with its own gap. */}
-      <div className="flex flex-col gap-3 max-[480px]:gap-2">
-        <StageHeader stage={stage} align="left" />
+      {/* The diagnosis stage is revealed alongside the result, not before —
+          showing "IX — VITUTUS MAXIMUS" while the loader still reads
+          "Summoning the void..." undercuts the reveal. Header + rail only
+          mount once there's an actual result (or an error) to anchor them. */}
+      {!isLoading && (
+        <div className="flex flex-col gap-3 max-[480px]:gap-2">
+          <StageHeader stage={stage} align="left" />
 
-        <DescentRail activeIndex={stage.index} />
-      </div>
+          <DescentRail activeIndex={stage.index} />
+        </div>
+      )}
 
-      <div className="mt-6">
-      {isAnalyzing || (!hasResult && !error) ? (
+      <div className={isLoading ? undefined : 'mt-6'}>
+      {isLoading ? (
         <div className="text-center py-10">
           <CassetteLoader className="mx-auto mb-4" />
           <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>{loadingMessage}</h3>
@@ -88,44 +93,50 @@ export default function ScreenAnalysis({
               drop shadow, generous document-like padding. */}
           <div className="pt-4">
             <div
+              className="p-[30px_32px_28px] max-[480px]:p-6"
               style={{
                 background: PAPER_LIGHT,
                 color: INK,
                 fontFamily: 'var(--font-plex-sans), Arial, sans-serif',
                 border: `1px solid ${INK}26`,
                 boxShadow: '0 6px 18px -14px rgba(43,42,38,0.4), 0 1px 0 rgba(255,255,255,0.6) inset',
-                padding: '30px 32px 28px',
               }}
             >
-              <div className="flex justify-between items-baseline flex-wrap gap-2" style={{ borderBottom: `1px solid ${INK}26`, paddingBottom: 10 }}>
-                <h2 className="uppercase m-0 font-bold" style={{ fontFamily: 'var(--font-special-elite), monospace', fontSize: 17, letterSpacing: '0.08em' }}>
+              {/* Stacks on mobile (name / subtitle / the divider that's
+                  already the block's own border-bottom) instead of forcing
+                  the desktop single-line lockup into a narrow viewport. */}
+              <div
+                className="flex justify-between items-baseline flex-wrap gap-2 max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-1"
+                style={{ borderBottom: `1px solid ${INK}26`, paddingBottom: 10 }}
+              >
+                <h2 className="uppercase m-0 font-bold text-[17px]" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.08em' }}>
                   Epicrisis
                 </h2>
-                <span className="uppercase" style={{ fontFamily: 'var(--font-special-elite), monospace', fontSize: 9.5, letterSpacing: '0.04em', color: STEEL }}>
+                <span className="uppercase text-[9.5px] max-[480px]:text-[10.5px]" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: STEEL }}>
                   Clinical Summary — Form CATH-2
                 </span>
               </div>
 
-              <div className="flex gap-6 flex-wrap" style={{ fontSize: 11, color: INK_SOFT, margin: '10px 0 4px' }}>
+              <div className="flex gap-6 flex-wrap text-[11px] max-[480px]:text-[12px]" style={{ color: INK_SOFT, margin: '10px 0 4px' }}>
                 <span><b style={{ color: INK, fontWeight: 600 }}>Diagnosis:</b> {diagnosisLabel}, Code {stage.roman}</span>
                 <span><b style={{ color: INK, fontWeight: 600 }}>Attending:</b> Dr. Catharsis, M.D.</span>
               </div>
 
               {cause && (
                 <div className="mt-5">
-                  <h3 className="uppercase m-0 font-bold" style={{ fontFamily: 'var(--font-special-elite), monospace', fontSize: 13, letterSpacing: '0.07em', marginBottom: 8 }}>
+                  <h3 className="uppercase m-0 font-bold text-[13px] max-[480px]:text-[15px]" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.07em', marginBottom: 8 }}>
                     1. Incident Summary
                   </h3>
-                  <p className="m-0" style={{ maxWidth: '62ch', fontSize: 13.5, color: INK_SOFT, lineHeight: 1.55 }}>{cause}</p>
+                  <p className="m-0 max-w-[62ch] text-[13.5px] max-[480px]:text-[19px] leading-[1.55]" style={{ color: INK_SOFT }}>{cause}</p>
                 </div>
               )}
 
               {choice && (
                 <div className="mt-5 pt-4" style={{ borderTop: `1px solid ${INK}1a` }}>
-                  <h3 className="uppercase m-0 font-bold" style={{ fontFamily: 'var(--font-special-elite), monospace', fontSize: 13, letterSpacing: '0.07em', marginBottom: 8 }}>
+                  <h3 className="uppercase m-0 font-bold text-[13px] max-[480px]:text-[15px]" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.07em', marginBottom: 8 }}>
                     2. Recommended Corrective Action
                   </h3>
-                  <p className="m-0" style={{ maxWidth: '62ch', fontSize: 13.5, color: INK_SOFT, lineHeight: 1.55 }}>{choice}</p>
+                  <p className="m-0 max-w-[62ch] text-[13.5px] max-[480px]:text-[19px] leading-[1.55]" style={{ color: INK_SOFT }}>{choice}</p>
                 </div>
               )}
             </div>

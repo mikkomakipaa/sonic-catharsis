@@ -9,12 +9,15 @@ interface StageHeaderProps {
 export default function StageHeader({ stage, align = 'center' }: StageHeaderProps) {
   return (
     <div
-      className={cn('flex items-baseline gap-4 max-[480px]:gap-2.5', align === 'left' ? 'justify-start' : 'justify-center')}
+      className={cn(
+        'flex items-baseline gap-4 max-[480px]:flex-col max-[480px]:gap-0',
+        align === 'left' ? 'justify-start max-[480px]:items-start' : 'justify-center max-[480px]:items-center'
+      )}
     >
-      <span className="font-mono text-[44px] max-[480px]:text-[36px] leading-none" style={{ color: stage.color, textShadow: `0 0 18px ${stage.color}55` }}>
+      <span className="font-mono text-[44px] max-[480px]:text-[56px] leading-none" style={{ color: stage.color, textShadow: `0 0 18px ${stage.color}55` }}>
         {stage.roman}
       </span>
-      <h2 className="text-3xl max-[480px]:text-2xl uppercase tracking-widest font-bold leading-none" style={{ color: stage.color }}>
+      <h2 className="text-3xl max-[480px]:text-[32px] uppercase tracking-widest max-[480px]:tracking-wide font-bold leading-none max-[480px]:leading-tight" style={{ color: stage.color }}>
         {stage.name}
       </h2>
     </div>
