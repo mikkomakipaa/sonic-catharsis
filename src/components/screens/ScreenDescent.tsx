@@ -53,19 +53,10 @@ export default function ScreenDescent({
         <DescentRail activeIndex={stage.index} />
       </div>
 
-      {playlist && (
-        <p
-          className="text-center uppercase mt-7 max-[480px]:mt-4 mb-3 max-[480px]:mb-2 text-[10.5px] max-[480px]:text-[14px] tracking-[0.14em] max-[480px]:tracking-[0.16em] text-[#7d7869] max-[480px]:text-[#726f66]"
-          style={{ fontWeight: 600 }}
-        >
-          Prescribed Treatment
-        </p>
-      )}
-
       {/* Diagnosis and its prescription, side by side — one physical set of
           paper handed over together, not two disconnected panels. Both
           sheets start at the same top edge. */}
-      <div className={cn('flex flex-col sm:flex-row sm:items-start justify-center gap-8', !playlist && 'mt-6')}>
+      <div className={cn('flex flex-col sm:flex-row sm:items-start justify-center gap-8 mt-6', playlist && 'mt-7 max-[480px]:mt-5')}>
         <ResultsPanel
           playlist={playlist}
           isProcessing={isProcessing}

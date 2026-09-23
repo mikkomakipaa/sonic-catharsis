@@ -70,18 +70,12 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
       }}
     >
-      {/* Pad header — a prescription, not a database row */}
-      <div className="flex items-start justify-between px-5 max-[480px]:px-6 pt-5 pb-3">
-        <div className="text-3xl font-bold leading-none" style={{ color: '#7f1d1d' }}>℞</div>
-        <div className="text-right">
-          <div className="text-sm max-[480px]:text-base font-bold tracking-wide">SONIC CATHARSIS</div>
-          <div
-            className="text-[8px] max-[480px]:text-[11px] uppercase tracking-wide mt-0.5 text-[#6b6b66] max-[480px]:text-[#4a4a46]"
-            style={{ letterSpacing: '1px' }}
-          >
-            Licensed Catharsis Practitioner
-          </div>
-        </div>
+      {/* Pad header — a prescription, not a database row. Rx stays pinned
+          to its corner (absolutely positioned so it doesn't skew the
+          centering) while the title centers across the full card width. */}
+      <div className="relative text-center px-5 max-[480px]:px-6 pt-5 pb-3">
+        <div className="absolute left-5 max-[480px]:left-6 top-5 text-3xl font-bold leading-none" style={{ color: '#7f1d1d' }}>℞</div>
+        <div className="text-sm max-[480px]:text-base font-bold tracking-wide uppercase">Prescription</div>
       </div>
 
       <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />

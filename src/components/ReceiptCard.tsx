@@ -125,7 +125,7 @@ export default function ReceiptCard({ stage, triggerLabel, stressLevel, subgenre
 
         <g fontFamily="'Courier New', monospace" fill="#2a2a28">
           <text x={RECEIPT_WIDTH / 2} y="30" textAnchor="middle" fontSize="15" fontWeight="bold" letterSpacing="1">
-            SONIC CATHARSIS
+            RECEIPT
           </text>
 
           <line x1="18" y1="44" x2={RECEIPT_WIDTH - 18} y2="44" stroke="#2a2a28" strokeWidth="1" strokeDasharray="2 2" />
