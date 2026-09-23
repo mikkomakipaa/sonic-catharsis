@@ -33,14 +33,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         <div className="text-center p-8">
           {isProcessing && !isAnalyzing && reasoning ? (
             <>
-              {/* Two cassettes now — the curator is loading two things at
-                  once (the treatment record + the actual bands), so one
-                  loader reads as a stalled single process where two side by
-                  side reads as genuinely parallel work happening. */}
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <CassetteLoader />
-                <CassetteLoader label="INEARTHED" />
-              </div>
+              <CassetteLoader className="mx-auto mb-6" label="INEARTHED" />
               <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>Almost there</h3>
             </>
           ) : (
