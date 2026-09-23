@@ -188,10 +188,13 @@ Currently: 0-7 (8 levels)
 
 ### Theme Customization
 
-Colors defined inline in components (no centralized theme):
-- Dark mode: `bg-zinc-800/50`, `text-zinc-50`
-- Party mode: `bg-white/60 border-pink-300`
-- Modify in component `playfulMode` ternaries
+Colors, typography, spacing, and animation are centralized in `src/lib/theme.ts` (tokens like `TEXT_PRIMARY`/`SECONDARY`/`TERTIARY`, `SECTION_LABEL_STYLE`, `STAGES`, `STRESS_TIERS`, `EASE`) — see `docs/design_guidelines.md` for the full system and how each token/component is meant to be used.
+
+## UI & Design Guidelines
+
+Before adding or changing **any graphical element** — a new component, screen, card, button variant, color, spacing value, radius, font weight, or animation — read **`docs/design_guidelines.md`** first. It is the source of truth for this app's design system and documents which existing tokens/components to reuse. Don't introduce a new one-off style when an existing one already covers the job; if nothing fits, that's a real design decision to flag, not something to improvise silently.
+
+Also check the rest of `docs/` (`data-model.md`, `formulas.md`, `readme.md`) for how the underlying data/logic a UI element represents actually works before styling around it — e.g. don't build a UI assuming the old 12-emotion/0-7-stress model described in this file's own "Core Architecture" section above; that section is stale (see Known Stale Sections at the bottom of this file) and `docs/data-model.md` reflects the current Trigger-based, 0-10 model.
 
 ## Development Guardrails
 
@@ -258,7 +261,14 @@ data/
 ## Security
 
 - `.env.local` gitignored (contains `OPENAI_API_KEY`)
-- `AGENTS.md` gitignored (project instructions)
 - No user data logged
 - Input validation with Zod on all API routes
 - HTTPS enforcement in production (Vercel)
+
+## Known Stale Sections
+
+This file predates the Trigger-based redesign and was not fully rewritten with it — several sections above still describe the old UI and don't match the current app. Do not follow them; they're kept for history until a full rewrite. Known stale:
+- **Core Architecture → Data Layer / UI Architecture**: describes 12 emotions, an 0-7 stress scale, `EmotionWheel.tsx`/`StressSelector.tsx`, a 5-4-3 grid layout, and dark/party mode theming. None of this exists anymore — the current intake is Trigger-based (`ClassificationGrid.tsx` + `IntensitySlider.tsx` + `StateOfMindPanel.tsx`) on a 0-10 intensity scale. See `docs/data-model.md` and `docs/design_guidelines.md` for the current model.
+- **Common Development Tasks → Adding New Emotions / Changing Stress Level Range**: references files/ranges from the old model; not applicable as written.
+- **File Organization**: missing most current files (`StateOfMindPanel.tsx`, `ClassificationGrid.tsx`, `IntensitySlider.tsx`, `StageHeader.tsx`, `DescentRail.tsx`, `ReceiptCard.tsx`, `CassetteLoader.tsx`, `genre-mapping.ts`, `trigger.ts`, `theme.ts`, and more).
+- **Debugging Tips → Theme colors not applying**: references `playfulMode`, which no longer exists.
