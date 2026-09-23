@@ -15,9 +15,13 @@ interface CassetteLoaderProps {
 }
 
 // The hero element of the loading state, not a decorative icon — sized
-// accordingly. 120x80 viewBox (3:2) kept exact via aspect-ratio so width
-// alone drives sizing at each breakpoint.
-const SIZE_CLASSES = 'w-32 h-[85.3px] sm:w-[140px] sm:h-[93.3px]';
+// accordingly. `aspect-[3/2]` matches the 120x80 viewBox exactly, so width
+// alone drives sizing at each breakpoint. Mobile uses a container-relative
+// width (not a fixed px value) so it scales up to fill whichever loading
+// context it's in — the full-screen analysis loader and the narrower
+// prescription-card loader — without a single hardcoded size overflowing
+// the tighter one. `max-w-[280px]` is just a ceiling for wide phones.
+const SIZE_CLASSES = 'w-4/5 max-w-[280px] aspect-[3/2] sm:w-[140px] sm:max-w-none';
 
 const SHELL = '#2f231f';
 const SHELL_BORDER = '#5a4a42';
