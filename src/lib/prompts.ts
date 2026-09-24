@@ -39,11 +39,11 @@ descriptions — interpret them by this exact ordering, not their literal
 wording:
 
   Fresh (just happened) < Simmering (~15-60 min) < Stewing (several hours)
-  < Overnight (since yesterday) < Now a lifestyle (several days or longer)
+  < Overnight (since yesterday) < Lifestyle (several days or longer)
 
 Same treatment as physical_symptoms: may season "cause" for grounding
 detail when it's more than the shortest tier (e.g. something reported as
-"Now a lifestyle" reading very differently in tone than something "Fresh"),
+"Lifestyle" reading very differently in tone than something "Fresh"),
 never fabricated, never the basis for the sonic profile or condition.
 
 # legacy_emotion — read this carefully

@@ -31,7 +31,7 @@ export const DURATION_TIERS: DurationMeta[] = [
   { type: 'about_hour', label: 'Simmering', value: 0.25 },
   { type: 'several_hours', label: 'Stewing', value: 0.5 },
   { type: 'since_yesterday', label: 'Overnight', value: 0.75 },
-  { type: 'several_days', label: 'Now a lifestyle', value: 1.0 },
+  { type: 'several_days', label: 'Lifestyle', value: 1.0 },
 ];
 
 export function getDurationMeta(type: DurationType): DurationMeta {
