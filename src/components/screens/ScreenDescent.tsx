@@ -1,18 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { RefreshCw, ArrowLeft, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { RefreshCw, ArrowLeft } from 'lucide-react';
 import { Stage, EASE } from '@/lib/theme';
-import { TriggerSelection, Playlist } from '@/types';
+import { Playlist } from '@/types';
 import ResultsPanel from '@/components/panels/ResultsPanel';
 import StageHeader from '@/components/StageHeader';
 import DescentRail from '@/components/DescentRail';
-import ReceiptCard from '@/components/ReceiptCard';
 
 interface ScreenDescentProps {
   stage: Stage;
-  selection: TriggerSelection | null;
   triggerLabel: string | null;
   playlist: Playlist | null;
   isProcessing: boolean;
@@ -25,7 +21,6 @@ interface ScreenDescentProps {
 
 export default function ScreenDescent({
   stage,
-  selection,
   triggerLabel,
   playlist,
   isProcessing,
@@ -35,13 +30,6 @@ export default function ScreenDescent({
   onReset,
   onBack,
 }: ScreenDescentProps) {
-  // Receipt starts collapsed on mobile — the prescription is the payoff of
-  // the whole interaction and should dominate the screen there; the
-  // receipt becomes a secondary, opt-in object behind a toggle. On desktop
-  // (sm: and up) the `sm:!block` override below always shows it, matching
-  // the side-by-side layout that already works well at that width.
-  const [showReceipt, setShowReceipt] = useState(false);
-
   return (
     <div className="flex flex-col max-w-3xl mx-auto animate-[rite-reveal_0.6s_cubic-bezier(0.25,1,0.5,1)_both]">
       {/* Same header cluster as the analysis screen — same left axis — so
@@ -53,10 +41,9 @@ export default function ScreenDescent({
         <DescentRail activeIndex={stage.index} />
       </div>
 
-      {/* Diagnosis and its prescription, side by side — one physical set of
-          paper handed over together, not two disconnected panels. Both
-          sheets start at the same top edge. */}
-      <div className={cn('flex flex-col sm:flex-row sm:items-start justify-center gap-8 mt-6', playlist && 'mt-7 max-[480px]:mt-5')}>
+      {/* The prescription — a single column now that the receipt is gone,
+          same card-free treatment as the Diagnosis screen above it. */}
+      <div className={`flex justify-center mt-6${playlist ? ' mt-7 max-[480px]:mt-5' : ''}`}>
         <ResultsPanel
           playlist={playlist}
           isProcessing={isProcessing}
@@ -64,32 +51,8 @@ export default function ScreenDescent({
           reasoning={reasoning}
           triggerLabel={triggerLabel}
           stage={stage}
+          subgenre={subgenre}
         />
-
-        {/* sm:contents keeps this wrapper from becoming its own flex item —
-            its children (the mobile-only toggle, and the receipt itself)
-            participate directly in the row above at desktop widths, same
-            as when ReceiptCard was a direct child. */}
-        {playlist && selection && (
-          <div className="flex flex-col items-center gap-3 sm:contents">
-            <button
-              onClick={() => setShowReceipt((v) => !v)}
-              className="sm:hidden flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide transition-colors duration-200"
-              style={{ letterSpacing: '0.05em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
-            >
-              {showReceipt ? 'Hide Diagnostic Receipt' : 'View Diagnostic Receipt'}
-              <ChevronDown className={cn('h-3.5 w-3.5 transition-transform duration-200', showReceipt && 'rotate-180')} />
-            </button>
-            <div className={cn(showReceipt ? 'block' : 'hidden', 'sm:!block')}>
-              <ReceiptCard
-                stage={stage}
-                triggerLabel={triggerLabel ?? 'unknown'}
-                stressLevel={selection.intensity}
-                subgenre={subgenre}
-              />
-            </div>
-          </div>
-        )}
       </div>
 
       {playlist && (

@@ -1,7 +1,16 @@
 'use client';
 
 import { Music, Radio } from 'lucide-react';
-import { Stage } from '@/lib/theme';
+import {
+  Stage,
+  SECTION_LABEL_STYLE,
+  TEXT_PRIMARY,
+  TEXT_SECONDARY,
+  TEXT_TERTIARY,
+  DIVIDER_COLOR,
+  TREATMENT_ACCENT_BORDER,
+  TREATMENT_ACCENT_TEXT,
+} from '@/lib/theme';
 import { Playlist } from '@/types';
 import PrescriptionCalibration from '@/components/PrescriptionCalibration';
 
@@ -12,18 +21,10 @@ interface ResultsPanelProps {
   reasoning: string | null;
   triggerLabel?: string | null;
   stage?: Stage | null;
+  subgenre?: string | null;
 }
 
-function formatDate(): string {
-  return new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
-}
-
-// Paper tone shared with ReceiptCard so the two feel like one physical
-// artifact handed over together — a diagnosis and its prescription.
-const PAPER_BG = '#e8e4d8';
-const PAPER_INK = '#2a2a28';
-
-export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage }: ResultsPanelProps) {
+export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage, subgenre }: ResultsPanelProps) {
   if (!playlist) {
     // No background/border box around the loading state itself — see
     // docs/design_guidelines.md → Loading States. PrescriptionCalibration
@@ -46,71 +47,74 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
     );
   }
 
+  const severityLabel = stage && stage.index > 0 ? `${stage.roman} · ${stage.name.toUpperCase()}` : null;
+
   return (
     <div
       key={playlist.id}
-      // Wider cap on mobile (~440px, this is the payoff of the whole
-      // interaction and should dominate the screen there) than on desktop
-      // (max-w-sm/384px, where it sits side-by-side with the receipt and
-      // shouldn't balloon past a reasonable document width).
-      className="w-full max-w-[440px] sm:max-w-sm rounded-sm animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]"
-      style={{
-        background: PAPER_BG,
-        color: PAPER_INK,
-        fontFamily: "'Courier New', monospace",
-        boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
-      }}
+      // No card/paper background — sits directly on the page, same as the
+      // Diagnosis screen. See docs/design_guidelines.md "Design Philosophy".
+      className="w-full max-w-xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]"
     >
-      {/* Pad header — a prescription, not a database row. Rx stays pinned
-          to its corner (absolutely positioned so it doesn't skew the
-          centering) while the title centers across the full card width. */}
-      <div className="relative text-center px-5 max-[480px]:px-6 pt-5 pb-3">
-        <div className="absolute left-5 max-[480px]:left-6 top-5 text-3xl font-bold leading-none" style={{ color: '#7f1d1d' }}>℞</div>
-        <div className="text-sm max-[480px]:text-base font-bold tracking-wide uppercase">Prescription</div>
-      </div>
-
-      <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
-
-      <div className="flex items-center justify-between px-5 max-[480px]:px-6 py-2 text-[9px] max-[480px]:text-[13px]">
-        <span>TRIGGER: {(triggerLabel || 'unknown').toUpperCase()}</span>
-        <span>DATE: {formatDate()}</span>
-      </div>
-
-      {stage && stage.index > 0 && (
-        <div className="px-5 max-[480px]:px-6 pb-2 text-[9px] max-[480px]:text-[13px]">
-          CONDITION: STAGE {stage.roman} — {stage.name.toUpperCase()}
-        </div>
-      )}
-
-      <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
-
       <div
-        className="px-5 max-[480px]:px-6 py-3 text-[9px] max-[480px]:text-[13px] uppercase text-[#6b6b66] max-[480px]:text-[#4a4a46]"
-        style={{ letterSpacing: '0.5px' }}
+        className="uppercase font-bold text-[17px] max-[480px]:text-[19px] pb-3"
+        style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.06em', color: TEXT_PRIMARY, borderBottom: `1px solid ${DIVIDER_COLOR}` }}
       >
-        Sig: Take ten (10) bands. Repeat ad nauseam.
-        <br />
-        No known cure.
+        Prescription
       </div>
 
-      <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
+      {/* Clinical metadata — monospace, not the sans body font used for
+          the band names below. Per the typography split in
+          docs/design_guidelines.md, monospace is reserved for clinical
+          metadata; content (band names) reads in the app's normal sans. */}
+      <div
+        className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 mt-4 text-[11px] max-[480px]:text-[13px] uppercase"
+        style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.04em' }}
+      >
+        <span style={{ color: TEXT_TERTIARY }}>For</span>
+        <span style={{ color: TEXT_PRIMARY }}>{(triggerLabel || 'unknown').toUpperCase()}</span>
 
-      {/* The bands themselves, styled as line items on the pad */}
-      <div className="px-5 max-[480px]:px-6">
+        {severityLabel && (
+          <>
+            <span style={{ color: TEXT_TERTIARY }}>Severity</span>
+            <span style={{ color: stage!.color }}>{severityLabel}</span>
+          </>
+        )}
+
+        {subgenre && (
+          <>
+            <span style={{ color: TEXT_TERTIARY }}>Treatment</span>
+            <span style={{ color: TREATMENT_ACCENT_TEXT }}>{subgenre.toUpperCase()}</span>
+          </>
+        )}
+      </div>
+
+      <div className="mt-4" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }} />
+
+      {/* The bands — a clean continuation of the landing page's own
+          selection rows, not a receipt-strip. */}
+      <div className="mt-1">
         {playlist.tracks.map((track, index) => (
           <div
             key={track.id}
             className="flex items-center py-2.5 max-[480px]:py-0 max-[480px]:min-h-[64px]"
             style={{
-              borderTop: index > 0 ? `1px dotted ${PAPER_INK}` : 'none',
-              borderTopColor: index > 0 ? `${PAPER_INK}33` : undefined,
+              borderTop: index > 0 ? `1px solid ${DIVIDER_COLOR}` : 'none',
               animationDelay: `${index * 60}ms`,
             }}
           >
-            <span className="text-[10px] max-[480px]:text-[13px] tabular-nums shrink-0 w-5 text-[#6b6b66] max-[480px]:text-[#4a4a46]">
-              {index + 1}.
+            <span
+              className="text-[10px] max-[480px]:text-[13px] tabular-nums shrink-0 w-6"
+              style={{ fontFamily: "'Courier New', monospace", color: TEXT_TERTIARY }}
+            >
+              {String(index + 1).padStart(2, '0')}
             </span>
-            <span className="min-w-0 flex-1 truncate text-[13px] max-[480px]:text-[16px] font-bold ml-1">{track.name}</span>
+            <span
+              className="min-w-0 flex-1 truncate text-[13px] max-[480px]:text-[16px] font-bold ml-1"
+              style={{ color: TEXT_PRIMARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
+            >
+              {track.name}
+            </span>
             {/* Outer <a> is the touch target — 44x44 minimum on mobile —
                 while the visible circle stays small, centered inside it. */}
             <a
@@ -122,7 +126,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
             >
               <span
                 className="flex items-center justify-center w-5 h-5 rounded-full"
-                style={{ border: `1px solid #7f1d1d80`, color: '#7f1d1d' }}
+                style={{ border: `1px solid ${TREATMENT_ACCENT_BORDER}`, color: TREATMENT_ACCENT_TEXT }}
               >
                 <Radio className="h-2.5 w-2.5" />
               </span>
@@ -131,19 +135,14 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         ))}
       </div>
 
-      <div className="mx-5 max-[480px]:mx-6 mt-2" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
-
-      {/* Signature */}
-      <div className="px-5 max-[480px]:px-6 py-4 text-right">
-        <div className="text-lg italic" style={{ fontFamily: "'Brush Script MT', cursive", color: PAPER_INK }}>
-          Dr. Curator
-        </div>
-        <div
-          className="text-[8px] max-[480px]:text-[11px] uppercase tracking-wide text-[#6b6b66] max-[480px]:text-[#4a4a46]"
-          style={{ letterSpacing: '1px' }}
+      <div className="mt-2 pt-4" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
+        <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Dosage</span>
+        <p
+          className="uppercase mt-2 text-[10px] max-[480px]:text-[12px] leading-[1.6]"
+          style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.03em', color: TEXT_SECONDARY }}
         >
-          M.D. (Metal Doctor)
-        </div>
+          Take ten (10) bands. Repeat ad nauseam. No known cure.
+        </p>
       </div>
     </div>
   );

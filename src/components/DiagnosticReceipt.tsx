@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY } from '@/lib/theme';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, COMPLETE_ACCENT } from '@/lib/theme';
 
 // The four things the matcher stage actually reasons over (emotion, its
 // intensity, physical symptoms, duration — see the Selection screen and
@@ -60,7 +60,7 @@ export default function DiagnosticReceipt() {
               style={{
                 letterSpacing: '0.03em',
                 animation: 'receipt-line-print 0.25s cubic-bezier(0.25, 1, 0.5, 1) both',
-                color: isDone ? TEXT_PRIMARY : TEXT_SECONDARY,
+                color: isDone ? COMPLETE_ACCENT : TEXT_SECONDARY,
               }}
             >
               <span>{label}</span>

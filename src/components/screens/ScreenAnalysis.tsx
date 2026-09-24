@@ -1,7 +1,18 @@
 'use client';
 
 import { ArrowLeft, RefreshCw } from 'lucide-react';
-import { EASE, Stage } from '@/lib/theme';
+import {
+  EASE,
+  Stage,
+  SECTION_LABEL_STYLE,
+  TEXT_SECONDARY,
+  TEXT_TERTIARY,
+  DIVIDER_COLOR,
+  TREATMENT_ACCENT_BG,
+  TREATMENT_ACCENT_BG_HOVER,
+  TREATMENT_ACCENT_BORDER,
+  TREATMENT_ACCENT_TEXT,
+} from '@/lib/theme';
 import StageHeader from '@/components/StageHeader';
 import DescentRail from '@/components/DescentRail';
 import DiagnosticReceipt from '@/components/DiagnosticReceipt';
@@ -11,28 +22,13 @@ interface ScreenAnalysisProps {
   triggerLabel: string | null;
   cause: string | null;
   choice: string | null;
+  subgenre: string | null;
   isAnalyzing: boolean;
   error: string | null;
   onContinue: () => void;
   onRetry: () => void;
   onBack: () => void;
 }
-
-// Paper tones for the Epicrisis card only — a single clinical-document
-// artifact dropped into the otherwise unchanged dark page, not a full
-// page reskin. See project notes on the "Descent Memo" design direction.
-const PAPER_LIGHT = '#f6f3ea';
-const INK = '#2b2a26';
-const INK_SOFT = '#4a473f';
-const STEEL = '#8a8577';
-
-// "Get Prescription" button only — a filled pale terracotta/prescription-
-// pink treatment, distinct from the cream-fill/coral-outline pattern used
-// elsewhere, so this one CTA reads as the ritual's actual pivot action.
-const RX_BUTTON_BG = '#f3e2dc';
-const RX_BUTTON_BG_HOVER = '#eed3ca';
-const RX_BUTTON_BORDER = '#c99184';
-const RX_BUTTON_TEXT = '#7a3d2e';
 
 // Two-tone capsule for the Get Prescription button — flat colors (no
 // gradient) split down the capsule's own long axis, matching a real pill's
@@ -59,6 +55,7 @@ export default function ScreenAnalysis({
   triggerLabel,
   cause,
   choice,
+  subgenre,
   isAnalyzing,
   error,
   onContinue,
@@ -115,73 +112,79 @@ export default function ScreenAnalysis({
           </button>
         </div>
       ) : (
-        <div className="flex flex-col">
-          {/* Epicrisis — a printed case record, not a bordered UI card:
-              warm paper tone, hairline border, soft lift instead of a hard
-              drop shadow, generous document-like padding. */}
-          <div className="pt-4">
-            <div
-              className="p-[30px_32px_28px] max-[480px]:p-6"
-              style={{
-                background: PAPER_LIGHT,
-                color: INK,
-                fontFamily: 'var(--font-plex-sans), Arial, sans-serif',
-                border: `1px solid ${INK}26`,
-                boxShadow: '0 6px 18px -14px rgba(43,42,38,0.4), 0 1px 0 rgba(255,255,255,0.6) inset',
-              }}
-            >
-              {/* Stacks on mobile (name / subtitle / the divider that's
-                  already the block's own border-bottom) instead of forcing
-                  the desktop single-line lockup into a narrow viewport. */}
+        <div className="flex flex-col pt-4">
+          {/* The Diagnosis IS the page now — no paper card, no border, no
+              shadow. Epicrisis survives only as a tiny metadata kicker
+              (below); the dominant heading is DIAGNOSIS itself, colored by
+              the active stage's severity accent (stage.color). See
+              docs/design_guidelines.md "Design Philosophy". */}
+          <span
+            className="uppercase text-[9.5px] max-[480px]:text-[10.5px]"
+            style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
+          >
+            Clinical Note / Epicrisis 001
+          </span>
+
+          <div
+            className="flex justify-between items-baseline flex-wrap gap-2 max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-1 mt-2 pb-3"
+            style={{ borderBottom: `1px solid ${DIVIDER_COLOR}` }}
+          >
+            <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Diagnosis</span>
+            <div className="text-right max-[480px]:text-left">
+              <div className="uppercase font-bold text-[17px] max-[480px]:text-[19px]" style={{ color: stage.color }}>
+                {diagnosisLabel}
+              </div>
               <div
-                className="flex justify-between items-baseline flex-wrap gap-2 max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-1"
-                style={{ borderBottom: `1px solid ${INK}26`, paddingBottom: 10 }}
+                className="uppercase text-[10px]"
+                style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.06em', color: stage.color }}
               >
-                <h2 className="uppercase m-0 font-bold text-[17px]" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.08em' }}>
-                  Epicrisis
-                </h2>
-                <span className="uppercase text-[9.5px] max-[480px]:text-[10.5px]" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: STEEL }}>
-                  Clinical Summary — Form CATH-2
-                </span>
+                Code {stage.roman}
               </div>
-
-              <div className="flex gap-6 flex-wrap text-[11px] max-[480px]:text-[12px]" style={{ color: INK_SOFT, margin: '10px 0 4px' }}>
-                <span><b style={{ color: INK, fontWeight: 600 }}>Diagnosis:</b> {diagnosisLabel}, Code {stage.roman}</span>
-              </div>
-
-              {cause && (
-                <div className="mt-5">
-                  <h3 className="uppercase m-0 font-bold text-[13px] max-[480px]:text-[15px]" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.07em', marginBottom: 8 }}>
-                    1. Incident Summary
-                  </h3>
-                  <p className="m-0 max-w-[62ch] min-w-0 break-words text-[13.5px] max-[480px]:text-[19px] leading-[1.55]" style={{ color: INK_SOFT }}>{cause}</p>
-                </div>
-              )}
-
-              {choice && (
-                <div className="mt-5 pt-4" style={{ borderTop: `1px solid ${INK}1a` }}>
-                  <h3 className="uppercase m-0 font-bold text-[13px] max-[480px]:text-[15px]" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.07em', marginBottom: 8 }}>
-                    2. Recommended Corrective Action
-                  </h3>
-                  <p className="m-0 max-w-[62ch] min-w-0 break-words text-[13.5px] max-[480px]:text-[19px] leading-[1.55]" style={{ color: INK_SOFT }}>{choice}</p>
-                </div>
-              )}
-
-              {/* Second "real" citation, same deadpan-legitimate spirit as
-                  the Vitutus study QR on ReceiptCard — small print, no QR
-                  this time, easy to skim past unless you're actually
-                  reading the fine print. Echoes the "matching, not venting"
-                  beat from the choice text above. */}
-              {choice && (
-                <p
-                  className="uppercase m-0 mt-4 pt-3 text-[8.5px] max-[480px]:text-[10px] leading-[1.5]"
-                  style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.03em', color: STEEL, borderTop: `1px solid ${INK}1a` }}
-                >
-                  Treatment protocol per Sharman &amp; Dingle (2015), Front. Hum. Neurosci. — extreme music does not escalate anger; it matches it.
-                </p>
-              )}
             </div>
           </div>
+
+          {cause && (
+            <div className="mt-6">
+              <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>What Happened</span>
+              <p
+                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13.5px] max-[480px]:text-[19px] leading-[1.55]"
+                style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
+              >
+                {cause}
+              </p>
+            </div>
+          )}
+
+          {choice && (
+            <div className="mt-6 pt-5" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
+              <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Prescribed Response</span>
+              {subgenre && (
+                <div
+                  className="uppercase font-bold text-[15px] max-[480px]:text-[17px] mt-2"
+                  style={{ color: TREATMENT_ACCENT_TEXT }}
+                >
+                  {subgenre}
+                </div>
+              )}
+              <p
+                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13.5px] max-[480px]:text-[19px] leading-[1.55]"
+                style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
+              >
+                {choice}
+              </p>
+            </div>
+          )}
+
+          {/* Same deadpan-legitimate citation as before, just off the old
+              paper-card ink tint and onto the shared neutral tokens. */}
+          {choice && (
+            <p
+              className="uppercase m-0 mt-5 pt-3 text-[8.5px] max-[480px]:text-[10px] leading-[1.5]"
+              style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.03em', color: TEXT_TERTIARY, borderTop: `1px solid ${DIVIDER_COLOR}` }}
+            >
+              Treatment protocol per Sharman &amp; Dingle (2015), Front. Hum. Neurosci. — extreme music does not escalate anger; it matches it.
+            </p>
+          )}
 
           {/* Narrow, centered action — a ritual step, not a form submit
               control spanning the page. Filled pale terracotta, not the
@@ -193,13 +196,13 @@ export default function ScreenAnalysis({
             style={{
               transition: `all 0.2s ${EASE}`,
               letterSpacing: '0.08em',
-              background: RX_BUTTON_BG,
-              color: RX_BUTTON_TEXT,
-              border: `1px solid ${RX_BUTTON_BORDER}`,
-              boxShadow: `0 2px 6px -2px ${RX_BUTTON_BORDER}40`,
+              background: TREATMENT_ACCENT_BG,
+              color: TREATMENT_ACCENT_TEXT,
+              border: `1px solid ${TREATMENT_ACCENT_BORDER}`,
+              boxShadow: `0 2px 6px -2px ${TREATMENT_ACCENT_BORDER}40`,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = RX_BUTTON_BG_HOVER)}
-            onMouseLeave={(e) => (e.currentTarget.style.background = RX_BUTTON_BG)}
+            onMouseEnter={(e) => (e.currentTarget.style.background = TREATMENT_ACCENT_BG_HOVER)}
+            onMouseLeave={(e) => (e.currentTarget.style.background = TREATMENT_ACCENT_BG)}
           >
             <CapsuleIcon className="h-4 w-4" />
             Get Prescription

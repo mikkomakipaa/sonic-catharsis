@@ -298,6 +298,7 @@ export default function Home() {
             triggerLabel={triggerLabel}
             cause={cause}
             choice={choice}
+            subgenre={subgenre}
             isAnalyzing={isAnalyzing}
             error={analysisError}
             onContinue={beginDescent}
@@ -309,7 +310,6 @@ export default function Home() {
         {step === 'descent' && (
           <ScreenDescent
             stage={stage}
-            selection={selection}
             triggerLabel={triggerLabel}
             playlist={playlist}
             isProcessing={isProcessing}

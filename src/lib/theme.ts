@@ -58,6 +58,25 @@ export const CTA_SHADOW = '0 4px 14px -4px rgba(36,26,23,0.45)';
 export const CTA_TEXT_SHADOW = 'none';
 export const CTA_TEXT_COLOR = '#e8a672';
 
+// Treatment/action accent — pale terracotta. Used on the "Get Prescription"
+// CTA, and on both the Diagnosis and Prescription screens' "treatment"
+// value text (the chosen subgenre name).
+export const TREATMENT_ACCENT_BG = '#f3e2dc';
+export const TREATMENT_ACCENT_BG_HOVER = '#eed3ca';
+export const TREATMENT_ACCENT_BORDER = '#c99184';
+export const TREATMENT_ACCENT_TEXT = '#7a3d2e';
+
+// Completed/calibrated accent — muted sage, deliberately distinct from the
+// vivid STRESS_TIERS ramp below (that ramp signals intensity, not "done").
+// Used for the checkmark/locked-row text in DiagnosticReceipt.tsx and
+// PrescriptionCalibration.tsx once a line finishes.
+export const COMPLETE_ACCENT = '#6f8f7c';
+
+// Shared neutral hairline — already used ad hoc as '#e6e2d8' in DescentRail,
+// IntensitySlider, etc. Named here since the card-free Diagnosis and
+// Prescription screens both use it for section dividers.
+export const DIVIDER_COLOR = '#e6e2d8';
+
 // --- Intensity tiers (0-10, "these go to eleven") --------------------------
 // The wheel's radial drag snaps directly to one of these 11 indices — no
 // separate string-label layer, the tier index *is* the stress value sent to
@@ -103,10 +122,11 @@ export const STRESS_VALUE_TO_LABEL: Record<number, string> = Object.fromEntries(
 // Replaces the old Dante circle names. "Vitutus" is Finnish slang for a
 // simmering, absurd, distinctly Finnish flavor of irritation/pissed-off-ness
 // — grounded in a real (tongue-in-cheek) academic instrument, the
-// "Vitutusviisari" ("vitutus gauge"), see the study QR on ReceiptCard.
-// Tiers III, IV, VI, and IX borrow the study's own terms (perusvitutus,
-// keskivaikea vitutus, syvävitutus, vitutus maximus); the rest are original
-// but built in the same register — not claimed as verbatim study language.
+// "Vitutusviisari" ("vitutus gauge"), cited in the Diagnosis screen's
+// footnote (Sharman & Dingle, 2015). Tiers III, IV, VI, and IX borrow the
+// study's own terms (perusvitutus, keskivaikea vitutus, syvävitutus,
+// vitutus maximus); the rest are original but built in the same register —
+// not claimed as verbatim study language.
 export interface Stage {
   index: number; // 0 = surface (nothing selected yet), 1-9 = the stages
   roman: string;

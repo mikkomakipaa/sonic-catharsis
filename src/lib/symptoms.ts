@@ -1,7 +1,7 @@
 // Physical symptoms — the real bodily-sensation items the (tongue-in-cheek)
 // Vitutus study actually measured, per the same academic instrument already
-// cited via the QR code on ReceiptCard and the footnote on the Epicrisis
-// card (see ScreenAnalysis.tsx, Sharman & Dingle citation). Optional,
+// cited in the Diagnosis screen's footnote (see ScreenAnalysis.tsx, Sharman
+// & Dingle citation). Optional,
 // multi-select, purely additional flavor context for the Matcher — never
 // required to submit, never treated as diagnostic.
 import type { PhysicalSymptomType } from '@/types';

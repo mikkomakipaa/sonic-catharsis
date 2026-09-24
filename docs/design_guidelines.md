@@ -1,19 +1,19 @@
 # Design Guidelines
 
-**Last Updated:** 2026-09-23
+**Last Updated:** 2026-09-24
 **Status:** Source of truth for all Sonic Catharsis UI. From this point on, every page and component must be built from the tokens and components defined here — don't invent a new one-off color, weight, spacing value, or card treatment when an existing element already covers the job.
 
 ---
 
 ## Design Philosophy
 
-**Deadpan clinical satire on warm paper.**
+**Deadpan clinical satire on a warm plain page.**
 
 The app plays a real "intake → diagnosis → prescription" medical process completely straight — restrained, Nordic-paper, editorial — while the actual content (Finnish "vitutus" stages, invented metal micro-genres, a prescription pad of death metal bands) is absurd. The comedy comes entirely from the contrast between a *quiet, credible* interface and *ridiculous* content. This means:
 
 - **The UI never winks.** No cartoonish icons, no neon, no skulls/black-metal imagery. The restraint is what makes the joke land.
-- **Paper, not screens.** The three "document" surfaces (Epicrisis, Prescription, Receipt) read as real physical objects — warm off-white paper tones, hairline rules, typewriter/monospace fonts — dropped into an otherwise plain page.
-- **One accent color at a time.** The page itself is neutral ink-on-cream; color is reserved for the active Stage (rail dot, header) and the CTA's coral text. Don't add decorative color anywhere else.
+- **The interface plays the straight man; the copy carries the absurdity.** The whole flow — landing page *and* the post-assessment Diagnosis/Prescription screens — shares one plain-page visual system: warm off-white canvas, hairline rules, restrained typography, no borders/shadows/card chrome. There used to be three separate literal paper props (Epicrisis as a medical-report card, Prescription as a pad, Receipt as a torn cash-register slip) — that's been retired. The clinical *voice* (Epicrisis, Dose Calibration, dry sig lines) stays; the physical-object rendering doesn't. See Components below.
+- **One accent color at a time, and each color means one thing.** Severity → the active Stage's own color (`stage.color`). Treatment/action → `TREATMENT_ACCENT_*`. Completed/calibrated → `COMPLETE_ACCENT`. Don't add decorative color that isn't one of these.
 
 ---
 
@@ -21,7 +21,7 @@ The app plays a real "intake → diagnosis → prescription" medical process com
 
 1. **Reuse tokens, don't restate values.** Colors, weights, easing, and stage/intensity data live in `src/lib/theme.ts`. Import them; don't hardcode a hex or `cubic-bezier` string that already exists there.
 2. **Question vs. answer weight is deliberate.** Section headers (questions) are heavier/darker than the options below them (answers). Don't equalize them "for consistency" — see Typography.
-3. **`max-[480px]:` is this app's mobile breakpoint**, not Tailwind's default `sm:` (640px). The one exception is the descent screen's prescription/receipt layout, which intentionally uses `sm:flex-row` for the desktop two-column reveal — don't add a third breakpoint convention.
+3. **`max-[480px]:` is this app's mobile breakpoint**, not Tailwind's default `sm:` (640px). Don't add a third breakpoint convention.
 4. **44px minimum touch targets** on every interactive element that appears on mobile (buttons, checkboxes, slider hit-area, Bandcamp links). The visible control can be smaller than that; the tappable area cannot.
 5. **No `overflow-x` surprises.** Anything that can hold long or dynamic text (stage names, band names, incident text) needs `min-w-0` on its flex-item ancestors and either wraps or truncates — it must never be allowed to push the page wider than the viewport.
 6. **New UI must reuse an existing document/card/button pattern below**, not invent a new visual language. If none fits, that's a real design decision — flag it, don't silently improvise.
@@ -69,16 +69,21 @@ SURFACE (pre-selection) #52525b
 ELEVEN (10)  #fbbf24   ← shock color, outside the ramp on purpose
 ```
 
-### Paper-document palettes
-Each of the three document cards has its own slightly different paper tone — this variation is intentional (they're "different sheets"), don't unify them into one shared constant:
+### Semantic color language
+Three accent tokens, each with exactly one meaning, used across both the Diagnosis and Prescription screens (`src/lib/theme.ts`):
 
-| Card | Background | Ink | Secondary ink | Accent |
-|---|---|---|---|---|
-| Epicrisis (`ScreenAnalysis.tsx`) | `#f6f3ea` | `#2b2a26` | `#4a473f` | steel `#8a8577`, coral `#bd5d4c` |
-| Prescription (`ResultsPanel.tsx`) | `#e8e4d8` | `#2a2a28` | muted `#6b6b66` / `#4a4a46` (mobile) | ℞ red `#7f1d1d` |
-| Receipt (`ReceiptCard.tsx`, SVG) | `#e8e4d8` | `#2a2a28` | muted `#6b6b66` | — |
+```
+severity            stage.color              the active Stage's own hex (existing STAGES data)
+treatment/action     TREATMENT_ACCENT_*        #f3e2dc bg / #eed3ca hover / #c99184 border / #7a3d2e text
+completed/calibrated COMPLETE_ACCENT           #6f8f7c  muted sage
+divider (neutral)   DIVIDER_COLOR             #e6e2d8  hairline rules, both screens
+```
 
-**Rule:** color communicates meaning (stage severity, intensity), never decoration. If you're adding color and can't say what it means, don't add it.
+- **Severity** (`stage.color`): the diagnosis condition/code, and the Prescription's `SEVERITY` row. Never a new hardcoded hex — always the active `Stage`'s own color, so it stays in sync with the rail/header elsewhere on screen.
+- **Treatment/action** (`TREATMENT_ACCENT_*`): the "Get Prescription" CTA, the subgenre name on both screens (Diagnosis's "Prescribed Response" and Prescription's `TREATMENT` row), and the Bandcamp link ring.
+- **Completed/calibrated** (`COMPLETE_ACCENT`): the checkmark and locked-row text in `DiagnosticReceipt.tsx`/`PrescriptionCalibration.tsx` once a line finishes — distinct from the vivid `STRESS_TIERS` ramp, which signals intensity, not completion.
+
+**Rule:** color communicates meaning (severity, treatment, completion), never decoration. If you're adding color and can't map it to one of the three above (or to `STAGES`/`STRESS_TIERS`/the CTA), don't add it.
 
 ---
 
@@ -87,10 +92,10 @@ Each of the three document cards has its own slightly different paper tone — t
 ### Fonts (`layout.tsx`)
 ```
 --font-geist-sans        UI body text, incident textarea
---font-plex-sans         Epicrisis card body
---font-plex-mono         Epicrisis card body (secondary use)
---font-special-elite     Typewriter headings (Epicrisis, Prescription/Receipt document titles)
-'Courier New', monospace Prescription + Receipt body — inline, not a next/font var
+--font-plex-sans         Diagnosis + Prescription body content (cause/choice text, band names)
+--font-plex-mono         Reserved secondary use
+--font-special-elite     Typewriter section eyebrows/headings (Diagnosis, Prescription, loading states)
+'Courier New', monospace Clinical metadata only (FOR/SEVERITY/TREATMENT rows, band numbering, sig line) — inline, not a next/font var
 --font-fraunces          Reserved for any future headline treatment
 --font-shadow-prayer     Decorative display face, currently unused in shipped UI
 ```
@@ -116,17 +121,17 @@ export const SECTION_LABEL_STYLE = {
 ```
 Rendered via the `SectionLabel` component (`StateOfMindPanel.tsx`) for all three landing-page questions ("What petty injustice...", "What kind of bullshit...", "How bad is it?"). **Any new question-style header on any screen must use this same token/component** — don't hand-roll a fourth near-identical eyebrow style.
 
-### Document/paper card type
-Document headings use `var(--font-special-elite)` monospace, uppercase, letter-spacing ~0.04–0.08em. Body copy inside documents sits at 13–16px depending on card and viewport (see each component) — the floor is **13px on mobile**, never smaller, since these are real reading content (cause/choice text, band names), not micro-labels.
+### Diagnosis/Prescription document type
+Section eyebrows and clinical metadata use `var(--font-special-elite)` monospace, uppercase, letter-spacing ~0.04–0.08em. Body copy (cause/choice text, band names) sits at 13–16px depending on screen and viewport (see each component) — the floor is **13px on mobile**, never smaller, since these are real reading content, not micro-labels.
 
 ---
 
 ## Spacing & Layout
 
 - **Page container:** `container mx-auto px-6 max-[480px]:px-4 pt-8 pb-4 max-w-7xl` (`page.tsx`) wraps every screen — don't add a competing outer container.
-- **Screen width:** each screen's own root is `max-w-3xl mx-auto` (selection, analysis, descent) — keep new screens on this same cap unless there's a specific reason to go wider (the descent screen's prescription card is the one deliberate exception, capped at 440px mobile / 384px desktop, see Components below).
+- **Screen width:** each screen's own root is `max-w-3xl mx-auto` (selection, analysis) — keep new screens on this same cap unless there's a specific reason to go wider. The descent screen's Prescription content is the one deliberate exception, at its own narrower `max-w-xl` (a single-column band list doesn't need the full 3xl width), see Components below.
 - **Vertical rhythm:** `gap-1.5`/`max-[480px]:gap-1` between a stage header and its rail (tight — reads as one combined unit); `mt-6`–`mt-8` between major sections; `gap-3`/`gap-2.5` inside compact clusters (intensity readout, buttons).
-- **Radius:** `rounded-md`/`rounded-lg` for buttons and inputs, `rounded-sm` for document cards. No `rounded-xl`/`rounded-2xl` anywhere in this app — the paper-and-ink aesthetic reads as crisper with tighter corners than a typical rounded card UI.
+- **Radius:** `rounded-md`/`rounded-lg` for buttons and inputs, `rounded-sm` where a small filled/bordered element still needs one (e.g. the Diagnosis screen's retry button). No `rounded-xl`/`rounded-2xl` anywhere in this app — crisper, tighter corners than a typical rounded card UI.
 - **Touch targets:** 44px minimum (`min-h-[44px]`, or an invisible larger hit-area around a smaller visible control — see IntensitySlider and the Bandcamp link icon).
 
 ---
@@ -135,7 +140,7 @@ Document headings use `var(--font-special-elite)` monospace, uppercase, letter-s
 
 Use these; don't create parallel versions.
 
-**SectionLabel** (`StateOfMindPanel.tsx`) — the landing page's shared question-header component. `as="label" | "p"`, renders `SECTION_LABEL_STYLE`.
+**SectionLabel** (`StateOfMindPanel.tsx`) — the landing page's shared question-header component. `as="label" | "p"`, renders `SECTION_LABEL_STYLE`. The Diagnosis and Prescription screens reuse the same `SECTION_LABEL_STYLE` token directly (left-aligned, not centered) for their own eyebrows (`DIAGNOSIS`, `WHAT HAPPENED`, `PRESCRIBED RESPONSE`, `DOSAGE`) rather than the centered `SectionLabel` component itself.
 
 **StageHeader + DescentRail** (`StageHeader.tsx`, `DescentRail.tsx`) — always rendered together as one unit (`gap-1.5`/`gap-1`), never separately. Roman numeral (`text-[36px] max-[480px]:text-[44px]`) + stage name (`text-2xl max-[480px]:text-[26px]`, bold, uppercase) on the left; the 10-dot rail below, always fits its container width (no horizontal scroll — every dot must be visible at any viewport). The active dot's own name is **not** repeated in the rail (that was tried and removed as duplication with the header above).
 
@@ -151,10 +156,12 @@ Use these; don't create parallel versions.
 
 **PrescriptionCalibration** (`PrescriptionCalibration.tsx`) — the curator-stage loading element (`ResultsPanel.tsx`'s loading state while `/api/curator` is in flight, replacing the old `CassetteLoader`). Same document-typography/no-card treatment and reveal cadence as `DiagnosticReceipt`, but framed as dosage calibration: four rows (Aggression/Heaviness/Dissonance/Melody), each an 8-segment `▰`/`▱` bar that flickers to a random fill count every 120ms while "scanning," then freezes at a full bar + `✓` once its turn to lock passes. **The flicker values and the lock order are the only things that move — the bar never settles at a partial or percentage-like fill.** That's deliberate: a bar that stopped at, say, 6/8 would read as a real measurement of a value the app doesn't actually compute, undermining the "the machine is processing your input" premise the whole loading-state redesign is built on. If genre-derived values for these four axes are ever added for real, this is the screen to wire them into — not a reason to fake numbers now. Footer reads "Formulating active compounds" while scanning, then a pulsing "Preparing prescription…" once all four rows lock.
 
-**Document cards** — three variants, each self-contained:
-- **Epicrisis** (`ScreenAnalysis.tsx`): cause/choice diagnosis text, paper `#f6f3ea`.
-- **Prescription** (`ResultsPanel.tsx`): centered "PRESCRIPTION" title with the ℞ glyph pinned to its own corner (absolute-positioned so it doesn't skew centering), then patient/condition/sig metadata and the 10-band list. Mobile width `max-w-[440px]`, desktop `sm:max-w-sm` (matches the receipt in the two-column layout).
-- **Receipt** (`ReceiptCard.tsx`, pure SVG): centered "RECEIPT" title, itemized lines, QR citation. Starts collapsed behind a "View Diagnostic Receipt" toggle on mobile (`sm:hidden`), always visible on desktop (`sm:!block`) — this collapse pattern is the one to reuse for any future secondary/optional content block, not a new accordion component.
+**Diagnosis and Prescription screens** — no card, no paper background, no border, no shadow. Both are plain page content, same visual register as the landing page:
+- **Diagnosis** (`ScreenAnalysis.tsx`): a tiny `CLINICAL NOTE / EPICRISIS 001` kicker, then a `DIAGNOSIS` eyebrow + condition/code pair (colored `stage.color`), then `WHAT HAPPENED` (cause) and `PRESCRIBED RESPONSE` (subgenre, colored `TREATMENT_ACCENT_TEXT`, + choice text) sections separated by `DIVIDER_COLOR` hairlines, then the citation footnote and the "Get Prescription" CTA. "Epicrisis" is now only that opening kicker — it's no longer the dominant heading.
+- **Prescription** (`ResultsPanel.tsx`): left-aligned `PRESCRIPTION` heading, then a `FOR`/`SEVERITY`/`TREATMENT` key-value block (monospace metadata; `SEVERITY` colored `stage.color`, `TREATMENT` colored `TREATMENT_ACCENT_TEXT`), then the 10-band list (band names in the sans body font, not monospace — see Typography split below), then a `DOSAGE` section with the sig line. Single column, `max-w-xl mx-auto` — there's no second column anymore (see Receipt, below).
+- **Receipt is gone.** `ReceiptCard.tsx` (the torn-edge SVG with the QR citation) has been deleted along with the mobile show/hide toggle that used to sit next to the Prescription. Nothing replaces it — don't reintroduce a third "physical object" surface for this flow.
+
+Typography split within these two screens: **monospace/typewriter (`'Courier New', monospace` or `var(--font-special-elite)`) is reserved for clinical metadata** (section eyebrows, the FOR/SEVERITY/TREATMENT rows, band numbering, the citation footnote) — actual content (cause/choice body text, band names) renders in the sans body font (`var(--font-plex-sans)`).
 
 **Buttons** — two variants only:
 - **Primary CTA**: solid `CTA_BACKGROUND` fill, `CTA_TEXT_COLOR` text, `rounded-lg`, weight 600, `active:scale-[0.98]`.
@@ -177,7 +184,9 @@ Apply this same principle to any future multi-step input: don't show a disabled 
 
 ## Loading States
 
-Both loading moments in the app are now **animated diagnostic documents** — receipt/document typography (monospace, dashed hairline rules, uppercase labels), printing in line by line, but with **no card wrapper, border, or shadow**. The document itself *is* the loading object, sitting directly on the page background; that's what keeps this from contradicting the "no document/card" spirit elsewhere in this file — there's no box, just document-styled text.
+Card-free document typography is the standing rule for the *entire* post-assessment flow now (see Components above) — this section was where that pattern first appeared, when it was still a loading-only exception to a paper-card Diagnosis/Prescription. It no longer is one; the two loading states below are just the transient version of the same treatment the results screens use at rest.
+
+Both loading moments in the app are **animated diagnostic documents** — receipt/document typography (monospace, dashed hairline rules, uppercase labels), printing in line by line, but with **no card wrapper, border, or shadow**. The document itself *is* the loading object, sitting directly on the page background.
 
 - **Matcher stage** (`ScreenAnalysis.tsx`'s full-screen loading state, before the Epicrisis result exists): `DiagnosticReceipt.tsx` — a four-line checklist that "prints" and checks off.
 - **Curator stage** (`ResultsPanel.tsx`'s loading state while `/api/curator` is in flight): `PrescriptionCalibration.tsx` — a four-row "compound" scanner that locks each row in turn. This replaced the earlier plain `CassetteLoader` treatment so both loading moments read as one continuous ritual (assessment → calibration) instead of two unrelated widgets.
