@@ -309,6 +309,7 @@ export default function Home() {
         {step === 'descent' && (
           <ScreenDescent
             stage={stage}
+            selection={selection}
             triggerLabel={triggerLabel}
             playlist={playlist}
             isProcessing={isProcessing}

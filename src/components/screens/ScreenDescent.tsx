@@ -1,14 +1,18 @@
 'use client';
 
-import { RefreshCw, ArrowLeft } from 'lucide-react';
+import { Dialog, DialogPanel } from '@headlessui/react';
+import { useState } from 'react';
+import { RefreshCw, ArrowLeft, X } from 'lucide-react';
 import { Stage, EASE } from '@/lib/theme';
-import { Playlist } from '@/types';
+import { Playlist, TriggerSelection } from '@/types';
 import ResultsPanel from '@/components/panels/ResultsPanel';
 import StageHeader from '@/components/StageHeader';
 import DescentRail from '@/components/DescentRail';
+import ReceiptCard from '@/components/ReceiptCard';
 
 interface ScreenDescentProps {
   stage: Stage;
+  selection: TriggerSelection | null;
   triggerLabel: string | null;
   playlist: Playlist | null;
   isProcessing: boolean;
@@ -21,6 +25,7 @@ interface ScreenDescentProps {
 
 export default function ScreenDescent({
   stage,
+  selection,
   triggerLabel,
   playlist,
   isProcessing,
@@ -30,6 +35,8 @@ export default function ScreenDescent({
   onReset,
   onBack,
 }: ScreenDescentProps) {
+  const [showReceipt, setShowReceipt] = useState(false);
+
   return (
     <div className="flex flex-col max-w-3xl mx-auto animate-[rite-reveal_0.6s_cubic-bezier(0.25,1,0.5,1)_both]">
       {/* Same header cluster as the analysis screen — same left axis — so
@@ -56,8 +63,25 @@ export default function ScreenDescent({
           triggerLabel={triggerLabel}
           stage={stage}
           subgenre={subgenre}
+          onViewReceipt={playlist && selection ? () => setShowReceipt(true) : undefined}
         />
       </div>
+
+      {playlist && selection && (
+        <Dialog open={showReceipt} onClose={setShowReceipt} className="relative z-50">
+          <div className="fixed inset-0 bg-[#241a17]/45" aria-hidden="true" />
+          <div className="fixed inset-0 flex items-center justify-center overflow-y-auto p-4">
+            <DialogPanel className="w-full max-w-sm rounded-lg bg-[#f7f5f0] p-5 shadow-[0_16px_48px_rgba(36,26,23,0.28)]">
+              <div className="mb-2 flex justify-end">
+                <button type="button" onClick={() => setShowReceipt(false)} aria-label="Close receipt" className="flex h-11 w-11 items-center justify-center rounded-md" style={{ color: '#5c584f' }}>
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <ReceiptCard stage={stage} triggerLabel={triggerLabel ?? 'unknown'} stressLevel={selection.intensity} subgenre={subgenre} />
+            </DialogPanel>
+          </div>
+        </Dialog>
+      )}
 
       {playlist && (
         <div className="flex items-center justify-center gap-6 mt-10">

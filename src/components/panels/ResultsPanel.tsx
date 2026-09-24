@@ -3,7 +3,6 @@
 import { Music, Radio } from 'lucide-react';
 import {
   Stage,
-  SECTION_LABEL_STYLE,
   TEXT_PRIMARY,
   TEXT_SECONDARY,
   TEXT_TERTIARY,
@@ -22,17 +21,18 @@ interface ResultsPanelProps {
   triggerLabel?: string | null;
   stage?: Stage | null;
   subgenre?: string | null;
+  onViewReceipt?: () => void;
 }
 
-export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage, subgenre }: ResultsPanelProps) {
+export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage, subgenre, onViewReceipt }: ResultsPanelProps) {
   if (!playlist) {
     // No background/border box around the loading state itself — see
     // docs/design_guidelines.md → Loading States. PrescriptionCalibration
     // uses document typography (like DiagnosticReceipt on the matcher
     // stage) but is still not wrapped in a card.
     return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center p-8">
+      <div className="w-full pt-2">
+        <div className="text-center">
           {isProcessing && !isAnalyzing && reasoning ? (
             <PrescriptionCalibration />
           ) : (
@@ -48,13 +48,6 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
   }
 
   const severityLabel = stage && stage.index > 0 ? `${stage.roman} · ${stage.name.toUpperCase()}` : null;
-  // One dynamic accent per diagnosis — treatment reuses the active stage's
-  // own severity color rather than a second, competing accent. See
-  // docs/design_guidelines.md "Semantic color language". TREATMENT_ACCENT_*
-  // stays reserved for the interactive elements (Bandcamp ring, the
-  // Diagnosis screen's "Get Prescription" CTA), not diagnostic value text.
-  const treatmentColor = stage ? stage.color : TREATMENT_ACCENT_TEXT;
-
   return (
     <div
       key={playlist.id}
@@ -66,10 +59,22 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
       className="w-full animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]"
     >
       <div
-        className="uppercase font-bold text-[17px] max-[480px]:text-[19px] pb-2"
+        className="flex items-center justify-between gap-4 pb-2"
         style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.06em', color: TEXT_PRIMARY, borderBottom: `1px solid ${DIVIDER_COLOR}` }}
       >
-        Prescription
+        <span className="uppercase font-bold text-[17px] max-[480px]:text-[19px]">Prescription</span>
+        {onViewReceipt && (
+          <button
+            type="button"
+            onClick={onViewReceipt}
+            className="shrink-0 px-1 text-[10px] max-[480px]:min-h-[44px] max-[480px]:text-[11px] font-medium uppercase tracking-wide transition-colors duration-200"
+            style={{ color: TEXT_SECONDARY }}
+            onMouseEnter={(event) => (event.currentTarget.style.color = TREATMENT_ACCENT_TEXT)}
+            onMouseLeave={(event) => (event.currentTarget.style.color = TEXT_SECONDARY)}
+          >
+            View receipt
+          </button>
+        )}
       </div>
 
       {/* Clinical metadata — monospace, not the sans body font used for
@@ -86,14 +91,14 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         {severityLabel && (
           <>
             <span style={{ color: TEXT_SECONDARY }}>Severity</span>
-            <span style={{ color: stage!.color }}>{severityLabel}</span>
+            <span style={{ color: TEXT_PRIMARY }}>{severityLabel}</span>
           </>
         )}
 
         {subgenre && (
           <>
             <span style={{ color: TEXT_SECONDARY }}>Treatment</span>
-            <span style={{ color: treatmentColor }}>{subgenre.toUpperCase()}</span>
+            <span style={{ color: TEXT_PRIMARY }}>{subgenre.toUpperCase()}</span>
           </>
         )}
       </div>
@@ -151,14 +156,12 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         ))}
       </div>
 
-      <div className="mt-2 pt-4" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
-        <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Dosage</span>
-        <p
-          className="uppercase mt-2 text-[10px] max-[480px]:text-[12px] leading-[1.6]"
-          style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.03em', color: TEXT_SECONDARY }}
-        >
-          Take ten (10) bands. Repeat ad nauseam. No known cure.
-        </p>
+      <div
+        className="grid grid-cols-[auto_1fr] gap-x-4 mt-2 pt-4 text-[11px] max-[480px]:text-[13px] uppercase"
+        style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.04em', borderTop: `1px solid ${DIVIDER_COLOR}` }}
+      >
+        <span style={{ color: TEXT_SECONDARY }}>Dosage:</span>
+        <span style={{ color: TEXT_PRIMARY }}>Take ten (10) bands. Repeat ad nauseam. No known cure.</span>
       </div>
     </div>
   );

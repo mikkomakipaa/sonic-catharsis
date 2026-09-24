@@ -37,7 +37,7 @@ function CompoundRow({ label, locked }: { label: string; locked: boolean }) {
 
   return (
     <div
-      className="receipt-line-print flex justify-between items-baseline gap-3 text-[10.5px] uppercase"
+      className="receipt-line-print flex justify-between items-baseline gap-3 text-[12px] max-[480px]:text-[14px] uppercase"
       style={{
         letterSpacing: '0.03em',
         animation: 'receipt-line-print 0.25s cubic-bezier(0.25, 1, 0.5, 1) both',
@@ -71,27 +71,27 @@ export default function PrescriptionCalibration() {
 
   return (
     <div
-      className="w-full max-w-[280px] mx-auto"
+      className="w-full max-w-[320px] mx-auto"
       style={{ fontFamily: "'Courier New', monospace", color: TEXT_PRIMARY }}
     >
       <div className="text-center mb-3">
-        <div className="text-[11px] font-bold uppercase" style={{ letterSpacing: '0.12em' }}>
+        <div className="text-[12px] max-[480px]:text-[14px] font-bold uppercase" style={{ letterSpacing: '0.12em' }}>
           Sonic Catharsis
         </div>
-        <div className="text-[10px] uppercase mt-0.5" style={{ letterSpacing: '0.08em', color: TEXT_SECONDARY }}>
+        <div className="text-[11px] max-[480px]:text-[13px] uppercase mt-0.5" style={{ letterSpacing: '0.08em', color: TEXT_SECONDARY }}>
           Dose Calibration
         </div>
       </div>
 
       <div className="border-t border-dashed mb-2" style={{ borderColor: TEXT_TERTIARY }} />
 
-      <div className="flex flex-col gap-1.5 min-h-[92px]">
+      <div className="flex flex-col gap-2 min-h-[108px]">
         {COMPOUNDS.map((label, i) => (i > locked ? null : <CompoundRow key={label} label={label} locked={i < locked} />))}
       </div>
 
       <div className="border-t border-dashed mt-2 mb-3" style={{ borderColor: TEXT_TERTIARY }} />
 
-      <div className="text-center text-[10.5px] uppercase" style={{ letterSpacing: '0.08em', color: TEXT_SECONDARY }}>
+      <div className="text-center text-[12px] max-[480px]:text-[13px] uppercase" style={{ letterSpacing: '0.08em', color: TEXT_SECONDARY }}>
         {allLocked ? (
           <span>
             Preparing prescription

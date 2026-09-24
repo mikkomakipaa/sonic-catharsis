@@ -245,4 +245,4 @@ incidentText, trigger, intensity, physicalSymptoms, duration
 | Matcher/Curator prompt text | `src/lib/prompts.ts` |
 | Matcher/Curator routes | `src/app/api/matcher/route.ts`, `src/app/api/curator/route.ts` |
 | Orchestration, `EmotionData` payload construction | `src/app/page.tsx` |
-| Vitutus study citation QR | `src/components/ReceiptCard.tsx` |
+| Vitutus study citation QR | `src/components/ReceiptCard.tsx`, opened on demand from the Prescription's receipt overlay |

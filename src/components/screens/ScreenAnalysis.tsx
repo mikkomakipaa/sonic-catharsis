@@ -80,11 +80,7 @@ export default function ScreenAnalysis({
 
       <div className={isLoading ? undefined : 'mt-6'}>
       {isLoading ? (
-        // min-h + flex centering (not the page shell's min-h-dvh — this is
-        // a transient, non-scrolling state, so it doesn't carry the same
-        // Safari toolbar-jump risk) so the loader sits in the visual middle
-        // of the screen instead of pinned to the top with dead space below.
-        <div className="min-h-[65dvh] flex flex-col items-center justify-center text-center">
+        <div className="pt-2 text-center">
           <DiagnosticReceipt />
         </div>
       ) : error ? (
@@ -109,24 +105,13 @@ export default function ScreenAnalysis({
         </div>
       ) : (
         <div className="flex flex-col pt-4">
-          {/* The Diagnosis IS the page now — no paper card, no border, no
-              shadow. Epicrisis survives only as a tiny metadata kicker
-              (below); the dominant heading is DIAGNOSIS itself, colored by
-              the active stage's severity accent (stage.color). See
-              docs/design_guidelines.md "Design Philosophy". */}
+          {/* Card-free clinical note: no paper card, border, or shadow. */}
           <span
             className="uppercase text-[9.5px] max-[480px]:text-[10.5px]"
             style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
           >
             Clinical Note / Epicrisis 001
           </span>
-
-          {/* Trigger label + stage code used to sit here (right-aligned)
-              but duplicated the rail's own roman numeral above — dropped.
-              The eyebrow stays as the section's lead-in. */}
-          <div className="pb-2 mt-1.5" style={{ borderBottom: `1px solid ${DIVIDER_COLOR}` }}>
-            <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Diagnosis</span>
-          </div>
 
           {cause && (
             <div className="mt-6">
