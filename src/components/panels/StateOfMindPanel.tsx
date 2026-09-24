@@ -163,11 +163,12 @@ export default function StateOfMindPanel({
               compact than the trigger grid above; a separate, independent
               axis, not a proxy for which trigger was picked. */}
           <SectionLabel className="mt-5">How bad is it?</SectionLabel>
-          {/* This wrapper owns the slider's available width. Without an
-              explicit width, the parent flex column shrink-wraps it to the
-              readout row, so a long Finnish tier name changes the track
-              length. */}
-          <div className="mt-2 w-full max-w-[280px]">
+          {/* This wrapper owns the slider's available width. It must be a
+              definite viewport-relative value, not w-full/max-w: nested
+              centered flex boxes have no definite width, so Safari resolves
+              percentage width from the label row's intrinsic size and lets a
+              long Finnish tier name change the track length. */}
+          <div className="mt-2 shrink-0" style={{ width: 'min(280px, calc(100vw - 2rem))' }}>
             <IntensitySlider
               value={selection.intensity}
               onChange={(tier) => onSelectionChange({ ...selection, intensity: tier })}
