@@ -20,6 +20,14 @@ export const TriggerTypes = [
   'exhaustion', 'uncertainty', 'absurdity', 'unclassified',
 ] as const;
 
+// Mirrors PhysicalSymptomType (src/types/index.ts) / PHYSICAL_SYMPTOMS
+// (lib/symptoms.ts) — optional, multi-select, so the schema field below
+// defaults to an empty array rather than being nullable like the others.
+export const PhysicalSymptomTypes = [
+  'head_exploding', 'muscle_tension', 'heart_pounding',
+  'accelerated_breathing', 'weakness', 'legs_limp',
+] as const;
+
 // Emotion data validation schema
 export const EmotionDataSchema = z.object({
   primary: z.enum(CoreEmotions, {
@@ -32,7 +40,8 @@ export const EmotionDataSchema = z.object({
     errorMap: () => ({ message: 'Invalid trigger type' })
   }),
   stressLevel: z.number().min(0).max(10).nullable().optional(), // 0-10 to match mapping matrix
-  event: z.string().max(500).nullable().optional()
+  event: z.string().max(500).nullable().optional(),
+  symptoms: z.array(z.enum(PhysicalSymptomTypes)).optional().default([])
 });
 
 // Matcher API request schema

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { TriggerSelection, TriggerType, Playlist } from '@/types';
+import { TriggerSelection, TriggerType, Playlist, PhysicalSymptomType } from '@/types';
 import { triggerToEmotion, getTriggerMeta } from '@/lib/trigger';
 import RiteHeader from '@/components/RiteHeader';
 import ScreenSelection from '@/components/screens/ScreenSelection';
@@ -30,6 +30,10 @@ interface EmotionData {
   trigger: TriggerType;
   stressLevel: number | null;
   event: string | null;
+  // Optional, multi-select, additional flavor for the Matcher — see
+  // lib/symptoms.ts. Never required, never sent as anything but a plain
+  // array (possibly empty).
+  symptoms: PhysicalSymptomType[];
 }
 
 export default function Home() {
@@ -40,6 +44,7 @@ export default function Home() {
   // model; it's derived only at the API boundary.
   const [selection, setSelection] = useState<TriggerSelection | null>(null);
   const [incidentText, setIncidentText] = useState<string>('');
+  const [symptoms, setSymptoms] = useState<PhysicalSymptomType[]>([]);
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -111,6 +116,7 @@ export default function Home() {
       trigger: selection.trigger,
       stressLevel: selection.intensity,
       event: incidentText.trim() || null,
+      symptoms,
     };
 
     try {
@@ -206,6 +212,7 @@ export default function Home() {
     setStep('selection');
     setSelection(null);
     setIncidentText('');
+    setSymptoms([]);
     setPlaylist(null);
     setReasoning(null);
     setCause(null);
@@ -219,6 +226,7 @@ export default function Home() {
   const clearInputs = () => {
     setSelection(null);
     setIncidentText('');
+    setSymptoms([]);
   };
 
   // Back from the analysis screen: return to selection but keep the
@@ -271,6 +279,8 @@ export default function Home() {
             onSelectionChange={setSelection}
             incidentText={incidentText}
             onIncidentTextChange={setIncidentText}
+            symptoms={symptoms}
+            onSymptomsChange={setSymptoms}
             isProcessing={isProcessing}
             canSubmit={canSubmit}
             onSubmit={startAssistant}

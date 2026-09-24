@@ -27,6 +27,19 @@ export interface TriggerSelection {
   intensity: StressLevel; // 0-10, same scale the old stressLevel used
 }
 
+// Physical symptoms — optional, multi-select, sourced from the real
+// bodily-sensation items the (tongue-in-cheek) Vitutus study actually
+// measured (see lib/symptoms.ts for the citation + full label/Finnish-term
+// pairs). Never required to submit; purely additional flavor context for
+// the Matcher's "cause" text.
+export type PhysicalSymptomType =
+  | 'head_exploding'
+  | 'muscle_tension'
+  | 'heart_pounding'
+  | 'accelerated_breathing'
+  | 'weakness'
+  | 'legs_limp';
+
 // --- Internal recommendation-engine model ------------------------------------
 // 8 basic emotions, as 4 opposing pairs. This is NOT the user-facing input model above
 // — nothing in the UI asks "which emotion". It's the vocabulary the

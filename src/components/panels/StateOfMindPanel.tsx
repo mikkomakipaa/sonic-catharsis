@@ -4,15 +4,18 @@ import { useState, type ReactNode } from 'react';
 import { ArrowDownToLine, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EASE, CTA_BACKGROUND, CTA_SHADOW, CTA_TEXT_SHADOW, CTA_TEXT_COLOR, SECTION_LABEL_STYLE, TEXT_TERTIARY } from '@/lib/theme';
-import { TriggerSelection } from '@/types';
+import { TriggerSelection, PhysicalSymptomType } from '@/types';
 import ClassificationGrid from '@/components/ClassificationGrid';
 import IntensitySlider from '@/components/IntensitySlider';
+import SymptomChecklist from '@/components/SymptomChecklist';
 
 interface StateOfMindPanelProps {
   selection: TriggerSelection | null;
   onSelectionChange: (selection: TriggerSelection | null) => void;
   incidentText: string;
   onIncidentTextChange: (value: string) => void;
+  symptoms: PhysicalSymptomType[];
+  onSymptomsChange: (symptoms: PhysicalSymptomType[]) => void;
   isProcessing: boolean;
   canSubmit: boolean;
   onSubmit: () => void;
@@ -48,6 +51,8 @@ export default function StateOfMindPanel({
   onSelectionChange,
   incidentText,
   onIncidentTextChange,
+  symptoms,
+  onSymptomsChange,
   isProcessing,
   canSubmit,
   onSubmit,
@@ -130,6 +135,18 @@ export default function StateOfMindPanel({
               onChange={(tier) => onSelectionChange({ ...selection, intensity: tier })}
               onClear={() => onSelectionChange(null)}
             />
+          </div>
+
+          {/* Physical symptoms — optional, multi-select, real items from the
+              same study the app already cites elsewhere (see
+              lib/symptoms.ts). Purely additional flavor for the Matcher;
+              never blocks submission either way. */}
+          <SectionLabel className="mt-6">Any physical symptoms?</SectionLabel>
+          <p className="text-center mt-1 text-[11px]" style={{ color: TEXT_TERTIARY }}>
+            Optional. Select any that apply.
+          </p>
+          <div className="mt-3 w-full">
+            <SymptomChecklist selected={symptoms} onSelectedChange={onSymptomsChange} />
           </div>
 
           <div className="mt-6">

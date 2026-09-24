@@ -139,9 +139,11 @@ Use these; don't create parallel versions.
 
 **StageHeader + DescentRail** (`StageHeader.tsx`, `DescentRail.tsx`) — always rendered together as one unit (`gap-1.5`/`gap-1`), never separately. Roman numeral (`text-[36px] max-[480px]:text-[44px]`) + stage name (`text-2xl max-[480px]:text-[26px]`, bold, uppercase) on the left; the 10-dot rail below, always fits its container width (no horizontal scroll — every dot must be visible at any viewport). The active dot's own name is **not** repeated in the rail (that was tried and removed as duplication with the header above).
 
-**ClassificationGrid** — the 3×3 (2×N mobile) trigger picker. Whole cell is the click target (`min-h-[44px]`, `py-2` compact padding), custom thin-line checkmark (never the OS checkbox), selected state = amber background tint (`rgba(201,138,75,0.08)`) + darker text, no weight change between selected/unselected (both 500).
+**ClassificationGrid** — the 3×3 (2×N mobile) trigger picker. Whole cell is the click target (`min-h-[44px]`, `py-2` compact padding), custom thin-line checkmark (never the OS checkbox), selected state = amber background tint (`rgba(201,138,75,0.08)`) + darker text, no weight change between selected/unselected (both 500). **Single-select** (`role="radiogroup"`) — for a multi-select version of the same visual pattern, see SymptomChecklist below.
 
-**IntensitySlider** — only ever mounts once a category is selected (see Progressive Disclosure below); no "disabled" visual state exists for it. Discrete 0–9 dial + a hidden "ELEVEN" zone past the track's right edge.
+**IntensitySlider** — only ever mounts once a category is selected (see Progressive Disclosure below); no "disabled" visual state exists for it. Discrete 0–9 dial + a hidden "ELEVEN" zone past the track's right edge. The readout label (`X/10`, or the Finnish tier name for `fi-*` locales) always uses `TEXT_PRIMARY`, never the tier's own ramp color — the bar/dots/handle carry the tier color, the label just needs to stay legible at every tier (some ramp colors, e.g. light green/yellow, are low-contrast for text).
+
+**SymptomChecklist** (`SymptomChecklist.tsx`) — same thin-line-checkbox cell pattern as ClassificationGrid (same padding, checkbox, selected-tint styling), but **multi-select** (`role="group"` of real checkboxes, toggling membership in an array) and a fixed 2-column grid at every width instead of ClassificationGrid's 3-to-2 responsive reflow. Optional — never blocks `canSubmit`. Backs the "Any physical symptoms?" step; vocabulary lives in `lib/symptoms.ts` (real items from the same Vitutus study already cited elsewhere in the app, each with an English label + a Finnish `labelFi` used as the button's `title` tooltip).
 
 **CassetteLoader** (`CassetteLoader.tsx`) — the loading-state hero element, not a decorative icon: `aspect-[3/2]`, sized `w-4/5` (capped `max-w-[280px]`) on mobile so it scales to whichever container it's in, fixed `220px` on desktop; spinning reels + draining tape, a bold monospace label (`label` prop, defaults to `"GOREWINTER"`; `ResultsPanel.tsx`'s "Almost there" state passes `"INEARTHED"` so the two loading moments read as distinct releases, not a repeated asset). See Loading States below for the no-background-box rule shared by both usages.
 
@@ -162,7 +164,7 @@ There is no secondary/outline button variant beyond the "Get Prescription" call 
 
 The landing page reveals in stages rather than showing the full form (including disabled controls) upfront:
 1. Incident text + trigger grid are always visible, plus a hint line ("Pick the closest one. Clinical accuracy is not required.") shown only before a category is picked.
-2. Intensity section + submit button mount (with a `rite-reveal` animation) only once a category is selected — never rendered in a disabled/placeholder state.
+2. Intensity section, the optional physical-symptoms checklist, and the submit button mount together (with a `rite-reveal` animation) only once a category is selected — never rendered in a disabled/placeholder state.
 3. Reset stays available independent of that reveal — it must work the moment there's *any* input to clear (even just typed text, no category yet).
 
 Apply this same principle to any future multi-step input: don't show a disabled control for a step that isn't reachable yet — don't render it at all until it's reachable.

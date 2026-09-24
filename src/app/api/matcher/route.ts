@@ -4,6 +4,7 @@ import { AnalysisSchema, MatcherRequestSchema, validateRequest } from '@/lib/val
 import { getDeterministicGenre } from '@/lib/genre-mapping';
 import { STRESS_VALUE_TO_LABEL, getActiveStage, STAGES } from '@/lib/theme';
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
+import { getSymptomMeta } from '@/lib/symptoms';
 
 const MATCHER_MODEL = 'gpt-4.1';
 
@@ -95,12 +96,17 @@ export async function POST(request: NextRequest) {
       ? `\n\nSPECIAL CASE: The event description is trivial ("${trimmedEvent || 'nothing typed at all'}") yet the app has diagnosed the most severe stage there is (${condition}). For "cause" ONLY, do not invent drama about the event — instead call out this exact mismatch directly, in the same dark comic voice: how little was given versus how much the app is dramatizing it. Keep "choice" normal.`
       : '';
 
+    // Optional, self-reported, multi-select — real items from the same
+    // study the app cites elsewhere (see lib/symptoms.ts), never required.
+    const symptomsList = (emotionData.symptoms ?? []).map((s) => getSymptomMeta(s).label);
+    const symptomsLine = symptomsList.length > 0 ? symptomsList.join(', ') : 'none reported';
+
     // Use OpenAI Responses API with in-repo instructions (no hosted Prompt
     // Object) — variables are embedded directly in the input text instead.
     const response = await openai.responses.create({
       model: MATCHER_MODEL,
       instructions: MATCHER_INSTRUCTIONS,
-      input: `legacy_emotion: ${emotionData.primary}\ntrigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. Name the condition ("${condition}") directly at least once across the two fields.${gapDirective}`,
+      input: `legacy_emotion: ${emotionData.primary}\ntrigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. Name the condition ("${condition}") directly at least once across the two fields.${gapDirective}`,
     });
 
     // Handle different response formats
