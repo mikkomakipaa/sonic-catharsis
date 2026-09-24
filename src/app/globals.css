@@ -70,6 +70,37 @@
   }
 }
 
+/* DiagnosticReceipt (matcher-stage loading) — each checklist line "prints"
+   in from just above its resting position, like a thermal printer producing
+   the receipt one line at a time. Reduced-motion users get the lines in
+   their final state immediately, no ellipsis pulsing. */
+@keyframes receipt-line-print {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes receipt-ellipsis-pulse {
+  0%, 100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .receipt-line-print,
+  .receipt-ellipsis-pulse {
+    animation: none !important;
+  }
+}
+
 /* Page-level "flinch" — fires once when the user drags into the ELEVEN
    tier. A hard, short shake + a one-frame red flash on the page background,
    like the app got startled by its own user. Retriggered by toggling this

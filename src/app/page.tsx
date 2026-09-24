@@ -9,8 +9,6 @@ import ScreenAnalysis from '@/components/screens/ScreenAnalysis';
 import ScreenDescent from '@/components/screens/ScreenDescent';
 import {
   MAX_STRESS_INTENSITY,
-  LOADING_MESSAGES,
-  pickRandom,
   getActiveStage,
   computeStageAccent,
 } from '@/lib/theme';
@@ -57,7 +55,6 @@ export default function Home() {
   const [cause, setCause] = useState<string | null>(null);
   const [choice, setChoice] = useState<string | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
-  const [loadingMessage, setLoadingMessage] = useState('');
   const [subgenre, setSubgenre] = useState<string | null>(null);
 
   // Held between the analysis and descent steps: the curator call needs both,
@@ -113,7 +110,6 @@ export default function Home() {
     setAnalysisError(null);
     setPlaylist(null);
     setSubgenre(null);
-    setLoadingMessage(pickRandom(LOADING_MESSAGES.analyzing));
 
     const emotionData: EmotionData = {
       primary: triggerToEmotion(selection.trigger),
@@ -166,7 +162,6 @@ export default function Home() {
 
     setStep('descent');
     setIsProcessing(true);
-    setLoadingMessage(pickRandom(LOADING_MESSAGES.curating));
 
     try {
       const curatorResponse = await fetch('/api/curator', {
@@ -304,7 +299,6 @@ export default function Home() {
             cause={cause}
             choice={choice}
             isAnalyzing={isAnalyzing}
-            loadingMessage={loadingMessage}
             error={analysisError}
             onContinue={beginDescent}
             onRetry={startAssistant}
@@ -322,7 +316,6 @@ export default function Home() {
             isAnalyzing={isAnalyzing}
             reasoning={reasoning}
             subgenre={subgenre}
-            loadingMessage={loadingMessage}
             onReset={resetSelections}
             onBack={() => setStep('analysis')}
           />

@@ -4,7 +4,7 @@ import { ArrowLeft, RefreshCw } from 'lucide-react';
 import { EASE, Stage } from '@/lib/theme';
 import StageHeader from '@/components/StageHeader';
 import DescentRail from '@/components/DescentRail';
-import CassetteLoader from '@/components/CassetteLoader';
+import DiagnosticReceipt from '@/components/DiagnosticReceipt';
 
 interface ScreenAnalysisProps {
   stage: Stage;
@@ -12,7 +12,6 @@ interface ScreenAnalysisProps {
   cause: string | null;
   choice: string | null;
   isAnalyzing: boolean;
-  loadingMessage: string;
   error: string | null;
   onContinue: () => void;
   onRetry: () => void;
@@ -61,7 +60,6 @@ export default function ScreenAnalysis({
   cause,
   choice,
   isAnalyzing,
-  loadingMessage,
   error,
   onContinue,
   onRetry,
@@ -94,9 +92,7 @@ export default function ScreenAnalysis({
         // Safari toolbar-jump risk) so the loader sits in the visual middle
         // of the screen instead of pinned to the top with dead space below.
         <div className="min-h-[65dvh] flex flex-col items-center justify-center text-center">
-          <CassetteLoader className="mx-auto mb-6" />
-          <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>{loadingMessage}</h3>
-          <p className="text-xs" style={{ color: '#7d7869' }}>This won&apos;t take long</p>
+          <DiagnosticReceipt />
         </div>
       ) : error ? (
         <div className="flex flex-col gap-4 items-center text-center py-6">

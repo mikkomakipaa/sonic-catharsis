@@ -3,7 +3,7 @@
 import { Music, Radio } from 'lucide-react';
 import { Stage } from '@/lib/theme';
 import { Playlist } from '@/types';
-import CassetteLoader from '@/components/CassetteLoader';
+import PrescriptionCalibration from '@/components/PrescriptionCalibration';
 
 interface ResultsPanelProps {
   playlist: Playlist | null;
@@ -12,7 +12,6 @@ interface ResultsPanelProps {
   reasoning: string | null;
   triggerLabel?: string | null;
   stage?: Stage | null;
-  loadingMessage?: string;
 }
 
 function formatDate(): string {
@@ -24,21 +23,17 @@ function formatDate(): string {
 const PAPER_BG = '#e8e4d8';
 const PAPER_INK = '#2a2a28';
 
-export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage, loadingMessage }: ResultsPanelProps) {
+export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage }: ResultsPanelProps) {
   if (!playlist) {
-    // No background/border box — matches the analysis screen's own loading
-    // state (ScreenAnalysis.tsx), which is plain, so a loading state never
-    // looks like two different treatments depending on which screen it's
-    // on. See docs/design_guidelines.md → Loading States.
+    // No background/border box around the loading state itself — see
+    // docs/design_guidelines.md → Loading States. PrescriptionCalibration
+    // uses document typography (like DiagnosticReceipt on the matcher
+    // stage) but is still not wrapped in a card.
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center p-8">
           {isProcessing && !isAnalyzing && reasoning ? (
-            <>
-              <CassetteLoader className="mx-auto mb-6" label="INEARTHED" />
-              <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>{loadingMessage || 'Almost there'}</h3>
-              <p className="text-xs" style={{ color: '#7d7869' }}>This won&apos;t take long</p>
-            </>
+            <PrescriptionCalibration />
           ) : (
             <>
               <Music className="h-10 w-10 mx-auto mb-4" style={{ color: '#7d7869' }} />

@@ -99,37 +99,6 @@ export const STRESS_VALUE_TO_LABEL: Record<number, string> = Object.fromEntries(
   STRESS_TIERS.map((tier, index) => [index, tier.label])
 );
 
-// Dry, deadpan, pseudo-clinical — a case-file progression (complaint ->
-// diagnosis -> treatment selection -> prescription) rather than generic
-// "AI loading screen" copy ("Downloading despair...", "Communing with
-// darkness..."). `analyzing` stays purely clinical; `curating` is where
-// treatment/genre language ("brutality", "sonic violence") belongs, since
-// that stage is literally selecting the sonic treatment.
-export const LOADING_MESSAGES = {
-  analyzing: [
-    'Assessing emotional damage...',
-    'Quantifying your suffering...',
-    'Measuring existential dread...',
-    'Calibrating catharsis...',
-    'Diagnosing the situation...',
-    'Cross-referencing your grievance...',
-    'Finalizing the diagnosis...',
-  ],
-  curating: [
-    'Reviewing treatment options...',
-    'Selecting appropriate brutality...',
-    'Matching symptoms to riffs...',
-    'Adjusting the dosage...',
-    'Curating sonic violence...',
-    'Preparing your prescription...',
-    'Matching dosage to your rage...',
-  ],
-} as const;
-
-export function pickRandom<T>(items: readonly T[]): T {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
 // --- The Nine Stages of Vitutus ----------------------------------------------
 // Replaces the old Dante circle names. "Vitutus" is Finnish slang for a
 // simmering, absurd, distinctly Finnish flavor of irritation/pissed-off-ness
