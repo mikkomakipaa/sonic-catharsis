@@ -118,14 +118,14 @@ export async function POST(request: NextRequest) {
 
         if (artistNames.length > 0) {
           playlistResult = {
-            artists: artistNames.map((artist, index) => ({
+            artists: artistNames.map((artist) => ({
               artist: artist,
               link: `https://music.apple.com/search?term=${encodeURIComponent(artist)}`
             }))
           };
         }
       }
-    } catch (error) {
+    } catch {
       // Failed to parse curator response - try to extract artist data from malformed JSON or text
       try {
         // Look for artist patterns in the text response
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
 
         if (extractedArtists.length > 0) {
           playlistResult = {
-            artists: extractedArtists.map((artist, index) => ({
+            artists: extractedArtists.map((artist) => ({
               artist: artist,
               link: `https://music.apple.com/search?term=${encodeURIComponent(artist)}`
             }))
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
             ]
           };
         }
-      } catch (fallbackError) {
+      } catch {
         // Fallback parsing also failed
         return NextResponse.json(
           { error: 'Failed to parse playlist response' },
@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
       type: 'artists'
     });
 
-  } catch (error) {
+  } catch {
     // Curator API error occurred
     return NextResponse.json(
       { error: 'Failed to create playlist' },

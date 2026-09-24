@@ -215,7 +215,7 @@ export async function POST(request: NextRequest) {
           choice: choice || `${detectedSubgenre} provides cathartic relief for the current emotional state`
         };
       }
-    } catch (error) {
+    } catch {
       // Failed to parse matcher response
       return NextResponse.json(
         { error: 'Failed to parse analysis response' },
