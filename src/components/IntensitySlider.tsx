@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { EASE, STRESS_TIERS, MAX_STRESS_INTENSITY } from '@/lib/theme';
+import { EASE, STRESS_TIERS, MAX_STRESS_INTENSITY, TEXT_PRIMARY } from '@/lib/theme';
 
 interface IntensitySliderProps {
   value: number; // 0-9 normal tier, or MAX_STRESS_INTENSITY for ELEVEN
@@ -100,9 +100,12 @@ export default function IntensitySlider({ value, onChange, onClear }: IntensityS
           {isFinnish ? 'Vitutusmittari' : 'Intensity'}
         </span>
         <div className="ml-auto flex items-center gap-2.5">
+          {/* Regular text color, not the tier's own (sometimes low-contrast
+              light green/yellow) color — the bar/dots/handle below still
+              carry the tier color, this label just needs to stay legible. */}
           <span
             className={cn('text-[13px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
-            style={{ letterSpacing: '0.04em', color: tierInfo?.color }}
+            style={{ letterSpacing: '0.04em', color: TEXT_PRIMARY }}
           >
             {isFinnish
               ? tierInfo?.labelFi
