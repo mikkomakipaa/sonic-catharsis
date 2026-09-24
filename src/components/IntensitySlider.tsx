@@ -93,7 +93,15 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
   const fillPct = atEleven ? 100 : (value / NORMAL_MAX_TIER) * 100;
 
   return (
-    <div className="w-full max-w-[280px] max-[480px]:max-w-full flex flex-col gap-2">
+    // min-w pinned to the same value as max-w — this container sits in a
+    // shrink-to-fit flex context (parent uses items-center, not stretch),
+    // so width:100%/max-w alone still let content drive the box wider (the
+    // track's own w-full doesn't count toward that shrink-to-fit
+    // calculation, but the label row's text does) — bumping the readout's
+    // font size widened the label row, which widened this whole
+    // container, which widened the w-full track along with it. Pinning
+    // min-w=max-w forces a true fixed width regardless of label content.
+    <div className="w-full max-w-[280px] min-w-[280px] max-[480px]:max-w-full max-[480px]:min-w-0 flex flex-col gap-2">
       <div className="flex items-center gap-3">
         <span className="text-[12px] font-medium uppercase" style={{ letterSpacing: '0.1em', color: '#5c584f' }}>
           {isFinnish ? 'Vitutusmittari' : 'Intensity'}
