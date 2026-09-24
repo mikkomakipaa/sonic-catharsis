@@ -37,6 +37,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
             <>
               <CassetteLoader className="mx-auto mb-6" label="INEARTHED" />
               <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>{loadingMessage || 'Almost there'}</h3>
+              <p className="text-xs" style={{ color: '#7d7869' }}>This won&apos;t take long</p>
             </>
           ) : (
             <>
