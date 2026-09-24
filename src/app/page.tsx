@@ -295,7 +295,6 @@ export default function Home() {
         {step === 'analysis' && (
           <ScreenAnalysis
             stage={stage}
-            triggerLabel={triggerLabel}
             cause={cause}
             choice={choice}
             subgenre={subgenre}

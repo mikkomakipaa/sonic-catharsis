@@ -19,7 +19,6 @@ import DiagnosticReceipt from '@/components/DiagnosticReceipt';
 
 interface ScreenAnalysisProps {
   stage: Stage;
-  triggerLabel: string | null;
   cause: string | null;
   choice: string | null;
   subgenre: string | null;
@@ -52,7 +51,6 @@ function CapsuleIcon({ className }: { className?: string }) {
 
 export default function ScreenAnalysis({
   stage,
-  triggerLabel,
   cause,
   choice,
   subgenre,
@@ -62,8 +60,6 @@ export default function ScreenAnalysis({
   onRetry,
   onBack,
 }: ScreenAnalysisProps) {
-  const diagnosisLabel = triggerLabel ? triggerLabel.toUpperCase() : 'UNKNOWN';
-
   const hasResult = Boolean(cause || choice);
   const isLoading = isAnalyzing || (!hasResult && !error);
 
@@ -125,27 +121,16 @@ export default function ScreenAnalysis({
             Clinical Note / Epicrisis 001
           </span>
 
-          <div
-            className="flex justify-between items-end flex-wrap gap-2 max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-1 mt-1.5 pb-2"
-            style={{ borderBottom: `1px solid ${DIVIDER_COLOR}` }}
-          >
+          {/* Trigger label + stage code used to sit here (right-aligned)
+              but duplicated the rail's own roman numeral above — dropped.
+              The eyebrow stays as the section's lead-in. */}
+          <div className="pb-2 mt-1.5" style={{ borderBottom: `1px solid ${DIVIDER_COLOR}` }}>
             <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Diagnosis</span>
-            <div className="text-right max-[480px]:text-left leading-tight">
-              <div className="uppercase font-bold text-[17px] max-[480px]:text-[19px] leading-tight" style={{ color: stage.color }}>
-                {diagnosisLabel}
-              </div>
-              <div
-                className="uppercase text-[10px] leading-tight"
-                style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.06em', color: stage.color }}
-              >
-                Code {stage.roman}
-              </div>
-            </div>
           </div>
 
           {cause && (
             <div className="mt-6">
-              <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>What Happened</span>
+              <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Incident Summary</span>
               <p
                 className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13px] max-[480px]:text-[19px] leading-[1.45]"
                 style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
