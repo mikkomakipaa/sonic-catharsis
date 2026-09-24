@@ -17,12 +17,21 @@ export interface DurationMeta {
   value: number; // 0-1, ascending
 }
 
+// Labels lean into the deadpan-clinical/absurd-diagnosis voice used
+// elsewhere (matching "WHAT KIND OF BULLSHIT WAS IT?", "BEGIN DIAGNOSIS")
+// rather than plain time ranges. FRESH -> SIMMERING -> STEWING keep one
+// consistent cooking-decay metaphor as it escalates; OVERNIGHT and NOW A
+// LIFESTYLE are the deliberate register-breaks (literal time-of-day, then
+// the punchline) — placed at the two tiers that have earned an escalation
+// beyond the cooking metaphor, not before (an earlier ENTRENCHED draft for
+// "several hours" read as MORE severe than "since yesterday", undercutting
+// the escalation — STEWING fixes that ordering).
 export const DURATION_TIERS: DurationMeta[] = [
-  { type: 'just_now', label: 'Just happened', value: 0.0 },
-  { type: 'about_hour', label: 'About an hour ago', value: 0.25 },
-  { type: 'several_hours', label: 'Several hours', value: 0.5 },
-  { type: 'since_yesterday', label: 'Since yesterday', value: 0.75 },
-  { type: 'several_days', label: 'Several days or longer', value: 1.0 },
+  { type: 'just_now', label: 'Fresh', value: 0.0 },
+  { type: 'about_hour', label: 'Simmering', value: 0.25 },
+  { type: 'several_hours', label: 'Stewing', value: 0.5 },
+  { type: 'since_yesterday', label: 'Overnight', value: 0.75 },
+  { type: 'several_days', label: 'Now a lifestyle', value: 1.0 },
 ];
 
 export function getDurationMeta(type: DurationType): DurationMeta {

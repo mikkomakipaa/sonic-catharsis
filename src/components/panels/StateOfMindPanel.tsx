@@ -156,7 +156,7 @@ export default function StateOfMindPanel({
           {/* Duration/persistence — optional, single-select, ordinal (a
               small dial like intensity, not a category picker like the
               checklist above). See lib/duration.ts. */}
-          <SectionLabel className="mt-6">How long has this been going on?</SectionLabel>
+          <SectionLabel className="mt-6">How long has it been festering?</SectionLabel>
           <div className="mt-3 w-full">
             <DurationSelect value={duration} onChange={onDurationChange} />
           </div>

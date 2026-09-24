@@ -50,11 +50,18 @@ isn't ten times worse than one hour, so this isn't `hours / max_hours`):
 
 | Tier | Label | Value |
 |---|---|---:|
-| `just_now` | Just happened | 0.00 |
-| `about_hour` | About an hour ago | 0.25 |
-| `several_hours` | Several hours | 0.50 |
-| `since_yesterday` | Since yesterday | 0.75 |
-| `several_days` | Several days or longer | 1.00 |
+| `just_now` | Fresh | 0.00 |
+| `about_hour` | Simmering | 0.25 |
+| `several_hours` | Stewing | 0.50 |
+| `since_yesterday` | Overnight | 0.75 |
+| `several_days` | Now a lifestyle | 1.00 |
+
+Labels are stylized (deadpan-clinical/absurd-diagnosis voice, matching
+"WHAT KIND OF BULLSHIT WAS IT?"), not literal time descriptions — `Fresh` →
+`Simmering` → `Stewing` keep one consistent cooking-decay metaphor as it
+escalates; `Overnight` and `Now a lifestyle` are deliberate register-breaks
+at the two tiers that have earned it. The underlying `value`/tier
+*ordering* is what matters for severity, not the wording.
 
 A product-model assumption, not something the study specifies numerically
 either — the study treats intensity/duration/frequency as separate

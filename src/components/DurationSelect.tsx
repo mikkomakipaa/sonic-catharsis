@@ -26,7 +26,7 @@ interface DurationSelectProps {
 // rounding.
 export default function DurationSelect({ value, onChange }: DurationSelectProps) {
   return (
-    <div role="radiogroup" aria-label="How long has this been going on?" className="w-full max-w-xl mx-auto">
+    <div role="radiogroup" aria-label="How long has it been festering?" className="w-full max-w-xl mx-auto">
       <div className="grid grid-cols-5 gap-1.5 max-[480px]:grid-cols-1 max-[480px]:gap-0">
         {DURATION_TIERS.map((d, index) => {
           const isSelected = value === d.type;

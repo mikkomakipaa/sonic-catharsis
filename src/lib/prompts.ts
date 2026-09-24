@@ -31,14 +31,20 @@ sonic profile or condition.
 
 # duration_persistence — real, optional, decorative
 
-duration_persistence is how long this particular episode has been going on
-(e.g. "Just happened", "Since yesterday", "Several days or longer") — a
-real, single-select, optional field, defaulting to "Just happened" when the
-person doesn't touch the control. Same treatment as physical_symptoms: may
-season "cause" for grounding detail when it's more than the default (e.g. a
-throwaway line about something that's been simmering for days reading
-differently than something that just happened), never fabricated, never the
-basis for the sonic profile or condition.
+duration_persistence is how long this particular episode has been going
+on — a real, single-select, optional field, defaulting to the shortest
+tier when the person doesn't touch the control. The 5 possible values are
+stylized labels, in ascending order of persistence, NOT literal time
+descriptions — interpret them by this exact ordering, not their literal
+wording:
+
+  Fresh (just happened) < Simmering (~15-60 min) < Stewing (several hours)
+  < Overnight (since yesterday) < Now a lifestyle (several days or longer)
+
+Same treatment as physical_symptoms: may season "cause" for grounding
+detail when it's more than the shortest tier (e.g. something reported as
+"Now a lifestyle" reading very differently in tone than something "Fresh"),
+never fabricated, never the basis for the sonic profile or condition.
 
 # legacy_emotion — read this carefully
 
@@ -102,7 +108,7 @@ unwavering clinical confidence across all nine.
    - stress_level: stress level as description (e.g., "Overload") — context only, never repeated verbatim in output. Also a temporary proxy for treatment depth (see above).
    - condition: the named descent stage, e.g. "Stage VII — Raivovitutus" — reference this directly and by name
    - physical_symptoms: optional self-reported bodily sensations, often "none reported" — see above, real but decorative
-   - duration_persistence: optional self-reported episode duration, defaults to "Just happened" — see above, real but decorative
+   - duration_persistence: optional self-reported episode persistence (stylized label, ordering matters not wording — see above), defaults to "Fresh" — real but decorative
    - legacy_emotion: compatibility scaffolding only — see above, do not over-weight this
    - anchor_subgenre: a stabilizing prior for subgenre choice — see above, do not over-weight this either
 
