@@ -3,7 +3,18 @@
 import { useState, type ReactNode } from 'react';
 import { ArrowDownToLine, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { EASE, CTA_BACKGROUND, CTA_SHADOW, CTA_TEXT_SHADOW, CTA_TEXT_COLOR, SECTION_LABEL_STYLE, TEXT_TERTIARY } from '@/lib/theme';
+import {
+  EASE,
+  CTA_BACKGROUND,
+  CTA_SHADOW,
+  CTA_TEXT_SHADOW,
+  CTA_TEXT_COLOR,
+  SECTION_LABEL_STYLE,
+  TEXT_PRIMARY,
+  TEXT_TERTIARY,
+  DIVIDER_COLOR,
+  TREATMENT_ACCENT_BORDER,
+} from '@/lib/theme';
 import { TriggerSelection, PhysicalSymptomType, DurationType } from '@/types';
 import ClassificationGrid from '@/components/ClassificationGrid';
 import IntensitySlider from '@/components/IntensitySlider';
@@ -31,19 +42,18 @@ interface StateOfMindPanelProps {
 // three separately-tuned inline styles. `as="label"` keeps the incident
 // header as a real <label> (kept for the existing accessibility intent)
 // while the other two stay plain <p> eyebrows.
-function SectionLabel({ children, className, as = 'p' }: { children: ReactNode; className?: string; as?: 'p' | 'label' }) {
+function SectionLabel({ children, className, as = 'p', htmlFor }: { children: ReactNode; className?: string; as?: 'p' | 'label'; htmlFor?: string }) {
   const Tag = as;
   return (
-    <Tag className={cn('text-center uppercase', className)} style={SECTION_LABEL_STYLE}>
+    <Tag className={cn('text-center uppercase', className)} style={SECTION_LABEL_STYLE} htmlFor={htmlFor}>
       {children}
     </Tag>
   );
 }
 
 // Situation-first flow: incident (language) -> trigger (visual
-// classification) -> intensity (magnitude). The text field is the dominant
-// first interaction, not a comment bolted onto a selector — see
-// docs/model.md for the full rationale behind this ordering.
+// classification) -> intensity (magnitude). The optional incident gives the
+// diagnosis personal context, without competing visually with classification.
 //
 // Progressive disclosure: the intensity section and the submit/reset
 // buttons only mount once a category is picked. Showing a disabled slider
@@ -68,14 +78,18 @@ export default function StateOfMindPanel({
 
   return (
     <div className="flex flex-col items-center">
-      {/* The incident — what happened. This is the page's dominant first
-          interaction, not an optional comment attached to a selector. */}
+      {/* The incident stays first because it personalizes the diagnosis, but
+          uses a compact field so classification remains the visual focus. */}
       <div className="w-full max-w-2xl">
         <div className="flex flex-col items-center">
-          <SectionLabel as="label" className="mb-1.5">
+          <SectionLabel as="label" htmlFor="incident" className="mb-0.5">
             What petty injustice did you endure today?
           </SectionLabel>
+          <p id="incident-optional" className="mb-1.5 text-[9px] uppercase tracking-[0.1em]" style={{ color: TEXT_TERTIARY }}>
+            Optional
+          </p>
           <textarea
+            id="incident"
             value={incidentText}
             onChange={(e) => onIncidentTextChange(e.target.value)}
             onKeyDown={(e) => {
@@ -86,24 +100,23 @@ export default function StateOfMindPanel({
             }}
             onFocus={() => setIsIncidentFocused(true)}
             onBlur={() => setIsIncidentFocused(false)}
+            aria-describedby="incident-optional"
             // Cleared on focus, not just on typing — the placeholder is
             // instructional copy for the empty state, not something that
             // should still crowd the box once the user has tapped in.
-            placeholder={isIncidentFocused ? '' : 'What exactly ruined an otherwise perfectly acceptable day?'}
+            placeholder={isIncidentFocused ? '' : 'Describe the incident. Briefly.'}
             // text-sm (14px) is below iOS Safari's 16px auto-zoom threshold
             // for focused text inputs — it zooms in on focus and doesn't
             // zoom back out on blur. max-[480px]:text-base keeps this at
             // 16px on the phone widths where that kicks in, leaving desktop
             // typography untouched.
-            className="w-full px-5 py-4 rounded-md text-sm max-[480px]:text-base text-center resize-none focus:outline-none focus:ring-1 transition-all duration-200 font-normal focus:ring-[#c98a4b]/30 placeholder-[#726c5d]"
+            className="w-full h-14 px-2 py-1 text-sm max-[480px]:text-base text-center resize-none focus:outline-none transition-colors duration-200 font-normal placeholder-[#726c5d] max-[480px]:placeholder:opacity-55"
             style={{
               fontFamily: 'var(--font-geist-sans)',
-              lineHeight: '1.5',
-              height: '80px',
-              color: '#2f2e2b',
-              background: '#faf8f3',
-              border: '1px solid #ece7db',
-              transition: `all 0.2s ${EASE}`,
+              lineHeight: '1.4',
+              color: TEXT_PRIMARY,
+              borderBottom: `1px solid ${isIncidentFocused ? TREATMENT_ACCENT_BORDER : DIVIDER_COLOR}`,
+              transition: `border-color 0.2s ${EASE}`,
             }}
           />
         </div>
