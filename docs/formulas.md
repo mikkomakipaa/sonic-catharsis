@@ -7,87 +7,167 @@ decision sequence for combining them with model judgment. See
 ## 1. Stage formula (`getActiveStage`, `src/lib/theme.ts`)
 
 ```ts
-function getActiveStage(emotion, stressValue) {
-  const intensity = stressValue ?? 5;
-  const intensityStage = 1 + (intensity / 10) * 8;       // 0-10 -> 1-9, continuous
-  const idx = clamp(1, 9, round(intensityStage + EMOTION_STAGE_TILT[emotion]));
+function getActiveStage(stressValue, symptoms = [], duration = 'just_now') {
+  if (stressValue === null) return SURFACE;
+  const intensityFraction = stressValue / 10;
+  const somaticFraction = symptoms.length / 6;       // uniform per-item weight
+  const durationFraction = getDurationMeta(duration).value; // 0/0.25/0.5/0.75/1.0
+  const severity = intensityFraction * 0.85 + somaticFraction * 0.10 + durationFraction * 0.05;
+  const idx = clamp(1, 9, round(1 + severity * 8));
   return STAGES[idx - 1];
 }
 ```
 
-Intensity is the **dominant** driver — on its own it spans nearly the full
-I-IX range. Emotion applies only a small additive tilt on top:
+Three inputs, blended into one severity score, weighted **85% intensity /
+10% somatic (physical symptoms) / 5% duration (persistence)**. Intensity —
+the user's own "how bad is it" self-report — stays clearly dominant;
+symptoms and duration differentiate the top end and refine the middle, but
+never override or badly demote what the user explicitly said.
 
-```ts
-const EMOTION_STAGE_TILT = {
-  trust: -1, joy: -1,
-  anticipation: 0, surprise: 0,
-  fear: 1, disgust: 1, anger: 1,
-  sadness: 2,  // deliberate — see below
-};
-```
+**Trigger/emotion is deliberately NOT an input.** See History below — this
+is the second time a trigger/emotion-based severity term has been tried and
+removed. The real "Vitutusviisari" study this app cites elsewhere (QR on
+the receipt, footnote on the Epicrisis card) has no situational axis either
+— it's a pure current-state measure. Trigger stays meaningful elsewhere
+(the anchor genre pick in §2, the Matcher's cause text) but never shifts
+the stage number.
 
-`sadness`'s `+2` is a deliberate design choice (not a bug like the ones
-below): Stage IX is meant to read as cold and numb, not just "most
-severe" — frozen grief fits an icy "Vitutus maximus" better than hot fury or
-revulsion, so sadness skews toward the top more than the other emotions.
+### Somatic fraction — inspired by, not a replication of, the study
 
-### History — why this isn't the original formula
+`symptoms.length / 6` is uniformly weighted because the study provides no
+validated per-symptom severity weights to use instead — uniform weighting
+avoids inventing such differences. This is **not** the same thing as the
+study's own methodology: the Vitutusviisari's 10 items are multiple
+statements averaged to measure one latent construct; this app's 6-item
+checklist (`src/lib/symptoms.ts`) counts distinct physical manifestations,
+a different kind of aggregate. Call it a "somatic activation index inspired
+by" the study, not a replica of its scoring.
 
-The original version assigned each emotion a **widely-spread base stage**
-(1 through 9, one full stage apart) and let intensity only nudge it by
-`±round(((stressValue - 5) / 5) * 2)`, i.e. at most ±2:
+### Duration fraction — categorical, not linear
 
-```ts
-// ORIGINAL — replaced, kept here only as a cautionary reference
-const EMOTION_BASE_STAGE = {
-  trust: 1, joy: 2, anticipation: 3, surprise: 4,
-  fear: 5, disgust: 6, anger: 7, sadness: 9,
-};
-idx = clamp(1, 9, EMOTION_BASE_STAGE[emotion] + offset); // offset ∈ [-2, +2]
-```
+`src/lib/duration.ts` maps 5 tiers to evenly-spaced 0-1 values (ten hours
+isn't ten times worse than one hour, so this isn't `hours / max_hours`):
 
-Because the base values were spread across the *entire* 1-9 range but
-intensity could only move the result by 2 in either direction, every emotion
-was trapped in a narrow band **regardless of what the user actually
-reported**:
+| Tier | Label | Value |
+|---|---|---:|
+| `just_now` | Just happened | 0.00 |
+| `about_hour` | About an hour ago | 0.25 |
+| `several_hours` | Several hours | 0.50 |
+| `since_yesterday` | Since yesterday | 0.75 |
+| `several_days` | Several days or longer | 1.00 |
 
-| Emotion | Reachable range (original formula) |
-|---|---|
-| trust | I – III (never above III, even at max intensity) |
-| joy | I – IV |
-| anticipation | I – V |
-| surprise | II – VI |
-| fear | III – VII |
-| disgust | IV – VIII |
-| anger | **V – IX** (never below V, even at min intensity) |
-| sadness | **VII – IX** (never below VII, even at min intensity) |
+A product-model assumption, not something the study specifies numerically
+either — the study treats intensity/duration/frequency as separate
+characteristics of vitutus, but doesn't publish a duration-to-severity
+curve to borrow. Frequency (how often this kind of thing happens, across
+episodes) is deliberately not modeled — it's a longitudinal pattern, not
+this episode's severity.
 
-Concretely: an `injustice` trigger (→ `anger`) at displayed intensity
-`2/10` (internal `stressLevel = 1`) computed `offset = round(((1-5)/5)*2) =
--2`, giving `idx = max(1, 7 - 2) = 5` → **Stage V, "Kova vitutus"** — a
-solidly severe diagnosis for a reading the user explicitly rated near the
-bottom of the scale. The bug wasn't anger-specific; it was structural (base
-spread ≫ offset range) and affected every emotion.
+### Weight-revision history
 
-### Current reachable range (new formula)
+Landed on 85/10/5 after two corrections during design review:
 
-| Emotion | Reachable range |
-|---|---|
-| trust, joy | I – VIII |
-| anticipation, surprise | I – IX |
-| fear, disgust, anger | II – IX |
-| sadness | III – IX |
+1. **75% intensity / 25% symptoms** (first draft, 2-axis) — rejected:
+   `(intensity=10, 0 symptoms)` computed to **Stage VII**, a 2-stage
+   demotion of an explicit "10/10" self-report. The study establishes
+   intensity + bodily manifestation as *relevant* to current-state
+   severity, not a specific weighting, and certainly not that most
+   symptoms are *required* for max severity — the demotion wasn't a claim
+   the research supports.
+2. **85% intensity / 15% symptoms** (2-axis) — fixed it:
+   `(10, 0 symptoms)` → **Stage VIII**, capped just below the ceiling
+   rather than badly demoted; `(10, 4-6 symptoms)` → Stage IX.
+3. **Adding duration as a third axis at a naive 80/10/10** would have
+   *reintroduced* the same problem (intensity's own weight dropping back
+   from 85% to 80%) — caught before implementing. Final split keeps
+   intensity at 85% and takes duration's weight from symptoms' prior share:
+   **85% intensity / 10% somatic / 5% duration.**
 
-Known, accepted asymmetry (confirmed with the app owner, not yet revisited):
-`fear`/`disgust`/`anger` can only reach Stage II at `intensity = 0` exactly,
-never Stage I; `sadness` can never reach Stage I or II at all, floored at
-III even at minimum intensity. This preserves each emotion's tonal
-"weight" — a `failure` (sadness) complaint reads as inherently graver than
-an `exhaustion` (trust) complaint even when both are reported as equally
-mild — mirroring the same intentional asymmetry in the genre curve below
-(§2). Revisit only if this stops feeling like flavor and starts feeling like
-another floor/ceiling bug.
+### Prior history (still cautionary — do not revisit)
+
+Two even older formulas, kept here as a reminder of what NOT to do:
+
+- **A per-emotion additive tilt** (`EMOTION_STAGE_TILT`, small +/-1/+2 on
+  top of pure intensity) drifted out of sync with `getDeterministicGenre()`'s
+  own independently-tuned, asymmetric per-emotion severity curve in §2 once
+  that curve was retuned — two curves independently encoding overlapping
+  severity information will eventually disagree. Removed; intensity became
+  the sole driver for a while (no tilt, no symptoms, no duration).
+- **The original version**, before that: each emotion got a **widely-spread
+  base stage** (1 through 9, one full stage apart), with intensity only
+  nudging it by `±round(((stressValue - 5) / 5) * 2)` — at most ±2. Because
+  the base spread (up to 8 stages) vastly exceeded the offset range (±2),
+  every emotion was trapped in a narrow band regardless of what the user
+  actually reported (e.g. `trust` could never exceed Stage III even at max
+  intensity; `anger` could never drop below Stage V even at min intensity).
+  A `2/10` `injustice` (→ `anger`) reading landed on **Stage V** purely
+  because anger's base was high — not because the user reported anything
+  severe.
+
+Both are why trigger/emotion is now excluded from this formula entirely
+rather than reintroduced a third time with "better" weights — the pattern
+(an independently-maintained severity term drifting from either the genre
+curve or the user's own report) kept recurring regardless of how the term
+itself was tuned.
+
+### Verified properties (11 intensity × 7 symptom-count × 5 duration-tier = 385 combinations)
+
+Computed via a one-off scratch script (no test runner configured in this
+repo — see `package.json`):
+
+- **All 9 stages (I-IX) are reachable.**
+- **Monotonic in all three inputs** — increasing intensity, symptom count,
+  or duration tier (with the others held fixed) never decreases the stage.
+  Guaranteed by construction (all three coefficients are positive), and
+  confirmed exhaustively across the full grid.
+- **Key boundary checks:**
+  - `(intensity=0, 0 symptoms, just_now)` → **Stage I** ("assessed, minimal
+    vitutus" — a reading was submitted; distinct from `SURFACE`, which is
+    reserved for `stressValue === null`, no selection made at all).
+  - `(intensity=10, 0 symptoms, just_now)` → **Stage VIII**.
+  - `(intensity=10, 6 symptoms, just_now)` → **Stage IX** (somatic
+    corroboration alone can close the gap; duration not required).
+  - `(intensity=10, 0 symptoms, several_days)` → **Stage VIII**, not IX —
+    duration alone (5% weight) can't reach the ceiling either.
+  - `(intensity=2, 6 symptoms, several_days)` → **Stage IV** — the
+    "shouldn't runaway" sanity check: maxing both secondary axes on a 2/10
+    self-report doesn't jump to a wildly higher stage.
+
+Full transition table, `duration = just_now` (D=0):
+
+| intensity \ symptoms | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|---:|---|---|---|---|---|---|---|
+| 0 | I | I | I | I | II | II | II |
+| 1 | II | II | II | II | II | II | II |
+| 2 | II | II | III | III | III | III | III |
+| 3 | III | III | III | III | IV | IV | IV |
+| 4 | IV | IV | IV | IV | IV | IV | V |
+| 5 | IV | V | V | V | V | V | V |
+| 6 | V | V | V | V | VI | VI | VI |
+| 7 | VI | VI | VI | VI | VI | VI | VII |
+| 8 | VI | VII | VII | VII | VII | VII | VII |
+| 9 | VII | VII | VII | VIII | VIII | VIII | VIII |
+| 10 | VIII | VIII | VIII | VIII | VIII | VIII | IX |
+
+Full transition table, `duration = several_days` (D=1.0):
+
+| intensity \ symptoms | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|---:|---|---|---|---|---|---|---|
+| 0 | I | II | II | II | II | II | II |
+| 1 | II | II | II | II | III | III | III |
+| 2 | III | III | III | III | III | III | IV |
+| 3 | III | IV | IV | IV | IV | IV | IV |
+| 4 | IV | IV | IV | V | V | V | V |
+| 5 | V | V | V | V | V | V | VI |
+| 6 | V | VI | VI | VI | VI | VI | VI |
+| 7 | VI | VI | VI | VII | VII | VII | VII |
+| 8 | VII | VII | VII | VII | VII | VIII | VIII |
+| 9 | VIII | VIII | VIII | VIII | VIII | VIII | VIII |
+| 10 | VIII | VIII | VIII | IX | IX | IX | IX |
+
+(`about_hour`, `several_hours`, and `since_yesterday` interpolate between
+these two tables — omitted here for brevity, regenerable from the formula
+above.)
 
 ## 2. Anchor genre table (`getDeterministicGenre`, `src/lib/genre-mapping.ts`)
 

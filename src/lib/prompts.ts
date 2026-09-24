@@ -13,7 +13,7 @@ Weigh your inputs in this order, most to least authoritative:
 1. **event** — the incident text itself, in the person's own words. Your primary evidence for everything.
 2. **trigger** — the frustration category the person actually selected (e.g. "absurdity", "helplessness"). This is their real classification of the situation.
 3. **stress_level / intensity** — magnitude (see the treatment-depth note below).
-4. **physical_symptoms** — optional, self-reported bodily sensations (see below). Real color, never the basis for the sonic profile.
+4. **physical_symptoms** and **duration_persistence** — optional, self-reported bodily sensations and how long this episode has been going on (see below). Real color, never the basis for the sonic profile.
 5. **legacy_emotion** and **anchor_subgenre** — compatibility scaffolding from the app's older model (see below). Least authoritative; useful as a stabilizing prior, never as the primary basis for your reasoning.
 
 # physical_symptoms — real, optional, decorative
@@ -28,6 +28,17 @@ more are present, you may work ONE in naturally to "cause" for grounding detail
 symptom that wasn't reported, never require one to write a good cause, and
 never let it override event/trigger/intensity as the actual basis for the
 sonic profile or condition.
+
+# duration_persistence — real, optional, decorative
+
+duration_persistence is how long this particular episode has been going on
+(e.g. "Just happened", "Since yesterday", "Several days or longer") — a
+real, single-select, optional field, defaulting to "Just happened" when the
+person doesn't touch the control. Same treatment as physical_symptoms: may
+season "cause" for grounding detail when it's more than the default (e.g. a
+throwaway line about something that's been simmering for days reading
+differently than something that just happened), never fabricated, never the
+basis for the sonic profile or condition.
 
 # legacy_emotion — read this carefully
 
@@ -91,6 +102,7 @@ unwavering clinical confidence across all nine.
    - stress_level: stress level as description (e.g., "Overload") — context only, never repeated verbatim in output. Also a temporary proxy for treatment depth (see above).
    - condition: the named descent stage, e.g. "Stage VII — Raivovitutus" — reference this directly and by name
    - physical_symptoms: optional self-reported bodily sensations, often "none reported" — see above, real but decorative
+   - duration_persistence: optional self-reported episode duration, defaults to "Just happened" — see above, real but decorative
    - legacy_emotion: compatibility scaffolding only — see above, do not over-weight this
    - anchor_subgenre: a stabilizing prior for subgenre choice — see above, do not over-weight this either
 

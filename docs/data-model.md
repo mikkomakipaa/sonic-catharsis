@@ -97,9 +97,13 @@ claim otherwise in generated copy.
 `SURFACE` (`index: 0`, roman `—`) is a 10th pseudo-stage used before any
 trigger is selected — it's not part of the I-IX scale.
 
-Stage is computed from `(legacyEmotion, intensity)` — see
-[`formulas.md`](./formulas.md) for the exact formula and its history (it was
-rewritten this session after a floor/ceiling bug was found).
+Stage is computed from `(intensity, physicalSymptoms, duration)` — see
+[`formulas.md`](./formulas.md) for the exact formula, weights, and its
+revision history. Trigger/legacy emotion is **deliberately not an input**
+(it stays meaningful elsewhere — the anchor genre pick, the Matcher's cause
+text — but never shifts the stage number); this has been tried and removed
+twice now, see `formulas.md`'s history section before reintroducing it a
+third time.
 
 ## 4. Sonic profile
 
@@ -131,8 +135,15 @@ combined values — enforced by `SonicProfileSchema` (Zod `z.enum`).
   trigger: TriggerType;    // the user's actual selection
   stressLevel: number | null; // 0-10
   event: string | null;    // incidentText
+  symptoms: PhysicalSymptomType[]; // optional, multi-select, defaults to []
+  duration: DurationType;  // optional, single-select, defaults to 'just_now'
 }
 ```
+
+`symptoms` and `duration` are both optional additional context — real
+inputs to `getActiveStage()`'s severity blend (§3) and decorative-only
+context for the Matcher's cause/choice text (`src/lib/prompts.ts`), never
+required to submit.
 
 **Response** (`analysis` field conforms to `AnalysisSchema`):
 
@@ -192,19 +203,20 @@ contract.
 ## 8. End-to-end shape
 
 ```
-incidentText, trigger, intensity
-        │
+incidentText, trigger, intensity, physicalSymptoms, duration
+        │                            │            │
+        │ triggerToEmotion()         │            │
+        ▼                            ▼            ▼
+   legacyEmotion    getActiveStage(intensity, physicalSymptoms, duration)
+        │                            │
+        │                            ▼
+        │                     Stage (condition string)
         ▼
-   triggerToEmotion()  ──────────────►  legacyEmotion
-        │                                    │
-        ▼                                    ▼
-   getActiveStage(legacyEmotion, intensity) → Stage (condition string)
-        │                                    │
-        ▼                                    ▼
    getDeterministicGenre(legacyEmotion, intensity) → anchor_subgenre
         │
         ▼
-   MATCHER (incidentText, trigger, legacyEmotion, condition, anchor_subgenre)
+   MATCHER (incidentText, trigger, legacyEmotion, condition, anchor_subgenre,
+            physicalSymptoms, duration)
         │
         ▼
    { subgenre, sonic_profile, cause, choice }
@@ -224,6 +236,8 @@ incidentText, trigger, intensity
 | Trigger metadata, `triggerToEmotion()` | `src/lib/trigger.ts` |
 | Classification grid UI | `src/components/ClassificationGrid.tsx` |
 | Intensity slider, ELEVEN tier | `src/lib/theme.ts` (`MAX_STRESS_INTENSITY`), `src/components/IntensitySlider.tsx` |
+| Physical symptoms vocabulary + checklist UI | `src/lib/symptoms.ts`, `src/components/SymptomChecklist.tsx` |
+| Duration/persistence vocabulary + select UI | `src/lib/duration.ts`, `src/components/DurationSelect.tsx` |
 | Stage names + `getActiveStage` | `src/lib/theme.ts` |
 | Stage header display | `src/components/StageHeader.tsx` |
 | Anchor genre table | `src/lib/genre-mapping.ts` |

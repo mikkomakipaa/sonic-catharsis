@@ -4,10 +4,11 @@ import { useState, type ReactNode } from 'react';
 import { ArrowDownToLine, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EASE, CTA_BACKGROUND, CTA_SHADOW, CTA_TEXT_SHADOW, CTA_TEXT_COLOR, SECTION_LABEL_STYLE, TEXT_TERTIARY } from '@/lib/theme';
-import { TriggerSelection, PhysicalSymptomType } from '@/types';
+import { TriggerSelection, PhysicalSymptomType, DurationType } from '@/types';
 import ClassificationGrid from '@/components/ClassificationGrid';
 import IntensitySlider from '@/components/IntensitySlider';
 import SymptomChecklist from '@/components/SymptomChecklist';
+import DurationSelect from '@/components/DurationSelect';
 
 interface StateOfMindPanelProps {
   selection: TriggerSelection | null;
@@ -16,6 +17,8 @@ interface StateOfMindPanelProps {
   onIncidentTextChange: (value: string) => void;
   symptoms: PhysicalSymptomType[];
   onSymptomsChange: (symptoms: PhysicalSymptomType[]) => void;
+  duration: DurationType;
+  onDurationChange: (duration: DurationType) => void;
   isProcessing: boolean;
   canSubmit: boolean;
   onSubmit: () => void;
@@ -53,6 +56,8 @@ export default function StateOfMindPanel({
   onIncidentTextChange,
   symptoms,
   onSymptomsChange,
+  duration,
+  onDurationChange,
   isProcessing,
   canSubmit,
   onSubmit,
@@ -147,6 +152,14 @@ export default function StateOfMindPanel({
           </p>
           <div className="mt-3 w-full">
             <SymptomChecklist selected={symptoms} onSelectedChange={onSymptomsChange} />
+          </div>
+
+          {/* Duration/persistence — optional, single-select, ordinal (a
+              small dial like intensity, not a category picker like the
+              checklist above). See lib/duration.ts. */}
+          <SectionLabel className="mt-6">How long has this been going on?</SectionLabel>
+          <div className="mt-3 w-full">
+            <DurationSelect value={duration} onChange={onDurationChange} />
           </div>
 
           <div className="mt-6">

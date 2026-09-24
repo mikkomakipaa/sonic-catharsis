@@ -1,7 +1,9 @@
 // THE RITE — shared design tokens, copy, and pure helpers for the redesigned UI.
 // No JSX here; consumed by page.tsx and the panel/selector components.
 
-import type { EmotionType } from '@/types';
+import type { PhysicalSymptomType, DurationType } from '@/types';
+import { PHYSICAL_SYMPTOMS } from './symptoms';
+import { getDurationMeta } from './duration';
 
 export const EASE = 'cubic-bezier(0.25, 1, 0.5, 1)';
 
@@ -156,26 +158,67 @@ export const STAGES: Stage[] = [
   { index: 9, roman: 'IX', name: 'Vitutus maximus', color: '#7dd3fc' },
 ];
 
-// --- Deterministic stage selection: stressValue -> Stage --------------------
-// Intensity (the user's own "how bad is it" 0-10 slider) is the *only*
-// driver — no per-emotion tilt. An earlier version gave each emotion a
-// widely-spread "base" stage and let stress only nudge it by +/-2 (or, in a
-// later revision, a small +/-1/+2 tilt on top of intensity): both versions
-// let two people who report the same intensity land on different stage
-// numbers depending on which emotion they picked, which drifted out of sync
-// with getDeterministicGenre()'s own per-emotion severity curve in
-// genre-mapping.ts once that curve was independently smoothed (tier 5 tuned
-// to read as "genuinely moderate" for every emotion). Emotion's character
-// now comes through entirely via the genre table's own per-emotion,
-// per-tier entries — this stage number is a plain, emotion-agnostic reading
-// of "how deep" so it can never disagree with the rail/header that display
-// it, or read more/less extreme than the genre curve implies at the same
-// intensity.
-export function getActiveStage(emotion: EmotionType | null, stressValue: number | null): Stage {
-  if (!emotion) return SURFACE;
-  const intensity = stressValue ?? 5;
-  const intensityStage = 1 + (intensity / MAX_STRESS_INTENSITY) * 8; // 0-10 -> 1-9, continuous
-  const idx = Math.min(9, Math.max(1, Math.round(intensityStage)));
+// --- Deterministic stage selection: intensity + somatic + duration -> Stage -
+// Trigger/emotion is deliberately NOT an input, on purpose, again. An
+// earlier version gave each emotion a widely-spread "base" stage (later a
+// small +/-1/+2 tilt on top of intensity): both drifted out of sync with
+// getDeterministicGenre()'s own independently-tuned per-emotion severity
+// curve, since two curves encoding overlapping severity information will
+// eventually disagree. The real "Vitutusviisari" study this app cites
+// elsewhere has no situational/trigger axis either — it's a pure
+// current-state measure. Trigger stays meaningful elsewhere (the genre
+// anchor pick, the Matcher's cause text) but never shifts the stage number.
+//
+// Intensity, physical symptoms, and duration are blended into one severity
+// score (not intensity alone, and not small nudges on top of it):
+//
+//   severity = 0.85 * intensityFraction + 0.10 * somaticFraction + 0.05 * durationFraction
+//
+// Weights were revised twice during design review before landing here:
+//   - 75% intensity / 25% symptoms was rejected — (intensity=10, 0 symptoms)
+//     computed to Stage VII, a 2-stage demotion of an explicit "10/10"
+//     self-report that the study doesn't support (it establishes intensity
+//     + bodily manifestation as relevant, not a specific weighting, and
+//     certainly not that most symptoms are required for max severity).
+//   - 85/15 (intensity/symptoms) fixed that: (10, 0) -> Stage VIII, capped
+//     just below the ceiling rather than badly demoted.
+//   - Adding duration as a third axis at a naive 80/10/10 would have
+//     reintroduced the same problem (intensity's own weight dropping back
+//     to 80%), so the final split keeps intensity at 85% and takes the
+//     duration weight from symptoms' prior share: 85/10/5.
+//
+// Physical symptoms are uniformly weighted (symptoms.length / 6) because
+// the study provides no validated per-symptom severity weights to use
+// instead — uniform weighting avoids inventing such differences. This is a
+// "somatic activation index" *inspired by* the Vitutusviisari, not a
+// replication of its own methodology: the study's 10 items are multiple
+// statements averaged to measure one latent construct, not a count of
+// distinct physical manifestations like this 6-item checklist.
+//
+// Duration/persistence is categorical (see lib/duration.ts), not linear —
+// ten hours isn't ten times worse than one. A product-model assumption, not
+// something the study specifies numerically.
+//
+// Stage I ("assessed, minimal vitutus") is distinct from SURFACE ("not
+// assessed at all") — (intensity=0, no symptoms, just_now) still returns
+// Stage I, since a reading was submitted; SURFACE is reserved for
+// stressValue === null (no selection made yet).
+//
+// Monotonic by construction: all three coefficients are positive, so
+// severity — and the rounded stage index — can never decrease when any one
+// input increases with the others held fixed. See docs/formulas.md for the
+// full computed transition table and worked boundary examples.
+export function getActiveStage(
+  stressValue: number | null,
+  symptoms: PhysicalSymptomType[] = [],
+  duration: DurationType = 'just_now'
+): Stage {
+  if (stressValue === null) return SURFACE;
+  const intensityFraction = stressValue / MAX_STRESS_INTENSITY;
+  const somaticFraction = symptoms.length / PHYSICAL_SYMPTOMS.length;
+  const durationFraction = getDurationMeta(duration).value;
+  const severity = intensityFraction * 0.85 + somaticFraction * 0.10 + durationFraction * 0.05;
+  const idx = Math.min(9, Math.max(1, Math.round(1 + severity * 8)));
   return STAGES[idx - 1];
 }
 

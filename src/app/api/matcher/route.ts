@@ -5,6 +5,7 @@ import { getDeterministicGenre } from '@/lib/genre-mapping';
 import { STRESS_VALUE_TO_LABEL, getActiveStage, STAGES } from '@/lib/theme';
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 import { getSymptomMeta } from '@/lib/symptoms';
+import { getDurationMeta } from '@/lib/duration';
 
 const MATCHER_MODEL = 'gpt-4.1';
 
@@ -68,11 +69,13 @@ export async function POST(request: NextRequest) {
     // otherwise be silently treated as "no stress level selected".
     const stressLabel = emotionData.stressLevel != null ? STRESS_VALUE_TO_LABEL[emotionData.stressLevel] ?? 'none' : 'none';
 
-    // The same deterministic (emotion, stress) -> Stage lookup the analysis
-    // screen already uses for its "Diagnosis: EMOTION, Code {roman}" display
-    // — computed again here so the model can be told the exact condition
-    // name it's expected to reference, in sync with what's on screen.
-    const stage = getActiveStage(emotionData.primary, emotionData.stressLevel ?? null);
+    // The same deterministic (intensity, symptoms, duration) -> Stage
+    // lookup the analysis screen already uses for its "Diagnosis: EMOTION,
+    // Code {roman}" display — computed again here so the model can be told
+    // the exact condition name it's expected to reference, in sync with
+    // what's on screen. Trigger/emotion is deliberately NOT an input to
+    // this — see the comment above getActiveStage() in lib/theme.ts.
+    const stage = getActiveStage(emotionData.stressLevel ?? null, emotionData.symptoms ?? [], emotionData.duration ?? 'just_now');
     const condition = `Stage ${stage.roman} — ${stage.name}`;
 
     // A stabilizing prior, not a forced answer: the same deterministic
@@ -101,12 +104,15 @@ export async function POST(request: NextRequest) {
     const symptomsList = (emotionData.symptoms ?? []).map((s) => getSymptomMeta(s).label);
     const symptomsLine = symptomsList.length > 0 ? symptomsList.join(', ') : 'none reported';
 
+    // Optional, self-reported, single-select — see lib/duration.ts.
+    const durationLine = getDurationMeta(emotionData.duration ?? 'just_now').label;
+
     // Use OpenAI Responses API with in-repo instructions (no hosted Prompt
     // Object) — variables are embedded directly in the input text instead.
     const response = await openai.responses.create({
       model: MATCHER_MODEL,
       instructions: MATCHER_INSTRUCTIONS,
-      input: `legacy_emotion: ${emotionData.primary}\ntrigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. Name the condition ("${condition}") directly at least once across the two fields.${gapDirective}`,
+      input: `legacy_emotion: ${emotionData.primary}\ntrigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. Name the condition ("${condition}") directly at least once across the two fields.${gapDirective}`,
     });
 
     // Handle different response formats

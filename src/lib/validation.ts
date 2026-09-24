@@ -28,6 +28,14 @@ export const PhysicalSymptomTypes = [
   'accelerated_breathing', 'weakness', 'legs_limp',
 ] as const;
 
+// Mirrors DurationType (src/types/index.ts) / DURATION_TIERS
+// (lib/duration.ts) — optional, single-select, defaults to the "no
+// duration reported" tier rather than being nullable, same reasoning as
+// PhysicalSymptomTypes above.
+export const DurationTypes = [
+  'just_now', 'about_hour', 'several_hours', 'since_yesterday', 'several_days',
+] as const;
+
 // Emotion data validation schema
 export const EmotionDataSchema = z.object({
   primary: z.enum(CoreEmotions, {
@@ -41,7 +49,8 @@ export const EmotionDataSchema = z.object({
   }),
   stressLevel: z.number().min(0).max(10).nullable().optional(), // 0-10 to match mapping matrix
   event: z.string().max(500).nullable().optional(),
-  symptoms: z.array(z.enum(PhysicalSymptomTypes)).optional().default([])
+  symptoms: z.array(z.enum(PhysicalSymptomTypes)).optional().default([]),
+  duration: z.enum(DurationTypes).optional().default('just_now')
 });
 
 // Matcher API request schema

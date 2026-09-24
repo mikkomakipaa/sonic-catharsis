@@ -1,0 +1,32 @@
+// Duration/persistence — how long this particular vitutus episode has been
+// going on. Inspired by the real Vitutus study treating intensity, duration,
+// and frequency as separate characteristics (frequency deliberately isn't
+// modeled here — it's about longitudinal pattern across episodes, not this
+// episode's severity) — not a literal replication of the study's own
+// measurement, which doesn't publish a validated duration-to-severity curve
+// either. `value` is a hand-tuned, evenly-spaced 0-1 product-model
+// assumption, not linear "hours / max_hours" (ten hours isn't ten times
+// worse than one). Optional, single-select; purely additional flavor context
+// plus a small (5%) contribution to getActiveStage()'s severity blend — see
+// lib/theme.ts.
+import type { DurationType } from '@/types';
+
+export interface DurationMeta {
+  type: DurationType;
+  label: string;
+  value: number; // 0-1, ascending
+}
+
+export const DURATION_TIERS: DurationMeta[] = [
+  { type: 'just_now', label: 'Just happened', value: 0.0 },
+  { type: 'about_hour', label: 'About an hour ago', value: 0.25 },
+  { type: 'several_hours', label: 'Several hours', value: 0.5 },
+  { type: 'since_yesterday', label: 'Since yesterday', value: 0.75 },
+  { type: 'several_days', label: 'Several days or longer', value: 1.0 },
+];
+
+export function getDurationMeta(type: DurationType): DurationMeta {
+  const meta = DURATION_TIERS.find((d) => d.type === type);
+  if (!meta) throw new Error(`Unknown duration type: ${type}`);
+  return meta;
+}

@@ -40,6 +40,17 @@ export type PhysicalSymptomType =
   | 'weakness'
   | 'legs_limp';
 
+// Duration/persistence — optional, single-select, 5 evenly-spaced tiers.
+// Distinct from Track.duration below (playback length) despite the name
+// overlap — this is how long the vitutus episode has been going on. See
+// lib/duration.ts for the citation/rationale and per-tier severity value.
+export type DurationType =
+  | 'just_now'
+  | 'about_hour'
+  | 'several_hours'
+  | 'since_yesterday'
+  | 'several_days';
+
 // --- Internal recommendation-engine model ------------------------------------
 // 8 basic emotions, as 4 opposing pairs. This is NOT the user-facing input model above
 // — nothing in the UI asks "which emotion". It's the vocabulary the

@@ -1,6 +1,6 @@
 'use client';
 
-import { TriggerSelection, PhysicalSymptomType } from '@/types';
+import { TriggerSelection, PhysicalSymptomType, DurationType } from '@/types';
 import StateOfMindPanel from '@/components/panels/StateOfMindPanel';
 
 interface ScreenSelectionProps {
@@ -10,6 +10,8 @@ interface ScreenSelectionProps {
   onIncidentTextChange: (value: string) => void;
   symptoms: PhysicalSymptomType[];
   onSymptomsChange: (symptoms: PhysicalSymptomType[]) => void;
+  duration: DurationType;
+  onDurationChange: (duration: DurationType) => void;
   isProcessing: boolean;
   canSubmit: boolean;
   onSubmit: () => void;
@@ -26,6 +28,8 @@ export default function ScreenSelection(props: ScreenSelectionProps) {
         onIncidentTextChange={props.onIncidentTextChange}
         symptoms={props.symptoms}
         onSymptomsChange={props.onSymptomsChange}
+        duration={props.duration}
+        onDurationChange={props.onDurationChange}
         isProcessing={props.isProcessing}
         canSubmit={props.canSubmit}
         onSubmit={props.onSubmit}

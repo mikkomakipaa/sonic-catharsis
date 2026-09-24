@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { TriggerSelection, TriggerType, Playlist, PhysicalSymptomType } from '@/types';
+import { TriggerSelection, TriggerType, Playlist, PhysicalSymptomType, DurationType } from '@/types';
 import { triggerToEmotion, getTriggerMeta } from '@/lib/trigger';
 import RiteHeader from '@/components/RiteHeader';
 import ScreenSelection from '@/components/screens/ScreenSelection';
@@ -34,6 +34,9 @@ interface EmotionData {
   // lib/symptoms.ts. Never required, never sent as anything but a plain
   // array (possibly empty).
   symptoms: PhysicalSymptomType[];
+  // Optional, single-select, additional flavor for the Matcher (and a small
+  // contribution to getActiveStage()'s severity blend) — see lib/duration.ts.
+  duration: DurationType;
 }
 
 export default function Home() {
@@ -45,6 +48,7 @@ export default function Home() {
   const [selection, setSelection] = useState<TriggerSelection | null>(null);
   const [incidentText, setIncidentText] = useState<string>('');
   const [symptoms, setSymptoms] = useState<PhysicalSymptomType[]>([]);
+  const [duration, setDuration] = useState<DurationType>('just_now');
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -71,8 +75,8 @@ export default function Home() {
   }, [intensityValue]);
 
   const stage = useMemo(
-    () => getActiveStage(selection ? triggerToEmotion(selection.trigger) : null, intensityValue),
-    [selection, intensityValue]
+    () => getActiveStage(intensityValue, symptoms, duration),
+    [intensityValue, symptoms, duration]
   );
   const riteAccent = useMemo(() => computeStageAccent(stage, combinedIntensity), [stage, combinedIntensity]);
 
@@ -117,6 +121,7 @@ export default function Home() {
       stressLevel: selection.intensity,
       event: incidentText.trim() || null,
       symptoms,
+      duration,
     };
 
     try {
@@ -213,6 +218,7 @@ export default function Home() {
     setSelection(null);
     setIncidentText('');
     setSymptoms([]);
+    setDuration('just_now');
     setPlaylist(null);
     setReasoning(null);
     setCause(null);
@@ -227,6 +233,7 @@ export default function Home() {
     setSelection(null);
     setIncidentText('');
     setSymptoms([]);
+    setDuration('just_now');
   };
 
   // Back from the analysis screen: return to selection but keep the
@@ -281,6 +288,8 @@ export default function Home() {
             onIncidentTextChange={setIncidentText}
             symptoms={symptoms}
             onSymptomsChange={setSymptoms}
+            duration={duration}
+            onDurationChange={setDuration}
             isProcessing={isProcessing}
             canSubmit={canSubmit}
             onSubmit={startAssistant}
