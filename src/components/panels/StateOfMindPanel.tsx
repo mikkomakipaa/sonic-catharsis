@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { ArrowDownToLine, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -13,7 +13,6 @@ import {
   TEXT_PRIMARY,
   TEXT_TERTIARY,
   DIVIDER_COLOR,
-  TREATMENT_ACCENT_BORDER,
 } from '@/lib/theme';
 import { TriggerSelection, PhysicalSymptomType, DurationType } from '@/types';
 import ClassificationGrid from '@/components/ClassificationGrid';
@@ -45,7 +44,7 @@ interface StateOfMindPanelProps {
 function SectionLabel({ children, className, as = 'p', htmlFor }: { children: ReactNode; className?: string; as?: 'p' | 'label'; htmlFor?: string }) {
   const Tag = as;
   return (
-    <Tag className={cn('text-center uppercase max-[640px]:!text-[17px]', className)} style={SECTION_LABEL_STYLE} htmlFor={htmlFor}>
+    <Tag className={cn('text-center uppercase max-[640px]:!text-[13px]', className)} style={SECTION_LABEL_STYLE} htmlFor={htmlFor}>
       {children}
     </Tag>
   );
@@ -74,7 +73,30 @@ export default function StateOfMindPanel({
   onReset,
 }: StateOfMindPanelProps) {
   const showReset = Boolean(selection || incidentText);
-  const [isIncidentFocused, setIsIncidentFocused] = useState(false);
+  const intensitySectionRef = useRef<HTMLDivElement>(null);
+  const hasAutoScrolledForSelection = useRef(false);
+
+  // The next step mounts only after the first trigger choice. Move it into
+  // view once, after React has painted that reveal, without repeatedly
+  // snapping the user back when they correct their category later.
+  useEffect(() => {
+    if (!selection) {
+      hasAutoScrolledForSelection.current = false;
+      return;
+    }
+
+    if (hasAutoScrolledForSelection.current) return;
+    hasAutoScrolledForSelection.current = true;
+
+    const frame = requestAnimationFrame(() => {
+      intensitySectionRef.current?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [selection]);
 
   return (
     <div className="flex flex-col items-center">
@@ -85,7 +107,7 @@ export default function StateOfMindPanel({
           <SectionLabel as="label" htmlFor="incident" className="mb-0.5">
             What petty injustice did you endure today?
           </SectionLabel>
-          <p id="incident-optional" className="mb-1.5 text-[9px] max-[640px]:text-[14px] uppercase tracking-[0.1em]" style={{ color: TEXT_TERTIARY }}>
+          <p id="incident-optional" className="mb-1.5 text-[9px] max-[640px]:text-[11px] uppercase tracking-[0.1em]" style={{ color: TEXT_TERTIARY }}>
             Optional
           </p>
           <textarea
@@ -98,24 +120,18 @@ export default function StateOfMindPanel({
                 if (canSubmit) onSubmit();
               }
             }}
-            onFocus={() => setIsIncidentFocused(true)}
-            onBlur={() => setIsIncidentFocused(false)}
             aria-describedby="incident-optional"
-            // Cleared on focus, not just on typing — the placeholder is
-            // instructional copy for the empty state, not something that
-            // should still crowd the box once the user has tapped in.
-            placeholder={isIncidentFocused ? '' : 'Describe the incident. Briefly.'}
-            // text-sm (14px) is below iOS Safari's 16px auto-zoom threshold
-            // for focused text inputs — it zooms in on focus and doesn't
-            // zoom back out on blur. max-[480px]:text-base keeps this at
-            // 16px on the phone widths where that kicks in, leaving desktop
-            // typography untouched.
-            className="w-full h-14 px-2 py-1 text-sm max-[640px]:text-[19px] text-center resize-none focus:outline-none transition-colors duration-200 font-normal placeholder-[#726c5d] max-[480px]:placeholder:opacity-55"
+            // The placeholder is instructional copy for the empty state, not
+            // something that should crowd the field after the user taps in.
+            placeholder="Describe the incident. Briefly."
+            // The mobile size stays at Safari's 16px auto-zoom threshold
+            // without overpowering the rest of the intake.
+            className="w-full h-14 px-2 py-1 text-sm max-[640px]:text-[16px] text-center resize-none focus:outline-none focus:ring-1 focus:ring-[#c99184]/30 transition-colors duration-200 font-normal placeholder-[#726c5d] max-[480px]:placeholder:opacity-55 focus:placeholder:opacity-0"
             style={{
               fontFamily: 'var(--font-geist-sans)',
               lineHeight: '1.4',
               color: TEXT_PRIMARY,
-              borderBottom: `1px solid ${isIncidentFocused ? TREATMENT_ACCENT_BORDER : DIVIDER_COLOR}`,
+              borderBottom: `1px solid ${DIVIDER_COLOR}`,
               transition: `border-color 0.2s ${EASE}`,
             }}
           />
@@ -134,7 +150,7 @@ export default function StateOfMindPanel({
       {/* Only shown before a category is picked — once selected, the next
           section takes over as guidance and this would just be clutter. */}
       {!selection && (
-        <p className="text-center mt-3 text-[11px] max-[640px]:text-[15px]" style={{ color: TEXT_TERTIARY }}>
+        <p className="text-center mt-3 text-[11px] max-[640px]:text-[12px]" style={{ color: TEXT_TERTIARY }}>
           Pick the closest one. Clinical accuracy is not required.
         </p>
       )}
@@ -142,7 +158,7 @@ export default function StateOfMindPanel({
       {/* Intensity + submit only reveal once a category exists — nothing
           to dial in or submit before then. */}
       {selection && (
-        <div className="flex flex-col items-center animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
+        <div ref={intensitySectionRef} className="flex flex-col items-center scroll-mt-4 animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
           {/* Intensity — how strongly it's affecting them. Quieter and more
               compact than the trigger grid above; a separate, independent
               axis, not a proxy for which trigger was picked. */}
@@ -159,7 +175,7 @@ export default function StateOfMindPanel({
               lib/symptoms.ts). Purely additional flavor for the Matcher;
               never blocks submission either way. */}
           <SectionLabel className="mt-6">Any physical symptoms?</SectionLabel>
-          <p className="text-center mt-1 text-[11px] max-[640px]:text-[15px]" style={{ color: TEXT_TERTIARY }}>
+          <p className="text-center mt-1 text-[11px] max-[640px]:text-[12px]" style={{ color: TEXT_TERTIARY }}>
             Optional. Select any that apply.
           </p>
           <div className="mt-3 w-full">

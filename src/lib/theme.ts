@@ -70,7 +70,7 @@ export const TREATMENT_ACCENT_TEXT = '#7a3d2e';
 // vivid STRESS_TIERS ramp below (that ramp signals intensity, not "done").
 // Used for the checkmark/locked-row text in DiagnosticReceipt.tsx and
 // PrescriptionCalibration.tsx once a line finishes.
-export const COMPLETE_ACCENT = '#6f8f7c';
+export const COMPLETE_ACCENT = '#496b58';
 
 // Shared neutral hairline — already used ad hoc as '#e6e2d8' in DescentRail,
 // IntensitySlider, etc. Named here since the card-free Diagnosis and

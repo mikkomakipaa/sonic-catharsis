@@ -21,7 +21,7 @@ export default function RiteHeader({ onGoHome, showHeadline = true }: RiteHeader
         onClick={onGoHome}
         disabled={!onGoHome}
         aria-label="Sonic Catharsis — back to start"
-        className="rite-kicker uppercase transition-opacity duration-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 text-[11px] max-[640px]:text-[16px] tracking-[0.18em] max-[480px]:tracking-[0.14em]"
+        className="rite-kicker uppercase transition-opacity duration-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 text-[11px] max-[640px]:text-[12px] tracking-[0.18em] max-[480px]:tracking-[0.14em]"
         style={{
           fontFamily: 'var(--font-plex-sans, sans-serif)',
           background: 'transparent',

@@ -285,7 +285,7 @@ export default function Home() {
         }}
       />
 
-      <div className="container mx-auto px-6 max-[480px]:px-4 pt-8 pb-4 max-w-7xl relative">
+      <div className={`container mx-auto px-6 max-[480px]:px-4 pt-8 pb-4 max-w-7xl relative ${step === 'analysis' ? 'max-[640px]:pt-4' : ''}`}>
         <RiteHeader onGoHome={resetSelections} showHeadline={step === 'selection'} />
 
         {step === 'selection' && (

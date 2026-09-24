@@ -71,13 +71,13 @@ export default function ScreenAnalysis({
       {!isLoading && (
         <>
           <span
-            className="uppercase text-[9.5px] max-[480px]:text-[10.5px]"
+            className="uppercase text-[9.5px] max-[640px]:text-[10.5px]"
             style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
           >
             Clinical Note / Epicrisis 001
           </span>
 
-          <div className="mt-8 flex flex-col gap-1.5 max-[480px]:gap-1">
+          <div className="mt-8 max-[640px]:mt-5 flex flex-col gap-1.5 max-[640px]:gap-1">
             <StageHeader stage={stage} align="left" />
 
             <DescentRail activeIndex={stage.index} />
@@ -85,7 +85,7 @@ export default function ScreenAnalysis({
         </>
       )}
 
-      <div className={isLoading ? undefined : 'mt-5'}>
+      <div className={isLoading ? undefined : 'mt-5 max-[640px]:mt-3'}>
       {isLoading ? (
         <div className="pt-2 text-center">
           <DiagnosticReceipt />
@@ -111,12 +111,12 @@ export default function ScreenAnalysis({
           </button>
         </div>
       ) : (
-        <div className="flex flex-col pt-3">
+        <div className="flex flex-col pt-3 max-[640px]:pt-1">
           {cause && (
-            <div className="mt-6">
+            <div className="mt-6 max-[640px]:mt-4">
               <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Incident Summary</span>
               <p
-                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13px] max-[480px]:text-[19px] leading-[1.45]"
+                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13px] max-[640px]:text-[16px] leading-[1.45]"
                 style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
               >
                 {cause}
@@ -125,18 +125,18 @@ export default function ScreenAnalysis({
           )}
 
           {choice && (
-            <div className="mt-6 pt-5" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
+            <div className="mt-6 max-[640px]:mt-4 pt-5 max-[640px]:pt-3" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
               <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Prescribed Response</span>
               {subgenre && (
                 <div
-                  className="uppercase font-bold text-[15px] max-[480px]:text-[17px] mt-2"
+                  className="uppercase font-bold text-[15px] max-[640px]:text-[16px] mt-2"
                   style={{ color: stage.color }}
                 >
                   {subgenre}
                 </div>
               )}
               <p
-                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13px] max-[480px]:text-[19px] leading-[1.45]"
+                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13px] max-[640px]:text-[16px] leading-[1.45]"
                 style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
               >
                 {choice}
@@ -148,7 +148,7 @@ export default function ScreenAnalysis({
               paper-card ink tint and onto the shared neutral tokens. */}
           {choice && (
             <p
-              className="uppercase m-0 mt-5 pt-3 text-[8.5px] max-[480px]:text-[10px] leading-[1.5]"
+              className="uppercase m-0 mt-5 max-[640px]:mt-3 pt-3 max-[640px]:pt-2 text-[8.5px] max-[640px]:text-[10px] leading-[1.5]"
               style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.03em', color: TEXT_TERTIARY, borderTop: `1px solid ${DIVIDER_COLOR}` }}
             >
               Treatment protocol per Sharman &amp; Dingle (2015), Front. Hum. Neurosci. — extreme music does not escalate anger; it matches it.
@@ -161,7 +161,7 @@ export default function ScreenAnalysis({
               the ritual's actual pivot action. */}
           <button
             onClick={onContinue}
-            className="mt-7 mx-auto w-full max-w-[280px] py-3.5 font-semibold text-sm uppercase tracking-wide transition-all duration-200 flex items-center justify-center gap-2 rounded-lg active:scale-[0.98]"
+            className="mt-7 max-[640px]:mt-5 mx-auto w-full max-w-[280px] py-3.5 font-semibold text-sm uppercase tracking-wide transition-all duration-200 flex items-center justify-center gap-2 rounded-lg active:scale-[0.98]"
             style={{
               transition: `all 0.2s ${EASE}`,
               letterSpacing: '0.08em',
@@ -177,7 +177,7 @@ export default function ScreenAnalysis({
             Get Prescription
           </button>
 
-          <div className="flex items-center justify-center gap-6 mt-5">
+          <div className="flex items-center justify-center gap-6 mt-5 max-[640px]:mt-4">
             <button
               onClick={onBack}
               className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide transition-colors duration-200"
