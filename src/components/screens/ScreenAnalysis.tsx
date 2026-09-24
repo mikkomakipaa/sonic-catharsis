@@ -126,16 +126,16 @@ export default function ScreenAnalysis({
           </span>
 
           <div
-            className="flex justify-between items-baseline flex-wrap gap-2 max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-1 mt-2 pb-3"
+            className="flex justify-between items-end flex-wrap gap-2 max-[480px]:flex-col max-[480px]:items-start max-[480px]:gap-1 mt-1.5 pb-2"
             style={{ borderBottom: `1px solid ${DIVIDER_COLOR}` }}
           >
             <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Diagnosis</span>
-            <div className="text-right max-[480px]:text-left">
-              <div className="uppercase font-bold text-[17px] max-[480px]:text-[19px]" style={{ color: stage.color }}>
+            <div className="text-right max-[480px]:text-left leading-tight">
+              <div className="uppercase font-bold text-[17px] max-[480px]:text-[19px] leading-tight" style={{ color: stage.color }}>
                 {diagnosisLabel}
               </div>
               <div
-                className="uppercase text-[10px]"
+                className="uppercase text-[10px] leading-tight"
                 style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.06em', color: stage.color }}
               >
                 Code {stage.roman}
@@ -147,7 +147,7 @@ export default function ScreenAnalysis({
             <div className="mt-6">
               <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>What Happened</span>
               <p
-                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13.5px] max-[480px]:text-[19px] leading-[1.55]"
+                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13px] max-[480px]:text-[19px] leading-[1.45]"
                 style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
               >
                 {cause}
@@ -161,13 +161,13 @@ export default function ScreenAnalysis({
               {subgenre && (
                 <div
                   className="uppercase font-bold text-[15px] max-[480px]:text-[17px] mt-2"
-                  style={{ color: TREATMENT_ACCENT_TEXT }}
+                  style={{ color: stage.color }}
                 >
                   {subgenre}
                 </div>
               )}
               <p
-                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13.5px] max-[480px]:text-[19px] leading-[1.55]"
+                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13px] max-[480px]:text-[19px] leading-[1.45]"
                 style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
               >
                 {choice}

@@ -48,16 +48,25 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
   }
 
   const severityLabel = stage && stage.index > 0 ? `${stage.roman} · ${stage.name.toUpperCase()}` : null;
+  // One dynamic accent per diagnosis — treatment reuses the active stage's
+  // own severity color rather than a second, competing accent. See
+  // docs/design_guidelines.md "Semantic color language". TREATMENT_ACCENT_*
+  // stays reserved for the interactive elements (Bandcamp ring, the
+  // Diagnosis screen's "Get Prescription" CTA), not diagnostic value text.
+  const treatmentColor = stage ? stage.color : TREATMENT_ACCENT_TEXT;
 
   return (
     <div
       key={playlist.id}
       // No card/paper background — sits directly on the page, same as the
-      // Diagnosis screen. See docs/design_guidelines.md "Design Philosophy".
-      className="w-full max-w-xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]"
+      // Diagnosis screen. Same max-w-3xl-derived width as the Diagnosis
+      // screen too (inherited from ScreenDescent's root, no separate cap
+      // here) — the two screens share one editorial grid and left edge.
+      // See docs/design_guidelines.md "Spacing & Layout".
+      className="w-full animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]"
     >
       <div
-        className="uppercase font-bold text-[17px] max-[480px]:text-[19px] pb-3"
+        className="uppercase font-bold text-[17px] max-[480px]:text-[19px] pb-2"
         style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.06em', color: TEXT_PRIMARY, borderBottom: `1px solid ${DIVIDER_COLOR}` }}
       >
         Prescription
@@ -68,7 +77,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
           docs/design_guidelines.md, monospace is reserved for clinical
           metadata; content (band names) reads in the app's normal sans. */}
       <div
-        className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 mt-4 text-[11px] max-[480px]:text-[13px] uppercase"
+        className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 mt-3 text-[11px] max-[480px]:text-[13px] uppercase"
         style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.04em' }}
       >
         <span style={{ color: TEXT_TERTIARY }}>For</span>
@@ -84,7 +93,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         {subgenre && (
           <>
             <span style={{ color: TEXT_TERTIARY }}>Treatment</span>
-            <span style={{ color: TREATMENT_ACCENT_TEXT }}>{subgenre.toUpperCase()}</span>
+            <span style={{ color: treatmentColor }}>{subgenre.toUpperCase()}</span>
           </>
         )}
       </div>
@@ -92,7 +101,9 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
       <div className="mt-4" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }} />
 
       {/* The bands — a clean continuation of the landing page's own
-          selection rows, not a receipt-strip. */}
+          selection rows, not a receipt-strip. Numbers stay quiet (small,
+          tertiary ink) so the band name — the actual payoff — carries the
+          row. */}
       <div className="mt-1">
         {playlist.tracks.map((track, index) => (
           <div
@@ -104,13 +115,13 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
             }}
           >
             <span
-              className="text-[10px] max-[480px]:text-[13px] tabular-nums shrink-0 w-6"
+              className="text-[9px] max-[480px]:text-[12px] tabular-nums shrink-0 w-6"
               style={{ fontFamily: "'Courier New', monospace", color: TEXT_TERTIARY }}
             >
               {String(index + 1).padStart(2, '0')}
             </span>
             <span
-              className="min-w-0 flex-1 truncate text-[13px] max-[480px]:text-[16px] font-bold ml-1"
+              className="min-w-0 flex-1 truncate text-[14px] max-[480px]:text-[16px] font-bold ml-1"
               style={{ color: TEXT_PRIMARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
             >
               {track.name}

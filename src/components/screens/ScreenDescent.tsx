@@ -42,8 +42,10 @@ export default function ScreenDescent({
       </div>
 
       {/* The prescription — a single column now that the receipt is gone,
-          same card-free treatment as the Diagnosis screen above it. */}
-      <div className={`flex justify-center mt-6${playlist ? ' mt-7 max-[480px]:mt-5' : ''}`}>
+          same card-free treatment and left edge as the Diagnosis screen
+          above it (no centering wrapper here, same as ScreenAnalysis —
+          both screens share this exact max-w-3xl column). */}
+      <div className={`mt-6${playlist ? ' mt-7 max-[480px]:mt-5' : ''}`}>
         <ResultsPanel
           playlist={playlist}
           isProcessing={isProcessing}
