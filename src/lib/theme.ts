@@ -78,7 +78,7 @@ export const STRESS_TIERS: { label: string; labelFi: string; color: string }[] =
   { label: 'Low', labelFi: 'Kiukku', color: '#22c55e' },
   { label: 'Optimum', labelFi: 'Ärsytys', color: '#84cc16' },
   { label: 'Moderate', labelFi: 'Suutus', color: '#eab308' },
-  { label: 'Overload', labelFi: 'Vitutus', color: '#f97316' },
+  { label: 'Overload', labelFi: 'Vituttaa', color: '#f97316' },
   { label: 'Burnout', labelFi: 'Raivo', color: '#ea580c' },
   { label: 'Breaking Point', labelFi: 'Täysi raivo', color: '#dc2626' },
   { label: 'Multi-climax', labelFi: 'Vimma', color: '#991b1b' },
