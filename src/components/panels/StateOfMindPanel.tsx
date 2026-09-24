@@ -138,7 +138,6 @@ export default function StateOfMindPanel({
             <IntensitySlider
               value={selection.intensity}
               onChange={(tier) => onSelectionChange({ ...selection, intensity: tier })}
-              onClear={() => onSelectionChange(null)}
             />
           </div>
 

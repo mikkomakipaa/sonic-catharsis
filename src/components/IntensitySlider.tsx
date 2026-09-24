@@ -7,7 +7,6 @@ import { EASE, STRESS_TIERS, MAX_STRESS_INTENSITY, TEXT_PRIMARY } from '@/lib/th
 interface IntensitySliderProps {
   value: number; // 0-9 normal tier, or MAX_STRESS_INTENSITY for ELEVEN
   onChange: (tier: number) => void;
-  onClear: () => void;
 }
 
 // Intensity, decoupled from the classification grid — a discrete horizontal dial
@@ -41,7 +40,7 @@ function tierForClientX(clientX: number, rect: DOMRect): number {
   return Math.round((clamped / rect.width) * NORMAL_MAX_TIER);
 }
 
-export default function IntensitySlider({ value, onChange, onClear }: IntensitySliderProps) {
+export default function IntensitySlider({ value, onChange }: IntensitySliderProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   // Vitutusmittari easter egg — undetectable server-side, so this starts
@@ -99,28 +98,17 @@ export default function IntensitySlider({ value, onChange, onClear }: IntensityS
         <span className="text-[12px] font-medium uppercase" style={{ letterSpacing: '0.1em', color: '#5c584f' }}>
           {isFinnish ? 'Vitutusmittari' : 'Intensity'}
         </span>
-        <div className="ml-auto flex items-center gap-2.5">
-          {/* Regular text color, not the tier's own (sometimes low-contrast
-              light green/yellow) color — the bar/dots/handle below still
-              carry the tier color, this label just needs to stay legible. */}
-          <span
-            className={cn('text-[13px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
-            style={{ letterSpacing: '0.04em', color: TEXT_PRIMARY }}
-          >
-            {isFinnish
-              ? tierInfo?.labelFi
-              : `${atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/${MAX_STRESS_INTENSITY}`}
-          </span>
-          <button
-            onClick={onClear}
-            className="text-[10px] font-medium uppercase transition-colors duration-200"
-            style={{ letterSpacing: '0.04em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
-          >
-            Clear
-          </button>
-        </div>
+        {/* Regular text color, not the tier's own (sometimes low-contrast
+            light green/yellow) color — the bar/dots/handle below still
+            carry the tier color, this label just needs to stay legible. */}
+        <span
+          className={cn('ml-auto text-[13px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
+          style={{ letterSpacing: '0.04em', color: TEXT_PRIMARY }}
+        >
+          {isFinnish
+            ? tierInfo?.labelFi
+            : `${atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/${MAX_STRESS_INTENSITY}`}
+        </span>
       </div>
 
       {/* Extra right padding reserves room for the handle to float past the
