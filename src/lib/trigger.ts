@@ -35,7 +35,7 @@ export const TRIGGER_TYPES: TriggerMeta[] = [
   { type: 'exhaustion', label: 'Exhaustion', description: 'Capacity is depleted; even small problems now matter.' },
   { type: 'uncertainty', label: 'Uncertainty', description: 'The outcome or situation is unclear or unpredictable.' },
   { type: 'absurdity', label: 'Absurdity', description: 'The situation is irrational, pointless, or comically stupid.' },
-  { type: 'unclassified', label: 'Unclassified', description: "Doesn't fit cleanly into any category above." },
+  { type: 'unclassified', label: 'Other Bullshit', description: "Doesn't fit cleanly into any category above." },
 ];
 
 export function getTriggerMeta(type: TriggerType): TriggerMeta {

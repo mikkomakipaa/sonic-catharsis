@@ -63,7 +63,13 @@ export default function SymptomChecklist({ selected, onSelectedChange }: Symptom
               onFocus={() => setHoveredType(s.type)}
               onBlur={() => setHoveredType(null)}
               className={cn(
-                'flex items-center gap-2.5 px-3 py-2 max-[480px]:px-2 text-left min-h-[44px] cursor-pointer',
+                // Denser than ClassificationGrid on purpose — this is
+                // secondary/optional context (10% of the stage formula),
+                // not the primary classification, so it shouldn't occupy
+                // comparable visual weight. min-h-[44px] stays mobile-only
+                // (touch target); desktop rows genuinely shrink with the
+                // reduced py.
+                'flex items-center gap-2.5 px-3 py-1.5 max-[480px]:px-2 max-[480px]:min-h-[44px] text-left cursor-pointer',
                 'focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-[#c98a4b]/60',
                 needsBorder && 'border-t'
               )}
