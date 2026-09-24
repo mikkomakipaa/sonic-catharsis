@@ -91,7 +91,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         className="px-5 max-[480px]:px-6 py-3 text-[9px] max-[480px]:text-[13px] uppercase text-[#6b6b66] max-[480px]:text-[#4a4a46]"
         style={{ letterSpacing: '0.5px' }}
       >
-        Sig: Take ten (10) bands. Repeat as needed. No known cure.
+        Sig: Take ten (10) bands. Repeat ad nauseam. No known cure.
       </div>
 
       <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
