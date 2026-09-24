@@ -106,7 +106,7 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
     // shrink-to-fit problem doesn't reappear at narrow widths: without it,
     // longer tier labels (e.g. "Täysvittuuntuminen") visibly widened the
     // whole control relative to shorter ones (e.g. "1/10").
-    <div className="w-full max-w-[280px] min-w-[280px] max-[480px]:max-w-full max-[480px]:min-w-full flex flex-col gap-2">
+    <div className="w-full max-w-[280px] min-w-[280px] max-[640px]:max-w-full max-[640px]:min-w-full flex flex-col gap-2">
       <div className="flex items-center gap-3">
         <span className="text-[12px] font-medium uppercase" style={{ letterSpacing: '0.1em', color: '#5c584f' }}>
           {isFinnish ? 'Vitutusmittari' : 'Intensity'}
