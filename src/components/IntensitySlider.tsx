@@ -101,7 +101,12 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
     // font size widened the label row, which widened this whole
     // container, which widened the w-full track along with it. Pinning
     // min-w=max-w forces a true fixed width regardless of label content.
-    <div className="w-full max-w-[280px] min-w-[280px] max-[480px]:max-w-full max-[480px]:min-w-0 flex flex-col gap-2">
+    // Mobile pins the same way, just against 100% instead of a fixed px
+    // value — min-w-full alongside max-w-full (not min-w-0) so the same
+    // shrink-to-fit problem doesn't reappear at narrow widths: without it,
+    // longer tier labels (e.g. "Täysvittuuntuminen") visibly widened the
+    // whole control relative to shorter ones (e.g. "1/10").
+    <div className="w-full max-w-[280px] min-w-[280px] max-[480px]:max-w-full max-[480px]:min-w-full flex flex-col gap-2">
       <div className="flex items-center gap-3">
         <span className="text-[12px] font-medium uppercase" style={{ letterSpacing: '0.1em', color: '#5c584f' }}>
           {isFinnish ? 'Vitutusmittari' : 'Intensity'}
