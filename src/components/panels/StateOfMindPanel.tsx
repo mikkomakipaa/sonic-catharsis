@@ -163,7 +163,11 @@ export default function StateOfMindPanel({
               compact than the trigger grid above; a separate, independent
               axis, not a proxy for which trigger was picked. */}
           <SectionLabel className="mt-5">How bad is it?</SectionLabel>
-          <div className="mt-2">
+          {/* This wrapper owns the slider's available width. Without an
+              explicit width, the parent flex column shrink-wraps it to the
+              readout row, so a long Finnish tier name changes the track
+              length. */}
+          <div className="mt-2 w-full max-w-[280px]">
             <IntensitySlider
               value={selection.intensity}
               onChange={(tier) => onSelectionChange({ ...selection, intensity: tier })}
