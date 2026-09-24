@@ -9,7 +9,7 @@ import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, COMPLETE_ACCENT } from '@/
 const COMPOUNDS = ['Aggression', 'Heaviness', 'Dissonance', 'Melody'] as const;
 
 const SEGMENTS = 8;
-const LOCK_INTERVAL_MS = 650; // cadence a row locks at — matches DiagnosticReceipt's own step timing
+const LOCK_INTERVAL_MS = 350; // cadence a row locks at — matches DiagnosticReceipt's own step timing
 const SCAN_TICK_MS = 120; // how often a still-scanning row's bar flickers
 
 function randomFillCount(): number {

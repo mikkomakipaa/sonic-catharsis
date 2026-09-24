@@ -16,6 +16,16 @@ import {
 type ArtistItem = string | { artist?: string; name?: string; link?: string };
 type Step = 'selection' | 'analysis' | 'descent';
 
+// The clinical loading documents are intentional feedback, not a flash of
+// chrome. Fast model responses stay visible long enough to complete their
+// four-line ritual; errors still surface immediately.
+const MIN_LOADING_DURATION_MS = 1500;
+
+function waitForMinimumLoadingDuration(startedAt: number): Promise<void> {
+  const remaining = MIN_LOADING_DURATION_MS - (performance.now() - startedAt);
+  return remaining > 0 ? new Promise((resolve) => window.setTimeout(resolve, remaining)) : Promise.resolve();
+}
+
 // The shape sent to /api/matcher and /api/curator — still keyed on the
 // internal EmotionType vocabulary the deterministic genre-mapping engine
 // expects. `primary` is derived from the user's trigger pick via
@@ -111,6 +121,9 @@ export default function Home() {
   const startAssistant = async () => {
     if (!selection) return;
 
+    const loadingStartedAt = performance.now();
+    let completed = false;
+
     setStep('analysis');
     setIsProcessing(true);
     setIsAnalyzing(true);
@@ -149,11 +162,13 @@ export default function Home() {
       setSubgenre(matcherData.subgenre || null);
       setPendingAnalysis(matcherData.analysis);
       setPendingEmotionData(emotionData);
+      completed = true;
     } catch (error) {
       console.error('Error processing incident analysis:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to analyze incident. Please try again.';
       setAnalysisError(errorMessage);
     } finally {
+      if (completed) await waitForMinimumLoadingDuration(loadingStartedAt);
       setIsAnalyzing(false);
       setIsProcessing(false);
     }
@@ -172,6 +187,8 @@ export default function Home() {
 
     setStep('descent');
     setIsProcessing(true);
+    const loadingStartedAt = performance.now();
+    let completed = false;
 
     try {
       const curatorResponse = await fetch('/api/curator', {
@@ -212,11 +229,13 @@ export default function Home() {
           tracks,
         });
       }
+      completed = true;
     } catch (error) {
       console.error('Error curating descent:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to curate artists. Please try again.';
       setReasoning(`Error: ${errorMessage}`);
     } finally {
+      if (completed) await waitForMinimumLoadingDuration(loadingStartedAt);
       setIsProcessing(false);
     }
   };

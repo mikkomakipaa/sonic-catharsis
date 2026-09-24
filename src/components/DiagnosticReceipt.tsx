@@ -14,7 +14,7 @@ const CHECKLIST = [
   'Measuring festering time',
 ] as const;
 
-const STEP_INTERVAL_MS = 650;
+const STEP_INTERVAL_MS = 350;
 
 // The matcher-stage loading state: a minimal animated diagnostic receipt
 // that visibly processes what the user just submitted. Deliberately not a
