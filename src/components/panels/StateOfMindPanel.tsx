@@ -45,7 +45,7 @@ interface StateOfMindPanelProps {
 function SectionLabel({ children, className, as = 'p', htmlFor }: { children: ReactNode; className?: string; as?: 'p' | 'label'; htmlFor?: string }) {
   const Tag = as;
   return (
-    <Tag className={cn('text-center uppercase', className)} style={SECTION_LABEL_STYLE} htmlFor={htmlFor}>
+    <Tag className={cn('text-center uppercase max-[640px]:!text-[17px]', className)} style={SECTION_LABEL_STYLE} htmlFor={htmlFor}>
       {children}
     </Tag>
   );
@@ -85,7 +85,7 @@ export default function StateOfMindPanel({
           <SectionLabel as="label" htmlFor="incident" className="mb-0.5">
             What petty injustice did you endure today?
           </SectionLabel>
-          <p id="incident-optional" className="mb-1.5 text-[9px] uppercase tracking-[0.1em]" style={{ color: TEXT_TERTIARY }}>
+          <p id="incident-optional" className="mb-1.5 text-[9px] max-[640px]:text-[14px] uppercase tracking-[0.1em]" style={{ color: TEXT_TERTIARY }}>
             Optional
           </p>
           <textarea
@@ -110,7 +110,7 @@ export default function StateOfMindPanel({
             // zoom back out on blur. max-[480px]:text-base keeps this at
             // 16px on the phone widths where that kicks in, leaving desktop
             // typography untouched.
-            className="w-full h-14 px-2 py-1 text-sm max-[480px]:text-base text-center resize-none focus:outline-none transition-colors duration-200 font-normal placeholder-[#726c5d] max-[480px]:placeholder:opacity-55"
+            className="w-full h-14 px-2 py-1 text-sm max-[640px]:text-[19px] text-center resize-none focus:outline-none transition-colors duration-200 font-normal placeholder-[#726c5d] max-[480px]:placeholder:opacity-55"
             style={{
               fontFamily: 'var(--font-geist-sans)',
               lineHeight: '1.4',
@@ -134,7 +134,7 @@ export default function StateOfMindPanel({
       {/* Only shown before a category is picked — once selected, the next
           section takes over as guidance and this would just be clutter. */}
       {!selection && (
-        <p className="text-center mt-3 text-[11px]" style={{ color: TEXT_TERTIARY }}>
+        <p className="text-center mt-3 text-[11px] max-[640px]:text-[15px]" style={{ color: TEXT_TERTIARY }}>
           Pick the closest one. Clinical accuracy is not required.
         </p>
       )}
@@ -159,7 +159,7 @@ export default function StateOfMindPanel({
               lib/symptoms.ts). Purely additional flavor for the Matcher;
               never blocks submission either way. */}
           <SectionLabel className="mt-6">Any physical symptoms?</SectionLabel>
-          <p className="text-center mt-1 text-[11px]" style={{ color: TEXT_TERTIARY }}>
+          <p className="text-center mt-1 text-[11px] max-[640px]:text-[15px]" style={{ color: TEXT_TERTIARY }}>
             Optional. Select any that apply.
           </p>
           <div className="mt-3 w-full">

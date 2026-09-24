@@ -198,7 +198,10 @@ export default function Home() {
             artist: displayName,
             album: 'Artist Collection',
             genre: 'metal',
-            bandcampUrl: (typeof artistItem !== 'string' && artistItem.link) || `https://bandcamp.com/search?q=${encodeURIComponent(displayName)}`,
+            // A name-prefilled search is more reliable than a model-supplied
+            // direct URL and lets the listener choose the right artist page,
+            // release, or label listing on Bandcamp.
+            bandcampUrl: `https://bandcamp.com/search?q=${encodeURIComponent(displayName)}`,
           };
         });
 

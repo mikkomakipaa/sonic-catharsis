@@ -143,7 +143,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
               target="_blank"
               rel="noopener noreferrer"
               className="relative flex items-center justify-center shrink-0 ml-2 w-5 h-5 max-[480px]:w-11 max-[480px]:h-11"
-              title="Listen on Bandcamp"
+              title={`Search ${track.name} on Bandcamp`}
             >
               <span
                 className="flex items-center justify-center w-5 h-5 rounded-full opacity-40 group-hover:opacity-100 group-focus-within:opacity-100 hover:!opacity-100 transition-opacity duration-200"

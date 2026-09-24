@@ -69,7 +69,7 @@ export default function SymptomChecklist({ selected, onSelectedChange }: Symptom
                 // comparable visual weight. min-h-[44px] stays mobile-only
                 // (touch target); desktop rows genuinely shrink with the
                 // reduced py.
-                'flex items-center gap-2.5 px-3 py-1.5 max-[480px]:px-2 max-[480px]:min-h-[44px] text-left cursor-pointer',
+                'flex items-center gap-2.5 px-3 py-1.5 max-[480px]:px-2 max-[640px]:py-3 max-[480px]:min-h-[44px] text-left cursor-pointer',
                 'focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-[#c98a4b]/60',
                 needsBorder && 'border-t'
               )}
@@ -80,7 +80,7 @@ export default function SymptomChecklist({ selected, onSelectedChange }: Symptom
               }}
             >
               <span
-                className="relative flex items-center justify-center shrink-0 rounded-[3px]"
+                className="relative flex items-center justify-center shrink-0 rounded-[3px] max-[640px]:!h-8 max-[640px]:!w-8"
                 style={{
                   width: '15px',
                   height: '15px',
@@ -89,11 +89,11 @@ export default function SymptomChecklist({ selected, onSelectedChange }: Symptom
                   transition: `background 0.2s ${EASE}, border-color 0.2s ${EASE}`,
                 }}
               >
-                {isSelected && <CheckMark className="w-3 h-3" style={{ color: '#f7f5f0' }} />}
+                {isSelected && <CheckMark className="w-3 h-3 max-[640px]:!h-5 max-[640px]:!w-5" style={{ color: '#f7f5f0' }} />}
               </span>
 
               <span
-                className="uppercase max-[480px]:whitespace-normal"
+                className="uppercase max-[480px]:whitespace-normal max-[640px]:!text-[17px]"
                 style={{
                   fontSize: '12px',
                   letterSpacing: '0.05em',

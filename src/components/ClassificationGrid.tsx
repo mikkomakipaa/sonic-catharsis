@@ -58,16 +58,16 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
       aria-label="What kind of bullshit was it?"
       className={cn('w-full max-w-xl mx-auto', disabled && 'opacity-50')}
     >
-      <div className="grid grid-cols-3 max-[480px]:grid-cols-2">
+      <div className="grid grid-cols-3 max-[640px]:grid-cols-2">
         {TRIGGER_TYPES.map((c, index) => {
           const isSelected = selection?.trigger === c.type;
           const isHovered = hoveredType === c.type;
           // Row-divider borders have to be computed per breakpoint since the
-          // grid itself reflows from 3 columns (desktop) to 2 (mobile) —
+          // grid itself reflows from 3 columns (desktop) to 2 (at <=640px) —
           // a border-t class based on a single column count would land on
           // the wrong cells at the other breakpoint. `border-t` (no prefix)
           // covers indices that need a divider at BOTH breakpoints; the
-          // `max-[480px]:border-t` case below covers indices that only
+          // `max-[640px]:border-t` case below covers indices that only
           // start a new row once the grid narrows to 2 columns.
           const desktopRow = Math.floor(index / 3);
           const mobileRow = Math.floor(index / 2);
@@ -90,12 +90,12 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
               onFocus={() => setHoveredType(c.type)}
               onBlur={() => setHoveredType(null)}
               className={cn(
-                'flex items-center gap-2.5 px-3 py-2 max-[480px]:px-2 text-left min-h-[44px]',
+                'flex items-center gap-2.5 px-3 py-2 max-[480px]:px-2 max-[640px]:py-3 text-left min-h-[44px]',
                 'focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-[#c98a4b]/60',
                 !disabled && 'cursor-pointer',
                 disabled && 'cursor-not-allowed',
                 needsBorder && 'border-t',
-                needsMobileOnlyBorder && 'max-[480px]:border-t'
+                needsMobileOnlyBorder && 'max-[640px]:border-t'
               )}
               style={{
                 borderColor: '#e6e2d8',
@@ -105,7 +105,7 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
             >
               {/* Thin-line checkbox — never the OS glyph */}
               <span
-                className="relative flex items-center justify-center shrink-0 rounded-[3px]"
+                className="relative flex items-center justify-center shrink-0 rounded-[3px] max-[640px]:!h-8 max-[640px]:!w-8"
                 style={{
                   width: '15px',
                   height: '15px',
@@ -114,11 +114,11 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
                   transition: `background 0.2s ${EASE}, border-color 0.2s ${EASE}`,
                 }}
               >
-                {isSelected && <CheckMark className="w-3 h-3" style={{ color: '#f7f5f0' }} />}
+                {isSelected && <CheckMark className="w-3 h-3 max-[640px]:!h-5 max-[640px]:!w-5" style={{ color: '#f7f5f0' }} />}
               </span>
 
               <span
-                className="uppercase whitespace-nowrap max-[480px]:whitespace-normal"
+                className="uppercase whitespace-nowrap max-[640px]:whitespace-normal max-[640px]:!text-[17px]"
                 style={{
                   fontSize: '12px',
                   letterSpacing: '0.05em',

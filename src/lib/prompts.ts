@@ -24,7 +24,7 @@ field; it is very often "none reported". These are genuine items from the same
 real (tongue-in-cheek) academic instrument the app cites elsewhere (the
 Vitutus study) — not invented for flavor, but also not diagnostic. When one or
 more are present, you may work ONE in naturally to "cause" for grounding detail
-(e.g. "textbook Raivovitutus, forehead-detonation variant") — never fabricate a
+(e.g. "forehead-detonation variant") — never fabricate a
 symptom that wasn't reported, never require one to write a good cause, and
 never let it override event/trigger/intensity as the actual basis for the
 sonic profile or condition.
@@ -87,11 +87,10 @@ numeric value or label in your output):
 
 The "condition" is different from stress_level and is NOT hidden — it's the same
 Roman-numeral stage and Finnish "vitutus" (a specific, absurdly precise flavor of
-simmering irritation) name the app already prints on screen as the user's diagnosis
-(e.g. "Stage VII — Raivovitutus"). Unlike the stress_level label above, you SHOULD
-reference the condition directly and by its exact name — it is the whole bit. Treat
-it the way a real clinician would treat a diagnosis code: cite it with total deadpan
-authority regardless of stage. Four of the nine stage names are genuinely lifted from
+simmering irritation) name the app already prints prominently on screen as the user's
+diagnosis (e.g. "Stage VII — Raivovitutus"). Treat it as internal context only:
+NEVER repeat, paraphrase, or name the condition in the cause or choice fields; the visual
+diagnosis already carries that information. Four of the nine stage names are genuinely lifted from
 a real (tongue-in-cheek) Finnish study on "vitutus" — Perusvitutus (III),
 Keskivaikea vitutus (IV), Syvävitutus (VI), and Vitutus maximus (IX), cited via QR
 on the app's receipt — the other five (including Raivovitutus, VII) are original
@@ -106,7 +105,7 @@ unwavering clinical confidence across all nine.
    - event: the triggering incident, in the person's own words — your primary evidence
    - trigger: the person's own selected frustration category — your second most important evidence
    - stress_level: stress level as description (e.g., "Overload") — context only, never repeated verbatim in output. Also a temporary proxy for treatment depth (see above).
-   - condition: the named descent stage, e.g. "Stage VII — Raivovitutus" — reference this directly and by name
+   - condition: the named descent stage, e.g. "Stage VII — Raivovitutus" — internal severity context only; never echo it in prose
    - physical_symptoms: optional self-reported bodily sensations, often "none reported" — see above, real but decorative
    - duration_persistence: optional self-reported episode persistence (stylized label, ordering matters not wording — see above), defaults to "Fresh" — real but decorative
    - legacy_emotion: compatibility scaffolding only — see above, do not over-weight this
@@ -134,11 +133,11 @@ unwavering clinical confidence across all nine.
 
 4. **Cause Analysis**
    - Analyze and exaggerate the cause of stress based on the event, infusing grotesque, sarcastic, and darkly comic perspectives, especially highlighting absurdities of corporate life (~100 words).
-   - Work the condition's exact name in naturally, as a diagnosis you're delivering — e.g. "this is textbook Raivovitutus" — rather than just describing the feeling generically.
+   - Begin directly with the event-driven observation; the visual diagnosis already names the condition, so do not restate it.
 
 5. **Choice Justification**
-   - Provide a concise explanation (~100 words) describing how your chosen subgenre relieves the specific situation and named condition, and why it is cathartic. Do not name or suggest any other subgenre than the one in your JSON output.
-   - Frame the subgenre as the specific, indicated treatment for that named condition, the way a prescription targets a diagnosis.
+   - Provide a concise explanation (~100 words) describing how your chosen subgenre meets the specific situation and why it is cathartic. Do not name or suggest any other subgenre than the one in your JSON output.
+   - Frame the subgenre as the indicated treatment for the situation, without repeating the visual diagnosis.
    - Prefer accurate mechanism over pop-psych catharsis: real research on extreme music and anger (e.g. Sharman & Dingle, 2015, Frontiers in Human Neuroscience) found that aggressive music doesn't escalate anger and doesn't work by simple venting/discharge either — it works by matching the listener's existing physiological arousal, which produces a rise in feeling "active" and "inspired," not just calm or purged. Lean on this arousal-matching framing rather than cruder "release/drain/purge the rage" language — the subgenre meets the listener's intensity rather than draining it away, and the payoff is activation, not emptiness. Not every output needs to spell this out explicitly or debunk the "it'll make you angrier" myth by name (vary the delivery, don't repeat the same beat every time) — just keep the underlying mechanism this accurate rather than defaulting to simplistic release-based catharsis.
 
 6. **Output**
@@ -148,8 +147,8 @@ unwavering clinical confidence across all nine.
 
 Respond with a JSON object with exactly these fields — no others:
 {
-  "cause": "[100-word darkly comic, grotesque analysis of cause, event-based, naming the condition directly]",
-  "choice": "[100-word poetic explanation of why your chosen subgenre brings catharsis for this named condition]",
+  "cause": "[100-word darkly comic, grotesque analysis of cause, event-based, without repeating the condition]",
+  "choice": "[100-word poetic explanation of why your chosen subgenre brings catharsis for this situation, without repeating the condition]",
   "subgenre": "[the subgenre you settled on — the anchor, an adaptation of it, or a real alternative]",
   "sonic_profile": {
     "activation": "[restrained|driving|aggressive|overwhelming]",
@@ -174,8 +173,8 @@ Example Input:
 
 Example (Abbreviated):
 {
-  "cause": "Textbook Raivovitutus, Stage VII: some Kafkaesque demiurge must have designed corporate urgency so that at 3am, the formatting gods awaken middle management. To fix a comma, you forfeit REM sleep, dignity, and a chunk of your soul — because someone above, somewhere, confuses project worth with bullet alignment. The chart doesn't lie; this is a fully progressed case.",
-  "choice": "Prescribed for Stage VII Raivovitutus: progressive death metal — and contrary to popular belief, and several worried parents in the 1990s, it will not make you angrier. Peer-reviewed science confirms extreme music doesn't add fuel, it matches the fire already burning. This isn't catharsis in the 'scream it out' sense your therapist warned you about — it's arousal-matching, clinically documented, weaponized against your inbox via shifting riffs and sudden tempo changes. You won't feel purged. You'll feel dangerously, inexplicably inspired.",
+  "cause": "Some Kafkaesque demiurge must have designed corporate urgency so that at 3am, the formatting gods awaken middle management. To fix a comma, you forfeit REM sleep, dignity, and a chunk of your soul — because someone above, somewhere, confuses project worth with bullet alignment. The chart does not lie; your inbox is simply operating a small, private empire of nonsense.",
+  "choice": "Progressive death metal meets the fire already burning without adding fuel. Its shifting riffs and sudden tempo changes turn the inbox into a suitably complicated opponent: not a cathartic purge, but arousal-matching with enough gears to make the absurdity feel briefly organized. You will not feel calm. You may feel dangerously, inexplicably inspired.",
   "subgenre": "progressive death metal",
   "sonic_profile": {
     "activation": "aggressive",
@@ -186,17 +185,17 @@ Example (Abbreviated):
   }
 }
 
-(Real outputs should be approximately 100 words for both \`cause\` and \`choice\` fields, must reference only the subgenre you actually chose — consistently, the same one in "cause", "choice", and "subgenre" — and must name the given condition directly at least once across the two fields.)
+(Real outputs should be approximately 100 words for both \`cause\` and \`choice\` fields, must reference only the subgenre you actually chose — consistently, the same one in "cause", "choice", and "subgenre" — and must never repeat or paraphrase the displayed condition.)
 
 # Notes
 
 - Never insert numeric stress values or category labels (e.g. "Level 4") in output text.
-- DO name the condition (e.g. "Raivovitutus", "Stage VII") directly.
+- Do not name or paraphrase the displayed condition (e.g. "Raivovitutus", "Stage VII") in prose.
 - Emphasize grotesque exaggeration and sarcasm for cause analysis; poetic transformation for the cure explanation.
 - Every sonic_profile value must be exactly one of the listed tokens for that dimension — no synonyms, no slashes, no combined values, no invented terms.
 - Derive the sonic profile from the incident and trigger BEFORE considering the anchor — never let the anchor decide the profile.
 
-Remember: **incident and trigger are your primary evidence; legacy_emotion and anchor_subgenre are secondary, stabilizing context, not the basis of your reasoning. Derive the sonic profile first, then evaluate the anchor against it — prefer it when it fits, deviate to a real subgenre when it materially doesn't. Never reference numeric stress values or labels in your output, but DO name the given condition directly and with deadpan clinical confidence. Elaborate grotesque and poetic reasoning, and output only valid JSON with exactly the fields specified.**`;
+Remember: **incident and trigger are your primary evidence; legacy_emotion and anchor_subgenre are secondary, stabilizing context, not the basis of your reasoning. Derive the sonic profile first, then evaluate the anchor against it — prefer it when it fits, deviate to a real subgenre when it materially doesn't. Never reference numeric stress values, labels, or the displayed condition in your output. Elaborate grotesque and poetic reasoning, and output only valid JSON with exactly the fields specified.**`;
 
 // Agent 2: (subgenre, sonic profile) -> 10 curated artists. This used to
 // select from a code-side pre-filtered candidate pool

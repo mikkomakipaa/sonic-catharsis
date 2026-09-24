@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
-import { Stage, MAX_STRESS_INTENSITY, TEXT_PRIMARY, TOTAL_INTENSITY_LEVELS } from '@/lib/theme';
+import { DIVIDER_COLOR, Stage, MAX_STRESS_INTENSITY, TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, TOTAL_INTENSITY_LEVELS } from '@/lib/theme';
 
 interface ReceiptCardProps {
   stage: Stage;
@@ -41,12 +41,13 @@ export default function ReceiptCard({ stage, triggerLabel, stressLevel, subgenre
 
   return (
     <div className="flex w-full flex-col items-center gap-3.5">
+      {/* The SVG preserves the compact, print-like desktop receipt exactly. */}
       <svg
         width="100%"
         height="auto"
         viewBox={`0 0 ${RECEIPT_WIDTH} ${RECEIPT_HEIGHT}`}
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full max-w-[340px] min-w-0"
+        className="hidden w-full max-w-[340px] min-w-0 min-[641px]:block"
       >
         <g fontFamily="'Courier New', monospace" fill={TEXT_PRIMARY}>
           <text x={RECEIPT_WIDTH / 2} y="24" textAnchor="middle" fontSize="12" fontWeight="bold" letterSpacing="1">RECEIPT</text>
@@ -70,6 +71,64 @@ export default function ReceiptCard({ stage, triggerLabel, stressLevel, subgenre
           <text x={RECEIPT_WIDTH / 2} y={248 + STUDY_QR_SIZE + 30} textAnchor="middle" fontSize="7.5" letterSpacing="0.5">UNIVERSITY OF TURKU · 2022</text>
         </g>
       </svg>
+
+      {/* A receipt is read close-up on a phone, rather than scaled down from
+          its desktop print dimensions. HTML here gives long clinical values
+          a natural wrap point without shrinking their type. */}
+      <section
+        aria-label="Receipt"
+        className="w-full min-w-0 px-8 pb-6 pt-8 font-mono min-[641px]:hidden"
+        style={{ color: TEXT_PRIMARY }}
+      >
+        <h2 className="text-center text-[17px] font-bold tracking-[0.08em]">RECEIPT</h2>
+        <div className="mt-3 border-t" style={{ borderColor: DIVIDER_COLOR }} />
+
+        <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[12px] leading-[1.45]" style={{ color: TEXT_TERTIARY }}>
+          <span>DATE: {date}</span>
+          <span>TIME: {time}</span>
+        </div>
+        <div className="mt-3 border-t" style={{ borderColor: DIVIDER_COLOR }} />
+
+        <dl className="mt-4 space-y-2 text-[14px] leading-[1.45]" style={{ color: TEXT_PRIMARY }}>
+          <div className="flex min-w-0 flex-wrap gap-x-2">
+            <dt style={{ color: TEXT_SECONDARY }}>TRIGGER:</dt>
+            <dd className="min-w-0 break-words">{itemLabel}</dd>
+          </div>
+          <div className="flex min-w-0 flex-wrap gap-x-2">
+            <dt style={{ color: TEXT_SECONDARY }}>INTENSITY:</dt>
+            <dd>{tierLabel}</dd>
+          </div>
+          <div className="flex min-w-0 flex-wrap gap-x-2">
+            <dt style={{ color: TEXT_SECONDARY }}>DIAGNOSIS:</dt>
+            <dd className="min-w-0 break-words">{stage.name.toUpperCase()} · STAGE {stage.roman}</dd>
+          </div>
+          {genreLine && (
+            <div className="flex min-w-0 flex-wrap gap-x-2">
+              <dt style={{ color: TEXT_SECONDARY }}>TREATMENT:</dt>
+              <dd className="min-w-0 break-words">{genreLine}</dd>
+            </div>
+          )}
+        </dl>
+
+        <div className="mt-4 border-t" style={{ borderColor: DIVIDER_COLOR }} />
+        <div className="mt-4 space-y-1 text-center text-[12px] leading-[1.45]" style={{ color: TEXT_SECONDARY }}>
+          <p>THANK YOU FOR PROCESSING YOUR VITUTUS!</p>
+          <p>NO REFUND, NO REMORSE.</p>
+          <p>SCIENTIFICALLY PROVEN TO FUNCTION.</p>
+        </div>
+        <div className="mt-4 border-t" style={{ borderColor: DIVIDER_COLOR }} />
+
+        <div className="mt-4 flex flex-col items-center text-center">
+          <p className="text-[13px] font-bold tracking-[0.08em]">VITUTUS STUDY</p>
+          {studyQrDataUrl && (
+            <svg role="img" aria-label="QR code linking to the Vitutus study" className="mt-3 h-[156px] w-[156px]" viewBox="0 0 156 156">
+              <image href={studyQrDataUrl} width="156" height="156" />
+            </svg>
+          )}
+          <p className="mt-3 text-[12px] tracking-[0.08em]" style={{ color: TEXT_SECONDARY }}>SCAN TO READ THE SOURCE</p>
+          <p className="mt-1 text-[12px] tracking-[0.04em]" style={{ color: TEXT_TERTIARY }}>UNIVERSITY OF TURKU · 2022</p>
+        </div>
+      </section>
     </div>
   );
 }

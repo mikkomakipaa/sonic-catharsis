@@ -65,20 +65,27 @@ export default function ScreenAnalysis({
 
   return (
     <div className="flex flex-col max-w-3xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]">
-      {/* The diagnosis stage is revealed alongside the result, not before —
-          showing "IX — VITUTUS MAXIMUS" while the loader still reads
-          "Diagnosing the situation..." undercuts the reveal. Header + rail
-          only mount once there's an actual result (or an error) to anchor
-          them. */}
+      {/* The clinical-note identifier establishes the document before its
+          severity finding. Both it and the stage reveal only once there is
+          an actual result (or an error) to anchor them. */}
       {!isLoading && (
-        <div className="flex flex-col gap-1.5 max-[480px]:gap-1">
-          <StageHeader stage={stage} align="left" />
+        <>
+          <span
+            className="uppercase text-[9.5px] max-[480px]:text-[10.5px]"
+            style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
+          >
+            Clinical Note / Epicrisis 001
+          </span>
 
-          <DescentRail activeIndex={stage.index} />
-        </div>
+          <div className="mt-8 flex flex-col gap-1.5 max-[480px]:gap-1">
+            <StageHeader stage={stage} align="left" />
+
+            <DescentRail activeIndex={stage.index} />
+          </div>
+        </>
       )}
 
-      <div className={isLoading ? undefined : 'mt-6'}>
+      <div className={isLoading ? undefined : 'mt-5'}>
       {isLoading ? (
         <div className="pt-2 text-center">
           <DiagnosticReceipt />
@@ -104,15 +111,7 @@ export default function ScreenAnalysis({
           </button>
         </div>
       ) : (
-        <div className="flex flex-col pt-4">
-          {/* Card-free clinical note: no paper card, border, or shadow. */}
-          <span
-            className="uppercase text-[9.5px] max-[480px]:text-[10.5px]"
-            style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
-          >
-            Clinical Note / Epicrisis 001
-          </span>
-
+        <div className="flex flex-col pt-3">
           {cause && (
             <div className="mt-6">
               <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Incident Summary</span>

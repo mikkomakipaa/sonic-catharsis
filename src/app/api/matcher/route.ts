@@ -9,27 +9,25 @@ import { getDurationMeta } from '@/lib/duration';
 
 const MATCHER_MODEL = 'gpt-4.1';
 
-// Matches "Stage <roman>" optionally followed by "— <Finnish stage name>",
-// so any wrong stage the model names in cause/choice prose (it's told to
-// name the condition, but nothing stops it hallucinating a different one —
-// e.g. writing "Stage I — Lievä ärsytys" while the app's own rail/header
-// show Stage II) gets corrected to the one actually diagnosed, the same
-// safety-net spirit as the subgenre fallback below.
-// \b after the roman-numeral group is load-bearing: JS regex alternation
-// matches the first successful branch, not the longest, and "V" and "I"
-// both appear earlier in this list than "VII"/"VIII"/"IX" — without a
-// boundary, "Stage VII" matched only the "V" inside it (leaving "II —
-// Raivovitutus" dangling and un-replaced) or "Stage IX" matched only the
-// leading "I". The \b forces backtracking to the full numeral.
-const STAGE_NAMES_PATTERN = STAGES.map((s) => s.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-const CONDITION_MENTION_PATTERN = new RegExp(
-  `Stage\\s+(?:I|II|III|IV|V|VI|VII|VIII|IX)\\b(?:\\s*[—-]\\s*(?:${STAGE_NAMES_PATTERN}))?`,
+// The Epicrisis header is the single source of the diagnosis label. The
+// model receives it as severity context, but prose must not restate it.
+const STAGE_NAMES_PATTERN = STAGES.map((stage) => stage.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+const STAGE_REFERENCE_PATTERN = new RegExp(
+  `\\bStage\\s+(?:I|II|III|IV|V|VI|VII|VIII|IX)\\b(?:\\s*[—-]\\s*(?:${STAGE_NAMES_PATTERN}))?`,
   'gi'
 );
+const STAGE_NAME_PATTERN = new RegExp(`\\b(?:${STAGE_NAMES_PATTERN})\\b`, 'gi');
 
-function enforceCondition(text: string, condition: string): string {
+function removeDisplayedCondition(text: string): string {
   if (!text) return text;
-  return text.replace(CONDITION_MENTION_PATTERN, condition);
+  return text
+    .replace(STAGE_REFERENCE_PATTERN, '')
+    .replace(STAGE_NAME_PATTERN, '')
+    .replace(/\b(?:classic|textbook)\s*[:—-]\s*/gi, '')
+    .replace(/\b(?:for|with|of)\s*:\s*/gi, '')
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 }
 
 export async function POST(request: NextRequest) {
@@ -70,10 +68,9 @@ export async function POST(request: NextRequest) {
     const stressLabel = emotionData.stressLevel != null ? STRESS_VALUE_TO_LABEL[emotionData.stressLevel] ?? 'none' : 'none';
 
     // The same deterministic (intensity, symptoms, duration) -> Stage
-    // lookup the analysis screen already uses for its "Diagnosis: EMOTION,
-    // Code {roman}" display — computed again here so the model can be told
-    // the exact condition name it's expected to reference, in sync with
-    // what's on screen. Trigger/emotion is deliberately NOT an input to
+    // lookup the analysis screen already uses for its prominent diagnosis
+    // display — computed again so the model has severity context without
+    // needing to repeat that label in prose. Trigger/emotion is deliberately NOT an input to
     // this — see the comment above getActiveStage() in lib/theme.ts.
     const stage = getActiveStage(emotionData.stressLevel ?? null, emotionData.symptoms ?? [], emotionData.duration ?? 'just_now');
     const condition = `Stage ${stage.roman} — ${stage.name}`;
@@ -96,7 +93,7 @@ export async function POST(request: NextRequest) {
     const trimmedEvent = (emotionData.event || '').trim();
     const isGapMoment = trimmedEvent.length < 15 && stage.index === 9;
     const gapDirective = isGapMoment
-      ? `\n\nSPECIAL CASE: The event description is trivial ("${trimmedEvent || 'nothing typed at all'}") yet the app has diagnosed the most severe stage there is (${condition}). For "cause" ONLY, do not invent drama about the event — instead call out this exact mismatch directly, in the same dark comic voice: how little was given versus how much the app is dramatizing it. Keep "choice" normal.`
+      ? `\n\nSPECIAL CASE: The event description is trivial ("${trimmedEvent || 'nothing typed at all'}") yet the header shows the most severe diagnosis. For "cause" ONLY, do not invent drama about the event — instead call out this exact mismatch directly, in the same dark comic voice: how little was given versus how much the app is dramatizing it. Keep "choice" normal.`
       : '';
 
     // Optional, self-reported, multi-select — real items from the same
@@ -112,7 +109,7 @@ export async function POST(request: NextRequest) {
     const response = await openai.responses.create({
       model: MATCHER_MODEL,
       instructions: MATCHER_INSTRUCTIONS,
-      input: `legacy_emotion: ${emotionData.primary}\ntrigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. Name the condition ("${condition}") directly at least once across the two fields.${gapDirective}`,
+      input: `legacy_emotion: ${emotionData.primary}\ntrigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}`,
     });
 
     // Handle different response formats
@@ -236,12 +233,10 @@ export async function POST(request: NextRequest) {
     // AI's judgment" behavior this change intentionally moves away from.
     analysisResult.subgenre = analysisResult.subgenre || anchorGenre.genre;
 
-    // Correct any wrong stage the model named — cause/choice text is prose
-    // the model writes freely, so it can drift from `condition` (the one
-    // fact that must match what's already on screen) even though the model
-    // is instructed to use it verbatim.
-    analysisResult.cause = enforceCondition(analysisResult.cause, condition);
-    analysisResult.choice = enforceCondition(analysisResult.choice, condition);
+    // The stage is already rendered as the Epicrisis diagnosis. This guards
+    // the visual hierarchy against a model that nevertheless echoes it.
+    analysisResult.cause = removeDisplayedCondition(analysisResult.cause);
+    analysisResult.choice = removeDisplayedCondition(analysisResult.choice);
 
     // Validate the shape before it can reach the Curator — a malformed
     // sonic_profile (wrong enum token, missing key) is far easier to

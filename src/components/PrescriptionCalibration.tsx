@@ -74,13 +74,8 @@ export default function PrescriptionCalibration() {
       className="w-full max-w-[320px] mx-auto"
       style={{ fontFamily: "'Courier New', monospace", color: TEXT_PRIMARY }}
     >
-      <div className="text-center mb-3">
-        <div className="text-[12px] max-[480px]:text-[14px] font-bold uppercase" style={{ letterSpacing: '0.12em' }}>
-          Sonic Catharsis
-        </div>
-        <div className="text-[11px] max-[480px]:text-[13px] uppercase mt-0.5" style={{ letterSpacing: '0.08em', color: TEXT_SECONDARY }}>
-          Dose Calibration
-        </div>
+      <div className="text-center mb-3 text-[11px] max-[480px]:text-[13px] uppercase" style={{ letterSpacing: '0.08em', color: TEXT_SECONDARY }}>
+        Dose Calibration
       </div>
 
       <div className="border-t border-dashed mb-2" style={{ borderColor: TEXT_TERTIARY }} />
