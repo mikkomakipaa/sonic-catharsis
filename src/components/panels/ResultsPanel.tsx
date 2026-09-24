@@ -77,7 +77,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
       <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
 
       <div className="flex items-center justify-between px-5 max-[480px]:px-6 py-2 text-[9px] max-[480px]:text-[13px]">
-        <span>PATIENT: {(triggerLabel || 'unknown').toUpperCase()}</span>
+        <span>TRIGGER: {(triggerLabel || 'unknown').toUpperCase()}</span>
         <span>DATE: {formatDate()}</span>
       </div>
 
@@ -93,7 +93,9 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         className="px-5 max-[480px]:px-6 py-3 text-[9px] max-[480px]:text-[13px] uppercase text-[#6b6b66] max-[480px]:text-[#4a4a46]"
         style={{ letterSpacing: '0.5px' }}
       >
-        Sig: Take ten (10) bands. Repeat ad nauseam. No known cure.
+        Sig: Take ten (10) bands. Repeat ad nauseam.
+        <br />
+        No known cure.
       </div>
 
       <div className="mx-5 max-[480px]:mx-6" style={{ borderTop: `1px dashed ${PAPER_INK}`, opacity: 0.4 }} />
@@ -139,7 +141,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
       {/* Signature */}
       <div className="px-5 max-[480px]:px-6 py-4 text-right">
         <div className="text-lg italic" style={{ fontFamily: "'Brush Script MT', cursive", color: PAPER_INK }}>
-          Dr. Catharsis
+          Dr. Curator
         </div>
         <div
           className="text-[8px] max-[480px]:text-[11px] uppercase tracking-wide text-[#6b6b66] max-[480px]:text-[#4a4a46]"

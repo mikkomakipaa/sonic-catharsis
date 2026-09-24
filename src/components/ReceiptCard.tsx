@@ -138,14 +138,15 @@ export default function ReceiptCard({ stage, triggerLabel, stressLevel, subgenre
           <text x="18" y="94" fontSize="10">1x {itemLabel}</text>
           <text x={RECEIPT_WIDTH - 18} y="94" textAnchor="end" fontSize="10">{tierLabel}</text>
 
+          <text x="18" y="112" fontSize="10">1x {stage.name.toUpperCase()}</text>
+          <text x={RECEIPT_WIDTH - 18} y="112" textAnchor="end" fontSize="10">STAGE {stage.roman}</text>
+
           {genreLine && (
             <>
-              <text x="18" y="112" fontSize="10">1x {genreLine}</text>
-              <text x={RECEIPT_WIDTH - 18} y="112" textAnchor="end" fontSize="10">N/A</text>
+              <text x="18" y="130" fontSize="10">1x {genreLine}</text>
+              <text x={RECEIPT_WIDTH - 18} y="130" textAnchor="end" fontSize="10">∞</text>
             </>
           )}
-
-          <text x="18" y="130" fontSize="10">1x STAGE {stage.roman} — {stage.name.toUpperCase()}</text>
 
           <line x1="18" y1="146" x2={RECEIPT_WIDTH - 18} y2="146" stroke="#2a2a28" strokeWidth="1" strokeDasharray="2 2" />
 
