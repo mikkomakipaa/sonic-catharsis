@@ -113,7 +113,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         {playlist.tracks.map((track, index) => (
           <div
             key={track.id}
-            className="group flex items-center py-2.5 max-[480px]:py-0 max-[480px]:min-h-[64px]"
+            className="group flex items-center py-2.5 max-[480px]:py-0 max-[480px]:min-h-[48px]"
             style={{
               borderTop: index > 0 ? `1px solid ${DIVIDER_COLOR}` : 'none',
               animationDelay: `${index * 60}ms`,
@@ -128,7 +128,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
               {String(index + 1).padStart(2, '0')}
             </span>
             <span
-              className="min-w-0 flex-1 truncate text-[14px] max-[480px]:text-[16px] font-bold ml-1"
+              className="min-w-0 flex-1 truncate text-[14px] font-bold ml-1"
               style={{ color: TEXT_PRIMARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
             >
               {track.name}

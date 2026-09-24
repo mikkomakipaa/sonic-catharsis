@@ -96,6 +96,16 @@ export default function Home() {
     wasAtElevenRef.current = atEleven;
   }, [intensityValue]);
 
+  // Screens replace one another in-place rather than through a route change,
+  // so the browser otherwise retains the previous screen's scroll position.
+  // Reset the document scroll after each screen mounts; assigning both roots
+  // also covers mobile Safari's scroll-root behavior.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [step]);
+
   // Step 1 of the rite: analyze the input. Stops here and waits for the user
   // to choose to descend — it never advances on its own.
   const startAssistant = async () => {
