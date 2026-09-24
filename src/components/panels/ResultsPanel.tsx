@@ -80,19 +80,19 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 mt-3 text-[11px] max-[480px]:text-[13px] uppercase"
         style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.04em' }}
       >
-        <span style={{ color: TEXT_TERTIARY }}>For</span>
+        <span style={{ color: TEXT_SECONDARY }}>For</span>
         <span style={{ color: TEXT_PRIMARY }}>{(triggerLabel || 'unknown').toUpperCase()}</span>
 
         {severityLabel && (
           <>
-            <span style={{ color: TEXT_TERTIARY }}>Severity</span>
+            <span style={{ color: TEXT_SECONDARY }}>Severity</span>
             <span style={{ color: stage!.color }}>{severityLabel}</span>
           </>
         )}
 
         {subgenre && (
           <>
-            <span style={{ color: TEXT_TERTIARY }}>Treatment</span>
+            <span style={{ color: TEXT_SECONDARY }}>Treatment</span>
             <span style={{ color: treatmentColor }}>{subgenre.toUpperCase()}</span>
           </>
         )}
@@ -108,15 +108,17 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         {playlist.tracks.map((track, index) => (
           <div
             key={track.id}
-            className="flex items-center py-2.5 max-[480px]:py-0 max-[480px]:min-h-[64px]"
+            className="group flex items-center py-2.5 max-[480px]:py-0 max-[480px]:min-h-[64px]"
             style={{
               borderTop: index > 0 ? `1px solid ${DIVIDER_COLOR}` : 'none',
               animationDelay: `${index * 60}ms`,
             }}
           >
+            {/* Indexing metadata, not information — quieter than the label
+                row above it, so it recedes behind the band name. */}
             <span
               className="text-[9px] max-[480px]:text-[12px] tabular-nums shrink-0 w-6"
-              style={{ fontFamily: "'Courier New', monospace", color: TEXT_TERTIARY }}
+              style={{ fontFamily: "'Courier New', monospace", color: TEXT_TERTIARY, opacity: 0.6 }}
             >
               {String(index + 1).padStart(2, '0')}
             </span>
@@ -127,7 +129,10 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
               {track.name}
             </span>
             {/* Outer <a> is the touch target — 44x44 minimum on mobile —
-                while the visible circle stays small, centered inside it. */}
+                while the visible circle stays small, centered inside it.
+                Quiet until hover/focus (group-hover on the row, or the
+                link's own :hover/:focus-visible) so every row doesn't end
+                with a coral circle competing with the band name. */}
             <a
               href={track.bandcampUrl}
               target="_blank"
@@ -136,7 +141,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
               title="Listen on Bandcamp"
             >
               <span
-                className="flex items-center justify-center w-5 h-5 rounded-full"
+                className="flex items-center justify-center w-5 h-5 rounded-full opacity-40 group-hover:opacity-100 group-focus-within:opacity-100 hover:!opacity-100 transition-opacity duration-200"
                 style={{ border: `1px solid ${TREATMENT_ACCENT_BORDER}`, color: TREATMENT_ACCENT_TEXT }}
               >
                 <Radio className="h-2.5 w-2.5" />
