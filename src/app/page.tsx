@@ -322,6 +322,7 @@ export default function Home() {
             isAnalyzing={isAnalyzing}
             reasoning={reasoning}
             subgenre={subgenre}
+            loadingMessage={loadingMessage}
             onReset={resetSelections}
             onBack={() => setStep('analysis')}
           />

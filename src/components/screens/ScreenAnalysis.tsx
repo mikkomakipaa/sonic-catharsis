@@ -76,8 +76,9 @@ export default function ScreenAnalysis({
     <div className="flex flex-col max-w-3xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]">
       {/* The diagnosis stage is revealed alongside the result, not before —
           showing "IX — VITUTUS MAXIMUS" while the loader still reads
-          "Summoning the void..." undercuts the reveal. Header + rail only
-          mount once there's an actual result (or an error) to anchor them. */}
+          "Diagnosing the situation..." undercuts the reveal. Header + rail
+          only mount once there's an actual result (or an error) to anchor
+          them. */}
       {!isLoading && (
         <div className="flex flex-col gap-1.5 max-[480px]:gap-1">
           <StageHeader stage={stage} align="left" />

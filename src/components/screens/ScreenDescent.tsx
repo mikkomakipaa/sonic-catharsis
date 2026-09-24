@@ -19,6 +19,7 @@ interface ScreenDescentProps {
   isAnalyzing: boolean;
   reasoning: string | null;
   subgenre: string | null;
+  loadingMessage: string;
   onReset: () => void;
   onBack: () => void;
 }
@@ -32,6 +33,7 @@ export default function ScreenDescent({
   isAnalyzing,
   reasoning,
   subgenre,
+  loadingMessage,
   onReset,
   onBack,
 }: ScreenDescentProps) {
@@ -64,6 +66,7 @@ export default function ScreenDescent({
           reasoning={reasoning}
           triggerLabel={triggerLabel}
           stage={stage}
+          loadingMessage={loadingMessage}
         />
 
         {/* sm:contents keeps this wrapper from becoming its own flex item —

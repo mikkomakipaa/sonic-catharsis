@@ -12,6 +12,7 @@ interface ResultsPanelProps {
   reasoning: string | null;
   triggerLabel?: string | null;
   stage?: Stage | null;
+  loadingMessage?: string;
 }
 
 function formatDate(): string {
@@ -23,7 +24,7 @@ function formatDate(): string {
 const PAPER_BG = '#e8e4d8';
 const PAPER_INK = '#2a2a28';
 
-export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage }: ResultsPanelProps) {
+export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage, loadingMessage }: ResultsPanelProps) {
   if (!playlist) {
     // No background/border box — matches the analysis screen's own loading
     // state (ScreenAnalysis.tsx), which is plain, so a loading state never
@@ -35,7 +36,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
           {isProcessing && !isAnalyzing && reasoning ? (
             <>
               <CassetteLoader className="mx-auto mb-6" label="INEARTHED" />
-              <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>Almost there</h3>
+              <h3 className="text-sm font-semibold mb-2 tracking-wide" style={{ color: '#2f2e2b' }}>{loadingMessage || 'Almost there'}</h3>
             </>
           ) : (
             <>

@@ -99,24 +99,30 @@ export const STRESS_VALUE_TO_LABEL: Record<number, string> = Object.fromEntries(
   STRESS_TIERS.map((tier, index) => [index, tier.label])
 );
 
+// Dry, deadpan, pseudo-clinical — a case-file progression (complaint ->
+// diagnosis -> treatment selection -> prescription) rather than generic
+// "AI loading screen" copy ("Downloading despair...", "Communing with
+// darkness..."). `analyzing` stays purely clinical; `curating` is where
+// treatment/genre language ("brutality", "sonic violence") belongs, since
+// that stage is literally selecting the sonic treatment.
 export const LOADING_MESSAGES = {
   analyzing: [
-    'Summoning the void...',
-    'Consulting the metal gods...',
-    'Calibrating your rage...',
+    'Assessing emotional damage...',
+    'Quantifying your suffering...',
     'Measuring existential dread...',
-    'Analyzing your suffering...',
-    'Communing with darkness...',
-    'Brewing catharsis...',
+    'Calibrating catharsis...',
+    'Diagnosing the situation...',
+    'Cross-referencing your grievance...',
+    'Finalizing the diagnosis...',
   ],
   curating: [
-    'Finding the perfect brutality...',
+    'Reviewing treatment options...',
+    'Selecting appropriate brutality...',
+    'Matching symptoms to riffs...',
+    'Adjusting the dosage...',
     'Curating sonic violence...',
-    'Selecting auditory chaos...',
-    'Matching your vibe to riffs...',
-    'Downloading despair...',
-    'Compiling emotional damage...',
-    'Generating cathartic noise...',
+    'Preparing your prescription...',
+    'Matching dosage to your rage...',
   ],
 } as const;
 
