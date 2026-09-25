@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { TEXT_TERTIARY } from '@/lib/theme';
 
 interface RiteHeaderProps {
   onGoHome?: () => void;
@@ -34,6 +35,15 @@ export default function RiteHeader({ onGoHome, showHeadline = true }: RiteHeader
       >
         Sonic Catharsis
       </button>
+
+      {showHeadline && (
+        <p
+          className="mt-1.5 text-[12px] max-[480px]:text-[11px]"
+          style={{ fontFamily: 'var(--font-plex-sans, sans-serif)', color: TEXT_TERTIARY }}
+        >
+          Rage, matched.
+        </p>
+      )}
 
       <div className={cn('h-px w-16 mx-auto', showHeadline ? 'mt-6' : 'mt-4')} style={{ background: '#e6e2d8' }} />
     </header>

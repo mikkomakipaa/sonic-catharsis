@@ -61,11 +61,11 @@ export default function ReceiptCard({ stage, triggerLabel, stressLevel, subgenre
           <text x={RECEIPT_WIDTH - 18} y="124" textAnchor="end" fontSize="10">STAGE {stage.roman}</text>
           {genreLine && <text x="18" y="142" fontSize="10">TREATMENT: {genreLine}</text>}
           <line x1="18" y1="152" x2={RECEIPT_WIDTH - 18} y2="152" stroke="#e6e2d8" strokeWidth="1" />
-          <text x={RECEIPT_WIDTH / 2} y="172" textAnchor="middle" fontSize="9">THANK YOU FOR PROCESSING YOUR VITUTUS!</text>
+          <text x={RECEIPT_WIDTH / 2} y="172" textAnchor="middle" fontSize="9">THANKS FOR PROCESSING YOUR VITUTUS!</text>
           <text x={RECEIPT_WIDTH / 2} y="186" textAnchor="middle" fontSize="8">NO REFUND, NO REMORSE.</text>
           <text x={RECEIPT_WIDTH / 2} y="198" textAnchor="middle" fontSize="8">SCIENTIFICALLY PROVEN TO FUNCTION.</text>
           <line x1="18" y1="214" x2={RECEIPT_WIDTH - 18} y2="214" stroke="#e6e2d8" strokeWidth="1" />
-          <text x={RECEIPT_WIDTH / 2} y="236" textAnchor="middle" fontSize="8" fontWeight="bold" letterSpacing="1">VITUTUS STUDY</text>
+          <text x={RECEIPT_WIDTH / 2} y="236" textAnchor="middle" fontSize="8" fontWeight="bold" letterSpacing="1">THE VITUTUS STUDY</text>
           {studyQrDataUrl && <image href={studyQrDataUrl} x={(RECEIPT_WIDTH - STUDY_QR_SIZE) / 2} y="248" width={STUDY_QR_SIZE} height={STUDY_QR_SIZE} />}
           <text x={RECEIPT_WIDTH / 2} y={248 + STUDY_QR_SIZE + 16} textAnchor="middle" fontSize="8" letterSpacing="1">SCAN TO READ THE SOURCE</text>
           <text x={RECEIPT_WIDTH / 2} y={248 + STUDY_QR_SIZE + 30} textAnchor="middle" fontSize="7.5" letterSpacing="0.5">UNIVERSITY OF TURKU · 2022</text>
@@ -112,14 +112,14 @@ export default function ReceiptCard({ stage, triggerLabel, stressLevel, subgenre
 
         <div className="mt-4 border-t" style={{ borderColor: DIVIDER_COLOR }} />
         <div className="mt-4 space-y-1 text-center text-[12px] leading-[1.45]" style={{ color: TEXT_SECONDARY }}>
-          <p>THANK YOU FOR PROCESSING YOUR VITUTUS!</p>
+          <p>THANKS FOR PROCESSING YOUR VITUTUS!</p>
           <p>NO REFUND, NO REMORSE.</p>
           <p>SCIENTIFICALLY PROVEN TO FUNCTION.</p>
         </div>
         <div className="mt-4 border-t" style={{ borderColor: DIVIDER_COLOR }} />
 
         <div className="mt-4 flex flex-col items-center text-center">
-          <p className="text-[13px] font-bold tracking-[0.08em]">VITUTUS STUDY</p>
+          <p className="text-[13px] font-bold tracking-[0.08em]">THE VITUTUS STUDY</p>
           {studyQrDataUrl && (
             <svg role="img" aria-label="QR code linking to the Vitutus study" className="mt-3 h-[156px] w-[156px]" viewBox="0 0 156 156">
               <image href={studyQrDataUrl} width="156" height="156" />

@@ -109,9 +109,22 @@ export default function StateOfMindPanel({
 
   return (
     <div className="flex flex-col items-center">
+      {/* Document identifier, matching the Epicrisis screen's "Clinical Note
+          / Epicrisis 001" eyebrow (same font/size/color/letter-spacing) so
+          the intake form reads as the first page of the same case file the
+          Diagnosis/Prescription screens continue — see ScreenAnalysis.tsx. */}
+      <div className="w-full max-w-2xl">
+        <span
+          className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+          style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
+        >
+          Intake / Case 001
+        </span>
+      </div>
+
       {/* The incident stays first because it personalizes the diagnosis, but
           uses a compact field so classification remains the visual focus. */}
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-2xl mt-6 max-[480px]:mt-5">
         <div className="flex flex-col items-center">
           <SectionLabel as="label" htmlFor="incident" className="mb-0.5">
             What petty injustice did you endure today?

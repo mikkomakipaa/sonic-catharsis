@@ -60,9 +60,17 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
     >
       <div
         className="flex items-center justify-between gap-4 pb-2"
-        style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.06em', color: TEXT_PRIMARY, borderBottom: `1px solid ${DIVIDER_COLOR}` }}
+        style={{ borderBottom: `1px solid ${DIVIDER_COLOR}` }}
       >
-        <span className="uppercase font-bold text-[17px] max-[480px]:text-[19px]">Prescription</span>
+        {/* Same document-identifier eyebrow as "Intake / Case 001" and
+            "Clinical Note / Epicrisis 001" — the three intake/diagnosis/
+            prescription screens read as consecutive pages of one case file. */}
+        <span
+          className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+          style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
+        >
+          Prescription / Case 001
+        </span>
         {onViewReceipt && (
           <button
             type="button"
