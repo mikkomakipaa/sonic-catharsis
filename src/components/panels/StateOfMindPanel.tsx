@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowDownToLine, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -76,12 +76,21 @@ export default function StateOfMindPanel({
   const intensitySectionRef = useRef<HTMLDivElement>(null);
   const hasAutoScrolledForSelection = useRef(false);
 
+  // Duration itself is never null (it defaults to 'just_now' — see
+  // lib/validation.ts for why it's deliberately non-nullable, unlike
+  // intensity), so there's no "unset" value to gate the next section on.
+  // This local flag tracks whether the user has actually touched the
+  // control at least once in this session, purely to drive the reveal
+  // below; it resets whenever the form fully clears.
+  const [hasSetDuration, setHasSetDuration] = useState(false);
+
   // The next step mounts only after the first trigger choice. Move it into
   // view once, after React has painted that reveal, without repeatedly
   // snapping the user back when they correct their category later.
   useEffect(() => {
     if (!selection) {
       hasAutoScrolledForSelection.current = false;
+      setHasSetDuration(false);
       return;
     }
 
@@ -161,7 +170,8 @@ export default function StateOfMindPanel({
         <div ref={intensitySectionRef} className="flex flex-col items-center scroll-mt-4 animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
           {/* Intensity — how strongly it's affecting them. Quieter and more
               compact than the trigger grid above; a separate, independent
-              axis, not a proxy for which trigger was picked. */}
+              axis, not a proxy for which trigger was picked. Starts empty —
+              nothing dialed in until the user actually picks a tier. */}
           <SectionLabel className="mt-5">How bad is it?</SectionLabel>
           {/* This wrapper owns the slider's available width. It must be a
               definite viewport-relative value, not w-full/max-w: nested
@@ -175,25 +185,43 @@ export default function StateOfMindPanel({
             />
           </div>
 
-          {/* Physical symptoms — optional, multi-select, real items from the
-              same study the app already cites elsewhere (see
-              lib/symptoms.ts). Purely additional flavor for the Matcher;
-              never blocks submission either way. */}
-          <SectionLabel className="mt-6">Any physical symptoms?</SectionLabel>
-          <p className="text-center mt-1 text-[11px] max-[640px]:text-[12px]" style={{ color: TEXT_TERTIARY }}>
-            Optional. Select any that apply.
-          </p>
-          <div className="mt-3 w-full">
-            <SymptomChecklist selected={symptoms} onSelectedChange={onSymptomsChange} />
-          </div>
+          {/* Duration only reveals once intensity is actually picked —
+              nothing further to fill in before then. */}
+          {selection.intensity !== null && (
+            <div className="flex flex-col items-center w-full animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
+              {/* Duration/persistence — optional, single-select, ordinal (a
+                  small dial like intensity, not a category picker like the
+                  checklist below). See lib/duration.ts. */}
+              <SectionLabel className="mt-6">How long has it been festering?</SectionLabel>
+              <div className="mt-3 w-full">
+                <DurationSelect
+                  value={duration}
+                  onChange={(value) => {
+                    setHasSetDuration(true);
+                    onDurationChange(value);
+                  }}
+                />
+              </div>
 
-          {/* Duration/persistence — optional, single-select, ordinal (a
-              small dial like intensity, not a category picker like the
-              checklist above). See lib/duration.ts. */}
-          <SectionLabel className="mt-6">How long has it been festering?</SectionLabel>
-          <div className="mt-3 w-full">
-            <DurationSelect value={duration} onChange={onDurationChange} />
-          </div>
+              {/* Physical symptoms only reveal once duration is actually
+                  picked — nothing further to fill in before then. */}
+              {hasSetDuration && (
+                <div className="flex flex-col items-center w-full animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
+                  {/* Physical symptoms — optional, multi-select, real items
+                      from the same study the app already cites elsewhere
+                      (see lib/symptoms.ts). Purely additional flavor for the
+                      Matcher; never blocks submission either way. */}
+                  <SectionLabel className="mt-6">Any physical symptoms?</SectionLabel>
+                  <p className="text-center mt-1 text-[11px] max-[640px]:text-[12px]" style={{ color: TEXT_TERTIARY }}>
+                    Optional. Select any that apply.
+                  </p>
+                  <div className="mt-3 w-full">
+                    <SymptomChecklist selected={symptoms} onSelectedChange={onSymptomsChange} />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="mt-6">
             <button

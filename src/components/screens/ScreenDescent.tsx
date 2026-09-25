@@ -59,7 +59,10 @@ export default function ScreenDescent({
               <button type="button" onClick={() => setShowReceipt(false)} aria-label="Close receipt" className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-md" style={{ color: '#5c584f' }}>
                 <X className="h-4 w-4" />
               </button>
-              <ReceiptCard stage={stage} triggerLabel={triggerLabel ?? 'unknown'} stressLevel={selection.intensity} subgenre={subgenre} />
+              {/* Only reachable after a completed submission, which requires
+                  intensity to be set (see canSubmit in page.tsx) — the
+                  fallback is just to satisfy the non-nullable prop type. */}
+              <ReceiptCard stage={stage} triggerLabel={triggerLabel ?? 'unknown'} stressLevel={selection.intensity ?? 0} subgenre={subgenre} />
             </DialogPanel>
           </div>
         </Dialog>

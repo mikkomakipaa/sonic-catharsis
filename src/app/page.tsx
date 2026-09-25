@@ -120,7 +120,7 @@ export default function Home() {
   // Step 1 of the rite: analyze the input. Stops here and waits for the user
   // to choose to descend — it never advances on its own.
   const startAssistant = async () => {
-    if (!selection) return;
+    if (!selection || selection.intensity === null) return;
 
     const loadingStartedAt = performance.now();
     let completed = false;
@@ -279,7 +279,7 @@ export default function Home() {
     setPendingEmotionData(null);
   };
 
-  const canSubmit = Boolean(selection) && !isProcessing && !reasoning;
+  const canSubmit = Boolean(selection) && selection?.intensity !== null && !isProcessing && !reasoning;
 
   return (
     <div

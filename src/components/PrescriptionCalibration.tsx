@@ -21,7 +21,7 @@ function randomFillCount(): number {
 }
 
 // One row's bar: ▰-segments that flicker while scanning, then freeze full
-// with a ✓ once locked. The flicker pattern is intentionally random and
+// once locked. The flicker pattern is intentionally random and
 // re-randomized every tick — it must never settle on a value that looks
 // like a measurement, since it isn't one. See docs/design_guidelines.md
 // "Loading States" for why this whole component exists as document
@@ -39,7 +39,7 @@ function CompoundRow({ label, locked }: { label: string; locked: boolean }) {
 
   return (
     <div
-      className="receipt-line-print grid grid-cols-[104px_minmax(0,1fr)_12px] items-baseline gap-3 text-[12px] max-[480px]:text-[14px] font-medium uppercase"
+      className="receipt-line-print grid grid-cols-[104px_minmax(0,1fr)] items-baseline gap-3 text-[12px] max-[480px]:text-[14px] font-medium uppercase"
       style={{
         letterSpacing: '0.03em',
         animation: `receipt-line-print 0.3s ${EASE} both`,
@@ -47,11 +47,10 @@ function CompoundRow({ label, locked }: { label: string; locked: boolean }) {
       }}
     >
       <span>{label}</span>
-      <span className="justify-self-start tabular-nums" style={{ letterSpacing: '0.05em' }}>
+      <span className="justify-self-end tabular-nums" style={{ letterSpacing: '0.05em' }}>
         {'▰'.repeat(filled)}
         {'▱'.repeat(SEGMENTS - filled)}
       </span>
-      <span className="text-right">{locked ? '✓' : ''}</span>
     </div>
   );
 }

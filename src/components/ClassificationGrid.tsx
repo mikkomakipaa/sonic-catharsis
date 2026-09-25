@@ -18,9 +18,7 @@ interface ClassificationGridProps {
 // a hurry, not another emotion selector — see lib/trigger.ts. Single
 // selection only, despite the checkbox glyph (role="radiogroup"/"radio" —
 // the checkbox look is a tone choice, the behavior is still one-of-many).
-const DEFAULT_TIER = 5;
-
-function selectionFor(type: TriggerType, tier: number): TriggerSelection {
+function selectionFor(type: TriggerType, tier: number | null): TriggerSelection {
   return { trigger: type, intensity: tier };
 }
 
@@ -39,8 +37,8 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
   const selectType = (type: TriggerType) => {
     if (disabled) return;
     // Switching category keeps whatever intensity was already dialed in —
-    // only a brand-new selection falls back to the default.
-    const tier = selection?.intensity ?? DEFAULT_TIER;
+    // a brand-new selection starts empty until the user picks one.
+    const tier = selection?.intensity ?? null;
     onSelectionChange(selectionFor(type, tier));
   };
 

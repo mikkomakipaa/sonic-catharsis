@@ -24,7 +24,9 @@ export type StressLevel = number;
 
 export interface TriggerSelection {
   trigger: TriggerType;
-  intensity: StressLevel; // 0-10, same scale the old stressLevel used
+  // null until the user actually dials in a value on the slider — intensity
+  // is no longer defaulted on trigger pick, so this stays empty until chosen.
+  intensity: StressLevel | null; // 0-10, same scale the old stressLevel used
 }
 
 // Physical symptoms — optional, multi-select, sourced from the real

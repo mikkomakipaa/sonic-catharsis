@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { EASE, STRESS_TIERS, MAX_STRESS_INTENSITY, TEXT_PRIMARY } from '@/lib/theme';
 
 interface IntensitySliderProps {
-  value: number; // 0-9 normal tier, or MAX_STRESS_INTENSITY for ELEVEN
+  value: number | null; // 0-9 normal tier, MAX_STRESS_INTENSITY for ELEVEN, or null if unset
   onChange: (tier: number) => void;
 }
 
@@ -16,8 +16,8 @@ interface IntensitySliderProps {
 // the wheel used to hide in its outer dashed halo, just relocated here.
 //
 // This only ever mounts once a category is picked (see StateOfMindPanel's
-// progressive disclosure), so there's no "nothing selected yet" state to
-// represent here — `value` is always a real tier.
+// progressive disclosure), but `value` starts as null — nothing is dialed
+// in until the user actually clicks/drags/keys the track.
 const ELEVEN_TIER = MAX_STRESS_INTENSITY;
 const NORMAL_MAX_TIER = ELEVEN_TIER - 1; // 9 — last visible tick
 const ELEVEN_ZONE_PX = 36; // how far past the track's right edge triggers it
@@ -81,16 +81,25 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
       e.preventDefault();
       // Holding right past the last normal tick is the keyboard route into
       // the same hidden eleventh position the drag gesture unlocks.
-      onChange(value >= NORMAL_MAX_TIER ? ELEVEN_TIER : value + 1);
+      if (value === null) {
+        onChange(0);
+      } else {
+        onChange(value >= NORMAL_MAX_TIER ? ELEVEN_TIER : value + 1);
+      }
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
       e.preventDefault();
-      onChange(value === ELEVEN_TIER ? NORMAL_MAX_TIER : Math.max(0, value - 1));
+      if (value === null) {
+        onChange(0);
+      } else {
+        onChange(value === ELEVEN_TIER ? NORMAL_MAX_TIER : Math.max(0, value - 1));
+      }
     }
   };
 
+  const isSet = value !== null;
   const atEleven = value === ELEVEN_TIER;
-  const tierInfo = STRESS_TIERS[value];
-  const fillPct = atEleven ? 100 : (value / NORMAL_MAX_TIER) * 100;
+  const tierInfo = isSet ? STRESS_TIERS[value] : undefined;
+  const fillPct = !isSet ? 0 : atEleven ? 100 : (value / NORMAL_MAX_TIER) * 100;
 
   return (
     // min-w pinned to the same value as max-w — this container sits in a
@@ -118,9 +127,11 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
           className={cn('ml-auto text-[13px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
           style={{ letterSpacing: '0.04em', color: TEXT_PRIMARY }}
         >
-          {isFinnish
-            ? tierInfo?.labelFi
-            : `${atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/${MAX_STRESS_INTENSITY}`}
+          {!isSet
+            ? '—'
+            : isFinnish
+              ? tierInfo?.labelFi
+              : `${atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/${MAX_STRESS_INTENSITY}`}
         </span>
       </div>
 
@@ -139,7 +150,8 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
           aria-label="Intensity"
           aria-valuemin={1}
           aria-valuemax={MAX_STRESS_INTENSITY}
-          aria-valuenow={atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}
+          aria-valuenow={isSet ? (atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1) : 0}
+          aria-valuetext={isSet ? undefined : 'not set'}
           className="relative flex items-center select-none max-[480px]:min-h-[44px] cursor-pointer"
           onPointerDown={handlePointerDown}
           onKeyDown={handleKeyDown}
@@ -166,7 +178,7 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
                   width: i === value ? '9px' : '5px',
                   height: i === value ? '9px' : '5px',
                   transform: 'translate(-50%, -50%)',
-                  background: i <= value && !atEleven ? '#fff8' : '#00000030',
+                  background: isSet && i <= value && !atEleven ? '#fff8' : '#00000030',
                   transition: `all 0.15s ${EASE}`,
                 }}
               />
@@ -176,6 +188,7 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
                 edge with a pulsing glow once it crosses into ELEVEN. Sized
                 up slightly on mobile, with a soft halo (decorative only,
                 doesn't affect layout) for easier visual targeting. */}
+            {isSet && (
             <div
               className="absolute top-1/2 rounded-full pointer-events-none hidden max-[480px]:block"
               style={{
@@ -187,6 +200,8 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
                 transition: dragging ? 'none' : `left 0.15s ${EASE}, background 0.2s ${EASE}`,
               }}
             />
+            )}
+            {isSet && (
             <div
               className={cn(
                 'absolute top-1/2 rounded-full pointer-events-none w-[18px] h-[18px] max-[480px]:w-5 max-[480px]:h-5',
@@ -206,6 +221,7 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
             >
               {atEleven && <HornsSigil className="w-3 h-3" style={{ color: 'white' }} />}
             </div>
+            )}
           </div>
         </div>
       </div>
