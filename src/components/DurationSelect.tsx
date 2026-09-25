@@ -72,7 +72,10 @@ export default function DurationSelect({ value, onChange }: DurationSelectProps)
   const fillPct = (index / LAST_INDEX) * 100;
 
   return (
-    <div className="w-full max-w-xs mx-auto flex flex-col items-center gap-1.5">
+    // Plain w-full — the caller (StateOfMindPanel) now wraps this in the
+    // same definite min(384px, viewport) width as IntensitySlider; see the
+    // note there for why a definite pixel value (not max-w) is required.
+    <div className="w-full flex flex-col items-center gap-1">
       {/* Current tier's word — the one thing that visibly changes as the
           user drags/steps, deliberately smaller and quieter than
           IntensitySlider's readout. */}
@@ -83,7 +86,9 @@ export default function DurationSelect({ value, onChange }: DurationSelectProps)
         {current?.label}
       </span>
 
-      <div className="relative w-full py-2" style={{ touchAction: 'none' }}>
+      {/* No top padding, same reasoning as IntensitySlider — the 44px-min
+          band already supplies invisible space above the visible line. */}
+      <div className="relative w-full pb-2" style={{ touchAction: 'none' }}>
         <div
           ref={trackRef}
           role="slider"
@@ -93,7 +98,10 @@ export default function DurationSelect({ value, onChange }: DurationSelectProps)
           aria-valuemax={DURATION_TIERS.length}
           aria-valuenow={index + 1}
           aria-valuetext={current?.label}
-          className="relative flex items-center select-none min-h-[24px] cursor-pointer"
+          // 44px-min hit band at every width, matching IntensitySlider — a
+          // touch device isn't guaranteed to have a narrow viewport, so this
+          // isn't gated to one breakpoint. See IntensitySlider.tsx for why.
+          className="relative flex items-center select-none min-h-[44px] cursor-pointer"
           onPointerDown={handlePointerDown}
           onKeyDown={handleKeyDown}
         >

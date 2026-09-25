@@ -83,6 +83,12 @@ export default function StateOfMindPanel({
   // control at least once in this session, purely to drive the reveal
   // below; it resets whenever the form fully clears.
   const [hasSetDuration, setHasSetDuration] = useState(false);
+  // Drives the incident field's focus color below — Tailwind's focus:ring
+  // draws a box-shadow on all four sides, which visibly added a border on
+  // the field's top/left/right edges (previously borderless; only the
+  // bottom edge is a real border) the moment it was focused. Tracking focus
+  // locally lets the bottom border itself just change color instead.
+  const [isIncidentFocused, setIsIncidentFocused] = useState(false);
 
   // The next step mounts only after the first trigger choice. Move it into
   // view once, after React has painted that reveal, without repeatedly
@@ -143,17 +149,25 @@ export default function StateOfMindPanel({
               }
             }}
             aria-describedby="incident-optional"
+            onFocus={() => setIsIncidentFocused(true)}
+            onBlur={() => setIsIncidentFocused(false)}
             // The placeholder is instructional copy for the empty state, not
             // something that should crowd the field after the user taps in.
             placeholder="Describe the incident. Briefly."
             // The mobile size stays at Safari's 16px auto-zoom threshold
             // without overpowering the rest of the intake.
-            className="w-full h-14 px-2 py-1 text-sm max-[640px]:text-[16px] text-center resize-none focus:outline-none focus:ring-1 focus:ring-[#c99184]/30 transition-colors duration-200 font-normal placeholder-[#726c5d] max-[480px]:placeholder:opacity-55 focus:placeholder:opacity-0"
+            // Placeholder matches the "Optional" label's faintness above —
+            // TEXT_TERTIARY color (#7d7869, hardcoded here since Tailwind's
+            // arbitrary-value classes must be static text, not a JS
+            // reference) plus placeholder:font-light, since Optional's
+            // faintness comes from a genuinely thinner weight, not just a
+            // muted color.
+            className="w-full h-14 px-3 py-1 text-sm max-[640px]:text-[16px] text-center resize-none focus:outline-none transition-colors duration-200 font-normal rounded-md placeholder-[#7d7869] placeholder:font-light focus:placeholder:opacity-0"
             style={{
               fontFamily: 'var(--font-geist-sans)',
               lineHeight: '1.4',
               color: TEXT_PRIMARY,
-              borderBottom: `1px solid ${DIVIDER_COLOR}`,
+              border: `1px solid ${isIncidentFocused ? '#c99184' : DIVIDER_COLOR}`,
               transition: `border-color 0.2s ${EASE}`,
             }}
           />
@@ -186,12 +200,19 @@ export default function StateOfMindPanel({
               axis, not a proxy for which trigger was picked. Starts empty —
               nothing dialed in until the user actually picks a tier. */}
           <SectionLabel className="mt-5">How bad is it?</SectionLabel>
-          {/* This wrapper owns the slider's available width. It must be a
-              definite viewport-relative value, not w-full/max-w: nested
-              centered flex boxes have no definite width, so Safari resolves
-              percentage width from the label row's intrinsic size and lets a
-              long Finnish tier name change the track length. */}
-          <div className="mt-2 shrink-0" style={{ width: 'min(280px, calc(100vw - 2rem))' }}>
+          {/* This wrapper owns the slider's available width, and must be a
+              definite pixel value — not w-full/max-w. Both this section and
+              its parent are centered flex columns with no width of their
+              own until a child (like the CTA button) establishes one, so a
+              percentage/max-w width on the slider itself resolves against
+              an indeterminate size in Safari and gets stuck small — visibly
+              only "fixing itself" once something else in the same flex
+              column (e.g. Duration mounting below) coincidentally gives the
+              column real width. A concrete min(384px, viewport) sidesteps
+              that resolution entirely. Same wrapper (and the same 384px, to
+              match IntensitySlider/DurationSelect's own max-w-sm) applies to
+              Duration below, so both controls size identically. */}
+          <div className="mt-2 w-full" style={{ width: 'min(384px, calc(100vw - 2rem))' }}>
             <IntensitySlider
               value={selection.intensity}
               onChange={(tier) => onSelectionChange({ ...selection, intensity: tier })}
@@ -206,7 +227,7 @@ export default function StateOfMindPanel({
                   small dial like intensity, not a category picker like the
                   checklist below). See lib/duration.ts. */}
               <SectionLabel className="mt-6">How long has it been festering?</SectionLabel>
-              <div className="mt-3 w-full">
+              <div className="mt-3 w-full" style={{ width: 'min(384px, calc(100vw - 2rem))' }}>
                 <DurationSelect
                   value={duration}
                   onChange={(value) => {

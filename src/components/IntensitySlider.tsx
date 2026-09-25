@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { EASE, STRESS_TIERS, MAX_STRESS_INTENSITY, TEXT_PRIMARY } from '@/lib/theme';
+import { EASE, STRESS_TIERS, MAX_STRESS_INTENSITY, TEXT_PRIMARY, TEXT_TERTIARY } from '@/lib/theme';
 
 interface IntensitySliderProps {
   value: number | null; // 0-9 normal tier, MAX_STRESS_INTENSITY for ELEVEN, or null if unset
@@ -43,13 +43,6 @@ function tierForClientX(clientX: number, rect: DOMRect): number {
 export default function IntensitySlider({ value, onChange }: IntensitySliderProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
-  // Vitutusmittari easter egg — undetectable server-side, so this starts
-  // false (matching SSR) and only flips after mount if the browser's own
-  // locale is Finnish. Nothing else about the control changes.
-  const [isFinnish, setIsFinnish] = useState(false);
-  useEffect(() => {
-    setIsFinnish(navigator.language?.toLowerCase().startsWith('fi') ?? false);
-  }, []);
 
   const updateFromPointer = useCallback((clientX: number) => {
     const rect = trackRef.current?.getBoundingClientRect();
@@ -102,47 +95,42 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
   const fillPct = !isSet ? 0 : atEleven ? 100 : (value / NORMAL_MAX_TIER) * 100;
 
   return (
-    // min-w pinned to the same value as max-w — this container sits in a
-    // shrink-to-fit flex context (parent uses items-center, not stretch),
-    // so width:100%/max-w alone still let content drive the box wider (the
-    // track's own w-full doesn't count toward that shrink-to-fit
-    // calculation, but the label row's text does) — bumping the readout's
-    // font size widened the label row, which widened this whole
-    // container, which widened the w-full track along with it. Pinning
-    // min-w=max-w forces a true fixed width regardless of label content.
-    // Mobile pins the same way, just against 100% instead of a fixed px
-    // value — min-w-full alongside max-w-full (not min-w-0) so the same
-    // shrink-to-fit problem doesn't reappear at narrow widths: without it,
-    // longer tier labels (e.g. "Täysvittuuntuminen") visibly widened the
-    // whole control relative to shorter ones (e.g. "1/10").
-    <div className="w-full max-w-[280px] min-w-[280px] max-[640px]:max-w-full max-[640px]:min-w-full flex flex-col gap-2">
-      <div className="flex items-center gap-3">
-        <span className="text-[12px] font-medium uppercase" style={{ letterSpacing: '0.1em', color: '#5c584f' }}>
-          {isFinnish ? 'Vitutusmittari' : 'Intensity'}
-        </span>
-        {/* Regular text color, not the tier's own (sometimes low-contrast
-            light green/yellow) color — the bar/dots/handle below still
-            carry the tier color, this label just needs to stay legible. */}
-        <span
-          className={cn('ml-auto text-[13px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
-          style={{ letterSpacing: '0.04em', color: TEXT_PRIMARY }}
-        >
-          {!isSet
-            ? '—'
-            : isFinnish
-              ? tierInfo?.labelFi
-              : `${atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/${MAX_STRESS_INTENSITY}`}
-        </span>
-      </div>
+    // Plain w-full — the caller (StateOfMindPanel) now wraps this in a
+    // definite min(384px, viewport) width, so this component doesn't need
+    // its own max-w/mx-auto logic; see the note there for why a definite
+    // pixel value (not max-w) is required at that wrapping point.
+    <div className="w-full flex flex-col items-center gap-1">
+      {/* Same anatomy as DurationSelect's centered current-value word above
+          its track — a single centered readout, not a separate axis-name +
+          value split row. Regular ink, not the tier's own (sometimes
+          low-contrast light) color — the dots/handle below still carry the
+          tier color, this readout just needs to stay legible at every tier. */}
+      <span
+        className={cn('text-[13px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
+        style={{ letterSpacing: '0.04em', color: TEXT_PRIMARY }}
+      >
+        {!isSet ? '—' : `${atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/${MAX_STRESS_INTENSITY}`}
+      </span>
 
-      {/* Extra right padding reserves room for the handle to float past the
-          track's own edge when it breaks into the hidden ELEVEN zone. */}
-      <div className="relative pr-9" style={{ touchAction: 'none' }}>
-        {/* Outer wrapper IS the hit target — a generous (44px min on
-            mobile) invisible band around the thin visual track, so touch
-            precision doesn't depend on hitting a 6px-tall line. The ref
-            stays here (not on the visual bar) since both share the same
-            width, and pointer math only cares about horizontal position. */}
+      {/* Thin-line/dot track, same visual language as DurationSelect — a
+          hairline instead of a filled progress bar, small hollow dots for
+          unselected tiers and a larger filled dot (in the tier's own color)
+          for the current one. Extra right padding reserves room for the
+          marker to float past the track's own edge once it breaks into the
+          hidden ELEVEN zone. No top padding (unlike the bottom, which keeps
+          room before the endpoint captions) — the 44px-min band below
+          already supplies plenty of invisible space above the visible line,
+          so stacking more on top just pushed the readout too far away. */}
+      <div className="relative w-full pr-9 pb-2" style={{ touchAction: 'none' }}>
+        {/* Outer wrapper IS the hit target — a generous 44px-min invisible
+            band around the thin visual track, so touch precision doesn't
+            depend on hitting a 1px-tall line. Applied at every width, not
+            just <=480px: a touch device isn't guaranteed to have a narrow
+            viewport (tablets, phones in landscape), and gating this to one
+            breakpoint left those devices with almost no vertical hit area
+            (the row was only as tall as the 6-9px dots). The ref stays here
+            (not on the visual bar) since both share the same width, and
+            pointer math only cares about horizontal position. */}
         <div
           ref={trackRef}
           role="slider"
@@ -152,78 +140,87 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
           aria-valuemax={MAX_STRESS_INTENSITY}
           aria-valuenow={isSet ? (atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1) : 0}
           aria-valuetext={isSet ? undefined : 'not set'}
-          className="relative flex items-center select-none max-[480px]:min-h-[44px] cursor-pointer"
+          className="relative flex items-center select-none min-h-[44px] cursor-pointer"
           onPointerDown={handlePointerDown}
           onKeyDown={handleKeyDown}
         >
-          <div className="relative w-full h-1.5 rounded-full" style={{ background: '#e6e2d8' }}>
-            {/* Filled portion up to the current tier */}
-            <div
-              className="absolute left-0 top-0 h-full rounded-full"
-              style={{
-                width: `${fillPct}%`,
-                background: tierInfo?.color ?? '#c9c4b6',
-                transition: dragging ? 'none' : `width 0.15s ${EASE}, background 0.2s ${EASE}`,
-              }}
-            />
-
+          <div className="relative w-full h-px" style={{ background: '#e6e2d8' }}>
             {/* 10 snap ticks (tiers 0-9) — ELEVEN deliberately has no tick of
-                its own, since it isn't part of the printed scale. */}
-            {Array.from({ length: MAX_STRESS_INTENSITY }, (_, i) => (
+                its own, since it isn't part of the printed scale. Only the
+                current tier is filled (with its own ramp color); the rest
+                stay hollow, same as DurationSelect's dots. */}
+            {Array.from({ length: MAX_STRESS_INTENSITY }, (_, i) => {
+              const isSelected = isSet && i === value && !atEleven;
+              return (
+                <div
+                  key={i}
+                  className="absolute top-1/2 rounded-full pointer-events-none"
+                  style={{
+                    left: `${(i / NORMAL_MAX_TIER) * 100}%`,
+                    width: isSelected ? '9px' : '6px',
+                    height: isSelected ? '9px' : '6px',
+                    transform: 'translate(-50%, -50%)',
+                    background: isSelected ? STRESS_TIERS[i].color : 'transparent',
+                    border: isSelected ? 'none' : '1px solid #cac5b7',
+                    transition: `all 0.15s ${EASE}`,
+                  }}
+                />
+              );
+            })}
+
+            {/* Soft halo (decorative only, doesn't affect layout) for
+                easier visual targeting on mobile — mirrors DurationSelect's
+                own halo, tinted with the current tier's color. */}
+            {isSet && !atEleven && (
               <div
-                key={i}
-                className="absolute top-1/2 rounded-full pointer-events-none"
+                className="absolute top-1/2 rounded-full pointer-events-none hidden max-[480px]:block"
                 style={{
-                  left: `${(i / NORMAL_MAX_TIER) * 100}%`,
-                  width: i === value ? '9px' : '5px',
-                  height: i === value ? '9px' : '5px',
+                  left: `${fillPct}%`,
+                  width: '32px',
+                  height: '32px',
                   transform: 'translate(-50%, -50%)',
-                  background: isSet && i <= value && !atEleven ? '#fff8' : '#00000030',
-                  transition: `all 0.15s ${EASE}`,
+                  background: `${tierInfo?.color}18`,
+                  transition: dragging ? 'none' : `left 0.15s ${EASE}`,
                 }}
               />
-            ))}
-
-            {/* Handle — sits on the track normally, floats past the right
-                edge with a pulsing glow once it crosses into ELEVEN. Sized
-                up slightly on mobile, with a soft halo (decorative only,
-                doesn't affect layout) for easier visual targeting. */}
-            {isSet && (
-            <div
-              className="absolute top-1/2 rounded-full pointer-events-none hidden max-[480px]:block"
-              style={{
-                left: atEleven ? `calc(100% + ${HANDLE_ELEVEN_OFFSET}px)` : `${fillPct}%`,
-                width: '38px',
-                height: '38px',
-                transform: 'translate(-50%, -50%)',
-                background: `${tierInfo?.color ?? '#c9c4b6'}22`,
-                transition: dragging ? 'none' : `left 0.15s ${EASE}, background 0.2s ${EASE}`,
-              }}
-            />
             )}
-            {isSet && (
-            <div
-              className={cn(
-                'absolute top-1/2 rounded-full pointer-events-none w-[18px] h-[18px] max-[480px]:w-5 max-[480px]:h-5',
-                atEleven && 'rite-eleven-pulse'
-              )}
-              style={{
-                left: atEleven ? `calc(100% + ${HANDLE_ELEVEN_OFFSET}px)` : `${fillPct}%`,
-                transform: 'translate(-50%, -50%)',
-                background: tierInfo?.color,
-                border: atEleven ? '1px solid white' : '2px solid #f7f5f0',
-                boxShadow: atEleven ? `0 0 12px 2px ${tierInfo?.color}90` : '0 1px 3px rgba(0,0,0,0.3)',
-                transition: dragging ? 'none' : `left 0.15s ${EASE}, background 0.2s ${EASE}`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {atEleven && <HornsSigil className="w-3 h-3" style={{ color: 'white' }} />}
-            </div>
+
+            {/* ELEVEN marker — floats past the track's right edge with a
+                pulsing glow once the scale breaks past its last tick. */}
+            {atEleven && (
+              <div
+                className="absolute top-1/2 rounded-full pointer-events-none w-[18px] h-[18px] max-[480px]:w-5 max-[480px]:h-5 rite-eleven-pulse"
+                style={{
+                  left: `calc(100% + ${HANDLE_ELEVEN_OFFSET}px)`,
+                  transform: 'translate(-50%, -50%)',
+                  background: tierInfo?.color,
+                  border: '1px solid white',
+                  boxShadow: `0 0 12px 2px ${tierInfo?.color}90`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <HornsSigil className="w-3 h-3" style={{ color: 'white' }} />
+              </div>
             )}
           </div>
         </div>
+      </div>
+
+      {/* Endpoint captions — same anatomy/style as DurationSelect's FRESH /
+          LIFESTYLE row below its track, so the two controls read as sibling
+          scales rather than unrelated widgets. Uses the actual top of the
+          10-tick scale (STRESS_TIERS[NORMAL_MAX_TIER], "Multi-climax" — see
+          the ordering note in theme.ts), so the caption stays truthful to
+          where 10/10 and the hidden ELEVEN zone actually sit. */}
+      <div className="flex items-start justify-between gap-2 w-full pr-9 text-[9px] uppercase" style={{ letterSpacing: '0.06em', color: TEXT_TERTIARY }}>
+        {/* Each caption gets its own half-width, wrapping onto a second
+            line rather than colliding with the other — "Intolerable
+            Lightness" / "Multi-climax" are longer than Duration's
+            Fresh/Lifestyle pair and don't fit on one line at this width. */}
+        <span className="max-w-[48%] text-left">{STRESS_TIERS[0].label}</span>
+        <span className="max-w-[48%] text-right">{STRESS_TIERS[NORMAL_MAX_TIER].label}</span>
       </div>
     </div>
   );

@@ -89,26 +89,37 @@ export const MAX_STRESS_INTENSITY = 10;
 // fed to the matcher/curator prompts — not for display.
 export const TOTAL_INTENSITY_LEVELS = MAX_STRESS_INTENSITY + 1;
 
-// labelFi: an undocumented "Vitutusmittari" easter egg — real, colloquial
-// Finnish anger-escalation slang, distinct from the STAGES' own "vitutus"
-// compounds (Kytevä vitutus, Raivovitutus, etc.) so the two vocabularies
-// don't collide. Only ever shown to a detected fi-* browser locale — see
-// IntensitySlider.tsx. Never sent to the matcher/curator prompts.
-export const STRESS_TIERS: { label: string; labelFi: string; color: string }[] = [
-  { label: 'Intolerable lightness', labelFi: 'Turhauma', color: '#10b981' },
-  { label: 'Low', labelFi: 'Kiukku', color: '#22c55e' },
-  { label: 'Optimum', labelFi: 'Ärsytys', color: '#84cc16' },
-  { label: 'Moderate', labelFi: 'Suutus', color: '#eab308' },
-  { label: 'Overload', labelFi: 'Vituttaa', color: '#f97316' },
-  { label: 'Burnout', labelFi: 'Raivo', color: '#ea580c' },
-  { label: 'Breaking Point', labelFi: 'Täysi raivo', color: '#dc2626' },
-  { label: 'Multi-climax', labelFi: 'Vimma', color: '#991b1b' },
-  { label: 'Total Meltdown', labelFi: 'Vittuuntuminen', color: '#7f1d1d' },
-  { label: 'Point of No Return', labelFi: 'Täysvittuuntuminen', color: '#581c87' },
+// Dropped the "Vitutusmittari" Finnish-locale easter egg (fi-* browsers used
+// to see labelFi tier names like "Vimma" here instead of the plain N/10
+// readout) — the deadpan numeric readout is more consistent with the rest
+// of the app's clinical register. The stronger comedy stays in the
+// generated diagnosis text and the STAGES names (e.g. Syvävitutus) below.
+//
+// Colors are a warm, monochrome sand-to-espresso ramp (same family as
+// DURATION_ACCENT/TREATMENT_ACCENT/CTA_BACKGROUND below), increasing in
+// saturation/darkness as intensity rises — not the earlier green->red
+// traffic-light ramp, which implied "safe vs. dangerous" (a judgment this
+// scale doesn't make; it measures magnitude, not goodness).
+//
+// "Multi-climax" and "Point of No Return" are swapped from their original
+// order so Multi-climax sits at the top of the visible scale (tier 9,
+// just under the hidden ELEVEN) — the more fitting "most extreme" label.
+// Keep this in sync with the descending list in prompts.ts.
+export const STRESS_TIERS: { label: string; color: string }[] = [
+  { label: 'Intolerable lightness', color: '#e6c9a0' },
+  { label: 'Low', color: '#ddb885' },
+  { label: 'Optimum', color: '#d3a76e' },
+  { label: 'Moderate', color: '#c9955a' },
+  { label: 'Overload', color: '#bf8449' },
+  { label: 'Burnout', color: '#af723f' },
+  { label: 'Breaking Point', color: '#996138' },
+  { label: 'Point of No Return', color: '#805031' },
+  { label: 'Total Meltdown', color: '#653f29' },
+  { label: 'Multi-climax', color: '#472e20' },
   // ELEVEN breaks the low->high color ramp on purpose — it sits outside the
   // normal radial band entirely, so it gets a shock color instead of the
   // next shade of dark red, matching the special emphasis in the CTA.
-  { label: 'ELEVEN', labelFi: 'Multihuipennus', color: '#fbbf24' },
+  { label: 'ELEVEN', color: '#fbbf24' },
 ];
 
 // The matcher/curator prompts expect a human-readable stress *description*

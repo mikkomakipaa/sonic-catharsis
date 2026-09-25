@@ -15,8 +15,7 @@ export type TriggerType =
   | 'overload'
   | 'exhaustion'
   | 'uncertainty'
-  | 'absurdity'
-  | 'unclassified';
+  | 'absurdity';
 
 // 11-tier intensity scale (0-10), Spinal Tap "these go to eleven" — see
 // STRESS_TIERS in lib/theme.ts for the label/color for each index.

@@ -12,12 +12,13 @@ interface ClassificationGridProps {
   disabled?: boolean;
 }
 
-// A pseudo-clinical intake checklist, not a wheel or field: 9 cells (the 8
-// frustration categories + "Unclassified") laid out as a plain 3x3 grid,
-// each a thin-line checkbox + label. Visually a form someone filled out in
-// a hurry, not another emotion selector — see lib/trigger.ts. Single
-// selection only, despite the checkbox glyph (role="radiogroup"/"radio" —
-// the checkbox look is a tone choice, the behavior is still one-of-many).
+// A pseudo-clinical intake checklist, not a wheel or field: 8 cells (the 8
+// frustration categories) laid out as a plain grid — 3 columns on desktop,
+// 2 on mobile (an even 2x4, no leftover row) — each a thin-line checkbox +
+// label. Visually a form someone filled out in a hurry, not another emotion
+// selector — see lib/trigger.ts. Single selection only, despite the
+// checkbox glyph (role="radiogroup"/"radio" — the checkbox look is a tone
+// choice, the behavior is still one-of-many).
 function selectionFor(type: TriggerType, tier: number | null): TriggerSelection {
   return { trigger: type, intensity: tier };
 }
@@ -88,7 +89,13 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
               onFocus={() => setHoveredType(c.type)}
               onBlur={() => setHoveredType(null)}
               className={cn(
-                'flex items-center gap-2.5 px-3 py-2 max-[480px]:px-2 max-[640px]:py-3 text-left min-h-[44px]',
+                // Mobile row padding trimmed from py-3 to py-2 (the previous
+                // padding pushed rows well past the 44px touch-target floor
+                // once combined with the 26px checkbox; this keeps every row
+                // right at that floor via min-h-[44px] instead of exceeding
+                // it — see docs/design_guidelines.md's 44px minimum, which
+                // is a floor, not a target to build past).
+                'flex items-center gap-2.5 px-3 py-2 max-[480px]:px-2 max-[640px]:py-2 text-left min-h-[44px]',
                 'focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-[-2px] focus-visible:outline-[#c98a4b]/60',
                 !disabled && 'cursor-pointer',
                 disabled && 'cursor-not-allowed',
@@ -101,9 +108,12 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
                 transition: `background 0.2s ${EASE}`,
               }}
             >
-              {/* Thin-line checkbox — never the OS glyph */}
+              {/* Thin-line checkbox — never the OS glyph. Mobile size
+                  trimmed from 26px to 22px alongside the row padding above,
+                  so the checkbox reads as part of a checklist rather than
+                  the row's dominant visual element. */}
               <span
-                className="relative flex items-center justify-center shrink-0 rounded-[3px] max-[640px]:!h-[26px] max-[640px]:!w-[26px]"
+                className="relative flex items-center justify-center shrink-0 rounded-[3px] max-[640px]:!h-[22px] max-[640px]:!w-[22px]"
                 style={{
                   width: '15px',
                   height: '15px',
@@ -112,7 +122,7 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
                   transition: `background 0.2s ${EASE}, border-color 0.2s ${EASE}`,
                 }}
               >
-                {isSelected && <CheckMark className="w-3 h-3 max-[640px]:!h-4 max-[640px]:!w-4" style={{ color: '#f7f5f0' }} />}
+                {isSelected && <CheckMark className="w-3 h-3 max-[640px]:!h-3.5 max-[640px]:!w-3.5" style={{ color: '#f7f5f0' }} />}
               </span>
 
               <span

@@ -9,8 +9,8 @@ typed, not just two dropdowns.
 
 ## Overview
 
-You describe an incident in your own words, pick the closest of 9 frustration
-categories (a 3×3 checkbox grid — not an emotion wheel), and rate how bad it
+You describe an incident in your own words, pick the closest of 8 frustration
+categories (a checkbox grid — not an emotion wheel), and rate how bad it
 is on a 0–10 scale. From there:
 
 1. **Matcher** reads your incident text and category, derives a 5-dimension
@@ -28,9 +28,9 @@ and [`docs/formulas.md`](docs/formulas.md).
 
 - **Situation-first intake**: a free-text incident field is the dominant
   first interaction — not a category picker pretending to know how you feel.
-- **Trigger classification grid**: 9 categories (injustice, failure,
-  conflict, helplessness, overload, exhaustion, uncertainty, absurdity,
-  unclassified) as a plain, pseudo-clinical checkbox matrix.
+- **Trigger classification grid**: 8 categories (injustice, failure,
+  conflict, helplessness, overload, exhaustion, uncertainty, absurdity) as a
+  plain, pseudo-clinical checkbox matrix.
 - **Two-agent AI pipeline**: Matcher (incident → sonic profile + subgenre +
   diagnosis) and Curator (sonic profile + subgenre → 10 real artists),
   entirely separate concerns — Curator never sees the incident, emotion, or
@@ -128,12 +128,12 @@ soniccatharsis/
 ## The Trigger Model
 
 Not an emotion wheel — a situation-first classification. Users describe an
-**incident** in free text, then pick the closest of 9 **trigger** categories:
+**incident** in free text, then pick the closest of 8 **trigger** categories:
 
 ```
 injustice · failure · conflict
 helplessness · overload · exhaustion
-uncertainty · absurdity · unclassified
+uncertainty · absurdity
 ```
 
 Internally, each trigger has a compatibility translation into one of

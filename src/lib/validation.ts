@@ -12,12 +12,11 @@ export const MetalSubgenres = [
   'progressive', 'symphonic', 'folk', 'industrial', 'nu-metal'
 ] as const;
 
-// The 8 frustration trigger types + the catch-all 9th category, mirroring
-// TriggerType (src/types/index.ts) as a runtime-checkable const array, same
-// pattern as CoreEmotions above.
+// The 8 frustration trigger types, mirroring TriggerType (src/types/index.ts)
+// as a runtime-checkable const array, same pattern as CoreEmotions above.
 export const TriggerTypes = [
   'injustice', 'failure', 'conflict', 'helplessness', 'overload',
-  'exhaustion', 'uncertainty', 'absurdity', 'unclassified',
+  'exhaustion', 'uncertainty', 'absurdity',
 ] as const;
 
 // Mirrors PhysicalSymptomType (src/types/index.ts) / PHYSICAL_SYMPTOMS

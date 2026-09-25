@@ -23,9 +23,12 @@ export interface TriggerMeta {
   description: string;
 }
 
-// Order matches the 3x3 grid's reading order (row-major) — see
+// Order matches the classification grid's reading order (row-major) — see
 // ClassificationGrid.tsx, which renders this array directly rather than
-// re-specifying the layout.
+// re-specifying the layout. 8 items: an even 2x4 on the mobile breakpoint,
+// 3+3+2 on desktop's 3-column grid. The former 9th catch-all ("Other
+// Bullshit"/unclassified) was removed — every situation is expected to fit
+// one of these eight.
 export const TRIGGER_TYPES: TriggerMeta[] = [
   { type: 'injustice', label: 'Injustice', description: 'Something is unfair, unreasonable, or unacceptable.' },
   { type: 'failure', label: 'Failure', description: 'Something was attempted and did not work.' },
@@ -35,7 +38,6 @@ export const TRIGGER_TYPES: TriggerMeta[] = [
   { type: 'exhaustion', label: 'Exhaustion', description: 'Capacity is depleted; even small problems now matter.' },
   { type: 'uncertainty', label: 'Uncertainty', description: 'The outcome or situation is unclear or unpredictable.' },
   { type: 'absurdity', label: 'Absurdity', description: 'The situation is irrational, pointless, or comically stupid.' },
-  { type: 'unclassified', label: 'Other Bullshit', description: "Doesn't fit cleanly into any category above." },
 ];
 
 export function getTriggerMeta(type: TriggerType): TriggerMeta {
@@ -48,10 +50,6 @@ export function getTriggerMeta(type: TriggerType): TriggerMeta {
 // tonal fit, not severity. E.g. absurdity -> joy lets a darkly funny, low-
 // stakes situation land in the wry/upbeat corner of the genre matrix instead
 // of being forced into "anger" just because it's still annoying.
-// `unclassified` isn't a real 9th emotion in the engine's vocabulary — it
-// reuses `trust` (exhaustion's anchor), the mildest/lowest-stage emotion in
-// the map, as a deliberately neutral default for a situation the user
-// declined to classify rather than inventing a spurious distinct reading for it.
 const TRIGGER_TO_EMOTION: Record<TriggerType, EmotionType> = {
   injustice: 'anger',
   conflict: 'disgust',
@@ -61,7 +59,6 @@ const TRIGGER_TO_EMOTION: Record<TriggerType, EmotionType> = {
   exhaustion: 'trust',
   uncertainty: 'anticipation',
   absurdity: 'joy',
-  unclassified: 'trust',
 };
 
 export function triggerToEmotion(type: TriggerType): EmotionType {

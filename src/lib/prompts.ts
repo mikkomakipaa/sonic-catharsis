@@ -83,7 +83,7 @@ same as it also indicates the situation feels worse.
 
 Stress level descriptions you may see (for tone/context only, never repeat the
 numeric value or label in your output):
-"ELEVEN", "Point of No Return", "Total Meltdown", "Multi-climax", "Breaking Point", "Burnout", "Overload", "Moderate", "Optimum", "Low", "Intolerable lightness".
+"ELEVEN", "Multi-climax", "Total Meltdown", "Point of No Return", "Breaking Point", "Burnout", "Overload", "Moderate", "Optimum", "Low", "Intolerable lightness".
 
 The "condition" is different from stress_level and is NOT hidden — it's the same
 Roman-numeral stage and Finnish "vitutus" (a specific, absurdly precise flavor of

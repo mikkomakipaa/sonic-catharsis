@@ -18,21 +18,21 @@ questions, never framed as "emotion":
 
 ```
 incidentText   "What petty injustice did you endure today?" — free text, ≤500 chars
-trigger        "What kind of bullshit was it?" — one of 9 categories (3x3 checkbox grid)
+trigger        "What kind of bullshit was it?" — one of 8 categories (checkbox grid)
 intensity      "How bad is it?" — 0-10 (displayed 1-11, see the ELEVEN note below)
 ```
 
-`trigger` (`TriggerType`, `src/types/index.ts`) — the 9 categories, in the
+`trigger` (`TriggerType`, `src/types/index.ts`) — the 8 categories, in the
 grid's row-major reading order (`TRIGGER_TYPES`, `src/lib/trigger.ts`):
 
 ```
 injustice · failure · conflict
 helplessness · overload · exhaustion
-uncertainty · absurdity · unclassified
+uncertainty · absurdity
 ```
 
-`unclassified` is the deliberate 9th "doesn't fit cleanly into any category
-above" catch-all — not a real trigger, but a legitimate selectable value.
+There is no catch-all/"unclassified" category — every situation is expected
+to fit one of the eight above.
 
 ```ts
 // src/types/index.ts
@@ -67,8 +67,6 @@ injustice: 'anger',      overload: 'surprise',
 conflict: 'disgust',     exhaustion: 'trust',
 failure: 'sadness',      uncertainty: 'anticipation',
 helplessness: 'fear',    absurdity: 'joy',
-unclassified: 'trust',   // reuses exhaustion's anchor — a deliberately
-                         // neutral default, not a real 9th emotion
 ```
 
 Both the trigger *and* its legacy-emotion translation are sent to the
