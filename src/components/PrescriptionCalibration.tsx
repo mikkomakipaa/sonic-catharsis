@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, COMPLETE_ACCENT } from '@/lib/theme';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, COMPLETE_ACCENT, EASE } from '@/lib/theme';
 
 // The four axes of "sonic treatment" the curator stage is nominally dialing
 // in. Deliberately not wired to any real per-genre value (see below) — this
@@ -9,7 +9,9 @@ import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, COMPLETE_ACCENT } from '@/
 const COMPOUNDS = ['Aggression', 'Heaviness', 'Dissonance', 'Melody'] as const;
 
 const SEGMENTS = 8;
-const LOCK_INTERVAL_MS = 350; // cadence a row locks at — matches DiagnosticReceipt's own step timing
+// Four 400ms locks fit the shared 2.2-second minimum, leaving a 600ms final
+// beat for the prescription footer before the result replaces the document.
+const LOCK_INTERVAL_MS = 400;
 const SCAN_TICK_MS = 120; // how often a still-scanning row's bar flickers
 
 function randomFillCount(): number {
@@ -37,19 +39,19 @@ function CompoundRow({ label, locked }: { label: string; locked: boolean }) {
 
   return (
     <div
-      className="receipt-line-print flex justify-between items-baseline gap-3 text-[12px] max-[480px]:text-[14px] font-medium uppercase"
+      className="receipt-line-print grid grid-cols-[104px_minmax(0,1fr)_12px] items-baseline gap-3 text-[12px] max-[480px]:text-[14px] font-medium uppercase"
       style={{
         letterSpacing: '0.03em',
-        animation: 'receipt-line-print 0.25s cubic-bezier(0.25, 1, 0.5, 1) both',
+        animation: `receipt-line-print 0.3s ${EASE} both`,
         color: locked ? COMPLETE_ACCENT : TEXT_SECONDARY,
       }}
     >
-      <span className="shrink-0">{label}</span>
-      <span className="tabular-nums" style={{ letterSpacing: '0.05em' }}>
+      <span>{label}</span>
+      <span className="justify-self-start tabular-nums" style={{ letterSpacing: '0.05em' }}>
         {'▰'.repeat(filled)}
         {'▱'.repeat(SEGMENTS - filled)}
       </span>
-      <span className="shrink-0 w-3 text-right">{locked ? '✓' : ''}</span>
+      <span className="text-right">{locked ? '✓' : ''}</span>
     </div>
   );
 }
@@ -90,7 +92,7 @@ export default function PrescriptionCalibration() {
         {allLocked ? (
           <span>
             Preparing prescription
-            <span className="receipt-ellipsis-pulse" style={{ animation: 'receipt-ellipsis-pulse 1s ease-in-out infinite' }}>
+            <span className="receipt-ellipsis-pulse" style={{ animation: `receipt-ellipsis-pulse 1s ${EASE} infinite` }}>
               &hellip;
             </span>
           </span>

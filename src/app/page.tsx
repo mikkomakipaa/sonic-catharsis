@@ -18,8 +18,9 @@ type Step = 'selection' | 'analysis' | 'descent';
 
 // The clinical loading documents are intentional feedback, not a flash of
 // chrome. Fast model responses stay visible long enough to complete their
-// four-line ritual; errors still surface immediately.
-const MIN_LOADING_DURATION_MS = 1500;
+// four-line ritual and briefly settle on the final status; errors still
+// surface immediately.
+const MIN_LOADING_DURATION_MS = 2200;
 
 function waitForMinimumLoadingDuration(startedAt: number): Promise<void> {
   const remaining = MIN_LOADING_DURATION_MS - (performance.now() - startedAt);

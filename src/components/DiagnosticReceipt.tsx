@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, COMPLETE_ACCENT } from '@/lib/theme';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_TERTIARY, COMPLETE_ACCENT, EASE } from '@/lib/theme';
 
 // The four things the matcher stage actually reasons over (emotion, its
 // intensity, physical symptoms, duration — see the Selection screen and
@@ -14,7 +14,9 @@ const CHECKLIST = [
   'Measuring festering time',
 ] as const;
 
-const STEP_INTERVAL_MS = 350;
+// Four 400ms locks fit the shared 2.2-second minimum while retaining a 600ms
+// final beat for the diagnosis footer to read as active, not finished.
+const STEP_INTERVAL_MS = 400;
 
 // The matcher-stage loading state: a minimal animated diagnostic receipt
 // that visibly processes what the user just submitted. Deliberately not a
@@ -54,12 +56,12 @@ export default function DiagnosticReceipt() {
               className="receipt-line-print flex justify-between items-baseline gap-3 text-[12px] max-[480px]:text-[14px] font-medium uppercase"
               style={{
                 letterSpacing: '0.03em',
-                animation: 'receipt-line-print 0.25s cubic-bezier(0.25, 1, 0.5, 1) both',
+                animation: `receipt-line-print 0.3s ${EASE} both`,
                 color: isDone ? COMPLETE_ACCENT : TEXT_SECONDARY,
               }}
             >
               <span>{label}</span>
-              <span className={isDone ? undefined : 'receipt-ellipsis-pulse'} style={isDone ? undefined : { animation: 'receipt-ellipsis-pulse 1s ease-in-out infinite' }}>
+              <span className={isDone ? undefined : 'receipt-ellipsis-pulse'} style={isDone ? undefined : { animation: `receipt-ellipsis-pulse 1s ${EASE} infinite` }}>
                 {isDone ? '✓' : '…'}
               </span>
             </div>
@@ -73,7 +75,7 @@ export default function DiagnosticReceipt() {
         {allChecked ? (
           <span>
             Generating diagnosis
-            <span className="receipt-ellipsis-pulse" style={{ animation: 'receipt-ellipsis-pulse 1s ease-in-out infinite' }}>
+            <span className="receipt-ellipsis-pulse" style={{ animation: `receipt-ellipsis-pulse 1s ${EASE} infinite` }}>
               &hellip;
             </span>
           </span>
