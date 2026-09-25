@@ -1,10 +1,14 @@
 # AGENTS.md
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+This is the single, tracked source of guidance for AI coding agents (Codex,
+Claude Code, etc.) working in this repository. It replaces the old
+`CLAUDE.md`/`AGENTS.md` split — there is no separate local `CLAUDE.md` to
+keep in sync anymore; agents that read `AGENTS.md` natively should treat this
+file as authoritative.
 
 # Sonic Catharsis - Metal Music Emotion Matching Application
 
-**Stack**: Next.js 15 + TypeScript + OpenAI GPT-4 (Responses API) + Tailwind CSS v4
+**Stack**: Next.js 16 + TypeScript + OpenAI GPT-4.1 (Responses API) + Tailwind CSS v4
 **Status**: Production Ready
 **Port**: 3001
 
@@ -15,12 +19,12 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 npm run dev              # Start dev server at http://localhost:3001
 
 # Production
-npm run build           # Production build
-npm run start           # Start production server (port 3001)
+npm run build            # Production build
+npm run start            # Start production server (port 3001)
 
 # Code Quality
-npm run lint            # ESLint
-npm run typecheck       # TypeScript strict type checking
+npm run lint              # ESLint
+npm run typecheck         # TypeScript strict type checking
 ```
 
 ## Environment Setup
@@ -37,117 +41,152 @@ ln -s ~/.config/sonic-catharsis/.env .env.local
 
 ## Core Architecture
 
-### Two-Agent System (Emotion → Music)
+The current model is **situation-first**: the app asks about the incident,
+not an emotion. `docs/data-model.md` is the authoritative reference for
+every data shape below — read it before changing any of this. `docs/formulas.md`
+documents exactly how Stage and subgenre are derived. This section is a
+summary, not a replacement for those docs.
 
-The application uses a **sequential two-agent pipeline** orchestrated from `src/app/page.tsx`:
+### User-facing input (the "Descent" intake)
 
-1. **Agent 1: Emotion Matcher** (`/api/matcher`)
-   - Maps user input (emotion + stress + event) → metal subgenre
-   - Uses OpenAI Responses API with `model: 'gpt-4.1'` and in-repo `instructions: MATCHER_INSTRUCTIONS` (see `src/lib/prompts.ts`) — no hosted OpenAI Prompt Object anymore
-   - **Data Source**: `data/full_mapping_matrix.json` (96 emotion/stress combinations); final subgenre is actually decided deterministically by `getDeterministicGenre()` in `src/lib/genre-mapping.ts`, overriding whatever the model returns
-   - **Output**: Subgenre + reasoning (cause analysis + cathartic choice explanation)
+Three questions, never framed as "how do you feel":
+- **incidentText** — free text, ≤500 chars ("What petty injustice did you endure today?")
+- **trigger** — one of 8 categories, no catch-all (`src/lib/trigger.ts` → `TRIGGER_TYPES`): `injustice, failure, conflict, helplessness, overload, exhaustion, uncertainty, absurdity`
+- **intensity** — 0-10 scale, displayed as 1-11 ("these go to eleven"; see `MAX_STRESS_INTENSITY`/`STRESS_TIERS` in `src/lib/theme.ts`)
 
-2. **Agent 2: Music Curator** (`/api/curator`)
-   - Takes Agent 1's subgenre → curates exactly 10 unique artists
-   - Uses OpenAI Responses API with `model: 'gpt-4.1'` and in-repo `instructions: CURATOR_INSTRUCTIONS` (see `src/lib/prompts.ts`) — no hosted OpenAI Prompt Object or vector store anymore
-   - **Data Sources**: `src/lib/artist-library.ts` pre-filters `data/artists-complete-genres.json` by genre-token overlap with the subgenre and hands the model a fixed candidate pool; the model must pick only from that pool
-   - **Output**: Array of exactly 10 artist objects with Bandcamp links
+Two optional, decorative-only inputs, both real items from the same
+(tongue-in-cheek) "Vitutus" academic instrument the app cites on its receipt:
+- **physical_symptoms** — multi-select, `src/lib/symptoms.ts` (`PHYSICAL_SYMPTOMS`), defaults to none
+- **duration_persistence** — single-select, `src/lib/duration.ts` (`DURATION_TIERS`), defaults to `just_now`/"Fresh"
 
-**Critical Flow**: User Input → Matcher (subgenre) → Curator (artists) → UI Display
+Both feed a small, non-dominant contribution into `getActiveStage()`
+(`src/lib/theme.ts`) — the deterministic (intensity, symptoms, duration) →
+Stage formula that drives the on-screen diagnosis. Never fabricate or infer
+either field; the UI's own selection is the only valid source.
 
-### Data Layer
+### The Nine Stages of Vitutus (the "condition")
 
-**Mapping Matrix** (`data/full_mapping_matrix.json`):
-- 96 entries: 12 emotions × 8 stress levels
-- Each entry: `{ emotion, stress_level: 0-7, genre, fallback_genre }`
-- **IMPORTANT**: `stress_level` is numeric (0-7), NOT string
-  - Frontend converts: `'none'→0, 'mild'→1, ..., 'multi-climax'→7`
-  - Validation enforces: `z.number().min(0).max(7)`
+`getActiveStage()` (`src/lib/theme.ts`) maps `(intensity, symptoms, duration)`
+to one of 9 stages (`STAGES`, Roman numerals I–IX, Finnish "vitutus" names,
+e.g. `Stage VII — Raivovitutus`). Four of the nine names (III, IV, VI, IX)
+are genuine terms from the real study; the rest are original extensions in
+the same register — this distinction must never be stated or implied in any
+user-facing output. The stage is displayed prominently in the UI (Epicrisis
+header / receipt) — the Matcher prompt is told never to name or paraphrase it
+in prose, since the visual diagnosis already carries that information.
 
-**12 Core Emotions** (4 quadrants):
-- Happy: `happy`, `excited`, `content`
-- Sad: `sad`, `tired`, `inconsolable`
-- Angry: `angry`, `enraged`, `hysterical`
-- Calm: `calm`, `worried`, `energetic`
+### Two-Agent System (Trigger+incident → Music)
 
-**Stress Levels** (V-curve model):
-- 8 levels: `none`(0) → `multi-climax`(7)
-- UI: Vertical gradient selector (grayscale in dark mode, rainbow in party mode)
+The application uses a **sequential two-agent pipeline** orchestrated from
+`src/app/page.tsx`:
+
+1. **Agent 1: Matcher** (`/api/matcher`, `src/app/api/matcher/route.ts`)
+   - Input: incident text, trigger, intensity, physical symptoms, duration, plus `anchor_subgenre` (via `getDeterministicGenre()`, `src/lib/genre-mapping.ts`). `getDeterministicGenre()` is keyed on the internal `EmotionType` vocabulary, computed server-side from `trigger` via `triggerToEmotion()` (`src/lib/trigger.ts`) — that translation is used only to pick the anchor and is **not** sent to the model as its own field (the model already gets the more informative `trigger` value directly)
+   - Uses OpenAI Responses API, `model: 'gpt-4.1'`, in-repo `instructions: MATCHER_INSTRUCTIONS` (`src/lib/prompts.ts`) — no hosted OpenAI Prompt Object
+   - The model derives its own 5-axis **sonic profile** (activation, agency, friction, cognitive_density, weight — see `SonicProfileSchema` in `src/lib/validation.ts`) from the incident + trigger, and picks the subgenre itself — the anchor is a stabilizing prior, not a forced answer. This is a deliberate change from the old fully-deterministic scheme: **`getDeterministicGenre()` no longer has final say over the subgenre**, only over the anchor handed to the model.
+   - Output: `{ subgenre, sonic_profile, cause, choice }` — see `AnalysisSchema`
+
+2. **Agent 2: Curator** (`/api/curator`, `src/app/api/curator/route.ts`)
+   - Input: only the Matcher's `subgenre` + `sonic_profile` — no emotion, event, or diagnosis. That interpretation work is entirely the Matcher's job.
+   - Uses OpenAI Responses API, `model: 'gpt-4.1'`, in-repo `instructions: CURATOR_INSTRUCTIONS` (`src/lib/prompts.ts`)
+   - **No code-side candidate pool or dataset anymore.** There used to be a local artist database (`data/artists-complete-genres.json`) pre-filtered by genre-token overlap (`src/lib/artist-library.ts`) to guarantee real, genre-matched artists, but that dataset's genre tagging was too thin (~326 metal artists, mostly generic "metal"/"heavy" tags) to give good matches across the full intensity range. Both the JSON files and `artist-library.ts` have been **deleted**; the Curator now relies entirely on the model's own knowledge, instructed to only name real, existing artists and to return `link: null` rather than a guessed Bandcamp URL.
+   - Output: exactly 10 `{ artist, link }` objects (`link` may be `null`)
+
+**Critical Flow**: User Input (incident + trigger + intensity [+ symptoms/duration]) → Matcher (subgenre + sonic_profile + cause/choice) → Curator (10 artists) → UI Display (`ScreenDescent` → `ResultsPanel`)
+
+**There is no `data/` directory anymore.** All emotion→genre calibration
+lives in code (`src/lib/genre-mapping.ts`); there is no static JSON dataset
+backing either agent. If you're tempted to add one back, prefer extending
+the deterministic map or the prompt instructions instead — that keeps the
+one no-JSON-drift invariant this section exists to document.
 
 ### UI Architecture
 
-**Layout**: 5-4-3 grid (left-middle-right)
-- **Left (5/12)**: Emotion wheel + stress selector + event input
-- **Middle (4/12)**: AI analysis (cause + choice)
-- **Right (3/12)**: Curated artist list
+Three screens, orchestrated by `src/app/page.tsx` via a `Step` union
+(`'selection' | 'analysis' | 'descent'`):
 
-**Themes**:
-- **Dark Mode** (default): Zinc gradients, grayscale stress selector
-- **Party Mode**: Pink/purple gradients, rainbow selector, unified white/pink backgrounds
+- **`ScreenSelection.tsx`** → `panels/StateOfMindPanel.tsx` — incident text, `ClassificationGrid.tsx` (trigger picker), `IntensitySlider.tsx`, `SymptomChecklist.tsx`, `DurationSelect.tsx`
+- **`ScreenAnalysis.tsx`** — loading/diagnosis view while the Matcher call is in flight (`DiagnosticReceipt.tsx`, `StageHeader.tsx`, `DescentRail.tsx`)
+- **`ScreenDescent.tsx`** → `panels/ResultsPanel.tsx` — final cause/choice/subgenre + curated artist list; `PrescriptionCalibration.tsx` for the (theatrical, not data-driven) curator-loading calibration display; `ReceiptCard.tsx` for the shareable QR receipt
 
-**Key Components**:
-- `EmotionWheel.tsx`: 12-emotion circular selector with intensity mapping
-- `StressSelector.tsx`: 7-level vertical slider with V-curve stress model
-- `page.tsx`: Main orchestrator with state management
+Shared chrome: `RiteHeader.tsx`. Design tokens (colors, typography, spacing,
+animation — `TEXT_PRIMARY`/`SECONDARY`/`TERTIARY`, `EASE`, `STAGES`,
+`STRESS_TIERS`, etc.) are centralized in `src/lib/theme.ts` — see
+`docs/design_guidelines.md` for the full system and how each token/component
+is meant to be used. **Read that doc before adding or changing any graphical
+element** — don't introduce a new one-off style when an existing token/
+component already covers the job.
 
-### State Management (page.tsx)
+### State Management (`page.tsx`)
 
-**Critical State Flow**:
-1. User selects emotion/stress/event
-2. `startAssistantWithWheelData()` converts stress string → number
-3. POST to `/api/matcher` with numeric stress level
-4. Display Agent 1 analysis (cause, choice, subgenre)
-5. POST to `/api/curator` with Agent 1's output
-6. Display Agent 2 artist list
+**Flow**:
+1. User fills incident text, picks trigger + intensity (+ optional symptoms, always-present duration) on `ScreenSelection`
+2. `triggerToEmotion()` derives the internal `primary` (`EmotionType`) value used only server-side, to compute `anchor_subgenre` — never sent to the model as its own field
+3. POST `/api/matcher` with `EmotionData` (see below) → display Matcher's cause/choice/subgenre
+4. POST `/api/curator` with the Matcher's `analysis` → display curated artists
+5. `ScreenDescent` renders the combined result
 
-**State Shape**:
+**`EmotionData` shape sent to both APIs** (`page.tsx`):
 ```typescript
-primarySelection: EmotionWheelSelection | null  // Selected emotion
-stressLevel: StressLevel | null                 // String from selector
-emotionData: {
-  primary: string,
-  stressLevel: number,  // CONVERTED before API call
-  event: string | null
+interface EmotionData {
+  primary: EmotionType;       // derived via triggerToEmotion(), never asked for directly
+  trigger: TriggerType;       // the user's actual selection
+  stressLevel: number | null; // 0-10
+  event: string | null;       // incident text
+  symptoms: PhysicalSymptomType[]; // optional, defaults to []
+  duration: DurationType;     // optional, defaults to 'just_now'
 }
 ```
 
 ### Validation Layer (`src/lib/validation.ts`)
 
-Uses Zod schemas with nullable support:
 ```typescript
 EmotionDataSchema = z.object({
-  primary: z.enum(CoreEmotions),
-  stressLevel: z.number().min(0).max(7).nullable().optional(),  // 0-7 numeric
-  event: z.string().max(500).nullable().optional()
+  primary: z.enum(CoreEmotions),               // 8 basic emotions — internal only
+  trigger: z.enum(TriggerTypes),                // 8 user-facing categories
+  stressLevel: z.number().min(0).max(10).nullable().optional(), // 0-10
+  event: z.string().max(500).nullable().optional(),
+  symptoms: z.array(z.enum(PhysicalSymptomTypes)).optional().default([]),
+  duration: z.enum(DurationTypes).optional().default('just_now'),
 })
 ```
 
-**CRITICAL**: Frontend sends `null` (not `undefined`) for empty fields. Validation must use `.nullable().optional()`.
+**CRITICAL**: Frontend sends `null` (not `undefined`) for empty `stressLevel`/`event`. Validation must keep `.nullable().optional()` on those two fields.
+
+`SonicProfileSchema` (also in `validation.ts`) is the Matcher's structured
+output contract for its 5-axis sonic profile — keep the enum token lists
+(`ActivationLevels`, `AgencyLevels`, `FrictionLevels`,
+`CognitiveDensityLevels`, `WeightLevels`) in sync with `MATCHER_INSTRUCTIONS`
+in `src/lib/prompts.ts` if either changes.
 
 ## API Integration Notes
 
 ### OpenAI Responses API
 
-Both agents use the **Responses API** (not Assistants API), with prompt text owned in-repo rather than a hosted Prompt Object:
+Both agents use the **Responses API** (not Assistants API, not a hosted
+Prompt Object):
 ```typescript
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 
 const response = await openai.responses.create({
   model: 'gpt-4.1',
   instructions: MATCHER_INSTRUCTIONS,
-  input: `emotion: ${emotion}\nstress_level: ${stress}\nevent: ${event}`,
+  input: `trigger: ...\nstress_level: ...\ncondition: ...\nevent: ...\nanchor_subgenre: ...\nphysical_symptoms: ...\nduration_persistence: ...`,
 });
 ```
-Variables are interpolated directly into `input` text (the old `prompt.variables` mechanism only exists for hosted Prompt Objects).
+Variables are interpolated directly into `input` text — there is no
+`prompt.variables` mechanism to keep in sync anymore.
 
-**Response parsing**:
-- Primary: `response.output_text`
-- Fallback: `response.output[0].content[0].text`
-- Extract JSON with regex: `/\{[\s\S]*\}/`
+**Response parsing**: primary `response.output_text`, with fallbacks that
+walk `response.output[]` for a `message`/`output_text` item, then a regex
+JSON extraction (`/\{[\s\S]*\}/`), then a best-effort text-salvage fallback if
+JSON parsing fails entirely. See both route handlers for the exact fallback
+chain — it's intentionally defensive since a malformed model response should
+degrade gracefully, not 500 the whole request.
 
 ### Error Handling
 
-All API routes follow pattern:
+All API routes follow this pattern:
 ```typescript
 try {
   const validation = validateRequest(Schema, body);
@@ -160,54 +199,51 @@ try {
 }
 ```
 
-Frontend displays errors in `cause` state for visibility.
-
 ## Common Development Tasks
 
 ### Modifying Emotion-to-Genre Mappings
 
-1. Edit `data/full_mapping_matrix.json` (keep numeric stress levels)
-2. **Do NOT** convert numbers back to strings
-3. Ensure all 96 combinations present (12 emotions × 8 stress levels)
-4. Test with various emotion/stress combinations
+Edit `src/lib/genre-mapping.ts` (`GENRE_MAP`) directly — it's hand-authored
+TypeScript, not generated from any data file. 8 emotions × 11 intensity tiers
+(0-10). Keep every emotion's tier list complete (0 through 10).
 
-### Adding New Emotions
+### Adding/Changing Trigger Categories
 
-1. Update `CoreEmotions` array in `src/lib/validation.ts`
-2. Add to `CoreEmotionType` in `src/types/index.ts`
-3. Add 8 entries to `full_mapping_matrix.json` (one per stress level)
-4. Update `EmotionWheel.tsx` UI positioning
+1. Update `TriggerType` in `src/types/index.ts`
+2. Update `TriggerTypes` (Zod) in `src/lib/validation.ts`
+3. Update `TRIGGER_TYPES` in `src/lib/trigger.ts`, including its `description`
+4. Add a mapping in `TRIGGER_TO_EMOTION` (`src/lib/trigger.ts`) — pick for tonal fit, not severity
+5. `ClassificationGrid.tsx` renders `TRIGGER_TYPES` directly — no separate UI positioning step needed
 
-### Changing Stress Level Range
+### Changing the Intensity Scale
 
-Currently: 0-7 (8 levels)
+Currently: 0-10 (11 tiers, "ELEVEN" easter egg at the top).
 1. Update `z.number().min(0).max(N)` in `validation.ts`
-2. Update `stressIntensityMap` in `page.tsx`
-3. Update `STRESS_LEVELS` array in `StressSelector.tsx`
-4. Add/remove entries in `full_mapping_matrix.json`
+2. Update `MAX_STRESS_INTENSITY`/`STRESS_TIERS` in `src/lib/theme.ts` — keep `STRESS_TIERS` in sync with the descending stress-label list in `MATCHER_INSTRUCTIONS` (`src/lib/prompts.ts`); there's a code comment there marking this
+3. Update `GENRE_MAP` tier ranges in `src/lib/genre-mapping.ts`
+4. Update `getActiveStage()`'s severity blend in `src/lib/theme.ts` if the somatic/duration weighting assumptions change
 
-### Theme Customization
+### Editing Prompts
 
-Colors, typography, spacing, and animation are centralized in `src/lib/theme.ts` (tokens like `TEXT_PRIMARY`/`SECONDARY`/`TERTIARY`, `SECTION_LABEL_STYLE`, `STAGES`, `STRESS_TIERS`, `EASE`) — see `docs/design_guidelines.md` for the full system and how each token/component is meant to be used.
-
-## UI & Design Guidelines
-
-Before adding or changing **any graphical element** — a new component, screen, card, button variant, color, spacing value, radius, font weight, or animation — read **`docs/design_guidelines.md`** first. It is the source of truth for this app's design system and documents which existing tokens/components to reuse. Don't introduce a new one-off style when an existing one already covers the job; if nothing fits, that's a real design decision to flag, not something to improvise silently.
-
-Also check the rest of `docs/` (`data-model.md`, `formulas.md`, `readme.md`) for how the underlying data/logic a UI element represents actually works before styling around it — e.g. don't build a UI assuming the old 12-emotion/0-7-stress model described in this file's own "Core Architecture" section above; that section is stale (see Known Stale Sections at the bottom of this file) and `docs/data-model.md` reflects the current Trigger-based, 0-10 model.
+Instructions live entirely in `src/lib/prompts.ts` (`MATCHER_INSTRUCTIONS`,
+`CURATOR_INSTRUCTIONS`) — edit there, not in the OpenAI dashboard; there is
+no hosted Prompt Object to keep in sync. When editing `MATCHER_INSTRUCTIONS`,
+check it still matches the real values in `src/lib/theme.ts` (`STRESS_TIERS`,
+`STAGES`), `src/lib/duration.ts` (`DURATION_TIERS`), and `src/lib/symptoms.ts`
+(`PHYSICAL_SYMPTOMS`) — these lists are hardcoded into the prompt text and
+will silently drift if the source files change without a corresponding edit.
 
 ## Development Guardrails
 
 **Never Modify**:
-- Mapping matrix structure (96 entries, numeric stress levels)
-- Validation schema nullability (frontend sends `null`)
-
-**Prompt changes**: instructions live in `src/lib/prompts.ts` (`MATCHER_INSTRUCTIONS`, `CURATOR_INSTRUCTIONS`) — edit there, not in the OpenAI dashboard; there's no hosted Prompt Object to keep in sync anymore.
+- `SonicProfileSchema` enum tokens without updating `MATCHER_INSTRUCTIONS` (and vice versa) — they must match exactly
+- Validation schema nullability on `stressLevel`/`event` (frontend sends `null`, not `undefined`)
 
 **Always Validate**:
-- Stress level is numeric (0-7) in API payload
-- Artist count = exactly 10 in curator response
-- Emotion is one of the core emotions in `CoreEmotions` (`src/lib/validation.ts`)
+- Intensity is numeric (0-10) in API payload
+- Artist count = exactly 10 in curator response, all real and distinct
+- Emotion is one of `CoreEmotions`, trigger is one of `TriggerTypes` (`src/lib/validation.ts`)
+- Matcher/curator prose never names or paraphrases the displayed Stage/condition
 
 **Text Contrast**:
 - AI analysis text: `text-zinc-50` (not `text-zinc-100`)
@@ -218,45 +254,61 @@ Also check the rest of `docs/` (`data-model.md`, `formulas.md`, `readme.md`) for
 ```
 src/
 ├── app/
-│   ├── page.tsx              # Main UI + orchestration
-│   ├── layout.tsx            # Meta tags (title: "Sonic Catharsis")
+│   ├── page.tsx                     # Main UI + orchestration (3-step flow)
+│   ├── layout.tsx                   # Meta tags (title: "Sonic Catharsis")
 │   └── api/
-│       ├── matcher/route.ts  # Agent 1: Emotion→Subgenre
-│       └── curator/route.ts  # Agent 2: Subgenre→Artists
+│       ├── matcher/route.ts         # Agent 1: incident+trigger+intensity → subgenre + sonic_profile
+│       └── curator/route.ts         # Agent 2: subgenre + sonic_profile → 10 artists
 ├── components/
-│   ├── EmotionWheel.tsx      # 12-emotion selector
-│   └── StressSelector.tsx    # 7-level vertical slider
+│   ├── ClassificationGrid.tsx       # 8-category trigger picker (3x3-ish grid)
+│   ├── IntensitySlider.tsx          # 0-10 (displayed 1-11) intensity slider
+│   ├── SymptomChecklist.tsx         # optional physical-symptoms multi-select
+│   ├── DurationSelect.tsx           # optional duration/persistence single-select
+│   ├── DiagnosticReceipt.tsx        # matcher-stage loading document
+│   ├── PrescriptionCalibration.tsx  # curator-stage loading calibration display (theatrical)
+│   ├── StageHeader.tsx              # Stage Roman numeral + vitutus name header
+│   ├── DescentRail.tsx              # depth rail visualizing stage progression
+│   ├── ReceiptCard.tsx              # shareable QR receipt
+│   ├── RiteHeader.tsx               # shared top chrome
+│   ├── panels/
+│   │   ├── StateOfMindPanel.tsx     # ScreenSelection's intake panel
+│   │   └── ResultsPanel.tsx         # ScreenDescent's cause/choice/artist display
+│   └── screens/
+│       ├── ScreenSelection.tsx      # Step 1: intake
+│       ├── ScreenAnalysis.tsx       # Step 2: matcher loading/diagnosis
+│       └── ScreenDescent.tsx        # Step 3: final results
 ├── lib/
-│   ├── validation.ts         # Zod schemas (CRITICAL)
-│   ├── prompts.ts            # In-repo agent instructions (MATCHER_INSTRUCTIONS, CURATOR_INSTRUCTIONS)
-│   ├── genre-mapping.ts      # Deterministic (emotion, stress) → subgenre lookup
-│   ├── artist-library.ts     # Genre-token filter over artists-complete-genres.json for the curator's candidate pool
-│   └── utils.ts              # cn() for className merging
+│   ├── validation.ts                # Zod schemas (CRITICAL — read before changing any data shape)
+│   ├── prompts.ts                   # In-repo agent instructions (MATCHER_INSTRUCTIONS, CURATOR_INSTRUCTIONS)
+│   ├── genre-mapping.ts             # Hand-authored (emotion, intensity) → anchor subgenre lookup
+│   ├── trigger.ts                   # TRIGGER_TYPES + triggerToEmotion() compatibility shim
+│   ├── theme.ts                     # Design tokens + STAGES + getActiveStage() severity formula
+│   ├── symptoms.ts                  # PHYSICAL_SYMPTOMS (optional intake field)
+│   ├── duration.ts                  # DURATION_TIERS (optional intake field)
+│   └── utils.ts                     # cn() for className merging
 └── types/
-    └── index.ts              # TypeScript definitions
-
-data/
-├── full_mapping_matrix.json  # 96 emotion/stress→genre mappings
-└── artists-*.json            # Artist database for curator
+    └── index.ts                     # TypeScript definitions
 ```
+
+There is no `data/` directory — see "Two-Agent System" above.
 
 ## Debugging Tips
 
 **Issue: Validation fails with "Expected number, received string"**
-- Check `stressIntensityMap` conversion in `page.tsx`
-- Ensure frontend sends numeric `stressLevel` to API
+- Check the intensity conversion path in `page.tsx` before the API call
+- Ensure the payload sends a numeric `stressLevel`, not a string label
 
-**Issue: Matcher returns wrong genre**
-- Verify `full_mapping_matrix.json` has correct entry
-- Check stress level is 0-7 numeric (not string)
+**Issue: Matcher returns an odd or off-tone subgenre**
+- Check `getDeterministicGenre()` in `genre-mapping.ts` for the anchor it handed the model — it's a prior, not a mandate, so the model may reasonably deviate
+- Check `MATCHER_INSTRUCTIONS` in `prompts.ts` for the sonic-profile derivation steps
 
-**Issue: Curator returns < 10 artists**
-- Check `getArtistCandidates()` in `src/lib/artist-library.ts` returns enough candidates for the subgenre (it falls back to the wider metal pool if too few genre-token matches exist)
-- Review `CURATOR_INSTRUCTIONS` in `src/lib/prompts.ts` for fallback logic
+**Issue: Curator returns fewer than 10 artists, or a fabricated-looking one**
+- There's no code-side candidate pool anymore — the model is relying entirely on its own knowledge (see "Two-Agent System" above)
+- Review `CURATOR_INSTRUCTIONS` in `prompts.ts`'s guardrails section; tighten the "never fabricate" language if this recurs
 
-**Issue: Theme colors not applying**
-- Verify `playfulMode` state propagation to child components
-- Check inline `style` objects override Tailwind classes
+**Issue: Matcher/Curator prose leaks the Stage name ("Raivovitutus", "Stage VII", etc.)**
+- `removeDisplayedCondition()` in `src/app/api/matcher/route.ts` is a regex safety net over the model's raw `cause`/`choice` text — check it's still matching against the current `STAGES` names if this slips through
+- Reinforce the "never repeat the condition" instruction in `MATCHER_INSTRUCTIONS` if it recurs frequently
 
 ## Security
 
@@ -265,10 +317,9 @@ data/
 - Input validation with Zod on all API routes
 - HTTPS enforcement in production (Vercel)
 
-## Known Stale Sections
+## Further Reading
 
-This file predates the Trigger-based redesign and was not fully rewritten with it — several sections above still describe the old UI and don't match the current app. Do not follow them; they're kept for history until a full rewrite. Known stale:
-- **Core Architecture → Data Layer / UI Architecture**: describes 12 emotions, an 0-7 stress scale, `EmotionWheel.tsx`/`StressSelector.tsx`, a 5-4-3 grid layout, and dark/party mode theming. None of this exists anymore — the current intake is Trigger-based (`ClassificationGrid.tsx` + `IntensitySlider.tsx` + `StateOfMindPanel.tsx`) on a 0-10 intensity scale. See `docs/data-model.md` and `docs/design_guidelines.md` for the current model.
-- **Common Development Tasks → Adding New Emotions / Changing Stress Level Range**: references files/ranges from the old model; not applicable as written.
-- **File Organization**: missing most current files (`StateOfMindPanel.tsx`, `ClassificationGrid.tsx`, `IntensitySlider.tsx`, `StageHeader.tsx`, `DescentRail.tsx`, `ReceiptCard.tsx`, `CassetteLoader.tsx`, `genre-mapping.ts`, `trigger.ts`, `theme.ts`, and more).
-- **Debugging Tips → Theme colors not applying**: references `playfulMode`, which no longer exists.
+- `docs/data-model.md` — authoritative data-shape reference (supersedes this file's "Core Architecture" section where they'd ever disagree)
+- `docs/formulas.md` — exact Stage/subgenre derivation formulas
+- `docs/design_guidelines.md` — design system, tokens, component usage
+- `docs/readme.md` — older, partially superseded project overview; cross-check against `data-model.md`/`formulas.md` before trusting anything data-shape-related in it
