@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Next 16's Turbopack walks up from this directory looking for a
+  // lockfile to infer the monorepo root, and finds an unrelated
+  // package-lock.json at /Users/mikko.makipaa (outside this git repo),
+  // misidentifying the project root. That silently breaks page discovery
+  // (e.g. a PageNotFoundError for /api/matcher during `next build`). Pin
+  // the root explicitly, as Next's own warning suggests, so it can't pick
+  // up a lockfile from anywhere above this directory.
+  turbopack: {
+    root: __dirname,
+  },
   async headers() {
     return [
       {
