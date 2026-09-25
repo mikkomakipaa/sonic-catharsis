@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Special_Elite, IBM_Plex_Sans, IBM_Plex_Mono, Fraunces } from "next/font/google";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -72,6 +73,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${shadowPrayer.variable} ${specialElite.variable} ${plexSans.variable} ${plexMono.variable} ${fraunces.variable} antialiased`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
