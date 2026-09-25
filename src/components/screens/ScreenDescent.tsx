@@ -78,7 +78,7 @@ export default function ScreenDescent({
             onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
           >
             <ArrowLeft className="h-3 w-3" />
-            Back to Analysis
+            Back to Diagnosis
           </button>
           <button
             onClick={onReset}

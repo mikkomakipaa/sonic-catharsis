@@ -4,7 +4,6 @@ import { ArrowLeft, RefreshCw } from 'lucide-react';
 import {
   EASE,
   Stage,
-  SECTION_LABEL_STYLE,
   TEXT_SECONDARY,
   TEXT_TERTIARY,
   DIVIDER_COLOR,
@@ -114,7 +113,20 @@ export default function ScreenAnalysis({
         <div className="flex flex-col pt-3 max-[640px]:pt-1">
           {cause && (
             <div className="mt-6 max-[640px]:mt-4">
-              <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Incident Summary</span>
+              {/* Same clinical-metadata monospace eyebrow as the "Clinical
+                  Note / Epicrisis 001" identifier above — INTAKE / CLINICAL
+                  NOTE / OBSERVATION / TREATMENT / PRESCRIPTION reads as one
+                  consistent case-file vocabulary end to end, rather than
+                  this being the one section still styled as a generic
+                  webpage heading. "Observation" (not "Incident Summary")
+                  since the incident itself was already captured at Intake —
+                  this is the system's read of it, not a repeat of it. */}
+              <span
+                className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+                style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
+              >
+                Observation / 01
+              </span>
               <p
                 className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[15px] max-[640px]:text-[16px] leading-[1.45]"
                 style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
@@ -126,7 +138,17 @@ export default function ScreenAnalysis({
 
           {choice && (
             <div className="mt-6 max-[640px]:mt-4 pt-5 max-[640px]:pt-3" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
-              <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Prescribed Response</span>
+              {/* "Treatment" (not "Prescribed Response") since the actual
+                  prescription — the 10 bands — arrives on the next screen;
+                  this is the diagnosis's recommended direction, not the
+                  prescription itself. Same clinical eyebrow style as
+                  Observation above. */}
+              <span
+                className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+                style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
+              >
+                Treatment / 02
+              </span>
               {subgenre && (
                 <div
                   className="uppercase font-bold text-[16px] mt-2"
