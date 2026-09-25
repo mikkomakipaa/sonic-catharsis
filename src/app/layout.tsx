@@ -49,7 +49,7 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   title: "Sonic Catharsis",
-  description: "We match your rage.",
+  description: "Rage, matched.",
 };
 
 // viewport-fit=cover lets the page reach under the iOS Safari safe areas
