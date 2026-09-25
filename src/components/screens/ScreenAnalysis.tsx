@@ -71,7 +71,7 @@ export default function ScreenAnalysis({
       {!isLoading && (
         <>
           <span
-            className="uppercase text-[9.5px] max-[640px]:text-[10.5px]"
+            className="uppercase text-[11px] max-[640px]:text-[10.5px]"
             style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
           >
             Clinical Note / Epicrisis 001
@@ -116,7 +116,7 @@ export default function ScreenAnalysis({
             <div className="mt-6 max-[640px]:mt-4">
               <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Incident Summary</span>
               <p
-                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13px] max-[640px]:text-[16px] leading-[1.45]"
+                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[15px] max-[640px]:text-[16px] leading-[1.45]"
                 style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
               >
                 {cause}
@@ -129,14 +129,14 @@ export default function ScreenAnalysis({
               <span style={{ ...SECTION_LABEL_STYLE, textAlign: 'left' }}>Prescribed Response</span>
               {subgenre && (
                 <div
-                  className="uppercase font-bold text-[15px] max-[640px]:text-[16px] mt-2"
+                  className="uppercase font-bold text-[16px] mt-2"
                   style={{ color: stage.color }}
                 >
                   {subgenre}
                 </div>
               )}
               <p
-                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[13px] max-[640px]:text-[16px] leading-[1.45]"
+                className="m-0 mt-2 max-w-[62ch] min-w-0 break-words text-[15px] max-[640px]:text-[16px] leading-[1.45]"
                 style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
               >
                 {choice}
@@ -148,7 +148,7 @@ export default function ScreenAnalysis({
               paper-card ink tint and onto the shared neutral tokens. */}
           {choice && (
             <p
-              className="uppercase m-0 mt-5 max-[640px]:mt-3 pt-3 max-[640px]:pt-2 text-[8.5px] max-[640px]:text-[10px] leading-[1.5]"
+              className="uppercase m-0 mt-5 max-[640px]:mt-3 pt-3 max-[640px]:pt-2 text-[10px] leading-[1.5]"
               style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.03em', color: TEXT_TERTIARY, borderTop: `1px solid ${DIVIDER_COLOR}` }}
             >
               Treatment protocol per Sharman &amp; Dingle (2015), Front. Hum. Neurosci. — extreme music does not escalate anger; it matches it.
