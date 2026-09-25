@@ -151,7 +151,9 @@ export default function ScreenAnalysis({
               className="uppercase m-0 mt-5 max-[640px]:mt-3 pt-3 max-[640px]:pt-2 text-[10px] leading-[1.5]"
               style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.03em', color: TEXT_TERTIARY, borderTop: `1px solid ${DIVIDER_COLOR}` }}
             >
-              Treatment protocol per Sharman &amp; Dingle (2015), Front. Hum. Neurosci. — extreme music does not escalate anger; it matches it.
+              Treatment protocol per Sharman &amp; Dingle (2015), Front. Hum. Neurosci.:
+              <br />
+              Extreme music does not escalate anger; it matches it.
             </p>
           )}
 
