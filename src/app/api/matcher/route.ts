@@ -96,6 +96,27 @@ export async function POST(request: NextRequest) {
       ? `\n\nSPECIAL CASE: The event description is trivial ("${trimmedEvent || 'nothing typed at all'}") yet the header shows the most severe diagnosis. For "cause" ONLY, do not invent drama about the event — instead call out this exact mismatch directly, in the same dark comic voice: how little was given versus how much the app is dramatizing it. Keep "choice" normal.`
       : '';
 
+    // "Pseudo-vitutus" — the real Vitutusviisari study found severe vitutus
+    // is characterized by sympathetic-activation symptoms (head exploding,
+    // muscle tension, heart pounding, accelerated breathing); weakness and
+    // legs going limp are parasympathetic markers the study found rare even
+    // during severe episodes. Reporting ONLY those two, with none of the
+    // sympathetic four, at a severe stage is the exact inverse of what real
+    // severe vitutus looks like — a legitimate "this isn't textbook" bit,
+    // not a manufactured one. Exact-set match only: if any sympathetic
+    // symptom is also present, this doesn't fire. Gated to stage.index >= 6
+    // (Syvävitutus+) to match the "exceptionally severe" framing the study
+    // itself used when collecting this data.
+    const reportedSymptoms = new Set(emotionData.symptoms ?? []);
+    const isPseudoVitutusMoment =
+      reportedSymptoms.size === 2 &&
+      reportedSymptoms.has('weakness') &&
+      reportedSymptoms.has('legs_limp') &&
+      stage.index >= 6;
+    const pseudoVitutusDirective = isPseudoVitutusMoment
+      ? `\n\nSPECIAL CASE: The only physical symptoms reported are weakness and legs going limp — real, but the two the app's own cited research found are rare even during severe episodes (which are typically dominated by head-exploding/muscle-tension/heart-pounding/accelerated-breathing instead). For "cause" ONLY, the persona may gently call out this presentation as suspiciously atypical — arguably "pseudo-vitutus," not the textbook thing — before proceeding completely normally. Diagnosis, subgenre, sonic profile, and prescription are all unaffected: the treatment is delivered in full regardless. Keep "choice" normal.`
+      : '';
+
     // Optional, self-reported, multi-select — real items from the same
     // study the app cites elsewhere (see lib/symptoms.ts), never required.
     const symptomsList = (emotionData.symptoms ?? []).map((s) => getSymptomMeta(s).label);
@@ -109,7 +130,7 @@ export async function POST(request: NextRequest) {
     const response = await openai.responses.create({
       model: MATCHER_MODEL,
       instructions: MATCHER_INSTRUCTIONS,
-      input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}`,
+      input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}${pseudoVitutusDirective}`,
     });
 
     // Handle different response formats
