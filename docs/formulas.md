@@ -54,13 +54,13 @@ isn't ten times worse than one hour, so this isn't `hours / max_hours`):
 |---|---|---:|
 | `just_now` | Fresh | 0.00 |
 | `about_hour` | Simmering | 0.25 |
-| `several_hours` | Stewing | 0.50 |
+| `several_hours` | Marinating | 0.50 |
 | `since_yesterday` | Overnight | 0.75 |
 | `several_days` | Lifestyle | 1.00 |
 
 Labels are stylized (deadpan-clinical/absurd-diagnosis voice, matching
 "WHAT KIND OF BULLSHIT WAS IT?"), not literal time descriptions — `Fresh` →
-`Simmering` → `Stewing` keep one consistent cooking-decay metaphor as it
+`Simmering` → `Marinating` keep one consistent cooking-decay metaphor as it
 escalates; `Overnight` and `Lifestyle` are deliberate register-breaks
 at the two tiers that have earned it. The underlying `value`/tier
 *ordering* is what matters for severity, not the wording.

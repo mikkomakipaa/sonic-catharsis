@@ -38,7 +38,7 @@ as "just happened" or invent a value). When it IS reported, it's one of 5
 stylized labels. The labels are NOT literal time descriptions — interpret
 them by this exact ascending ordering, not their literal wording:
 
-  Fresh (just happened) < Simmering (~15-60 min) < Stewing (several hours)
+  Fresh (just happened) < Simmering (~15-60 min) < Marinating (several hours)
   < Overnight (since yesterday) < Lifestyle (several days or longer)
 
 You may season "cause" with grounding detail when it's reported and more

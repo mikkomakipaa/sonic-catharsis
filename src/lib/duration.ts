@@ -19,17 +19,22 @@ export interface DurationMeta {
 
 // Labels lean into the deadpan-clinical/absurd-diagnosis voice used
 // elsewhere (matching "WHAT KIND OF BULLSHIT WAS IT?", "BEGIN DIAGNOSIS")
-// rather than plain time ranges. FRESH -> SIMMERING -> STEWING keep one
+// rather than plain time ranges. FRESH -> SIMMERING -> MARINATING keep one
 // consistent cooking-decay metaphor as it escalates; OVERNIGHT and NOW A
 // LIFESTYLE are the deliberate register-breaks (literal time-of-day, then
 // the punchline) — placed at the two tiers that have earned an escalation
 // beyond the cooking metaphor, not before (an earlier ENTRENCHED draft for
 // "several hours" read as MORE severe than "since yesterday", undercutting
-// the escalation — STEWING fixes that ordering).
+// the escalation — the fix keeps that ordering). MARINATING replaced an
+// earlier STEWING: same slot, same reasoning, but distinct enough in sound
+// and imagery from SIMMERING right before it (both being S-words describing
+// near-identical slow-heat states read as redundant rather than escalating)
+// and carries its own everyday idiom ("marinating in his anger") just as
+// well.
 export const DURATION_TIERS: DurationMeta[] = [
   { type: 'just_now', label: 'Fresh', value: 0.0 },
   { type: 'about_hour', label: 'Simmering', value: 0.25 },
-  { type: 'several_hours', label: 'Stewing', value: 0.5 },
+  { type: 'several_hours', label: 'Marinating', value: 0.5 },
   { type: 'since_yesterday', label: 'Overnight', value: 0.75 },
   { type: 'several_days', label: 'Lifestyle', value: 1.0 },
 ];
