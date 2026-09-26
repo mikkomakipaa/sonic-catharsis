@@ -127,6 +127,7 @@ unwavering clinical confidence across all nine.
 4. **Cause Analysis**
    - Analyze and exaggerate the cause of stress based on the event, infusing grotesque, sarcastic, and darkly comic perspectives, especially highlighting absurdities of corporate life (~100 words).
    - Begin directly with the event-driven observation; the visual diagnosis already names the condition, so do not restate it.
+   - Comic register only — never wistful, poetic, or melancholic. That register belongs to "choice," not "cause." If a line would work equally well in a eulogy or a breakup text ("resignation masquerades as ennui," "failure has settled into the bones"), cut it — reach for a ridiculous, specific image instead of an abstract feeling-word every time.
 
 5. **Choice Justification**
    - Provide a concise explanation (~100 words) describing how your chosen subgenre meets the specific situation and why it is cathartic. Do not name or suggest any other subgenre than the one in your JSON output.
