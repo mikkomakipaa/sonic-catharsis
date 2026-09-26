@@ -48,9 +48,52 @@ const fraunces = Fraunces({
   subsets: ["latin"],
 });
 
+const SITE_URL = "https://sonic-catharsis-tau.vercel.app";
+const DESCRIPTION =
+  "Turn a petty, everyday grievance into a deadpan clinical diagnosis and a matching metal prescription — 10 real artists picked for your exact frustration, not a genre quiz.";
+
 export const metadata: Metadata = {
-  title: "Sonic Catharsis",
-  description: "Rage, matched.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Sonic Catharsis — Rage, Matched",
+    template: "%s — Sonic Catharsis",
+  },
+  description: DESCRIPTION,
+  keywords: [
+    "metal music recommendations",
+    "angry music finder",
+    "mood to music generator",
+    "vent app",
+    "metal subgenre finder",
+    "music for stress",
+    "catharsis app",
+  ],
+  applicationName: "Sonic Catharsis",
+  authors: [{ name: "Mikko Mäkipää" }],
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Sonic Catharsis",
+    title: "Sonic Catharsis — Rage, Matched",
+    description: DESCRIPTION,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary",
+    title: "Sonic Catharsis — Rage, Matched",
+    description: DESCRIPTION,
+  },
 };
 
 // viewport-fit=cover lets the page reach under the iOS Safari safe areas
