@@ -56,8 +56,8 @@ Three questions, never framed as "how do you feel":
 
 Two optional, decorative-only inputs, both real items from the same
 (tongue-in-cheek) "Vitutus" academic instrument the app cites on its receipt:
-- **physical_symptoms** — multi-select, `src/lib/symptoms.ts` (`PHYSICAL_SYMPTOMS`), defaults to none
-- **duration_persistence** — single-select, `src/lib/duration.ts` (`DURATION_TIERS`), defaults to `just_now`/"Fresh"
+- **physical_symptoms** — multi-select, `src/lib/symptoms.ts` (`PHYSICAL_SYMPTOMS`), no default — empty array until chosen
+- **duration_persistence** — single-select, `src/lib/duration.ts` (`DURATION_TIERS`), no default — `null` until chosen, same "nothing dialed in until touched" contract as intensity. Gates the "Begin Diagnosis" CTA (`canSubmit`, `src/app/page.tsx`) alongside trigger+intensity.
 
 Both feed a small, non-dominant contribution into `getActiveStage()`
 (`src/lib/theme.ts`) — the deterministic (intensity, symptoms, duration) →
@@ -85,7 +85,8 @@ The application uses a **sequential two-agent pipeline** orchestrated from
    - Uses OpenAI Responses API, `model: 'gpt-4.1'`, in-repo `instructions: MATCHER_INSTRUCTIONS` (`src/lib/prompts.ts`) — no hosted OpenAI Prompt Object
    - The model derives its own 5-axis **sonic profile** (activation, agency, friction, cognitive_density, weight — see `SonicProfileSchema` in `src/lib/validation.ts`) from the incident + trigger, and picks the subgenre itself — the anchor is a stabilizing prior, not a forced answer. This is a deliberate change from the old fully-deterministic scheme: **`getDeterministicGenre()` no longer has final say over the subgenre**, only over the anchor handed to the model.
    - Output: `{ subgenre, sonic_profile, cause, choice }` — see `AnalysisSchema`
-   - **Special-case directives**: `route.ts` detects a couple of precise input patterns server-side and appends an extra one-line directive to the prompt `input`, scoped to `cause` only (never `subgenre`/`sonic_profile`/`choice`) — `isGapMoment` (trivial event text at the most severe Stage) and `isPseudoVitutusMoment` (the *only* reported `physical_symptoms` are `weakness` + `legs_limp`, at `stage.index >= 6` — the exact inverse of the real Vitutusviisari study's severe-episode symptom profile, which is sympathetic-dominant). Both are additive and independent — see the comments directly above them in `route.ts` before changing either.
+   - **Special-case directives**: `route.ts` detects a couple of precise input patterns server-side and appends an extra one-line directive to the prompt `input`, scoped to `cause` only (never `subgenre`/`sonic_profile`/`choice`) — `isGapMoment` (trivial event text at the most severe Stage) and `isPseudoVitutusMoment` (the *only* reported `physical_symptoms` are `weakness` + `legs_limp`, at raw `stressLevel >= 7` — the exact inverse of the real Vitutusviisari study's severe-episode symptom profile, which is sympathetic-dominant). Both are additive and independent — see the comments directly above them in `route.ts` before changing either.
+   - **`isPseudoVitutusMoment` also caps the actual displayed Stage**, not just the prompt directive: `getActiveStage()` (`src/lib/theme.ts`) applies `Math.min(idx, 2)` whenever `isPseudoVitutusProfile()` (`src/lib/symptoms.ts`) matches, so the Epicrisis header/receipt itself refuses to certify high severity for this exact symptom set. Both the directive gate and the Stage cap call the same `isPseudoVitutusProfile()` predicate — never duplicate this exact-match logic; import it instead. Because the displayed Stage is now capped low whenever this profile matches, the directive's own gate deliberately checks the *raw* `stressLevel` input, not the (post-cap) `stage.index` — see `docs/formulas.md` § "Exception: the pseudo-vitutus Stage cap" for why.
 
 2. **Agent 2: Curator** (`/api/curator`, `src/app/api/curator/route.ts`)
    - Input: only the Matcher's `subgenre` + `sonic_profile` — no emotion, event, or diagnosis. That interpretation work is entirely the Matcher's job.
@@ -121,7 +122,7 @@ component already covers the job.
 ### State Management (`page.tsx`)
 
 **Flow**:
-1. User fills incident text, picks trigger + intensity (+ optional symptoms, always-present duration) on `ScreenSelection`
+1. User fills incident text, picks trigger + intensity + duration (+ optional symptoms) on `ScreenSelection` — the "Begin Diagnosis" CTA stays disabled (`canSubmit`) until trigger, intensity, AND duration are all set
 2. `triggerToEmotion()` derives the internal `primary` (`EmotionType`) value used only server-side, to compute `anchor_subgenre` — never sent to the model as its own field
 3. POST `/api/matcher` with `EmotionData` (see below) → display Matcher's cause/choice/subgenre
 4. POST `/api/curator` with the Matcher's `analysis` → display curated artists
@@ -135,7 +136,7 @@ interface EmotionData {
   stressLevel: number | null; // 0-10
   event: string | null;       // incident text
   symptoms: PhysicalSymptomType[]; // optional, defaults to []
-  duration: DurationType;     // optional, defaults to 'just_now'
+  duration: DurationType | null;   // no default — null until chosen; required by canSubmit before this is ever sent
 }
 ```
 
@@ -148,11 +149,11 @@ EmotionDataSchema = z.object({
   stressLevel: z.number().min(0).max(10).nullable().optional(), // 0-10
   event: z.string().max(500).nullable().optional(),
   symptoms: z.array(z.enum(PhysicalSymptomTypes)).optional().default([]),
-  duration: z.enum(DurationTypes).optional().default('just_now'),
+  duration: z.enum(DurationTypes).nullable().optional(), // no default
 })
 ```
 
-**CRITICAL**: Frontend sends `null` (not `undefined`) for empty `stressLevel`/`event`. Validation must keep `.nullable().optional()` on those two fields.
+**CRITICAL**: Frontend sends `null` (not `undefined`) for empty `stressLevel`/`event`/`duration`. Validation must keep `.nullable().optional()` on all three fields.
 
 `SonicProfileSchema` (also in `validation.ts`) is the Matcher's structured
 output contract for its 5-axis sonic profile — keep the enum token lists

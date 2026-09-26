@@ -45,7 +45,9 @@ interface EmotionData {
   symptoms: PhysicalSymptomType[];
   // Optional, single-select, additional flavor for the Matcher (and a small
   // contribution to getActiveStage()'s severity blend) — see lib/duration.ts.
-  duration: DurationType;
+  // null until the user actually picks a tier — same "nothing is dialed in
+  // until chosen" contract as stressLevel, never a silent "Fresh" default.
+  duration: DurationType | null;
 }
 
 export default function Home() {
@@ -57,7 +59,7 @@ export default function Home() {
   const [selection, setSelection] = useState<TriggerSelection | null>(null);
   const [incidentText, setIncidentText] = useState<string>('');
   const [symptoms, setSymptoms] = useState<PhysicalSymptomType[]>([]);
-  const [duration, setDuration] = useState<DurationType>('just_now');
+  const [duration, setDuration] = useState<DurationType | null>(null);
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -246,7 +248,7 @@ export default function Home() {
     setSelection(null);
     setIncidentText('');
     setSymptoms([]);
-    setDuration('just_now');
+    setDuration(null);
     setPlaylist(null);
     setReasoning(null);
     setCause(null);
@@ -261,7 +263,7 @@ export default function Home() {
     setSelection(null);
     setIncidentText('');
     setSymptoms([]);
-    setDuration('just_now');
+    setDuration(null);
   };
 
   // Back from the analysis screen: return to selection but keep the
@@ -279,7 +281,7 @@ export default function Home() {
     setPendingEmotionData(null);
   };
 
-  const canSubmit = Boolean(selection) && selection?.intensity !== null && !isProcessing && !reasoning;
+  const canSubmit = Boolean(selection) && selection?.intensity !== null && duration !== null && !isProcessing && !reasoning;
 
   return (
     <div

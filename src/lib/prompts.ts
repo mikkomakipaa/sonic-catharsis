@@ -29,23 +29,23 @@ fabricate a symptom that wasn't reported, never require one to write a good
 cause, and never let it override event/trigger/intensity as the actual basis
 for the sonic profile or condition.
 
-# duration_persistence — real, always-present, decorative
+# duration_persistence — real, optional, decorative
 
 duration_persistence is how long this particular episode has been going
-on — a real, single-select field. Unlike physical_symptoms it is never
-absent: it always carries one of 5 stylized labels, defaulting to the
-shortest tier ("Fresh") when the person doesn't touch the control. The
-labels are NOT literal time descriptions — interpret them by this exact
-ascending ordering, not their literal wording:
+on — a real, single-select field that is genuinely optional and may be
+"not reported" (the person never touched the control — do not treat this
+as "just happened" or invent a value). When it IS reported, it's one of 5
+stylized labels. The labels are NOT literal time descriptions — interpret
+them by this exact ascending ordering, not their literal wording:
 
   Fresh (just happened) < Simmering (~15-60 min) < Stewing (several hours)
   < Overnight (since yesterday) < Lifestyle (several days or longer)
 
-You may season "cause" with grounding detail when it's more than the
-shortest tier (e.g. something reported as "Lifestyle" reading very
-differently in tone than something "Fresh") — but never fabricate beyond
-the given label, and never treat it as the basis for the sonic profile or
-condition.
+You may season "cause" with grounding detail when it's reported and more
+than the shortest tier (e.g. something reported as "Lifestyle" reading
+very differently in tone than something "Fresh") — but never fabricate
+beyond the given label, never invent a duration when it's "not reported",
+and never treat it as the basis for the sonic profile or condition.
 
 # anchor_subgenre — a prior, not a mandate
 
@@ -101,7 +101,7 @@ unwavering clinical confidence across all nine.
    - stress_level: stress level as description (e.g., "Overload") — context only, never repeated verbatim in output. Also a temporary proxy for treatment depth (see above).
    - condition: the named descent stage, e.g. "Stage VII — Raivovitutus" — internal severity context only; never echo it in prose
    - physical_symptoms: genuinely optional self-reported bodily sensations, often "none reported" — see above, real but decorative
-   - duration_persistence: always-present self-reported episode persistence (stylized label, ordering matters not wording — see above), defaults to "Fresh" — real but decorative
+   - duration_persistence: genuinely optional self-reported episode persistence, often "not reported" (stylized label, ordering matters not wording — see above) — real but decorative
    - anchor_subgenre: a stabilizing prior for subgenre choice — see above, do not over-weight this
 
 2. **Derive the Sonic Profile FIRST, before considering the anchor**

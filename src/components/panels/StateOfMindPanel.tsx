@@ -27,7 +27,7 @@ interface StateOfMindPanelProps {
   onIncidentTextChange: (value: string) => void;
   symptoms: PhysicalSymptomType[];
   onSymptomsChange: (symptoms: PhysicalSymptomType[]) => void;
-  duration: DurationType;
+  duration: DurationType | null;
   onDurationChange: (duration: DurationType) => void;
   isProcessing: boolean;
   canSubmit: boolean;
@@ -76,13 +76,6 @@ export default function StateOfMindPanel({
   const intensitySectionRef = useRef<HTMLDivElement>(null);
   const hasAutoScrolledForSelection = useRef(false);
 
-  // Duration itself is never null (it defaults to 'just_now' — see
-  // lib/validation.ts for why it's deliberately non-nullable, unlike
-  // intensity), so there's no "unset" value to gate the next section on.
-  // This local flag tracks whether the user has actually touched the
-  // control at least once in this session, purely to drive the reveal
-  // below; it resets whenever the form fully clears.
-  const [hasSetDuration, setHasSetDuration] = useState(false);
   // Drives the incident field's focus color below — Tailwind's focus:ring
   // draws a box-shadow on all four sides, which visibly added a border on
   // the field's top/left/right edges (previously borderless; only the
@@ -96,7 +89,6 @@ export default function StateOfMindPanel({
   useEffect(() => {
     if (!selection) {
       hasAutoScrolledForSelection.current = false;
-      setHasSetDuration(false);
       return;
     }
 
@@ -230,16 +222,13 @@ export default function StateOfMindPanel({
               <div className="mt-3 w-full" style={{ width: 'min(384px, calc(100vw - 2rem))' }}>
                 <DurationSelect
                   value={duration}
-                  onChange={(value) => {
-                    setHasSetDuration(true);
-                    onDurationChange(value);
-                  }}
+                  onChange={onDurationChange}
                 />
               </div>
 
               {/* Physical symptoms only reveal once duration is actually
                   picked — nothing further to fill in before then. */}
-              {hasSetDuration && (
+              {duration !== null && (
                 <div className="flex flex-col items-center w-full animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
                   {/* Physical symptoms — optional, multi-select, real items
                       from the same study the app already cites elsewhere

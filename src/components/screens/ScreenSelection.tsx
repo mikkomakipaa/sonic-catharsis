@@ -10,7 +10,7 @@ interface ScreenSelectionProps {
   onIncidentTextChange: (value: string) => void;
   symptoms: PhysicalSymptomType[];
   onSymptomsChange: (symptoms: PhysicalSymptomType[]) => void;
-  duration: DurationType;
+  duration: DurationType | null;
   onDurationChange: (duration: DurationType) => void;
   isProcessing: boolean;
   canSubmit: boolean;

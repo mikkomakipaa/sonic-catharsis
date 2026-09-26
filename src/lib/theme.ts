@@ -2,7 +2,7 @@
 // No JSX here; consumed by page.tsx and the panel/selector components.
 
 import type { PhysicalSymptomType, DurationType } from '@/types';
-import { PHYSICAL_SYMPTOMS } from './symptoms';
+import { PHYSICAL_SYMPTOMS, isPseudoVitutusProfile } from './symptoms';
 import { getDurationMeta } from './duration';
 
 export const EASE = 'cubic-bezier(0.25, 1, 0.5, 1)';
@@ -214,18 +214,39 @@ export const STAGES: Stage[] = [
 // severity — and the rounded stage index — can never decrease when any one
 // input increases with the others held fixed. See docs/formulas.md for the
 // full computed transition table and worked boundary examples.
+//
+// One narrow, deliberate exception layered on top (not a change to the
+// general formula): isPseudoVitutusProfile() — see lib/symptoms.ts — is an
+// exact-set match on exactly {weakness, legs_limp} and nothing else, the
+// one 2-symptom combination the real Vitutusviisari study found to be the
+// inverse of a real severe episode's typical (sympathetic) profile. When it
+// matches, the result is capped at Stage II regardless of intensity/
+// duration, via Math.min(idx, 2) — a comedic "the algorithm doesn't
+// certify this as real vitutus" beat, not a re-interpretation of the
+// study's data as a general severity weight (that was deliberately
+// rejected elsewhere for every other symptom/combination). This preserves
+// the monotonicity claim above: min(f(x), 2) is still non-decreasing
+// wherever f is, so it only ever flattens the climb for this one exact
+// profile, never reverses it — and the moment the symptom set changes to
+// anything else, the ordinary formula (which can jump back up sharply)
+// takes back over immediately.
 export function getActiveStage(
   stressValue: number | null,
   symptoms: PhysicalSymptomType[] = [],
-  duration: DurationType = 'just_now'
+  duration: DurationType | null = null
 ): Stage {
   if (stressValue === null) return SURFACE;
   const intensityFraction = stressValue / MAX_STRESS_INTENSITY;
   const somaticFraction = symptoms.length / PHYSICAL_SYMPTOMS.length;
-  const durationFraction = getDurationMeta(duration).value;
+  // No duration reported (person never touched the control) contributes 0
+  // — numerically identical to 'just_now'/"Fresh" (value 0.0 in
+  // DURATION_TIERS), but this is now an explicit "nothing claimed" case,
+  // not a silent stand-in for a real answer. See lib/validation.ts.
+  const durationFraction = duration ? getDurationMeta(duration).value : 0;
   const severity = intensityFraction * 0.85 + somaticFraction * 0.10 + durationFraction * 0.05;
   const idx = Math.min(9, Math.max(1, Math.round(1 + severity * 8)));
-  return STAGES[idx - 1];
+  const cappedIdx = isPseudoVitutusProfile(symptoms) ? Math.min(idx, 2) : idx;
+  return STAGES[cappedIdx - 1];
 }
 
 // --- Stage-driven accent color -----------------------------------------------

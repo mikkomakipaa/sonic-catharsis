@@ -49,7 +49,11 @@ export const EmotionDataSchema = z.object({
   stressLevel: z.number().min(0).max(10).nullable().optional(), // 0-10 to match mapping matrix
   event: z.string().max(500).nullable().optional(),
   symptoms: z.array(z.enum(PhysicalSymptomTypes)).optional().default([]),
-  duration: z.enum(DurationTypes).optional().default('just_now')
+  // No default — null/undefined means the person never touched the
+  // control, same as `stressLevel`. Never silently treated as "Fresh";
+  // see lib/theme.ts and lib/prompts.ts for how an absent duration is
+  // handled downstream.
+  duration: z.enum(DurationTypes).nullable().optional()
 });
 
 // Matcher API request schema

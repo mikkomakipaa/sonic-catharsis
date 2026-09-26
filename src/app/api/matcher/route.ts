@@ -4,7 +4,7 @@ import { AnalysisSchema, MatcherRequestSchema, validateRequest } from '@/lib/val
 import { getDeterministicGenre } from '@/lib/genre-mapping';
 import { STRESS_VALUE_TO_LABEL, getActiveStage, STAGES } from '@/lib/theme';
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
-import { getSymptomMeta } from '@/lib/symptoms';
+import { getSymptomMeta, isPseudoVitutusProfile } from '@/lib/symptoms';
 import { getDurationMeta } from '@/lib/duration';
 
 const MATCHER_MODEL = 'gpt-4.1';
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     // display — computed again so the model has severity context without
     // needing to repeat that label in prose. Trigger/emotion is deliberately NOT an input to
     // this — see the comment above getActiveStage() in lib/theme.ts.
-    const stage = getActiveStage(emotionData.stressLevel ?? null, emotionData.symptoms ?? [], emotionData.duration ?? 'just_now');
+    const stage = getActiveStage(emotionData.stressLevel ?? null, emotionData.symptoms ?? [], emotionData.duration ?? null);
     const condition = `Stage ${stage.roman} — ${stage.name}`;
 
     // A stabilizing prior, not a forced answer: the same deterministic
@@ -101,20 +101,25 @@ export async function POST(request: NextRequest) {
     // muscle tension, heart pounding, accelerated breathing); weakness and
     // legs going limp are parasympathetic markers the study found rare even
     // during severe episodes. Reporting ONLY those two, with none of the
-    // sympathetic four, at a severe stage is the exact inverse of what real
-    // severe vitutus looks like — a legitimate "this isn't textbook" bit,
-    // not a manufactured one. Exact-set match only: if any sympathetic
-    // symptom is also present, this doesn't fire. Gated to stage.index >= 6
-    // (Syvävitutus+) to match the "exceptionally severe" framing the study
-    // itself used when collecting this data.
-    const reportedSymptoms = new Set(emotionData.symptoms ?? []);
+    // sympathetic four, while claiming high intensity is the exact inverse
+    // of what real severe vitutus looks like — a legitimate "this isn't
+    // textbook" bit, not a manufactured one. Exact-set match via the same
+    // isPseudoVitutusProfile() that also drives getActiveStage()'s Stage
+    // cap (lib/theme.ts) — one predicate, so the two can never drift apart.
+    //
+    // Gated on the RAW stressLevel (>= 7 of 10), not `stage.index` — the
+    // latter is now itself capped low by getActiveStage() whenever this
+    // exact profile matches, so gating on it here would almost never see a
+    // "severe" reading again and silently disable this directive. Gating on
+    // what the person actually claimed on the slider is also more correct:
+    // the joke is about the claim not matching the profile, independent of
+    // whatever Stage number falls out afterward. >= 7 is the approximate
+    // pre-cap equivalent of the old stage.index >= 6 threshold.
     const isPseudoVitutusMoment =
-      reportedSymptoms.size === 2 &&
-      reportedSymptoms.has('weakness') &&
-      reportedSymptoms.has('legs_limp') &&
-      stage.index >= 6;
+      isPseudoVitutusProfile(emotionData.symptoms ?? []) &&
+      (emotionData.stressLevel ?? 0) >= 7;
     const pseudoVitutusDirective = isPseudoVitutusMoment
-      ? `\n\nSPECIAL CASE: The only physical symptoms reported are weakness and legs going limp — real, but the two the app's own cited research found are rare even during severe episodes (which are typically dominated by head-exploding/muscle-tension/heart-pounding/accelerated-breathing instead). For "cause" ONLY, the persona may gently call out this presentation as suspiciously atypical — arguably "pseudo-vitutus," not the textbook thing — before proceeding completely normally. Diagnosis, subgenre, sonic profile, and prescription are all unaffected: the treatment is delivered in full regardless. Keep "choice" normal.`
+      ? `\n\nSPECIAL CASE: The only physical symptoms reported are weakness and legs going limp — real, but the two the app's own cited research found are rare even during severe episodes (which are typically dominated by head-exploding/muscle-tension/heart-pounding/accelerated-breathing instead). The displayed condition already reflects this — the diagnosis itself has been capped low, refusing to certify high severity for this profile. For "cause" ONLY, the persona may gently call out this presentation as suspiciously atypical — arguably "pseudo-vitutus," not the textbook thing — before proceeding completely normally. Subgenre, sonic profile, and prescription are all unaffected: the treatment is delivered in full regardless. Keep "choice" normal.`
       : '';
 
     // Optional, self-reported, multi-select — real items from the same
@@ -122,8 +127,10 @@ export async function POST(request: NextRequest) {
     const symptomsList = (emotionData.symptoms ?? []).map((s) => getSymptomMeta(s).label);
     const symptomsLine = symptomsList.length > 0 ? symptomsList.join(', ') : 'none reported';
 
-    // Optional, self-reported, single-select — see lib/duration.ts.
-    const durationLine = getDurationMeta(emotionData.duration ?? 'just_now').label;
+    // Optional, self-reported, single-select — see lib/duration.ts. No
+    // default: an untouched control is "not reported", same convention as
+    // symptomsLine above, never silently stood in for by "Fresh".
+    const durationLine = emotionData.duration ? getDurationMeta(emotionData.duration).label : 'not reported';
 
     // Use OpenAI Responses API with in-repo instructions (no hosted Prompt
     // Object) — variables are embedded directly in the input text instead.

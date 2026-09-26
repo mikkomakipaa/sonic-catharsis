@@ -29,3 +29,17 @@ export function getSymptomMeta(type: PhysicalSymptomType): SymptomMeta {
   if (!meta) throw new Error(`Unknown physical symptom type: ${type}`);
   return meta;
 }
+
+// The study's Study 3 embodiment mapping found severe vitutus dominated by
+// sympathetic-activation symptoms (head_exploding, muscle_tension,
+// heart_pounding, accelerated_breathing); weakness and legs_limp are the
+// parasympathetic markers it found rare even during severe episodes.
+// Reporting ONLY those two — exact set, nothing else — is the inverse of
+// what real severe vitutus looks like. Single source of truth for this
+// exact-match check: both the Matcher's cause-only "pseudo-vitutus"
+// directive (src/app/api/matcher/route.ts) and the Stage cap it drives
+// (getActiveStage(), src/lib/theme.ts) call this, so the two can never
+// drift apart.
+export function isPseudoVitutusProfile(symptoms: PhysicalSymptomType[]): boolean {
+  return symptoms.length === 2 && symptoms.includes('weakness') && symptoms.includes('legs_limp');
+}

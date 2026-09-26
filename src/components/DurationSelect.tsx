@@ -6,7 +6,7 @@ import { DURATION_TIERS } from '@/lib/duration';
 import { EASE, TEXT_TERTIARY } from '@/lib/theme';
 
 interface DurationSelectProps {
-  value: DurationType;
+  value: DurationType | null;
   onChange: (value: DurationType) => void;
 }
 
@@ -27,12 +27,16 @@ function indexForClientX(clientX: number, rect: DOMRect): number {
 // its prominent presentation — see StateOfMindPanel for how the two sit
 // next to each other. Replaces the earlier 5-button grid, which ran ~450px
 // tall stacked on mobile; this is a single row at any width.
+//
+// `value` starts null — same "nothing is dialed in until the user actually
+// interacts" contract as IntensitySlider, not a pre-selected default tier.
 export default function DurationSelect({ value, onChange }: DurationSelectProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
 
-  const index = DURATION_TIERS.findIndex((d) => d.type === value);
-  const current = DURATION_TIERS[index];
+  const isSet = value !== null;
+  const index = isSet ? DURATION_TIERS.findIndex((d) => d.type === value) : -1;
+  const current = isSet ? DURATION_TIERS[index] : undefined;
 
   const updateFromPointer = useCallback((clientX: number) => {
     const rect = trackRef.current?.getBoundingClientRect();
@@ -62,14 +66,17 @@ export default function DurationSelect({ value, onChange }: DurationSelectProps)
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
       e.preventDefault();
-      onChange(DURATION_TIERS[Math.min(index + 1, LAST_INDEX)].type);
+      // From unset, the first key press lands on the first tier rather than
+      // "index + 1" of a nonexistent current position — same convention as
+      // IntensitySlider's own unset-to-0 jump.
+      onChange(DURATION_TIERS[isSet ? Math.min(index + 1, LAST_INDEX) : 0].type);
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
       e.preventDefault();
-      onChange(DURATION_TIERS[Math.max(index - 1, 0)].type);
+      onChange(DURATION_TIERS[isSet ? Math.max(index - 1, 0) : 0].type);
     }
   };
 
-  const fillPct = (index / LAST_INDEX) * 100;
+  const fillPct = isSet ? (index / LAST_INDEX) * 100 : 0;
 
   return (
     // Plain w-full — the caller (StateOfMindPanel) now wraps this in the
@@ -83,7 +90,7 @@ export default function DurationSelect({ value, onChange }: DurationSelectProps)
         className="uppercase transition-colors"
         style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', color: DURATION_ACCENT, transition: `color 0.15s ${EASE}` }}
       >
-        {current?.label}
+        {isSet ? current?.label : '—'}
       </span>
 
       {/* No top padding, same reasoning as IntensitySlider — the 44px-min
@@ -96,8 +103,8 @@ export default function DurationSelect({ value, onChange }: DurationSelectProps)
           aria-label="How long has it been festering?"
           aria-valuemin={1}
           aria-valuemax={DURATION_TIERS.length}
-          aria-valuenow={index + 1}
-          aria-valuetext={current?.label}
+          aria-valuenow={isSet ? index + 1 : 0}
+          aria-valuetext={isSet ? current?.label : 'not set'}
           // 44px-min hit band at every width, matching IntensitySlider — a
           // touch device isn't guaranteed to have a narrow viewport, so this
           // isn't gated to one breakpoint. See IntensitySlider.tsx for why.
@@ -125,17 +132,19 @@ export default function DurationSelect({ value, onChange }: DurationSelectProps)
               );
             })}
 
-            <div
-              className="absolute top-1/2 rounded-full pointer-events-none hidden max-[480px]:block"
-              style={{
-                left: `${fillPct}%`,
-                width: '32px',
-                height: '32px',
-                transform: 'translate(-50%, -50%)',
-                background: `${DURATION_ACCENT}18`,
-                transition: dragging ? 'none' : `left 0.15s ${EASE}`,
-              }}
-            />
+            {isSet && (
+              <div
+                className="absolute top-1/2 rounded-full pointer-events-none hidden max-[480px]:block"
+                style={{
+                  left: `${fillPct}%`,
+                  width: '32px',
+                  height: '32px',
+                  transform: 'translate(-50%, -50%)',
+                  background: `${DURATION_ACCENT}18`,
+                  transition: dragging ? 'none' : `left 0.15s ${EASE}`,
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

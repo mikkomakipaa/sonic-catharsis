@@ -134,14 +134,19 @@ combined values — enforced by `SonicProfileSchema` (Zod `z.enum`).
   stressLevel: number | null; // 0-10
   event: string | null;    // incidentText
   symptoms: PhysicalSymptomType[]; // optional, multi-select, defaults to []
-  duration: DurationType;  // optional, single-select, defaults to 'just_now'
+  duration: DurationType | null;  // optional, single-select, no default — null until chosen
 }
 ```
 
 `symptoms` and `duration` are both optional additional context — real
 inputs to `getActiveStage()`'s severity blend (§3) and decorative-only
 context for the Matcher's cause/choice text (`src/lib/prompts.ts`), never
-required to submit.
+required to submit. Neither is silently stood in for by a default value:
+an untouched `duration` reaches the Matcher as "not reported" (same
+convention as an empty `symptoms` array), and contributes 0 to
+`getActiveStage()`'s severity blend — numerically identical to `'just_now'`
+("Fresh," which already carries a 0.0 weight), but as an explicit "nothing
+claimed" case rather than a stand-in for a real answer.
 
 **Response** (`analysis` field conforms to `AnalysisSchema`):
 
