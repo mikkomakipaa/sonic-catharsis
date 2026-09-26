@@ -101,25 +101,21 @@ export async function POST(request: NextRequest) {
     // muscle tension, heart pounding, accelerated breathing); weakness and
     // legs going limp are parasympathetic markers the study found rare even
     // during severe episodes. Reporting ONLY those two, with none of the
-    // sympathetic four, while claiming high intensity is the exact inverse
-    // of what real severe vitutus looks like — a legitimate "this isn't
-    // textbook" bit, not a manufactured one. Exact-set match via the same
-    // isPseudoVitutusProfile() that also drives getActiveStage()'s Stage
-    // cap (lib/theme.ts) — one predicate, so the two can never drift apart.
+    // sympathetic four, is the exact inverse of what real severe vitutus
+    // looks like — a legitimate "this isn't textbook" bit, not a
+    // manufactured one. Exact-set match via the same isPseudoVitutusProfile()
+    // that also drives getActiveStage()'s dedicated "Level 0" Stage
+    // (lib/theme.ts) — one predicate, so the two can never drift apart.
     //
-    // Gated on the RAW stressLevel (>= 7 of 10), not `stage.index` — the
-    // latter is now itself capped low by getActiveStage() whenever this
-    // exact profile matches, so gating on it here would almost never see a
-    // "severe" reading again and silently disable this directive. Gating on
-    // what the person actually claimed on the slider is also more correct:
-    // the joke is about the claim not matching the profile, independent of
-    // whatever Stage number falls out afterward. >= 7 is the approximate
-    // pre-cap equivalent of the old stage.index >= 6 threshold.
-    const isPseudoVitutusMoment =
-      isPseudoVitutusProfile(emotionData.symptoms ?? []) &&
-      (emotionData.stressLevel ?? 0) >= 7;
+    // Unconditional on intensity, matching the Stage itself: getActiveStage()
+    // now returns PSEUDO_VITUTUS_STAGE for this exact profile at ANY
+    // intensity (not just high), so the directive fires the same way — a
+    // header that says "Level 0: Pseudo-vitutus" while the cause text
+    // treated it like a real Stage IX meltdown would read as a bug, not a
+    // joke.
+    const isPseudoVitutusMoment = isPseudoVitutusProfile(emotionData.symptoms ?? []);
     const pseudoVitutusDirective = isPseudoVitutusMoment
-      ? `\n\nSPECIAL CASE: The only physical symptoms reported are weakness and legs going limp — real, but the two the app's own cited research found are rare even during severe episodes (which are typically dominated by head-exploding/muscle-tension/heart-pounding/accelerated-breathing instead). The displayed condition already reflects this — the diagnosis itself has been capped low, refusing to certify high severity for this profile. For "cause" ONLY, the persona may gently call out this presentation as suspiciously atypical — arguably "pseudo-vitutus," not the textbook thing — before proceeding completely normally. Subgenre, sonic profile, and prescription are all unaffected: the treatment is delivered in full regardless. Keep "choice" normal.`
+      ? `\n\nSPECIAL CASE: The only physical symptoms reported are weakness and legs going limp — real, but the two the app's own cited research found are rare even during severe episodes (which are typically dominated by head-exploding/muscle-tension/heart-pounding/accelerated-breathing instead). The displayed condition already reflects this — the diagnosis is "Level 0: Pseudo-vitutus," a dedicated tier below the real I-IX scale, refusing to certify this as real vitutus at all. For "cause" ONLY, the persona may gently call out this presentation as suspiciously atypical — arguably "pseudo-vitutus," not the textbook thing — before proceeding completely normally. Subgenre, sonic profile, and prescription are all unaffected: the treatment is delivered in full regardless. Keep "choice" normal.`
       : '';
 
     // Optional, self-reported, multi-select — real items from the same

@@ -3,6 +3,7 @@
 import { Music, Radio } from 'lucide-react';
 import {
   Stage,
+  SURFACE,
   TEXT_PRIMARY,
   TEXT_SECONDARY,
   TEXT_TERTIARY,
@@ -47,7 +48,10 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
     );
   }
 
-  const severityLabel = stage && stage.index > 0 ? `${stage.roman} · ${stage.name.toUpperCase()}` : null;
+  // stage.index alone can't distinguish "unassessed" (SURFACE) from
+  // "assessed, pseudo-vitutus" (PSEUDO_VITUTUS_STAGE) — both are index 0 by
+  // design (see lib/theme.ts) — so this compares by reference instead.
+  const severityLabel = stage && stage !== SURFACE ? `${stage.roman} · ${stage.name.toUpperCase()}` : null;
   return (
     <div
       key={playlist.id}

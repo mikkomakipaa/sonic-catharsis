@@ -152,6 +152,24 @@ export const SURFACE: Stage = {
   color: '#52525b',
 };
 
+// Level 0 — a real reading was submitted, but the exact reported symptom
+// profile (see isPseudoVitutusProfile(), lib/symptoms.ts) is the inverse of
+// what real severe vitutus looks like per the study this app cites, so the
+// algorithm declines to certify it as vitutus at all. Deliberately reuses
+// SURFACE's index (0) — "Level 0" is the right number for this, not a
+// collision to avoid — but is a DIFFERENT object: SURFACE means "nothing
+// assessed yet," this means "assessed, and rejected." Never distinguish the
+// two by raw `index === 0` in consuming code — always compare by reference
+// (`stage === SURFACE`) instead. Color is a flat, desaturated warm gray —
+// distinct from SURFACE's cooler neutral and from every real Stage's color
+// — reads as "administratively declined a real color," not a severity rung.
+export const PSEUDO_VITUTUS_STAGE: Stage = {
+  index: 0,
+  roman: '0',
+  name: 'Pseudo-vitutus',
+  color: '#a8a29e',
+};
+
 export const STAGES: Stage[] = [
   { index: 1, roman: 'I', name: 'Lievä ärsytys', color: '#71717a' },
   { index: 2, roman: 'II', name: 'Kytevä vitutus', color: '#a855f7' },
@@ -213,29 +231,32 @@ export const STAGES: Stage[] = [
 // Monotonic by construction: all three coefficients are positive, so
 // severity — and the rounded stage index — can never decrease when any one
 // input increases with the others held fixed. See docs/formulas.md for the
-// full computed transition table and worked boundary examples.
+// full computed transition table and worked boundary examples. This claim
+// is scoped to the ordinary 1-9 output path below — PSEUDO_VITUTUS_STAGE
+// (next) is an out-of-band override outside the ordinal scale entirely,
+// same category of thing as the SURFACE early-return above, not a value
+// on the severity ramp.
 //
 // One narrow, deliberate exception layered on top (not a change to the
 // general formula): isPseudoVitutusProfile() — see lib/symptoms.ts — is an
 // exact-set match on exactly {weakness, legs_limp} and nothing else, the
 // one 2-symptom combination the real Vitutusviisari study found to be the
 // inverse of a real severe episode's typical (sympathetic) profile. When it
-// matches, the result is capped at Stage II regardless of intensity/
-// duration, via Math.min(idx, 2) — a comedic "the algorithm doesn't
-// certify this as real vitutus" beat, not a re-interpretation of the
-// study's data as a general severity weight (that was deliberately
-// rejected elsewhere for every other symptom/combination). This preserves
-// the monotonicity claim above: min(f(x), 2) is still non-decreasing
-// wherever f is, so it only ever flattens the climb for this one exact
-// profile, never reverses it — and the moment the symptom set changes to
-// anything else, the ordinary formula (which can jump back up sharply)
-// takes back over immediately.
+// matches, the result is PSEUDO_VITUTUS_STAGE ("Level 0") unconditionally
+// — regardless of intensity or duration, never a real Stage I-IX — a
+// comedic "the algorithm doesn't certify this as real vitutus" beat, not a
+// re-interpretation of the study's data as a general severity weight (that
+// was deliberately rejected elsewhere for every other symptom/combination).
+// The moment the symptom set changes to anything else, the ordinary
+// formula (which can climb all the way to Stage IX) takes back over
+// immediately.
 export function getActiveStage(
   stressValue: number | null,
   symptoms: PhysicalSymptomType[] = [],
   duration: DurationType | null = null
 ): Stage {
   if (stressValue === null) return SURFACE;
+  if (isPseudoVitutusProfile(symptoms)) return PSEUDO_VITUTUS_STAGE;
   const intensityFraction = stressValue / MAX_STRESS_INTENSITY;
   const somaticFraction = symptoms.length / PHYSICAL_SYMPTOMS.length;
   // No duration reported (person never touched the control) contributes 0
@@ -245,8 +266,7 @@ export function getActiveStage(
   const durationFraction = duration ? getDurationMeta(duration).value : 0;
   const severity = intensityFraction * 0.85 + somaticFraction * 0.10 + durationFraction * 0.05;
   const idx = Math.min(9, Math.max(1, Math.round(1 + severity * 8)));
-  const cappedIdx = isPseudoVitutusProfile(symptoms) ? Math.min(idx, 2) : idx;
-  return STAGES[cappedIdx - 1];
+  return STAGES[idx - 1];
 }
 
 // --- Stage-driven accent color -----------------------------------------------

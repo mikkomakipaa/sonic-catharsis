@@ -178,7 +178,7 @@ Full transition table, `duration = several_days` (D=1.0):
 these two tables — omitted here for brevity, regenerable from the formula
 above.)
 
-### Exception: the "pseudo-vitutus" Stage cap
+### Exception: "Level 0: Pseudo-vitutus"
 
 The tables above are for symptom **count**, not which specific symptoms —
 they're true for every one of the C(6,2)=15 possible 2-symptom combinations
@@ -187,25 +187,28 @@ top of the general formula (`isPseudoVitutusProfile()`, `src/lib/
 symptoms.ts`): when the reported symptom set is **exactly**
 `{weakness, legs_limp}` — the two parasympathetic markers the real
 Vitutusviisari study found rare even during severe episodes, the inverse of
-a real severe episode's typical (sympathetic) profile — the computed stage
-index is capped via `Math.min(idx, 2)`, i.e. Stage II regardless of
-intensity or duration. This is a one-off comedic exception for this exact
-combination, not a re-interpretation of the study's typical/atypical
-symptom data as a general severity weight (which was deliberately rejected
-for every other symptom/combination — frequency in the study isn't a
-validated severity signal).
+a real severe episode's typical (sympathetic) profile — the function
+returns a dedicated `PSEUDO_VITUTUS_STAGE` ("Level 0: Pseudo-vitutus",
+`src/lib/theme.ts`) instead of a real Stage, **unconditionally** —
+regardless of intensity or duration, never Stage I-IX. This is a one-off
+comedic exception for this exact combination, not a re-interpretation of
+the study's typical/atypical symptom data as a general severity weight
+(which was deliberately rejected for every other symptom/combination —
+frequency in the study isn't a validated severity signal).
 
-The "monotonic in all three inputs" property above still holds with this
-override in place: `min(f(x), 2)` is non-decreasing wherever `f` is, so
-fixing the symptom set at exactly this one pair and increasing
-intensity/duration still never decreases the result — it just flattens at
-Stage II instead of continuing to climb. The moment the symptom set changes
-to anything else (a third symptom added, one of the two swapped out), the
-predicate goes false and the ordinary formula — which can jump back up
-sharply — takes back over immediately; e.g. `{weakness, legs_limp,
-heart_pounding}` at `(intensity=10, several_days)` is an ordinary 3-symptom
-reading (see the ordinary tables above), completely unaffected by this
-override.
+`PSEUDO_VITUTUS_STAGE` sits entirely outside the ordinal 1-9 scale — the
+same category of thing as `SURFACE` (both happen to share `index: 0`, but
+are distinct objects; never distinguish them by raw index, compare by
+reference instead). The "monotonic in all three inputs" property above is
+therefore unaffected: it's a claim about the ordinary 1-9 output path only,
+which this override never touches — it replaces that path entirely for
+this one exact symptom set, rather than clamping its result. The moment the
+symptom set changes to anything else (a third symptom added, one of the two
+swapped out), the predicate goes false and the ordinary formula — which can
+climb all the way to Stage IX — takes back over immediately; e.g.
+`{weakness, legs_limp, heart_pounding}` at `(intensity=10, several_days)` is
+an ordinary 3-symptom reading (see the ordinary tables above), completely
+unaffected by this override.
 
 ## 2. Anchor genre table (`getDeterministicGenre`, `src/lib/genre-mapping.ts`)
 

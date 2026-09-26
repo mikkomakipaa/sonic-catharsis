@@ -79,7 +79,7 @@ export default function ScreenAnalysis({
           <div className="mt-8 max-[640px]:mt-5 flex flex-col gap-1.5 max-[640px]:gap-1">
             <StageHeader stage={stage} align="left" />
 
-            <DescentRail activeIndex={stage.index} />
+            <DescentRail activeStage={stage} />
           </div>
         </>
       )}

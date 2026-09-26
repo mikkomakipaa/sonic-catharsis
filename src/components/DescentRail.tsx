@@ -1,22 +1,33 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { SURFACE, STAGES, EASE } from '@/lib/theme';
+import { SURFACE, PSEUDO_VITUTUS_STAGE, STAGES, EASE, Stage } from '@/lib/theme';
 
 interface DescentRailProps {
-  activeIndex: number; // 0 = surface, 1-9 = stage depth
+  activeStage: Stage;
 }
 
-const BANDS = [SURFACE, ...STAGES];
+// Surface, Level 0 (pseudo-vitutus), then the real I-IX progression. Real
+// Stages keep their own `index` values (1-9, used by the severity formula
+// and docs/formulas.md's transition tables) — those must never be
+// renumbered, so this rail can't derive its highlighted dot from `index`
+// alone once Level 0 is inserted between Surface and Stage I. Instead it
+// matches by object reference: SURFACE, PSEUDO_VITUTUS_STAGE, and every
+// STAGES entry are singleton exports, and getActiveStage() always returns
+// one of those exact references, so `findIndex((band) => band ===
+// activeStage)` reliably finds the right position regardless of how the
+// `index` numbers themselves are laid out.
+const BANDS = [SURFACE, PSEUDO_VITUTUS_STAGE, ...STAGES];
 
 // Horizontal progress rail, shared by the analysis and descent screens —
 // replaces the old vertical DescentShaft sidebar. A thin baseline connector
 // with evenly spaced ticks; dots keep a fixed physical size and only ever
 // scale via `transform` (not width/height) so the baseline stays pixel-
-// aligned across every stage regardless of active/inactive state. All 10
+// aligned across every stage regardless of active/inactive state. All 11
 // bands always fit the container width (no horizontal scroll) so every
-// mobile viewport shows the full I-IX progression at once.
-export default function DescentRail({ activeIndex }: DescentRailProps) {
+// mobile viewport shows the full Level-0-through-IX progression at once.
+export default function DescentRail({ activeStage }: DescentRailProps) {
+  const activeIndex = BANDS.findIndex((band) => band === activeStage);
   return (
     <div className="w-full">
       <div className="relative w-full min-w-0" style={{ borderTop: '1px solid #e6e2d8' }}>
