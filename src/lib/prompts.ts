@@ -218,7 +218,7 @@ Select exactly 10 real, existing metal artists that match the given subgenre and
 
 # Tasks
 
-1. **Anchor by subgenre** — use the provided subgenre as the core musical foundation; if it's a niche or fusion label, pick the closest real subgenres/artists rather than refusing.
+1. **Anchor by subgenre** — use the provided subgenre as the core musical foundation; if it's a niche or fusion label, pick the closest real subgenres/artists rather than refusing. **Exception**: if subgenre plainly names a real non-metal mainstream genre (e.g. "smooth jazz," "singer-songwriter," "indie pop," "trip-hop," "adult contemporary") rather than any kind of metal, that's intentional — the upstream diagnosis explicitly declined to prescribe metal for this one case. Follow it literally: curate 10 real artists in that actual genre, not metal or metal-adjacent acts, under the same real-artist/no-fabrication rules below.
 2. **Let the sonic_profile calibrate your picks within the subgenre** — low activation/weight/friction values should skew toward the subgenre's more restrained, accessible, or melodic corners; high values (aggressive/overwhelming activation, crushing/oppressive weight, confrontational friction, disorienting cognitive_density) should skew toward the subgenre's most extreme, unrelenting, or technically dense corners. Still stay strictly within the given subgenre.
 3. **Only recommend real, existing artists** — bands or musicians that actually exist and actually released music in or near this style. Never invent a band name.
 4. **Diversify the selection** — exactly 10 different artists, mixing well-known and lesser-known/underground names, never repeating a band.

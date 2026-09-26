@@ -6,8 +6,26 @@ import { STRESS_VALUE_TO_LABEL, getActiveStage, STAGES } from '@/lib/theme';
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 import { getSymptomMeta, isPseudoVitutusProfile } from '@/lib/symptoms';
 import { getDurationMeta } from '@/lib/duration';
+import type { TriggerType } from '@/types';
 
 const MATCHER_MODEL = 'gpt-4.1';
+
+// The "treatment" for Level 0: Pseudo-vitutus (see isPseudoVitutusMoment
+// below) — metal has not been medically indicated for this presentation,
+// so the prescribed genre downgrades entirely out of metal. A small
+// formulary rather than one fixed fallback, so the joke doesn't go stale
+// on repeat; each entry is a real, well-known non-metal genre direction,
+// picked for comedic fit with that trigger.
+const PSEUDO_VITUTUS_GENRE: Record<TriggerType, string> = {
+  injustice: 'smooth jazz', // your grievance has been noted and gently ignored
+  failure: 'singer-songwriter', // sit with your feelings, alone, with a guitar
+  conflict: 'indie pop', // breezy, doesn't even acknowledge the fight happened
+  helplessness: 'trip-hop', // low-energy, horizontal, nothing to be done
+  overload: 'adult contemporary', // you don't need adrenaline, you need a nap
+  exhaustion: 'adult contemporary',
+  uncertainty: 'trip-hop',
+  absurdity: 'smooth jazz',
+};
 
 // The Epicrisis header is the single source of the diagnosis label. The
 // model receives it as severity context, but prose must not restate it.
@@ -113,9 +131,15 @@ export async function POST(request: NextRequest) {
     // header that says "Level 0: Pseudo-vitutus" while the cause text
     // treated it like a real Stage IX meltdown would read as a bug, not a
     // joke.
+    //
+    // The prescription itself downgrades too now (previously it stayed a
+    // real metal genre regardless) — see PSEUDO_VITUTUS_GENRE above. The
+    // Curator (src/lib/prompts.ts, CURATOR_INSTRUCTIONS) has a matching
+    // exception clause letting it curate real artists in that non-metal
+    // genre instead of forcing a metal pick.
     const isPseudoVitutusMoment = isPseudoVitutusProfile(emotionData.symptoms ?? []);
     const pseudoVitutusDirective = isPseudoVitutusMoment
-      ? `\n\nSPECIAL CASE: The only physical symptoms reported are weakness and legs going limp — real, but the two the app's own cited research found are rare even during severe episodes (which are typically dominated by head-exploding/muscle-tension/heart-pounding/accelerated-breathing instead). The displayed condition already reflects this — the diagnosis is "Level 0: Pseudo-vitutus," a dedicated tier below the real I-IX scale, refusing to certify this as real vitutus at all. For "cause" ONLY, the persona may gently call out this presentation as suspiciously atypical — arguably "pseudo-vitutus," not the textbook thing — before proceeding completely normally. Subgenre, sonic profile, and prescription are all unaffected: the treatment is delivered in full regardless. Keep "choice" normal.`
+      ? `\n\nSPECIAL CASE: The only physical symptoms reported are weakness and legs going limp — real, but the two the app's own cited research found are rare even during severe episodes (which are typically dominated by head-exploding/muscle-tension/heart-pounding/accelerated-breathing instead). The displayed condition already reflects this — the diagnosis is "Level 0: Pseudo-vitutus," a dedicated tier below the real I-IX scale, refusing to certify this as real vitutus at all. For "cause" ONLY, the persona may gently call out this presentation as suspiciously atypical — arguably "pseudo-vitutus," not the textbook thing. Metal has not been medically indicated for this presentation: ignore anchor_subgenre entirely and set "subgenre" to exactly "${PSEUDO_VITUTUS_GENRE[emotionData.trigger]}" (a real, well-known direction in that genre — not metal, not metal-adjacent). Still fill all five sonic_profile fields with your best plausible tokens (the schema requires them; they aren't load-bearing here). Write "choice" in the same deadpan-clinical voice, but borrowing pharma-commercial register (in the spirit of "ask your consultant if doing absolutely nothing is right for you") to explain why a declined diagnosis gets a real-but-anticlimactic prescription instead of metal — do NOT invoke the arousal-matching/Sharman & Dingle mechanism here, it's specific to extreme music and doesn't apply.`
       : '';
 
     // Optional, self-reported, multi-select — real items from the same
