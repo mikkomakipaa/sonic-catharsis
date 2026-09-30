@@ -32,8 +32,36 @@ const nextConfig = {
             value: 'nosniff'
           },
           {
+            // The legacy XSS auditor is gone from modern browsers and could
+            // introduce XS-Leak side channels in old ones; '0' disables it
+            // explicitly (current OWASP guidance). CSP below replaces it.
             key: 'X-XSS-Protection',
-            value: '1; mode=block'
+            value: '0'
+          },
+          {
+            // Report-Only first (S4 in docs/CODE_AND_SECURITY_REVIEW_2026-09.md):
+            // violations show in the browser console without breaking
+            // anything. Switch the key to 'Content-Security-Policy' once a
+            // production deploy runs clean. 'unsafe-inline' for scripts is
+            // needed for Next's inline bootstrap without per-request nonces
+            // (which would force dynamic rendering); for styles, by the
+            // app's inline style={} usage. Fonts are self-hosted by
+            // next/font; the receipt QR code is a data: URL.
+            // va.vercel-scripts.com is Vercel Analytics' script origin in
+            // development — production serves it from /_vercel on 'self'.
+            key: 'Content-Security-Policy-Report-Only',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data:",
+              "font-src 'self'",
+              "connect-src 'self' https://va.vercel-scripts.com",
+              "frame-ancestors 'self'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "object-src 'none'"
+            ].join('; ')
           },
           {
             key: 'Referrer-Policy',
