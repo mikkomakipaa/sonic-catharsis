@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
+process.env.OPENAI_API_KEY = 'test-key';
 const create = vi.fn();
 vi.mock('openai', () => ({
   default: class {

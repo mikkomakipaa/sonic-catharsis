@@ -1,21 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
 import { CuratorArtistsSchema, CuratorRequestSchema, validateRequest } from '@/lib/validation';
 import { CURATOR_INSTRUCTIONS } from '@/lib/prompts';
 import { createWithRetry } from '@/lib/openai-response';
+import { getOpenAI } from '@/lib/openai-client';
 
 const CURATOR_MODEL = 'gpt-4.1';
 
 export async function POST(request: NextRequest) {
   try {
-    // Constructed inside the handler, not at module scope — module scope
-    // runs during Next.js's build-time "Collecting page data" step, before
-    // OPENAI_API_KEY is necessarily available, and the SDK throws
-    // immediately on a missing key, failing the build itself.
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
     let body: unknown;
     try {
       body = await request.json();
@@ -32,16 +24,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { analysis, emotionData } = validation.data!;
+    // emotionData is validated (CuratorRequestSchema) but intentionally
+    // unused — see the comment below.
+    const { analysis } = validation.data!;
 
-    if (!analysis || !emotionData) {
-      return NextResponse.json(
-        { error: 'Analysis and emotion data are required' },
-        { status: 400 }
-      );
-    }
-
-    const subgenre = analysis.subgenre || 'metal';
+    // Always non-empty: SubgenreSchema requires min(1).
+    const subgenre = analysis.subgenre;
     const sonicProfile = analysis.sonic_profile;
 
     // Curator gets only the finished sonic direction — no emotion, stress
@@ -58,7 +46,7 @@ export async function POST(request: NextRequest) {
     // lib/openai-response.ts. Model output is untrusted: only a bounded list
     // of {artist, link} (CuratorArtistsSchema) ever leaves the server.
     const artists = await createWithRetry(
-      () => openai.responses.create({
+      () => getOpenAI().responses.create({
         model: CURATOR_MODEL,
         instructions: CURATOR_INSTRUCTIONS,
         input: `subgenre: ${subgenre}\nactivation: ${sonicProfile.activation}\nagency: ${sonicProfile.agency}\nfriction: ${sonicProfile.friction}\ncognitive_density: ${sonicProfile.cognitive_density}\nweight: ${sonicProfile.weight}`,
@@ -82,8 +70,8 @@ export async function POST(request: NextRequest) {
       type: 'artists'
     });
 
-  } catch {
-    // Curator API error occurred
+  } catch (error) {
+    console.error('Curator API error:', error);
     return NextResponse.json(
       { error: 'Failed to create playlist' },
       { status: 500 }

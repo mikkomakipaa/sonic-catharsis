@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
 import { AnalysisSchema, MatcherRequestSchema, SubgenreSchema, validateRequest } from '@/lib/validation';
 import { getDeterministicGenre } from '@/lib/genre-mapping';
 import { STRESS_VALUE_TO_LABEL, getActiveStage } from '@/lib/theme';
@@ -8,6 +7,7 @@ import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 import { getSymptomMeta, isPseudoVitutusProfile } from '@/lib/symptoms';
 import { getDurationMeta } from '@/lib/duration';
 import { createWithRetry } from '@/lib/openai-response';
+import { getOpenAI } from '@/lib/openai-client';
 import type { TriggerType } from '@/types';
 
 const MATCHER_MODEL = 'gpt-4.1';
@@ -31,14 +31,6 @@ const PSEUDO_VITUTUS_GENRE: Record<TriggerType, string> = {
 
 export async function POST(request: NextRequest) {
   try {
-    // Constructed inside the handler, not at module scope — module scope
-    // runs during Next.js's build-time "Collecting page data" step, before
-    // OPENAI_API_KEY is necessarily available, and the SDK throws
-    // immediately on a missing key, failing the build itself.
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
     let body: unknown;
     try {
       body = await request.json();
@@ -56,13 +48,6 @@ export async function POST(request: NextRequest) {
     }
 
     const { emotionData } = validation.data!;
-
-    if (!emotionData) {
-      return NextResponse.json(
-        { error: 'Emotion data is required' },
-        { status: 400 }
-      );
-    }
 
     // The prompt expects a stress *description* ("Overload", "Moderate", ...)
     // that it maps to a number internally per its own persona — not our raw
@@ -142,7 +127,7 @@ export async function POST(request: NextRequest) {
     // Object) — variables are embedded directly in the input text instead.
     // One retry if the reply isn't a JSON object; see lib/openai-response.ts.
     const analysisResult = await createWithRetry(
-      () => openai.responses.create({
+      () => getOpenAI().responses.create({
         model: MATCHER_MODEL,
         instructions: MATCHER_INSTRUCTIONS,
         input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}${pseudoVitutusDirective}`,
