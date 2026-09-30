@@ -194,6 +194,10 @@ formula and the floor/ceiling bug it replaced.
 }
 ```
 
+`reasoning` is kept for compatibility and is always non-empty
+(`cause || choice || subgenre`). It never contains the raw model reply.
+Only schema-validated fields are returned.
+
 `subgenre` is the model's own reasoned pick, guided by a deterministic
 `(emotion, intensity)` anchor table (a stabilizing prior, not a forced
 answer) — never a hardcoded `trigger → genre` rule.
@@ -225,9 +229,13 @@ answer) — never a hardcoded `trigger → genre` rule.
 }
 ```
 
-Exactly 10 artists, all real and distinct. `link` is `null` rather than a
-guessed URL when the Curator isn't confident one exists — the client falls
-back to a Bandcamp search link in that case.
+Exactly 10 artists (the schema accepts 1-15), all real and distinct.
+`link` is `null` rather than a guessed URL when the Curator isn't confident
+one exists. The client ignores `link` either way and always builds its own
+Bandcamp search link from the artist name. `analysis.subgenre` must be 1-120
+genre-name characters, or the request gets a 400. If the model's reply isn't
+valid after one retry, the route returns 500 rather than placeholder
+artists.
 
 ## Development
 
@@ -244,6 +252,9 @@ npm run lint
 
 # Type checking
 npm run typecheck
+
+# Tests (Vitest; OpenAI is mocked, no key or network needed)
+npm run test
 ```
 
 ## License

@@ -25,6 +25,8 @@ npm run start            # Start production server (port 3001)
 # Code Quality
 npm run lint              # ESLint
 npm run typecheck         # TypeScript strict type checking
+npm run test              # Vitest (unit + route tests, OpenAI mocked)
+npm run test:one "name"   # Single test by name
 ```
 
 ## Environment Setup
@@ -155,6 +157,18 @@ EmotionDataSchema = z.object({
 
 **CRITICAL**: Frontend sends `null` (not `undefined`) for empty `stressLevel`/`event`/`duration`. Validation must keep `.nullable().optional()` on all three fields.
 
+**Trust boundary** (see `docs/CODE_AND_SECURITY_REVIEW_2026-09.md`): the
+client echoes the Matcher's `analysis` back to `/api/curator`, which puts
+`analysis.subgenre` straight into the Curator prompt. So `AnalysisSchema`
+is an input contract as well as an output one:
+- `SubgenreSchema`: 1-120 chars, genre-name characters only (letters,
+  digits, space, `& ' / : , . ( ) -`). If you add an anchor in
+  `genre-mapping.ts` with another character, widen the regex. A test fails
+  if an anchor shape is rejected.
+- `cause`/`choice` are capped at 2000 chars.
+- `CuratorArtistsSchema` (1-15 × `{ artist ≤100, link ≤300 | null }`) is
+  the Curator's output contract. Only those fields reach the client.
+
 `SonicProfileSchema` (also in `validation.ts`) is the Matcher's structured
 output contract for its 5-axis sonic profile — keep the enum token lists
 (`ActivationLevels`, `AgencyLevels`, `FrictionLevels`,
@@ -170,33 +184,54 @@ Prompt Object):
 ```typescript
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 
-const response = await openai.responses.create({
+const result = await createWithRetry(() => getOpenAI().responses.create({
   model: 'gpt-4.1',
   instructions: MATCHER_INSTRUCTIONS,
   input: `trigger: ...\nstress_level: ...\ncondition: ...\nevent: ...\nanchor_subgenre: ...\nphysical_symptoms: ...\nduration_persistence: ...`,
-});
+}), (json) => json);
 ```
+`getOpenAI()` (`src/lib/openai-client.ts`) creates the client lazily and
+reuses it. Never create it at module scope: that runs during the build's
+page-data step, where `OPENAI_API_KEY` may be missing.
 Variables are interpolated directly into `input` text — there is no
 `prompt.variables` mechanism to keep in sync anymore.
 
-**Response parsing**: primary `response.output_text`, with fallbacks that
-walk `response.output[]` for a `message`/`output_text` item, then a regex
-JSON extraction (`/\{[\s\S]*\}/`), then a best-effort text-salvage fallback if
-JSON parsing fails entirely. See both route handlers for the exact fallback
-chain — it's intentionally defensive since a malformed model response should
-degrade gracefully, not 500 the whole request.
+**Response parsing** (`src/lib/openai-response.ts`, shared by both routes):
+`getResponseText()` reads `output_text` and falls back to walking
+`output[]`. `extractJsonObject()` takes the first `{`…last `}` and parses it.
+`createWithRetry()` calls the model again **once** if the reply isn't
+acceptable, then gives up and the route returns 500. **Do not add prose
+salvage or placeholder results back.** The old keyword heuristics and fake
+"<genre> Artist 1" bands were removed on purpose (review items C5/C6): a
+made-up diagnosis or fake band shown as real is worse than a retry prompt.
+The Matcher still falls back to the anchor subgenre and a neutral
+`sonic_profile` when those fields are invalid, because those are
+calibration inputs the user never reads.
+
+**Never return or log raw model text.** Responses contain only
+schema-validated fields. `/api/matcher`'s `reasoning` field is kept for
+response-shape compatibility: the client uses it only as a non-empty "analysis
+exists" flag. It is built as `cause || choice || subgenre`, never the raw
+reply.
 
 ### Error Handling
 
 All API routes follow this pattern:
 ```typescript
 try {
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Request body must be valid JSON' }, { status: 400 });
+  }
   const validation = validateRequest(Schema, body);
   if (!validation.success) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
   }
   // ... OpenAI call
 } catch (error) {
+  console.error('X API error:', error); // no request/response payloads
   return NextResponse.json({ error: 'Failed to...' }, { status: 500 });
 }
 ```
@@ -281,6 +316,9 @@ src/
 │       └── ScreenDescent.tsx        # Step 3: final results
 ├── lib/
 │   ├── validation.ts                # Zod schemas (CRITICAL — read before changing any data shape)
+│   ├── openai-client.ts             # getOpenAI(): lazy, memoized client + OPENAI_API_KEY check
+│   ├── openai-response.ts           # getResponseText / extractJsonObject / createWithRetry
+│   ├── condition-text.ts            # removeDisplayedCondition(): strips echoed Stage names from prose
 │   ├── prompts.ts                   # In-repo agent instructions (MATCHER_INSTRUCTIONS, CURATOR_INSTRUCTIONS)
 │   ├── genre-mapping.ts             # Hand-authored (emotion, intensity) → anchor subgenre lookup
 │   ├── trigger.ts                   # TRIGGER_TYPES + triggerToEmotion() compatibility shim
@@ -291,6 +329,10 @@ src/
 └── types/
     └── index.ts                     # TypeScript definitions
 ```
+
+Tests sit next to their code as `*.test.ts` (`src/lib/`), and route tests
+live in `src/app/api/__tests__/`. Route tests mock the `openai` module, so
+they never make network calls. Config: `vitest.config.mts`.
 
 There is no `data/` directory — see "Two-Agent System" above.
 
@@ -304,19 +346,34 @@ There is no `data/` directory — see "Two-Agent System" above.
 - Check `getDeterministicGenre()` in `genre-mapping.ts` for the anchor it handed the model — it's a prior, not a mandate, so the model may reasonably deviate
 - Check `MATCHER_INSTRUCTIONS` in `prompts.ts` for the sonic-profile derivation steps
 
+**Issue: "Failed to parse analysis response" / "No structured playlist received"**
+- The model returned non-JSON (or, for the Curator, a `Selection` that failed `CuratorArtistsSchema`) twice in a row. The server log has a one-line reason but no payload. Reproduce locally and inspect the reply, and tighten the JSON-format section of the prompt if it recurs.
+
 **Issue: Curator returns fewer than 10 artists, or a fabricated-looking one**
 - There's no code-side candidate pool anymore — the model is relying entirely on its own knowledge (see "Two-Agent System" above)
 - Review `CURATOR_INSTRUCTIONS` in `prompts.ts`'s guardrails section; tighten the "never fabricate" language if this recurs
 
 **Issue: Matcher/Curator prose leaks the Stage name ("Raivovitutus", "Stage VII", etc.)**
-- `removeDisplayedCondition()` in `src/app/api/matcher/route.ts` is a regex safety net over the model's raw `cause`/`choice` text — check it's still matching against the current `STAGES` names if this slips through
+- `removeDisplayedCondition()` in `src/lib/condition-text.ts` is a regex safety net over the model's raw `cause`/`choice` text — check it's still matching against the current `STAGES` names if this slips through
 - Reinforce the "never repeat the condition" instruction in `MATCHER_INSTRUCTIONS` if it recurs frequently
 
 ## Security
 
+Latest review: `docs/CODE_AND_SECURITY_REVIEW_2026-09.md` (status of each
+finding is tracked there).
+
 - `.env.local` gitignored (contains `OPENAI_API_KEY`)
-- No user data logged
-- Input validation with Zod on all API routes
+- No user data or model output logged
+- Zod validation on every API input **and** on model output before it
+  leaves the server (see "Trust boundary" above)
+- Both API routes are unauthenticated and call a paid model. Rate limiting
+  is done at the edge by a **Vercel WAF rule**, not in code. Keep it in
+  place (setup in the review doc, S1)
+- Headers in `next.config.js`: HSTS, `X-Frame-Options`, `nosniff`,
+  `Referrer-Policy`, `Permissions-Policy`, `X-XSS-Protection: 0`, and a
+  **report-only** CSP. If you add an external script, font, image or API
+  origin, add it to the CSP or it will show as a violation, and will be
+  blocked once the CSP is enforced
 - HTTPS enforcement in production (Vercel)
 
 ## Further Reading

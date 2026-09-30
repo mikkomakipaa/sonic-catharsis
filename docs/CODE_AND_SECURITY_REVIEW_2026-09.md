@@ -18,6 +18,56 @@
 
 Overall: no critical vulnerabilities. The main risk is **cost abuse of the two unauthenticated OpenAI-backed endpoints**, which can be used as a general LLM proxy.
 
+## Remediation status (updated 2026-09-30)
+
+| ID | Status | Commit / action |
+|---|---|---|
+| S1 | ⏳ **Manual action needed**: Vercel WAF rule + OpenAI budget (see below) | no code change (decision: edge rate limiting) |
+| S2 | ✅ Fixed | `045a524`: `SubgenreSchema`, `CuratorArtistsSchema` |
+| S3 | ✅ Fixed | `162d7f7`: `reasoning` built from validated fields; no `debug` |
+| S4 | ✅ Fixed (report-only) | `d7d9e21`: switch to enforcing after a clean production run |
+| S5 | ✅ Fixed | `162d7f7` |
+| S6 | ✅ Mitigated by S1–S3 | no change |
+| C1 | ✅ Fixed | `33089ce`: Vitest; 47 tests incl. route tests with mocked OpenAI |
+| C2, C3, C8 | ✅ Fixed | `045a524` |
+| C4, C5, C6 | ✅ Fixed | `43adeae`: `lib/openai-response.ts`; retry once, then 500 (decision: no fabricated fallbacks) |
+| C7, C10 | ✅ Fixed | `0c31588`: `lib/openai-client.ts` |
+| C9 | ✅ Fixed | `334fd8d`: `eslint-config-next@16`, native flat config |
+
+Verified end-to-end on a local production build: matcher and curator both
+return 200, the receipt QR renders, CSP headers are present, and there are
+no CSP violations.
+
+### S1 setup: Vercel WAF rate limit (manual)
+
+Vercel dashboard → project → **Firewall** → **Configure** → **New Rule**:
+
+| Field | Value |
+|---|---|
+| Name | `api-rate-limit` |
+| If | **Request Path** · *starts with* · `/api/` |
+| And | **Method** · *equals* · `POST` |
+| Then | **Rate Limit**, fixed window, **60 s**, **10 requests**, key: **IP** |
+| Action on limit | **Too Many Requests (429)** |
+
+10/min/IP is a starting point. One full reading is 2 requests (matcher +
+curator), so this allows about 5 readings a minute per person. Adjust it
+after looking at real traffic in the Firewall tab.
+Publish the rule, then confirm with a burst of 11 `curl -X POST` requests
+to `/api/matcher` that the 11th gets a 429. The page already shows the
+error message for non-2xx responses.
+
+**OpenAI**: platform.openai.com → Settings → Limits. Set a monthly budget
+and an email alert at about 50% of it. This is the backstop if the WAF rule
+is ever removed or bypassed.
+
+### Follow-ups noticed during remediation (not part of the original findings)
+
+- `ReceiptCard.tsx` sets `height="auto"` on an `<svg>`, which is invalid and
+  logs a console error when the receipt opens. This was already there.
+- The README's sample `cause` text names the Stage ("textbook Raivovitutus,
+  Stage VII"), which the matcher now strips out. The example is outdated.
+
 ## Findings
 
 Severity: 🔴 High · 🟠 Medium · 🟡 Low · ⚪ Info
