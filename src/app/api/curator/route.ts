@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { CuratorRequestSchema, validateRequest } from '@/lib/validation';
+import { CuratorArtistsSchema, CuratorRequestSchema, validateRequest } from '@/lib/validation';
 import { CURATOR_INSTRUCTIONS } from '@/lib/prompts';
 
 const CURATOR_MODEL = 'gpt-4.1';
@@ -15,7 +15,12 @@ export async function POST(request: NextRequest) {
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    const body = await request.json();
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: 'Request body must be valid JSON' }, { status: 400 });
+    }
 
     // Validate request data
     const validation = validateRequest(CuratorRequestSchema, body);
@@ -199,8 +204,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Model output is untrusted: only a bounded list of {artist, link}
+    // leaves the server, never whatever else the model chose to emit.
+    const artists = CuratorArtistsSchema.safeParse(playlistResult.artists);
+    if (!artists.success) {
+      return NextResponse.json(
+        { error: 'Received a malformed playlist response' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
-      artists: playlistResult.artists,
+      artists: artists.data,
       type: 'artists'
     });
 

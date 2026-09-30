@@ -87,11 +87,26 @@ export const SonicProfileSchema = z.object({
 // LLM isn't asked to echo them back (state-transport anti-pattern). subgenre
 // is now the model's own reasoned pick (informed by an anchor, not dictated
 // by one) rather than an echoed deterministic value.
+//
+// subgenre is bounded because the client echoes this object back to the
+// Curator, which interpolates subgenre straight into its prompt — unbounded,
+// it turned /api/curator into a free general-purpose LLM proxy (S2 in
+// docs/CODE_AND_SECURITY_REVIEW_2026-09.md). 120 chars / genre-name
+// characters comfortably covers every anchor in lib/genre-mapping.ts (the
+// longest is 45, some contain ':' or '/'). cause/choice never reach a model
+// again, but are capped so the echo can't carry an arbitrarily large body.
+export const SubgenreSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(120)
+  .regex(/^[\p{L}\p{N} &'/:,.()-]+$/u, 'Invalid subgenre');
+
 export const AnalysisSchema = z.object({
-  subgenre: z.string(),
+  subgenre: SubgenreSchema,
   sonic_profile: SonicProfileSchema,
-  cause: z.string().optional(),
-  choice: z.string().optional()
+  cause: z.string().max(2000).optional(),
+  choice: z.string().max(2000).optional()
 });
 
 // Curator API request schema
@@ -99,6 +114,17 @@ export const CuratorRequestSchema = z.object({
   analysis: AnalysisSchema,
   emotionData: EmotionDataSchema
 });
+
+// Curator OUTPUT contract — what the model must return before anything is
+// passed on to the client. Only these fields are forwarded; anything else
+// the model adds is stripped. `link` is requested by CURATOR_INSTRUCTIONS
+// (lib/prompts.ts) but the client builds its own Bandcamp search URL.
+export const CuratorArtistSchema = z.object({
+  artist: z.string().trim().min(1).max(100),
+  link: z.string().max(300).nullable().optional(),
+});
+
+export const CuratorArtistsSchema = z.array(CuratorArtistSchema).min(1).max(15);
 
 // Validation helper function
 export function validateRequest<T>(schema: z.ZodSchema<T>, data: unknown): {

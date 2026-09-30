@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { AnalysisSchema, MatcherRequestSchema, validateRequest } from '@/lib/validation';
+import { AnalysisSchema, MatcherRequestSchema, SubgenreSchema, validateRequest } from '@/lib/validation';
 import { getDeterministicGenre } from '@/lib/genre-mapping';
 import { STRESS_VALUE_TO_LABEL, getActiveStage } from '@/lib/theme';
 import { removeDisplayedCondition } from '@/lib/condition-text';
@@ -38,7 +38,12 @@ export async function POST(request: NextRequest) {
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    const body = await request.json();
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: 'Request body must be valid JSON' }, { status: 400 });
+    }
 
     // Validate request data
     const validation = validateRequest(MatcherRequestSchema, body);
@@ -255,11 +260,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Safety net only — fills in the anchor if the model's response is
-    // missing/empty, never overrides a subgenre it actually chose. The old
-    // version forced this every time; that's exactly the "never left to the
-    // AI's judgment" behavior this change intentionally moves away from.
-    analysisResult.subgenre = analysisResult.subgenre || anchorGenre.genre;
+    // Safety net only — fills in the anchor if the model's subgenre is
+    // missing, empty, or fails SubgenreSchema (too long / odd characters),
+    // never overrides a valid subgenre it actually chose. The old version
+    // forced this every time; that's exactly the "never left to the AI's
+    // judgment" behavior this change intentionally moves away from.
+    if (!SubgenreSchema.safeParse(analysisResult.subgenre).success) {
+      analysisResult.subgenre = anchorGenre.genre;
+    }
 
     // The stage is already rendered as the Epicrisis diagnosis. This guards
     // the visual hierarchy against a model that nevertheless echoes it.
@@ -270,7 +278,7 @@ export async function POST(request: NextRequest) {
     // sonic_profile (wrong enum token, missing key) is far easier to
     // diagnose and recover from here than after it's already failed
     // CuratorRequestSchema validation downstream.
-    const parsedAnalysis = AnalysisSchema.safeParse(analysisResult);
+    let parsedAnalysis = AnalysisSchema.safeParse(analysisResult);
     if (!parsedAnalysis.success) {
       analysisResult.sonic_profile = {
         activation: 'driving',
@@ -279,8 +287,8 @@ export async function POST(request: NextRequest) {
         cognitive_density: 'direct',
         weight: 'heavy',
       };
-      const retryParsed = AnalysisSchema.safeParse(analysisResult);
-      if (!retryParsed.success) {
+      parsedAnalysis = AnalysisSchema.safeParse(analysisResult);
+      if (!parsedAnalysis.success) {
         return NextResponse.json(
           { error: 'Received a malformed analysis response' },
           { status: 500 }
@@ -288,12 +296,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Only schema-validated fields leave the server — anything extra the
+    // model invented is stripped by the parse.
+    const analysis = parsedAnalysis.data;
+
     return NextResponse.json({
-      analysis: analysisResult,
+      analysis,
       reasoning: responseText, // Include full response text for backward compatibility
-      cause: analysisResult.cause || responseText, // Separate cause field
-      choice: analysisResult.choice || '', // Separate choice field
-      subgenre: analysisResult.subgenre || 'metal' // Separate subgenre field
+      cause: analysis.cause || responseText, // Separate cause field
+      choice: analysis.choice || '', // Separate choice field
+      subgenre: analysis.subgenre // Separate subgenre field
     });
 
   } catch (error) {
