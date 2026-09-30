@@ -7,6 +7,7 @@ import { removeDisplayedCondition } from '@/lib/condition-text';
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 import { getSymptomMeta, isPseudoVitutusProfile } from '@/lib/symptoms';
 import { getDurationMeta } from '@/lib/duration';
+import { createWithRetry } from '@/lib/openai-response';
 import type { TriggerType } from '@/types';
 
 const MATCHER_MODEL = 'gpt-4.1';
@@ -139,123 +140,20 @@ export async function POST(request: NextRequest) {
 
     // Use OpenAI Responses API with in-repo instructions (no hosted Prompt
     // Object) — variables are embedded directly in the input text instead.
-    const response = await openai.responses.create({
-      model: MATCHER_MODEL,
-      instructions: MATCHER_INSTRUCTIONS,
-      input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}${pseudoVitutusDirective}`,
-    });
-
-    // Handle different response formats
-    let responseText = response.output_text;
-    // Response processing completed
-
-    // If output_text is undefined, try to get text from output array
-    if (!responseText && response.output && Array.isArray(response.output)) {
-      const messageOutput = response.output.find(item => item.type === 'message');
-      if (messageOutput && messageOutput.content && messageOutput.content[0]) {
-        const firstContent = messageOutput.content[0];
-        if ('text' in firstContent) {
-          responseText = firstContent.text;
-        }
-      }
-    }
-
-    // Additional fallback: sometimes the response comes back as an array directly
-    if (!responseText && Array.isArray(response.output)) {
-      // Try to find a text response in the array
-      for (const item of response.output) {
-        if (item.type === 'message' && Array.isArray(item.content)) {
-          const textContent = item.content.find(c => c.type === 'output_text');
-          if (textContent && textContent.type === 'output_text' && textContent.text) {
-            responseText = textContent.text;
-            break;
-          }
-        }
-      }
-    }
-
-    if (!responseText) {
-      // No response text found in expected format
-      return NextResponse.json(
-        { error: 'No response received from AI' },
-        { status: 500 }
-      );
-    }
-
-    // Parse structured JSON response
-    let analysisResult = null;
-    try {
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        analysisResult = JSON.parse(jsonMatch[0]);
-      } else {
-        // Fallback: try to extract key information from text. The subgenre
-        // falls back to the anchor here — the fallback only needs to
-        // salvage the cause/choice prose. sonic_profile has no incident-
-        // specific signal to recover from free text, so it gets a neutral
-        // default; AnalysisSchema requires the field to be present.
-        const detectedSubgenre = anchorGenre.genre;
-        const fallbackSonicProfile = {
-          activation: 'driving' as const,
-          agency: 'assertion' as const,
-          friction: 'abrasive' as const,
-          cognitive_density: 'direct' as const,
-          weight: 'heavy' as const,
-        };
-
-        // Try to extract cause and choice from existing text response
-        const paragraphs = responseText.split('\n\n').filter(p => p.trim());
-        let cause = '';
-        let choice = '';
-
-        // Try to find patterns for cause and choice in the text
-        for (const paragraph of paragraphs) {
-          if (paragraph.toLowerCase().includes('cause') ||
-              paragraph.toLowerCase().includes('stress') ||
-              paragraph.toLowerCase().includes('corporate') ||
-              paragraph.toLowerCase().includes('transformation') ||
-              paragraph.includes('IT')) {
-            cause = paragraph.trim();
-          } else if (paragraph.toLowerCase().includes('metal') ||
-                    paragraph.toLowerCase().includes('catharsis') ||
-                    paragraph.toLowerCase().includes('relief') ||
-                    paragraph.toLowerCase().includes('chosen')) {
-            choice = paragraph.trim();
-          }
-        }
-
-        // Fallback to splitting the text roughly in half
-        if (!cause && !choice && paragraphs.length >= 2) {
-          const midpoint = Math.floor(paragraphs.length / 2);
-          cause = paragraphs.slice(0, midpoint).join(' ').trim();
-          choice = paragraphs.slice(midpoint).join(' ').trim();
-        } else if (!cause && !choice && responseText.length > 200) {
-          // Split long single paragraph
-          const sentences = responseText.split(/[.!?]+/).filter(s => s.trim());
-          const midpoint = Math.floor(sentences.length / 2);
-          cause = sentences.slice(0, midpoint).join('. ').trim() + '.';
-          choice = sentences.slice(midpoint).join('. ').trim() + '.';
-        }
-
-        // Create fallback result with extracted cause and choice
-        analysisResult = {
-          subgenre: detectedSubgenre,
-          sonic_profile: fallbackSonicProfile,
-          cause: cause || 'Professional burnout and organizational stress',
-          choice: choice || `${detectedSubgenre} provides cathartic relief for the current emotional state`
-        };
-      }
-    } catch {
-      // Failed to parse matcher response
-      return NextResponse.json(
-        { error: 'Failed to parse analysis response' },
-        { status: 500 }
-      );
-    }
+    // One retry if the reply isn't a JSON object; see lib/openai-response.ts.
+    const analysisResult = await createWithRetry(
+      () => openai.responses.create({
+        model: MATCHER_MODEL,
+        instructions: MATCHER_INSTRUCTIONS,
+        input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}${pseudoVitutusDirective}`,
+      }),
+      (json) => json
+    );
 
     if (!analysisResult) {
+      console.error('Matcher: no JSON object in model response after retry');
       return NextResponse.json(
-        { error: 'No structured analysis received' },
+        { error: 'Failed to parse analysis response' },
         { status: 500 }
       );
     }
@@ -271,8 +169,10 @@ export async function POST(request: NextRequest) {
 
     // The stage is already rendered as the Epicrisis diagnosis. This guards
     // the visual hierarchy against a model that nevertheless echoes it.
-    analysisResult.cause = removeDisplayedCondition(analysisResult.cause);
-    analysisResult.choice = removeDisplayedCondition(analysisResult.choice);
+    for (const key of ['cause', 'choice'] as const) {
+      const text = analysisResult[key];
+      analysisResult[key] = typeof text === 'string' ? removeDisplayedCondition(text) : undefined;
+    }
 
     // Validate the shape before it can reach the Curator — a malformed
     // sonic_profile (wrong enum token, missing key) is far easier to

@@ -87,3 +87,30 @@ describe('no raw model output in responses (S3)', () => {
     expect(await res.json()).toEqual({ error: 'No structured playlist received' });
   });
 });
+
+describe('retry instead of fabricated fallbacks (C5/C6)', () => {
+  it('matcher retries a prose reply once, then returns 500 rather than salvaging it', async () => {
+    create.mockResolvedValue({ output_text: 'Corporate stress.\n\nMetal provides catharsis.' });
+    const res = await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData })));
+    expect(res.status).toBe(500);
+    expect(create).toHaveBeenCalledTimes(2);
+  });
+
+  it('curator never returns placeholder artists', async () => {
+    create.mockResolvedValue({ output_text: 'Napalm Death\nUndeath' });
+    const body = JSON.stringify({ analysis: { subgenre: 'death metal', sonic_profile }, emotionData });
+    const res = await curatorPOST(post('/api/curator', body));
+    expect(res.status).toBe(500);
+    expect(create).toHaveBeenCalledTimes(2);
+  });
+
+  it('curator succeeds when the retry returns a valid Selection', async () => {
+    create
+      .mockResolvedValueOnce({ output_text: 'oops' })
+      .mockResolvedValueOnce({ output_text: JSON.stringify({ Selection: [{ artist: 'Undeath', link: null }] }) });
+    const body = JSON.stringify({ analysis: { subgenre: 'death metal', sonic_profile }, emotionData });
+    const res = await curatorPOST(post('/api/curator', body));
+    expect(res.status).toBe(200);
+    expect((await res.json()).artists).toEqual([{ artist: 'Undeath', link: null }]);
+  });
+});

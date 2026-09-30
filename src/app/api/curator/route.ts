@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { CuratorArtistsSchema, CuratorRequestSchema, validateRequest } from '@/lib/validation';
 import { CURATOR_INSTRUCTIONS } from '@/lib/prompts';
+import { createWithRetry } from '@/lib/openai-response';
 
 const CURATOR_MODEL = 'gpt-4.1';
 
@@ -52,161 +53,32 @@ export async function POST(request: NextRequest) {
     //
     // Trying the model's own artist knowledge unconstrained by a code-side
     // candidate pool — see the note in lib/prompts.ts for why.
-    const response = await openai.responses.create({
-      model: CURATOR_MODEL,
-      instructions: CURATOR_INSTRUCTIONS,
-      input: `subgenre: ${subgenre}\nactivation: ${sonicProfile.activation}\nagency: ${sonicProfile.agency}\nfriction: ${sonicProfile.friction}\ncognitive_density: ${sonicProfile.cognitive_density}\nweight: ${sonicProfile.weight}`,
-    });
-
-    // Handle different response formats
-    let responseText = response.output_text;
-    // Analysis processing initiated
-
-    // If output_text is undefined, try to get text from output array
-    if (!responseText && response.output && Array.isArray(response.output)) {
-      const messageOutput = response.output.find(item => item.type === 'message');
-      if (messageOutput && messageOutput.content && messageOutput.content[0]) {
-        const firstContent = messageOutput.content[0];
-        if ('text' in firstContent) {
-          responseText = firstContent.text;
-        }
+    //
+    // One retry if the reply isn't a valid Selection; see
+    // lib/openai-response.ts. Model output is untrusted: only a bounded list
+    // of {artist, link} (CuratorArtistsSchema) ever leaves the server.
+    const artists = await createWithRetry(
+      () => openai.responses.create({
+        model: CURATOR_MODEL,
+        instructions: CURATOR_INSTRUCTIONS,
+        input: `subgenre: ${subgenre}\nactivation: ${sonicProfile.activation}\nagency: ${sonicProfile.agency}\nfriction: ${sonicProfile.friction}\ncognitive_density: ${sonicProfile.cognitive_density}\nweight: ${sonicProfile.weight}`,
+      }),
+      (json) => {
+        const parsed = CuratorArtistsSchema.safeParse(json.Selection);
+        return parsed.success ? parsed.data : null;
       }
-    }
+    );
 
-    if (!responseText) {
-      // No response text found in expected format
-      console.error('No response text from OpenAI');
-      return NextResponse.json(
-        { error: 'No response received from AI' },
-        { status: 500 }
-      );
-    }
-
-    // Parse structured JSON response for artist-based format
-    let playlistResult = null;
-    try {
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-
-        // Handle new artist-based format
-        if (parsed.Selection && Array.isArray(parsed.Selection)) {
-          playlistResult = {
-            artists: parsed.Selection
-          };
-        }
-        // Handle direct array of artists
-        else if (Array.isArray(parsed)) {
-          playlistResult = {
-            artists: parsed
-          };
-        }
-      } else {
-        // Fallback: try to extract artist names from text
-        const artistNames = responseText
-          .split('\n')
-          .map(line => line.trim())
-          .filter(line =>
-            line.length > 0 &&
-            !line.startsWith('{') &&
-            !line.startsWith('}')
-          )
-          .map(line => {
-            // Extract artist names from various formats
-            const matches = line.match(/([A-Za-z0-9\s&-]+?)(?:\s*[-:]|$)/);
-            return matches ? matches[1].trim() : line;
-          })
-          .filter(name => name.length > 2 && name.length < 50)
-          .slice(0, 15); // Limit to 15 artists
-
-        if (artistNames.length > 0) {
-          playlistResult = {
-            artists: artistNames.map((artist) => ({
-              artist: artist,
-              link: `https://music.apple.com/search?term=${encodeURIComponent(artist)}`
-            }))
-          };
-        }
-      }
-    } catch {
-      // Failed to parse curator response - try to extract artist data from malformed JSON or text
-      try {
-        // Look for artist patterns in the text response
-        const artistPatterns = [
-          // Pattern for { \"artist\": \"Name\", \"link\": \"url\" }
-          /\"artist\"\\s*:\\s*\"([^\"]+)\"/g,
-          // Pattern for artist names in quotes
-          /\"([A-Za-z][A-Za-z0-9\\s&'\\-]+)\"/g,
-          // Pattern for lines that look like artist names
-          /^\\s*-?\\s*([A-Za-z][A-Za-z0-9\\s&'\\-]{2,30})\\s*$/gm
-        ];
-
-        let extractedArtists: string[] = [];
-
-        // Try each pattern
-        for (const pattern of artistPatterns) {
-          const matches = Array.from(responseText.matchAll(pattern));
-          if (matches.length > 0) {
-            extractedArtists = matches
-              .map(match => match[1].trim())
-              .filter(name =>
-                name.length > 2 &&
-                name.length < 50 &&
-                !name.toLowerCase().includes('link') &&
-                !name.toLowerCase().includes('http')
-              )
-              .slice(0, 15);
-            break;
-          }
-        }
-
-        if (extractedArtists.length > 0) {
-          playlistResult = {
-            artists: extractedArtists.map((artist) => ({
-              artist: artist,
-              link: `https://music.apple.com/search?term=${encodeURIComponent(artist)}`
-            }))
-          };
-        } else {
-          // Last resort: create a generic fallback
-          const fallbackSubgenre = analysis?.subgenre || 'metal';
-          playlistResult = {
-            artists: [
-              { artist: `${fallbackSubgenre} Artist 1`, link: `https://music.apple.com/search?term=${encodeURIComponent(fallbackSubgenre)}` },
-              { artist: `${fallbackSubgenre} Artist 2`, link: `https://music.apple.com/search?term=${encodeURIComponent(fallbackSubgenre)}` },
-              { artist: `${fallbackSubgenre} Artist 3`, link: `https://music.apple.com/search?term=${encodeURIComponent(fallbackSubgenre)}` }
-            ]
-          };
-        }
-      } catch {
-        // Fallback parsing also failed
-        return NextResponse.json(
-          { error: 'Failed to parse playlist response' },
-          { status: 500 }
-        );
-      }
-    }
-
-    if (!playlistResult || !playlistResult.artists) {
-      console.error('Curator: no structured playlist in model response');
+    if (!artists) {
+      console.error('Curator: no valid Selection in model response after retry');
       return NextResponse.json(
         { error: 'No structured playlist received' },
         { status: 500 }
       );
     }
 
-    // Model output is untrusted: only a bounded list of {artist, link}
-    // leaves the server, never whatever else the model chose to emit.
-    const artists = CuratorArtistsSchema.safeParse(playlistResult.artists);
-    if (!artists.success) {
-      return NextResponse.json(
-        { error: 'Received a malformed playlist response' },
-        { status: 500 }
-      );
-    }
-
     return NextResponse.json({
-      artists: artists.data,
+      artists,
       type: 'artists'
     });
 
