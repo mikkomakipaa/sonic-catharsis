@@ -300,12 +300,18 @@ export async function POST(request: NextRequest) {
     // model invented is stripped by the parse.
     const analysis = parsedAnalysis.data;
 
+    // `reasoning` is kept for response-shape compatibility — the client
+    // only uses it as a non-empty "analysis exists" flag (page.tsx gates
+    // canSubmit and the calibration loader on it). It used to carry the raw
+    // model output verbatim (S3 in docs/CODE_AND_SECURITY_REVIEW_2026-09.md);
+    // now it's built from validated fields only. subgenre always passes
+    // SubgenreSchema, so this is never empty.
     return NextResponse.json({
       analysis,
-      reasoning: responseText, // Include full response text for backward compatibility
-      cause: analysis.cause || responseText, // Separate cause field
-      choice: analysis.choice || '', // Separate choice field
-      subgenre: analysis.subgenre // Separate subgenre field
+      reasoning: analysis.cause || analysis.choice || analysis.subgenre,
+      cause: analysis.cause || '',
+      choice: analysis.choice || '',
+      subgenre: analysis.subgenre
     });
 
   } catch (error) {

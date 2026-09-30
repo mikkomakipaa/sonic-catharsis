@@ -62,3 +62,28 @@ describe('/api/curator', () => {
     expect((await res.json()).artists).toEqual([{ artist: 'Undeath', link: null }]);
   });
 });
+
+describe('no raw model output in responses (S3)', () => {
+  it('matcher reasoning is built from validated fields, not the raw text', async () => {
+    const raw = `Preamble the client must never see.\n${JSON.stringify({ subgenre: 'doom metal', sonic_profile, cause: 'Because.', choice: 'Slow.' })}`;
+    create.mockResolvedValue({ output_text: raw });
+    const json = await (await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData })))).json();
+    expect(json.reasoning).toBe('Because.');
+    expect(JSON.stringify(json)).not.toContain('Preamble');
+  });
+
+  it('matcher reasoning stays non-empty when the model omits cause and choice', async () => {
+    create.mockResolvedValue({ output_text: JSON.stringify({ subgenre: 'doom metal', sonic_profile }) });
+    const json = await (await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData })))).json();
+    expect(json.reasoning).toBe('doom metal');
+    expect(json.cause).toBe('');
+  });
+
+  it('curator error responses carry no debug payload', async () => {
+    create.mockResolvedValue({ output_text: JSON.stringify({ notSelection: true }) });
+    const body = JSON.stringify({ analysis: { subgenre: 'death metal', sonic_profile }, emotionData });
+    const res = await curatorPOST(post('/api/curator', body));
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: 'No structured playlist received' });
+  });
+});

@@ -82,8 +82,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('OpenAI Response Text:', responseText.substring(0, 500)); // Log first 500 chars for debugging
-
     // Parse structured JSON response for artist-based format
     let playlistResult = null;
     try {
@@ -190,16 +188,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (!playlistResult || !playlistResult.artists) {
-      console.error('Failed to parse playlist. Response text:', responseText.substring(0, 1000));
-      console.error('PlaylistResult:', playlistResult);
+      console.error('Curator: no structured playlist in model response');
       return NextResponse.json(
-        {
-          error: 'No structured playlist received',
-          debug: {
-            responsePreview: responseText.substring(0, 200),
-            playlistResult: playlistResult
-          }
-        },
+        { error: 'No structured playlist received' },
         { status: 500 }
       );
     }

@@ -203,9 +203,6 @@ export default function Home() {
       const curatorData = await curatorResponse.json();
 
       if (curatorData.error) {
-        if (curatorData.debug) {
-          console.error('Curator Debug Info:', curatorData.debug);
-        }
         throw new Error(curatorData.error);
       }
 
