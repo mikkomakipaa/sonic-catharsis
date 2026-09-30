@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { AnalysisSchema, MatcherRequestSchema, validateRequest } from '@/lib/validation';
 import { getDeterministicGenre } from '@/lib/genre-mapping';
-import { STRESS_VALUE_TO_LABEL, getActiveStage, STAGES } from '@/lib/theme';
+import { STRESS_VALUE_TO_LABEL, getActiveStage } from '@/lib/theme';
+import { removeDisplayedCondition } from '@/lib/condition-text';
 import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 import { getSymptomMeta, isPseudoVitutusProfile } from '@/lib/symptoms';
 import { getDurationMeta } from '@/lib/duration';
@@ -26,27 +27,6 @@ const PSEUDO_VITUTUS_GENRE: Record<TriggerType, string> = {
   uncertainty: 'trip-hop',
   absurdity: 'smooth jazz',
 };
-
-// The Epicrisis header is the single source of the diagnosis label. The
-// model receives it as severity context, but prose must not restate it.
-const STAGE_NAMES_PATTERN = STAGES.map((stage) => stage.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-const STAGE_REFERENCE_PATTERN = new RegExp(
-  `\\bStage\\s+(?:I|II|III|IV|V|VI|VII|VIII|IX)\\b(?:\\s*[—-]\\s*(?:${STAGE_NAMES_PATTERN}))?`,
-  'gi'
-);
-const STAGE_NAME_PATTERN = new RegExp(`\\b(?:${STAGE_NAMES_PATTERN})\\b`, 'gi');
-
-function removeDisplayedCondition(text: string): string {
-  if (!text) return text;
-  return text
-    .replace(STAGE_REFERENCE_PATTERN, '')
-    .replace(STAGE_NAME_PATTERN, '')
-    .replace(/\b(?:classic|textbook)\s*[:—-]\s*/gi, '')
-    .replace(/\b(?:for|with|of)\s*:\s*/gi, '')
-    .replace(/\s+([,.;:!?])/g, '$1')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
-}
 
 export async function POST(request: NextRequest) {
   try {
