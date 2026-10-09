@@ -189,22 +189,22 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
             )}
 
             {/* ELEVEN marker — floats past the track's right edge with a
-                pulsing glow once the scale breaks past its last tick. */}
+                pulsing glow (magenta ring on a near-black disc) once the scale breaks past its last tick. */}
             {atEleven && (
               <div
-                className="absolute top-1/2 rounded-full pointer-events-none w-[18px] h-[18px] max-[480px]:w-5 max-[480px]:h-5 rite-eleven-pulse"
+                className="absolute top-1/2 rounded-full pointer-events-none w-[26px] h-[26px] max-[480px]:w-7 max-[480px]:h-7 rite-eleven-pulse"
                 style={{
                   left: `calc(100% + ${HANDLE_ELEVEN_OFFSET}px)`,
                   transform: 'translate(-50%, -50%)',
-                  background: tierInfo?.color,
-                  border: '1px solid white',
+                  background: '#1c1917', // near-black so the white skull stays legible; the tier color lives in the ring + glow
+                  border: `1.5px solid ${tierInfo?.color}`,
                   boxShadow: `0 0 12px 2px ${tierInfo?.color}90`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <SkullSigil className="w-3 h-3" style={{ color: 'white' }} />
+                <SkullSigil className="w-[18px] h-[18px] max-[480px]:w-5 max-[480px]:h-5" style={{ color: 'white' }} />
               </div>
             )}
           </div>
