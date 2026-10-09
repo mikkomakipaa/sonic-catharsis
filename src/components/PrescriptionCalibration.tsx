@@ -46,7 +46,7 @@ function CompoundRow({ label, locked }: { label: string; locked: boolean }) {
         color: locked ? COMPLETE_ACCENT : TEXT_SECONDARY,
       }}
     >
-      <span>{label}</span>
+      <span className="text-left">{label}</span>
       <span className="justify-self-end tabular-nums" style={{ letterSpacing: '0.05em' }}>
         {'▰'.repeat(filled)}
         {'▱'.repeat(SEGMENTS - filled)}
