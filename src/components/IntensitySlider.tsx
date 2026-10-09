@@ -23,12 +23,15 @@ const NORMAL_MAX_TIER = ELEVEN_TIER - 1; // 9 — last visible tick
 const ELEVEN_ZONE_PX = 36; // how far past the track's right edge triggers it
 const HANDLE_ELEVEN_OFFSET = 30; // how far past 100% the floating handle sits
 
-// Same ram-horns sigil the wheel's center used to show at ELEVEN.
-function HornsSigil({ className, style }: { className?: string; style?: React.CSSProperties }) {
+// Skull sigil shown on the handle at ELEVEN (replaced the earlier ram horns).
+function SkullSigil({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 20 C6.5 15 6 10 9 5 C10.5 3 9.5 2 8 2.5" />
-      <path d="M15 20 C17.5 15 18 10 15 5 C13.5 3 14.5 2 16 2.5" />
+      <path d="M12 3C7.5 3 5 6 5 9.5c0 2.5 1 4 2.5 5V18h9v-3.5c1.5-1 2.5-2.5 2.5-5C19 6 16.5 3 12 3Z" />
+      <circle cx="9.3" cy="10" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="14.7" cy="10" r="1.4" fill="currentColor" stroke="none" />
+      <path d="M12 12.8l-.9 1.7h1.8z" fill="currentColor" strokeWidth={1} />
+      <path d="M10 18v2.5M12 18v2.5M14 18v2.5" />
     </svg>
   );
 }
@@ -106,7 +109,7 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
           low-contrast light) color — the dots/handle below still carry the
           tier color, this readout just needs to stay legible at every tier. */}
       <span
-        className={cn('text-[13px] uppercase', atEleven ? 'font-bold rite-eleven-pulse' : 'font-medium')}
+        className={cn('text-[13px] uppercase', atEleven ? 'font-bold' : 'font-medium')}
         style={{ letterSpacing: '0.04em', color: TEXT_PRIMARY }}
       >
         {!isSet ? '—' : `${atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/${MAX_STRESS_INTENSITY}`}
@@ -201,7 +204,7 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
                   justifyContent: 'center',
                 }}
               >
-                <HornsSigil className="w-3 h-3" style={{ color: 'white' }} />
+                <SkullSigil className="w-3 h-3" style={{ color: 'white' }} />
               </div>
             )}
           </div>
