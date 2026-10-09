@@ -82,13 +82,13 @@ shown as the diagnosis (e.g. "Stage VII — Raivovitutus"). 9 stages, ascending:
 I    Lievä ärsytys        VI   Syvävitutus
 II   Kytevä vitutus       VII  Raivovitutus
 III  Perusvitutus         VIII Täysvitutus
-IV   Keskivaikea vitutus  IX   Vitutus maximus
+IV   Keskivaikea vitutus  IX   Vitutus Multi-Climax
 V    Kova vitutus
 ```
 
 Terminology is loosely inspired by a real (tongue-in-cheek) Finnish
-"vitutus" study (cited via QR on the receipt) — only **III, IV, VI, IX**
-(Perusvitutus, Keskivaikea vitutus, Syvävitutus, Vitutus maximus) are the
+"vitutus" study (cited via QR on the receipt) — only **III, IV, VI**
+(Perusvitutus, Keskivaikea vitutus, Syvävitutus) are the
 study's own terms; the rest are original, built in the same register. Never
 claim otherwise in generated copy.
 

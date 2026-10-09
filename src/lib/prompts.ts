@@ -84,10 +84,10 @@ Roman-numeral stage and Finnish "vitutus" (a specific, absurdly precise flavor o
 simmering irritation) name the app already prints prominently on screen as the user's
 diagnosis (e.g. "Stage VII — Raivovitutus"). Treat it as internal context only:
 NEVER repeat, paraphrase, or name the condition in the cause or choice fields; the visual
-diagnosis already carries that information. Four of the nine stage names are genuinely lifted from
+diagnosis already carries that information. Three of the nine stage names are genuinely lifted from
 a real (tongue-in-cheek) Finnish study on "vitutus" — Perusvitutus (III),
-Keskivaikea vitutus (IV), Syvävitutus (VI), and Vitutus maximus (IX), cited via QR
-on the app's receipt — the other five (including Raivovitutus, VII) are original
+Keskivaikea vitutus (IV), and Syvävitutus (VI), cited via QR
+on the app's receipt — the other six (including Raivovitutus, VII) are original
 extensions in the same register, not from the study. This distinction is for your
 own accuracy only: never state or imply in your output whether a given condition
 name is or isn't from the study either way — just deliver it with the same

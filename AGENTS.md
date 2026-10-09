@@ -70,7 +70,7 @@ either field; the UI's own selection is the only valid source.
 
 `getActiveStage()` (`src/lib/theme.ts`) maps `(intensity, symptoms, duration)`
 to one of 9 stages (`STAGES`, Roman numerals I–IX, Finnish "vitutus" names,
-e.g. `Stage VII — Raivovitutus`). Four of the nine names (III, IV, VI, IX)
+e.g. `Stage VII — Raivovitutus`). Three of the nine names (III, IV, VI)
 are genuine terms from the real study; the rest are original extensions in
 the same register — this distinction must never be stated or implied in any
 user-facing output. The stage is displayed prominently in the UI (Epicrisis

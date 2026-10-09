@@ -134,9 +134,8 @@ export const STRESS_VALUE_TO_LABEL: Record<number, string> = Object.fromEntries(
 // simmering, absurd, distinctly Finnish flavor of irritation/pissed-off-ness
 // — grounded in a real (tongue-in-cheek) academic instrument, the
 // "Vitutusviisari" ("vitutus gauge"), cited in the Diagnosis screen's
-// footnote (Sharman & Dingle, 2015). Tiers III, IV, VI, and IX borrow the
-// study's own terms (perusvitutus, keskivaikea vitutus, syvävitutus,
-// vitutus maximus); the rest are original but built in the same register —
+// footnote (Sharman & Dingle, 2015). Tiers III, IV, and VI borrow the
+// study's own terms (perusvitutus, keskivaikea vitutus, syvävitutus); the rest are original but built in the same register —
 // not claimed as verbatim study language.
 export interface Stage {
   index: number; // 0 = surface (nothing selected yet), 1-9 = the stages
@@ -179,7 +178,7 @@ export const STAGES: Stage[] = [
   { index: 6, roman: 'VI', name: 'Syvävitutus', color: '#ea580c' },
   { index: 7, roman: 'VII', name: 'Raivovitutus', color: '#dc2626' },
   { index: 8, roman: 'VIII', name: 'Täysvitutus', color: '#a16207' },
-  { index: 9, roman: 'IX', name: 'Vitutus maximus', color: '#7dd3fc' },
+  { index: 9, roman: 'IX', name: 'Vitutus Multi-Climax', color: '#7dd3fc' },
 ];
 
 // --- Deterministic stage selection: intensity + somatic + duration -> Stage -

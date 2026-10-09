@@ -8,7 +8,7 @@ describe('removeDisplayedCondition', () => {
   });
 
   it('strips a bare stage name case-insensitively', () => {
-    expect(removeDisplayedCondition('Pure vitutus maximus energy.')).toBe('Pure energy.');
+    expect(removeDisplayedCondition('Pure vitutus multi-climax energy.')).toBe('Pure energy.');
   });
 
   it('leaves unrelated prose untouched', () => {
