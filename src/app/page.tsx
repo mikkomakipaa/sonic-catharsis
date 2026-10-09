@@ -90,8 +90,8 @@ export default function Home() {
   );
   const riteAccent = useMemo(() => computeStageAccent(stage, combinedIntensity), [stage, combinedIntensity]);
 
-  // Page-level "flinch" when the user drags into ELEVEN — a hard shake +
-  // one-frame red flash, triggered once per rising edge (not on every
+  // Page-level "flinch" when the user drags into ELEVEN — a hard shake
+  // (no background flash), triggered once per rising edge (not on every
   // pointermove while already past the edge). Toggles a class directly via
   // ref + forced reflow instead of React state, so it never remounts the
   // interactive tree mid-drag (which would kill the slider's active drag).

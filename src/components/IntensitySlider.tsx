@@ -106,7 +106,7 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
           low-contrast light) color — the dots/handle below still carry the
           tier color, this readout just needs to stay legible at every tier. */}
       <span
-        className={cn('text-[13px] font-medium uppercase', atEleven && 'rite-eleven-pulse')}
+        className={cn('text-[13px] uppercase', atEleven ? 'font-bold rite-eleven-pulse' : 'font-medium')}
         style={{ letterSpacing: '0.04em', color: TEXT_PRIMARY }}
       >
         {!isSet ? '—' : `${atEleven ? MAX_STRESS_INTENSITY + 1 : value + 1}/${MAX_STRESS_INTENSITY}`}

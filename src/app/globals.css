@@ -56,11 +56,9 @@
 @keyframes rite-eleven-pulse {
   0%, 100% {
     opacity: 1;
-    filter: drop-shadow(0 0 6px currentColor);
   }
   50% {
     opacity: 0.65;
-    filter: drop-shadow(0 0 16px currentColor);
   }
 }
 
@@ -102,18 +100,16 @@
 }
 
 /* Page-level "flinch" — fires once when the user drags into the ELEVEN
-   tier. A hard, short shake + a one-frame red flash on the page background,
+   tier. A hard, short shake (no background flash — dropped on purpose),
    like the app got startled by its own user. Retriggered by toggling this
    class via JS (with a forced reflow) rather than React state, so it never
    remounts the interactive tree mid-drag. Gated on prefers-reduced-motion. */
 @keyframes rite-page-flinch {
   0% {
     transform: translateX(0);
-    background-color: #f7f5f0;
   }
   20% {
     transform: translateX(-4px);
-    background-color: rgba(239, 68, 68, 0.08);
   }
   45% {
     transform: translateX(4px);
@@ -123,7 +119,6 @@
   }
   100% {
     transform: translateX(0);
-    background-color: #f7f5f0;
   }
 }
 

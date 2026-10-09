@@ -66,7 +66,7 @@ SURFACE (pre-selection) #52525b
 ```
 0  #10b981   1  #22c55e   2  #84cc16   3  #eab308   4  #f97316
 5  #ea580c   6  #dc2626   7  #991b1b   8  #7f1d1d   9  #581c87
-ELEVEN (10)  #fbbf24   ← shock color, outside the ramp on purpose
+ELEVEN (10)  #e11d74   ← shock color, outside the ramp on purpose
 ```
 
 ### Semantic color language
