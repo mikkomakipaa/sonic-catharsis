@@ -95,6 +95,31 @@ claim otherwise in generated copy.
 `SURFACE` (`index: 0`, roman `—`) is a 10th pseudo-stage used before any
 trigger is selected — it's not part of the I-IX scale.
 
+### 3.1 Provoke Me (stimulus plates)
+
+When a reading is too calm to treat — `PSEUDO_VITUTUS_STAGE` ("Level 0") or
+Stage I — the Epicrisis shows a "Referral / 03" offering to administer a
+controlled stimulus. The rule lives in one predicate,
+`shouldOfferProvocation()` (`src/lib/provocations.ts`); it compares stages
+by reference, never by `index`.
+
+- `STIMULI` (same file) holds 30 `Stimulus` entries: `fig`, `trigger`,
+  `stimulus` (caption), `legend` (A/B/C key), `incident` (pre-fill text),
+  `imageBrief` (drawing brief, never shown), optional `image`. Review copy:
+  [`design/provoke-me/STIMULI.md`](./design/provoke-me/STIMULI.md).
+- `pickStimuli()` draws `MAX_STIMULI_PER_SESSION` (5), drawn plates first.
+  Five "no"s → discharge note.
+- "Nyt vituttaa?" → yes: a fresh intake with `incident` and `trigger`
+  pre-filled. Intensity and duration stay empty — the patient still rates
+  it. Symptoms are cleared.
+- That intake is sent with `provoked: true` (§5). The Epicrisis prints
+  "Aetiology: iatrogenic (induced by this clinic, Fig. n)" deterministically,
+  and the Matcher's cause text gets an iatrogenic note.
+- Plate art: `public/provocations/*.svg` (light-only, no captions — the
+  caption is HTML in `StimulusPlate.tsx`). All 30 are drawn; a future
+  stimulus without `image` renders an "Illustration withheld" plate. New
+  plates in the same style: `docs/design/provoke-me/generate_plates.py`.
+
 Stage is computed from `(intensity, physicalSymptoms, duration)` — see
 [`formulas.md`](./formulas.md) for the exact formula, weights, and its
 revision history. Trigger/legacy emotion is **deliberately not an input**
@@ -135,6 +160,7 @@ combined values — enforced by `SonicProfileSchema` (Zod `z.enum`).
   event: string | null;    // incidentText
   symptoms: PhysicalSymptomType[]; // optional, multi-select, defaults to []
   duration: DurationType | null;  // optional, single-select, no default — null until chosen
+  provoked?: boolean;      // optional, additive — true when pre-filled from a Provoke Me stimulus (§3.1)
 }
 ```
 
@@ -248,4 +274,6 @@ incidentText, trigger, intensity, physicalSymptoms, duration
 | Matcher/Curator prompt text | `src/lib/prompts.ts` |
 | Matcher/Curator routes | `src/app/api/matcher/route.ts`, `src/app/api/curator/route.ts` |
 | Orchestration, `EmotionData` payload construction | `src/app/page.tsx` |
+| Provoke Me stimuli, offer rule, session pick | `src/lib/provocations.ts` |
+| Stimulus plate + Provoke Me screen | `src/components/StimulusPlate.tsx`, `src/components/screens/ScreenProvoke.tsx` |
 | Vitutus study citation QR | `src/components/ReceiptCard.tsx`, opened on demand from the Prescription's receipt overlay |

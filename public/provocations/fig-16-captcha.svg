@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 258" role="img" aria-labelledby="t d">
+  <title id="t">Fig. 16 — verification, traffic lights, attempt 3</title>
+  <desc id="d">A: grid, 3 × 3. B: traffic light, partial. C: result, “try again”.</desc>
+  <style>.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}.dot{stroke-dasharray:1.5 4}.t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}.solid{fill:#211e1a}.accfill{fill:#a3352a}.wash{fill:rgba(163,53,42,0.18)}.paper{fill:#f1ece0}</style>
+  <line class="ink thin" x1="60" y1="25" x2="60" y2="205"/>
+  <line class="ink thin" x1="60" y1="25" x2="240" y2="25"/>
+  <line class="ink thin" x1="120" y1="25" x2="120" y2="205"/>
+  <line class="ink thin" x1="60" y1="85" x2="240" y2="85"/>
+  <line class="ink thin" x1="180" y1="25" x2="180" y2="205"/>
+  <line class="ink thin" x1="60" y1="145" x2="240" y2="145"/>
+  <line class="ink thin" x1="240" y1="25" x2="240" y2="205"/>
+  <line class="ink thin" x1="60" y1="205" x2="240" y2="205"/>
+  <rect class="ink" x="100" y="55" width="40" height="72" rx="6"/>
+  <circle class="ink" cx="120" cy="70" r="7"/>
+  <circle class="ink" cx="120" cy="91" r="7"/>
+  <circle class="ink" cx="120" cy="112" r="7"/>
+  <line class="ink" x1="120" y1="127" x2="120" y2="198"/>
+  <line class="ink" x1="104" y1="198" x2="186" y2="198"/>
+  <rect class="acc" x="180" y="145" width="60" height="60" stroke-width="2.4"/>
+  <g transform="rotate(-12 316 110)">
+  <rect class="acc" x="262" y="92" width="108" height="32"/>
+  <text class="t ta" x="272" y="114" font-size="13">TRY AGAIN</text>
+  </g>
+  <text class="t" x="282" y="160" font-size="10">attempt 3</text>
+  <text class="t lbl" x="36" y="30">A</text>
+  <line class="ink thin" x1="41" y1="33" x2="58" y2="36"/>
+  <text class="t lbl" x="150" y="52">B</text>
+  <line class="ink thin" x1="155" y1="55" x2="140" y2="66"/>
+  <text class="t lbl ta" x="262" y="84">C</text>
+</svg>

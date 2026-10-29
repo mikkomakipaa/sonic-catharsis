@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 258" role="img" aria-labelledby="t d">
+  <title id="t">Fig. 9 — lift door, closing</title>
+  <desc id="d">A: subject, running. B: occupant, finger on CLOSE. C: gap, 1.5 m.</desc>
+  <style>.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}.dot{stroke-dasharray:1.5 4}.t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}.solid{fill:#211e1a}.accfill{fill:#a3352a}.wash{fill:rgba(163,53,42,0.18)}.paper{fill:#f1ece0}</style>
+  <rect class="ink" x="220" y="60" width="120" height="155"/>
+  <rect class="ink thin" x="220" y="60" width="32" height="155"/>
+  <rect class="ink thin" x="308" y="60" width="32" height="155"/>
+  <rect class="ink thin" x="266" y="42" width="28" height="14"/>
+  <text class="t" x="275" y="53" font-size="10">3</text>
+  <polyline class="acc" points="236,140 246,140"/>
+  <polyline class="acc" points="241,135 247,140 241,145"/>
+  <polyline class="acc" points="324,140 314,140"/>
+  <polyline class="acc" points="319,135 313,140 319,145"/>
+  <circle class="ink" cx="282" cy="108" r="9"/>
+  <line class="ink" x1="282" y1="117" x2="282" y2="165"/>
+  <line class="ink" x1="282" y1="165" x2="274" y2="213"/>
+  <line class="ink" x1="282" y1="165" x2="290" y2="213"/>
+  <line class="ink" x1="282" y1="130" x2="300" y2="128"/>
+  <rect class="ink thin" x="300" y="120" width="6" height="16"/>
+  <circle class="ink" cx="95" cy="112" r="9"/>
+  <line class="ink" x1="97" y1="121" x2="88" y2="162"/>
+  <line class="ink" x1="88" y1="162" x2="70" y2="182"/>
+  <line class="ink" x1="70" y1="182" x2="66" y2="212"/>
+  <line class="ink" x1="88" y1="162" x2="108" y2="186"/>
+  <line class="ink" x1="108" y1="186" x2="122" y2="210"/>
+  <line class="ink" x1="94" y1="135" x2="116" y2="128"/>
+  <line class="ink" x1="94" y1="135" x2="74" y2="146"/>
+  <line class="ink thin" x1="48" y1="120" x2="34" y2="120"/>
+  <line class="ink thin" x1="48" y1="130" x2="30" y2="130"/>
+  <line class="ink thin" x1="48" y1="140" x2="34" y2="140"/>
+  <line class="acc" x1="122" y1="232" x2="220" y2="232"/>
+  <line class="acc" x1="122" y1="226" x2="122" y2="238"/>
+  <line class="acc" x1="220" y1="226" x2="220" y2="238"/>
+  <text class="t ta" x="155" y="247">1.5 m</text>
+  <text class="t lbl" x="70" y="92">A</text>
+  <line class="ink thin" x1="75" y1="95" x2="88" y2="104"/>
+  <text class="t lbl" x="262" y="92">B</text>
+  <line class="ink thin" x1="267" y1="95" x2="278" y2="101"/>
+  <text class="t lbl ta" x="228" y="236">C</text>
+</svg>

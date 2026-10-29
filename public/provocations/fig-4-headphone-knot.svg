@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 258" role="img" aria-labelledby="t d">
+  <title id="t">Fig. 4 — headphone cable, spontaneous knot</title>
+  <desc id="d">A: pocket. B: cable. C: knot, detail ×4.</desc>
+  <style>.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}.dot{stroke-dasharray:1.5 4}.t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}.solid{fill:#211e1a}.accfill{fill:#a3352a}.wash{fill:rgba(163,53,42,0.18)}.paper{fill:#f1ece0}</style>
+  <path class="ink" d="M30,55 L135,55 L135,140 Q82,172 30,140 Z"/>
+  <path class="ink thin dash" d="M38,63 L127,63 L127,136 Q82,162 38,136 Z"/>
+  <path class="ink" d="M92,55 C96,30 130,40 140,70 C150,100 120,118 150,124 C180,130 196,96 170,92 C142,88 156,134 186,128 C214,122 190,82 168,104 C150,124 196,150 204,118"/>
+  <path class="ink" d="M204,118 C210,96 230,110 236,92"/>
+  <circle class="ink" cx="239" cy="88" r="5"/>
+  <path class="ink" d="M92,55 C84,40 70,40 66,30"/>
+  <circle class="ink" cx="64" cy="26" r="5"/>
+  <circle class="ink" cx="300" cy="140" r="70"/>
+  <line class="ink thin dash" x1="186" y1="104" x2="240" y2="84"/>
+  <line class="ink thin dash" x1="190" y1="132" x2="236" y2="186"/>
+  <path class="ink" d="M250,140 C250,90 340,90 330,130 C320,170 260,160 280,120 C300,80 360,120 340,160 C320,200 250,190 262,150 C274,110 330,110 320,150 C310,190 270,170 290,130 C300,110 330,124 310,160"/>
+  <text class="t ta" x="352" y="80" font-size="13">×4</text>
+  <text class="t lbl" x="12" y="100">A</text>
+  <line class="ink thin" x1="17" y1="88" x2="30" y2="100"/>
+  <text class="t lbl" x="120" y="26">B</text>
+  <line class="ink thin" x1="125" y1="29" x2="128" y2="44"/>
+  <text class="t lbl ta" x="366" y="214">C</text>
+  <line class="acc thin" x1="371" y1="202" x2="344" y2="194"/>
+</svg>

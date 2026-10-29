@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 258" role="img" aria-labelledby="t d">
+  <title id="t">Fig. 19 — reply-all, cascade</title>
+  <desc id="d">A: origin, “thanks!”. B: recipients, 214. C: replies asking to be removed.</desc>
+  <style>.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}.dot{stroke-dasharray:1.5 4}.t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}.solid{fill:#211e1a}.accfill{fill:#a3352a}.wash{fill:rgba(163,53,42,0.18)}.paper{fill:#f1ece0}</style>
+  <rect class="ink" x="178" y="28" width="44" height="28"/>
+  <polyline class="ink" points="178,28 200,44 222,28"/>
+  <text class="t" x="232" y="46" font-size="10">“thanks!”</text>
+  <line class="ink thin" x1="200" y1="56" x2="49" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="78" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="107" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="136" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="165" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="194" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="223" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="252" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="281" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="310" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="339" y2="128"/>
+  <line class="ink thin" x1="200" y1="56" x2="368" y2="128"/>
+  <rect class="ink thin" x="40" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="40,130 49,136 58,130"/>
+  <rect class="ink thin" x="69" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="69,130 78,136 87,130"/>
+  <rect class="ink thin" x="98" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="98,130 107,136 116,130"/>
+  <rect class="ink thin" x="127" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="127,130 136,136 145,130"/>
+  <rect class="ink thin" x="156" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="156,130 165,136 174,130"/>
+  <rect class="ink thin" x="185" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="185,130 194,136 203,130"/>
+  <rect class="ink thin" x="214" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="214,130 223,136 232,130"/>
+  <rect class="ink thin" x="243" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="243,130 252,136 261,130"/>
+  <rect class="ink thin" x="272" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="272,130 281,136 290,130"/>
+  <rect class="ink thin" x="301" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="301,130 310,136 319,130"/>
+  <rect class="ink thin" x="330" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="330,130 339,136 348,130"/>
+  <rect class="ink thin" x="359" y="130" width="18" height="12"/>
+  <polyline class="ink thin" points="359,130 368,136 377,130"/>
+  <rect class="ink thin" x="40" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="40,156 49,162 58,156"/>
+  <rect class="ink thin" x="69" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="69,156 78,162 87,156"/>
+  <rect class="ink thin" x="98" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="98,156 107,162 116,156"/>
+  <rect class="ink thin" x="127" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="127,156 136,162 145,156"/>
+  <rect class="ink thin" x="156" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="156,156 165,162 174,156"/>
+  <rect class="ink thin" x="185" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="185,156 194,162 203,156"/>
+  <rect class="ink thin" x="214" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="214,156 223,162 232,156"/>
+  <rect class="ink thin" x="243" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="243,156 252,162 261,156"/>
+  <rect class="ink thin" x="272" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="272,156 281,162 290,156"/>
+  <rect class="ink thin" x="301" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="301,156 310,162 319,156"/>
+  <rect class="ink thin" x="330" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="330,156 339,162 348,156"/>
+  <rect class="ink thin" x="359" y="156" width="18" height="12"/>
+  <polyline class="ink thin" points="359,156 368,162 377,156"/>
+  <rect class="ink thin" x="40" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="40,182 49,188 58,182"/>
+  <rect class="ink thin" x="69" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="69,182 78,188 87,182"/>
+  <rect class="ink thin" x="98" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="98,182 107,188 116,182"/>
+  <rect class="ink thin" x="127" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="127,182 136,188 145,182"/>
+  <rect class="ink thin" x="156" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="156,182 165,188 174,182"/>
+  <rect class="ink thin" x="185" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="185,182 194,188 203,182"/>
+  <rect class="ink thin" x="214" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="214,182 223,188 232,182"/>
+  <rect class="ink thin" x="243" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="243,182 252,188 261,182"/>
+  <rect class="ink thin" x="272" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="272,182 281,188 290,182"/>
+  <rect class="ink thin" x="301" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="301,182 310,188 319,182"/>
+  <rect class="ink thin" x="330" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="330,182 339,188 348,182"/>
+  <rect class="ink thin" x="359" y="182" width="18" height="12"/>
+  <polyline class="ink thin" points="359,182 368,188 377,182"/>
+  <path class="acc" d="M78,128 C78,90 134.5,70 180,60"/>
+  <path class="acc" d="M165,128 C165,90 178.0,70 193,60"/>
+  <path class="acc" d="M252,128 C252,90 221.5,70 206,60"/>
+  <path class="acc" d="M339,128 C339,90 265.0,70 220,60"/>
+  <text class="t" x="320" y="215" font-size="10">×214</text>
+  <text class="t lbl" x="158" y="24">A</text>
+  <line class="ink thin" x1="163" y1="27" x2="176" y2="34"/>
+  <text class="t lbl" x="20" y="232">B</text>
+  <line class="ink thin" x1="25" y1="220" x2="40" y2="196"/>
+  <text class="t lbl ta" x="370" y="100">C</text>
+  <line class="acc thin" x1="375" y1="103" x2="352" y2="112"/>
+</svg>

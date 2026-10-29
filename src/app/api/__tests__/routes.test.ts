@@ -39,6 +39,23 @@ describe('/api/matcher', () => {
   });
 });
 
+describe('/api/matcher iatrogenic note (Provoke Me)', () => {
+  const ok = { output_text: JSON.stringify({ subgenre: 'doom metal', sonic_profile, cause: 'Because.', choice: 'Slow.' }) };
+
+  it('tells the model the vitutus is iatrogenic when the intake was provoked', async () => {
+    create.mockResolvedValue(ok);
+    const res = await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData: { ...emotionData, provoked: true } })));
+    expect(res.status).toBe(200);
+    expect(create.mock.calls[0][0].input).toContain('iatrogenic');
+  });
+
+  it('says nothing about it for an ordinary intake', async () => {
+    create.mockResolvedValue(ok);
+    await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData })));
+    expect(create.mock.calls[0][0].input).not.toContain('iatrogenic');
+  });
+});
+
 describe('/api/curator', () => {
   it('returns 400 for a malformed JSON body without calling OpenAI', async () => {
     const res = await curatorPOST(post('/api/curator', '{not json'));

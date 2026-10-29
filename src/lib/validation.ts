@@ -53,7 +53,12 @@ export const EmotionDataSchema = z.object({
   // control, same as `stressLevel`. Never silently treated as "Fresh";
   // see lib/theme.ts and lib/prompts.ts for how an absent duration is
   // handled downstream.
-  duration: z.enum(DurationTypes).nullable().optional()
+  duration: z.enum(DurationTypes).nullable().optional(),
+  // Optional, additive: true when the intake was pre-filled from a Provoke
+  // Me stimulus (lib/provocations.ts). Absent is treated as false, so older
+  // clients are unaffected. The Matcher uses it for its iatrogenic note; the
+  // Curator ignores it.
+  provoked: z.boolean().optional()
 });
 
 // Matcher API request schema

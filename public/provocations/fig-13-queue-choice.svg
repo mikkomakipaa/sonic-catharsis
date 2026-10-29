@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 258" role="img" aria-labelledby="t d">
+  <title id="t">Fig. 13 — checkout queues, selection error</title>
+  <desc id="d">A: subject, queue 1. B: queue 2. C: relative progress.</desc>
+  <style>.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}.dot{stroke-dasharray:1.5 4}.t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}.solid{fill:#211e1a}.accfill{fill:#a3352a}.wash{fill:rgba(163,53,42,0.18)}.paper{fill:#f1ece0}</style>
+  <line class="ink" x1="15" y1="122" x2="300" y2="122"/>
+  <rect class="ink" x="24" y="96" width="44" height="26"/>
+  <rect class="ink thin" x="30" y="84" width="16" height="12"/>
+  <text class="t" x="6" y="114" font-size="10">1</text>
+  <circle class="ink" cx="100" cy="67" r="5.58"/>
+  <line class="ink" x1="100" y1="72.58" x2="100" y2="98"/>
+  <line class="ink" x1="100" y1="98" x2="93.8" y2="121.56"/>
+  <line class="ink" x1="100" y1="98" x2="106.2" y2="121.56"/>
+  <line class="ink" x1="100" y1="79.4" x2="91.94" y2="93.04"/>
+  <line class="ink" x1="100" y1="79.4" x2="108.06" y2="93.04"/>
+  <circle class="ink" cx="146" cy="67" r="5.58"/>
+  <line class="ink" x1="146" y1="72.58" x2="146" y2="98"/>
+  <line class="ink" x1="146" y1="98" x2="139.8" y2="121.56"/>
+  <line class="ink" x1="146" y1="98" x2="152.2" y2="121.56"/>
+  <line class="ink" x1="146" y1="79.4" x2="137.94" y2="93.04"/>
+  <line class="ink" x1="146" y1="79.4" x2="154.06" y2="93.04"/>
+  <circle class="ink" cx="192" cy="67" r="5.58"/>
+  <line class="ink" x1="192" y1="72.58" x2="192" y2="98"/>
+  <line class="ink" x1="192" y1="98" x2="185.8" y2="121.56"/>
+  <line class="ink" x1="192" y1="98" x2="198.2" y2="121.56"/>
+  <line class="ink" x1="192" y1="79.4" x2="183.94" y2="93.04"/>
+  <line class="ink" x1="192" y1="79.4" x2="200.06" y2="93.04"/>
+  <circle class="ink" cx="238" cy="67" r="5.58"/>
+  <line class="ink" x1="238" y1="72.58" x2="238" y2="98"/>
+  <line class="ink" x1="238" y1="98" x2="231.8" y2="121.56"/>
+  <line class="ink" x1="238" y1="98" x2="244.2" y2="121.56"/>
+  <line class="ink" x1="238" y1="79.4" x2="229.94" y2="93.04"/>
+  <line class="ink" x1="238" y1="79.4" x2="246.06" y2="93.04"/>
+  <line class="ink" x1="15" y1="226" x2="300" y2="226"/>
+  <rect class="ink" x="24" y="200" width="44" height="26"/>
+  <rect class="ink thin" x="30" y="188" width="16" height="12"/>
+  <text class="t" x="6" y="218" font-size="10">2</text>
+  <circle class="ink" cx="100" cy="171" r="5.58"/>
+  <line class="ink" x1="100" y1="176.58" x2="100" y2="202"/>
+  <line class="ink" x1="100" y1="202" x2="93.8" y2="225.56"/>
+  <line class="ink" x1="100" y1="202" x2="106.2" y2="225.56"/>
+  <line class="ink" x1="100" y1="183.4" x2="91.94" y2="197.04"/>
+  <line class="ink" x1="100" y1="183.4" x2="108.06" y2="197.04"/>
+  <circle class="ink" cx="146" cy="171" r="5.58"/>
+  <line class="ink" x1="146" y1="176.58" x2="146" y2="202"/>
+  <line class="ink" x1="146" y1="202" x2="139.8" y2="225.56"/>
+  <line class="ink" x1="146" y1="202" x2="152.2" y2="225.56"/>
+  <line class="ink" x1="146" y1="183.4" x2="137.94" y2="197.04"/>
+  <line class="ink" x1="146" y1="183.4" x2="154.06" y2="197.04"/>
+  <line class="acc" x1="158" y1="162" x2="134" y2="162"/>
+  <polyline class="acc" points="140,157 132,162 140,167"/>
+  <line class="acc" x1="204" y1="162" x2="180" y2="162"/>
+  <polyline class="acc" points="186,157 178,162 186,167"/>
+  <line class="ink thin" x1="320" y1="186" x2="385" y2="186"/>
+  <rect class="accfill" x="330" y="182" width="16" height="4"/>
+  <rect class="accfill" x="358" y="96" width="16" height="90"/>
+  <text class="t" x="334" y="200" font-size="9">1</text>
+  <text class="t" x="362" y="200" font-size="9">2</text>
+  <text class="t lbl" x="254" y="44">A</text>
+  <line class="ink thin" x1="259" y1="47" x2="240" y2="60"/>
+  <text class="t lbl" x="212" y="156">B</text>
+  <line class="ink thin" x1="217" y1="159" x2="192" y2="170"/>
+  <text class="t lbl ta" x="326" y="110">C</text>
+</svg>

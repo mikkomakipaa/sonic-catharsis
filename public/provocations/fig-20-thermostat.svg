@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 258" role="img" aria-labelledby="t d">
+  <title id="t">Fig. 20 — office thermostat, contested</title>
+  <desc id="d">A: subject. B: thermostat. C: setpoint over 5 days.</desc>
+  <style>.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}.dot{stroke-dasharray:1.5 4}.t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}.solid{fill:#211e1a}.accfill{fill:#a3352a}.wash{fill:rgba(163,53,42,0.18)}.paper{fill:#f1ece0}</style>
+  <circle class="ink" cx="200" cy="62" r="32"/>
+  <circle class="ink thin" cx="200" cy="62" r="24"/>
+  <line class="ink thin" x1="176.617" y1="75.5" x2="173.153" y2="77.5"/>
+  <line class="ink thin" x1="173" y1="62" x2="169" y2="62"/>
+  <line class="ink thin" x1="176.617" y1="48.5" x2="173.153" y2="46.5"/>
+  <line class="ink thin" x1="186.5" y1="38.6173" x2="184.5" y2="35.1532"/>
+  <line class="ink thin" x1="200" y1="35" x2="200" y2="31"/>
+  <line class="ink thin" x1="213.5" y1="38.6173" x2="215.5" y2="35.1532"/>
+  <line class="ink thin" x1="223.383" y1="48.5" x2="226.847" y2="46.5"/>
+  <line class="ink thin" x1="227" y1="62" x2="231" y2="62"/>
+  <line class="ink thin" x1="223.383" y1="75.5" x2="226.847" y2="77.5"/>
+  <line class="ink" x1="200" y1="62" x2="212.856" y2="46.6791"/>
+  <text class="t" x="192" y="84" font-size="9">21°</text>
+  <line class="ink" x1="60" y1="58" x2="162" y2="62"/>
+  <circle class="ink" cx="166" cy="62" r="5"/>
+  <line class="ink" x1="340" y1="72" x2="238" y2="66"/>
+  <circle class="ink" cx="234" cy="66" r="5"/>
+  <line class="ink" x1="70" y1="112" x2="70" y2="205"/>
+  <line class="ink" x1="70" y1="205" x2="345" y2="205"/>
+  <text class="t" x="34" y="135" font-size="9">23°</text>
+  <text class="t" x="34" y="194" font-size="9">19°</text>
+  <path class="acc" d="M70,190 L70,132 L125,132 L125,190 L180,190 L180,132 L235,132 L235,190 L290,190 L290,132 L345,132"/>
+  <text class="t" x="94" y="220" font-size="9">M</text>
+  <text class="t" x="149" y="220" font-size="9">T</text>
+  <text class="t" x="204" y="220" font-size="9">W</text>
+  <text class="t" x="259" y="220" font-size="9">T</text>
+  <text class="t" x="314" y="220" font-size="9">F</text>
+  <text class="t lbl" x="60" y="44">A</text>
+  <line class="ink thin" x1="65" y1="47" x2="70" y2="56"/>
+  <text class="t lbl" x="244" y="30">B</text>
+  <line class="ink thin" x1="249" y1="33" x2="228" y2="40"/>
+  <text class="t lbl ta" x="360" y="160">C</text>
+  <line class="acc thin" x1="365" y1="163" x2="344" y2="175"/>
+</svg>

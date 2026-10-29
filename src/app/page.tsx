@@ -7,6 +7,8 @@ import RiteHeader from '@/components/RiteHeader';
 import ScreenSelection from '@/components/screens/ScreenSelection';
 import ScreenAnalysis from '@/components/screens/ScreenAnalysis';
 import ScreenDescent from '@/components/screens/ScreenDescent';
+import ScreenProvoke from '@/components/screens/ScreenProvoke';
+import { Stimulus, pickStimuli, shouldOfferProvocation } from '@/lib/provocations';
 import {
   MAX_STRESS_INTENSITY,
   getActiveStage,
@@ -14,7 +16,7 @@ import {
 } from '@/lib/theme';
 
 type ArtistItem = string | { artist?: string; name?: string; link?: string };
-type Step = 'selection' | 'analysis' | 'descent';
+type Step = 'selection' | 'analysis' | 'provoke' | 'descent';
 
 // The clinical loading documents are intentional feedback, not a flash of
 // chrome. Fast model responses stay visible long enough to complete their
@@ -48,6 +50,9 @@ interface EmotionData {
   // null until the user actually picks a tier — same "nothing is dialed in
   // until chosen" contract as stressLevel, never a silent "Fresh" default.
   duration: DurationType | null;
+  // True when this intake was pre-filled from a Provoke Me stimulus — the
+  // Matcher then treats the vitutus as iatrogenic. See lib/provocations.ts.
+  provoked: boolean;
 }
 
 export default function Home() {
@@ -69,6 +74,11 @@ export default function Home() {
   const [choice, setChoice] = useState<string | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [subgenre, setSubgenre] = useState<string | null>(null);
+
+  // Provoke Me: this session's stimuli, and the one the patient said "yes"
+  // to (null unless the current intake came from a stimulus).
+  const [provokeStimuli, setProvokeStimuli] = useState<Stimulus[]>([]);
+  const [provokedBy, setProvokedBy] = useState<Stimulus | null>(null);
 
   // Held between the analysis and descent steps: the curator call needs both,
   // but it only fires once the user chooses to descend, not automatically.
@@ -144,6 +154,7 @@ export default function Home() {
       event: incidentText.trim() || null,
       symptoms,
       duration,
+      provoked: provokedBy !== null,
     };
 
     try {
@@ -254,6 +265,7 @@ export default function Home() {
     setPendingAnalysis(null);
     setPendingEmotionData(null);
     setSubgenre(null);
+    setProvokedBy(null);
   };
 
   const clearInputs = () => {
@@ -261,6 +273,27 @@ export default function Home() {
     setIncidentText('');
     setSymptoms([]);
     setDuration(null);
+    setProvokedBy(null);
+  };
+
+  // Provoke Me — a fresh draw each time the referral is accepted.
+  const startProvocation = () => {
+    setProvokeStimuli(pickStimuli());
+    setStep('provoke');
+  };
+
+  // "Nyt vituttaa?" → yes: a fresh intake pre-filled from the stimulus. The
+  // patient still dials in intensity and duration themselves — the clinic
+  // provides the grievance, not the reading. Symptoms are cleared so the
+  // previous (possibly pseudo-vitutus) profile doesn't pin the new reading.
+  const acceptStimulus = (stimulus: Stimulus) => {
+    goBackToSelection();
+    setSelection({ trigger: stimulus.trigger, intensity: null });
+    setIncidentText(stimulus.incident);
+    setSymptoms([]);
+    setDuration(null);
+    setSubgenre(null);
+    setProvokedBy(stimulus);
   };
 
   // Back from the analysis screen: return to selection but keep the
@@ -335,6 +368,18 @@ export default function Home() {
             onContinue={beginDescent}
             onRetry={startAssistant}
             onBack={goBackToSelection}
+            offerProvocation={shouldOfferProvocation(stage)}
+            onProvoke={startProvocation}
+            provokedBy={provokedBy}
+          />
+        )}
+
+        {step === 'provoke' && (
+          <ScreenProvoke
+            stimuli={provokeStimuli}
+            onConfirm={acceptStimulus}
+            onBack={() => setStep('analysis')}
+            onReset={resetSelections}
           />
         )}
 

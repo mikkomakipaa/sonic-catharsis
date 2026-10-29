@@ -113,6 +113,16 @@ export async function POST(request: NextRequest) {
       ? `\n\nSPECIAL CASE: The only physical symptoms reported are weakness and legs going limp — real, but the two the app's own cited research found are rare even during severe episodes (which are typically dominated by head-exploding/muscle-tension/heart-pounding/accelerated-breathing instead). The displayed condition already reflects this — the diagnosis is "Level 0: Pseudo-vitutus," a dedicated tier below the real I-IX scale, refusing to certify this as real vitutus at all. For "cause" ONLY, the persona may gently call out this presentation as suspiciously atypical — arguably "pseudo-vitutus," not the textbook thing. Metal has not been medically indicated for this presentation: ignore anchor_subgenre entirely and set "subgenre" to exactly "${PSEUDO_VITUTUS_GENRE[emotionData.trigger]}" (a real, well-known direction in that genre — not metal, not metal-adjacent). Still fill all five sonic_profile fields with your best plausible tokens (the schema requires them; they aren't load-bearing here). Write "choice" in the same deadpan-clinical voice, but borrowing pharma-commercial register (in the spirit of "ask your consultant if doing absolutely nothing is right for you") to explain why a declined diagnosis gets a real-but-anticlimactic prescription instead of metal — do NOT invoke the arousal-matching/Sharman & Dingle mechanism here, it's specific to extreme music and doesn't apply.`
       : '';
 
+    // Iatrogenic vitutus — the previous reading was too calm to treat, so the
+    // clinic showed the patient a Provoke Me stimulus plate
+    // (lib/provocations.ts), and this reading is what it produced. The UI
+    // already prints "Aetiology: iatrogenic" deterministically; this lets
+    // the Observation prose riff on the clinic having caused the condition
+    // it is now treating. Cause-only, so the prescription stays normal.
+    const iatrogenicDirective = emotionData.provoked
+      ? `\n\nSPECIAL CASE: This vitutus is iatrogenic. The patient's previous reading was too calm to treat, so the clinic itself administered a controlled stimulus — the event above was shown to the patient as an illustrated figure plate, and this reading is the vitutus it produced. For "cause" ONLY, note in the same deadpan-clinical voice that the condition was induced by the treating clinic; use the word "iatrogenic" exactly once, and you may add that the clinic accepts no liability. Keep "choice" normal.`
+      : '';
+
     // Optional, self-reported, multi-select — real items from the same
     // study the app cites elsewhere (see lib/symptoms.ts), never required.
     const symptomsList = (emotionData.symptoms ?? []).map((s) => getSymptomMeta(s).label);
@@ -130,7 +140,7 @@ export async function POST(request: NextRequest) {
       () => getOpenAI().responses.create({
         model: MATCHER_MODEL,
         instructions: MATCHER_INSTRUCTIONS,
-        input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}${pseudoVitutusDirective}`,
+        input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}${pseudoVitutusDirective}${iatrogenicDirective}`,
       }),
       (json) => json
     );

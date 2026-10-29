@@ -106,11 +106,12 @@ one no-JSON-drift invariant this section exists to document.
 
 ### UI Architecture
 
-Three screens, orchestrated by `src/app/page.tsx` via a `Step` union
-(`'selection' | 'analysis' | 'descent'`):
+Four screens, orchestrated by `src/app/page.tsx` via a `Step` union
+(`'selection' | 'analysis' | 'provoke' | 'descent'`):
 
 - **`ScreenSelection.tsx`** → `panels/StateOfMindPanel.tsx` — incident text, `ClassificationGrid.tsx` (trigger picker), `IntensitySlider.tsx`, `SymptomChecklist.tsx`, `DurationSelect.tsx`
 - **`ScreenAnalysis.tsx`** — loading/diagnosis view while the Matcher call is in flight (`DiagnosticReceipt.tsx`, `StageHeader.tsx`, `DescentRail.tsx`)
+- **`ScreenProvoke.tsx`** — Provoke Me: one `StimulusPlate.tsx` at a time, "Nyt vituttaa?" yes/no, discharge note after 5 noes. Reached only from the Epicrisis "Referral / 03", which `shouldOfferProvocation()` (`src/lib/provocations.ts`) shows for Level 0 (Pseudo-vitutus) and Stage I. See `docs/data-model.md` §3.1
 - **`ScreenDescent.tsx`** → `panels/ResultsPanel.tsx` — final cause/choice/subgenre + curated artist list; `PrescriptionCalibration.tsx` for the (theatrical, not data-driven) curator-loading calibration display; `ReceiptCard.tsx` for the shareable QR receipt
 
 Shared chrome: `RiteHeader.tsx`. Design tokens (colors, typography, spacing,
@@ -139,6 +140,7 @@ interface EmotionData {
   event: string | null;       // incident text
   symptoms: PhysicalSymptomType[]; // optional, defaults to []
   duration: DurationType | null;   // no default — null until chosen; required by canSubmit before this is ever sent
+  provoked: boolean;               // true when the intake was pre-filled from a Provoke Me stimulus → Matcher adds an iatrogenic note
 }
 ```
 
@@ -291,7 +293,7 @@ will silently drift if the source files change without a corresponding edit.
 ```
 src/
 ├── app/
-│   ├── page.tsx                     # Main UI + orchestration (3-step flow)
+│   ├── page.tsx                     # Main UI + orchestration (selection → analysis → [provoke] → descent)
 │   ├── layout.tsx                   # Meta tags (title: "Sonic Catharsis")
 │   └── api/
 │       ├── matcher/route.ts         # Agent 1: incident+trigger+intensity → subgenre + sonic_profile
@@ -306,13 +308,15 @@ src/
 │   ├── StageHeader.tsx              # Stage Roman numeral + vitutus name header
 │   ├── DescentRail.tsx              # depth rail visualizing stage progression
 │   ├── ReceiptCard.tsx              # shareable QR receipt
+│   ├── StimulusPlate.tsx            # Provoke Me figure plate (drawn SVG or "illustration withheld")
 │   ├── RiteHeader.tsx               # shared top chrome
 │   ├── panels/
 │   │   ├── StateOfMindPanel.tsx     # ScreenSelection's intake panel
 │   │   └── ResultsPanel.tsx         # ScreenDescent's cause/choice/artist display
 │   └── screens/
 │       ├── ScreenSelection.tsx      # Step 1: intake
-│       ├── ScreenAnalysis.tsx       # Step 2: matcher loading/diagnosis
+│       ├── ScreenAnalysis.tsx       # Step 2: matcher loading/diagnosis (+ Provoke Me referral)
+│       ├── ScreenProvoke.tsx        # Provoke Me stimulus loop + discharge note
 │       └── ScreenDescent.tsx        # Step 3: final results
 ├── lib/
 │   ├── validation.ts                # Zod schemas (CRITICAL — read before changing any data shape)
@@ -325,6 +329,7 @@ src/
 │   ├── theme.ts                     # Design tokens + STAGES + getActiveStage() severity formula
 │   ├── symptoms.ts                  # PHYSICAL_SYMPTOMS (optional intake field)
 │   ├── duration.ts                  # DURATION_TIERS (optional intake field)
+│   ├── provocations.ts              # Provoke Me: STIMULI, shouldOfferProvocation(), pickStimuli()
 │   └── utils.ts                     # cn() for className merging
 └── types/
     └── index.ts                     # TypeScript definitions
