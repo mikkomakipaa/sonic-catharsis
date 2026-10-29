@@ -96,6 +96,13 @@ The application uses a **sequential two-agent pipeline** orchestrated from
    - **No code-side candidate pool or dataset anymore.** There used to be a local artist database (`data/artists-complete-genres.json`) pre-filtered by genre-token overlap (`src/lib/artist-library.ts`) to guarantee real, genre-matched artists, but that dataset's genre tagging was too thin (~326 metal artists, mostly generic "metal"/"heavy" tags) to give good matches across the full intensity range. Both the JSON files and `artist-library.ts` have been **deleted**; the Curator now relies entirely on the model's own knowledge, instructed to only name real, existing artists and to return `link: null` rather than a guessed Bandcamp URL.
    - Output: exactly 10 `{ artist, link }` objects (`link` may be `null`)
 
+3. **Seppo, the vittuilubotti** (`/api/vittuilu`, `src/app/api/vittuilu/route.ts`) — optional last resort *outside* the Matcher→Curator pipeline
+   - Reached only from `ScreenProvoke`'s Discharge Note ("Escalate to a human", after all 5 stimuli were declined) → `ScreenVittuilu.tsx` (a live-chat window)
+   - Multi-turn but **stateless**: the client resends the whole transcript (`VittuiluRequestSchema`, `src/lib/validation.ts`); the server derives `turn`/`is_final_turn` itself (cap: `MAX_VITTUILU_USER_MESSAGES` = 6, user text ≤ `MAX_VITTUILU_USER_TEXT` = 300). The opening greeting is hardcoded in the UI, not a model call
+   - Uses `VITTUILUBOTTI_INSTRUCTIONS` (`src/lib/prompts.ts`), `temperature: 1`, `max_output_tokens: 400`. Output `{ reply, end_chat }` (`VittuiluReplySchema`); only those fields leave the server
+   - Persona: a furious "human" support-chat agent insulting the *user* in absurd, hyperbolic terms. Hard limits (no protected-trait insults, no slurs, no realistic threats, self-harm → drop the act and point to help) live in the prompt — keep them when editing. It never receives the intake data or Stage, so it can't leak the diagnosis
+   - Same route rules apply: no payload logging, unauthenticated paid-model route covered by the Vercel WAF rate limit (add this route to that rule)
+
 **Critical Flow**: User Input (incident + trigger + intensity [+ symptoms/duration]) → Matcher (subgenre + sonic_profile + cause/choice) → Curator (10 artists) → UI Display (`ScreenDescent` → `ResultsPanel`)
 
 **There is no `data/` directory anymore.** All emotion→genre calibration
@@ -107,7 +114,7 @@ one no-JSON-drift invariant this section exists to document.
 ### UI Architecture
 
 Four screens, orchestrated by `src/app/page.tsx` via a `Step` union
-(`'selection' | 'analysis' | 'provoke' | 'descent'`):
+(`'selection' | 'analysis' | 'provoke' | 'vittuilu' | 'descent'`):
 
 - **`ScreenSelection.tsx`** → `panels/StateOfMindPanel.tsx` — incident text, `ClassificationGrid.tsx` (trigger picker), `IntensitySlider.tsx`, `SymptomChecklist.tsx`, `DurationSelect.tsx`
 - **`ScreenAnalysis.tsx`** — loading/diagnosis view while the Matcher call is in flight (`DiagnosticReceipt.tsx`, `StageHeader.tsx`, `DescentRail.tsx`)
@@ -297,7 +304,8 @@ src/
 │   ├── layout.tsx                   # Meta tags (title: "Sonic Catharsis")
 │   └── api/
 │       ├── matcher/route.ts         # Agent 1: incident+trigger+intensity → subgenre + sonic_profile
-│       └── curator/route.ts         # Agent 2: subgenre + sonic_profile → 10 artists
+│       ├── curator/route.ts         # Agent 2: subgenre + sonic_profile → 10 artists
+│       └── vittuilu/route.ts        # Seppo the vittuilubotti: stateless multi-turn rant chat
 ├── components/
 │   ├── ClassificationGrid.tsx       # 8-category trigger picker (3x3-ish grid)
 │   ├── IntensitySlider.tsx          # 0-10 (displayed 1-11) intensity slider
@@ -316,7 +324,8 @@ src/
 │   └── screens/
 │       ├── ScreenSelection.tsx      # Step 1: intake
 │       ├── ScreenAnalysis.tsx       # Step 2: matcher loading/diagnosis (+ Provoke Me referral)
-│       ├── ScreenProvoke.tsx        # Provoke Me stimulus loop + discharge note
+│       ├── ScreenProvoke.tsx        # Provoke Me stimulus loop + discharge note (+ "Escalate to a human")
+│       ├── ScreenVittuilu.tsx       # Referral / 04: Seppo live-chat
 │       └── ScreenDescent.tsx        # Step 3: final results
 ├── lib/
 │   ├── validation.ts                # Zod schemas (CRITICAL — read before changing any data shape)

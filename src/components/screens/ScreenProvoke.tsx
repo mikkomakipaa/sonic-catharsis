@@ -22,6 +22,9 @@ interface ScreenProvokeProps {
   stimuli: Stimulus[];
   // "Nyt vituttaa?" → yes: the parent re-opens intake pre-filled from it.
   onConfirm: (stimulus: Stimulus) => void;
+  // Last resort once every stimulus has been declined: hand the patient to
+  // a human (Seppo, the vittuilubotti — see ScreenVittuilu).
+  onEscalate: () => void;
   onBack: () => void;
   onReset: () => void;
 }
@@ -40,7 +43,7 @@ const SECONDARY_BUTTON_STYLE = {
   transition: `all 0.2s ${EASE}`,
 } as const;
 
-export default function ScreenProvoke({ stimuli, onConfirm, onBack, onReset }: ScreenProvokeProps) {
+export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack, onReset }: ScreenProvokeProps) {
   const [index, setIndex] = useState(0);
   const discharged = index >= stimuli.length;
   const stimulus = stimuli[index];
@@ -66,6 +69,19 @@ export default function ScreenProvoke({ stimuli, onConfirm, onBack, onReset }: S
             evidently are able to.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 mt-8 pt-5" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
+            <button
+              onClick={onEscalate}
+              className="px-4 py-2 text-xs font-semibold uppercase tracking-wide rounded-sm active:scale-[0.98]"
+              style={{
+                letterSpacing: '0.05em',
+                color: TREATMENT_ACCENT_TEXT,
+                background: TREATMENT_ACCENT_BG,
+                border: `1px solid ${TREATMENT_ACCENT_BORDER}`,
+                transition: `all 0.2s ${EASE}`,
+              }}
+            >
+              Escalate to a human
+            </button>
             <button
               onClick={onBack}
               className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium uppercase tracking-wide rounded-sm active:scale-[0.98]"
