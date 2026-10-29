@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 258" role="img" aria-labelledby="t d">
+  <title id="t">Fig. 33 — signature, interrupted</title>
+  <desc id="d">A: document. B: pen, empty. C: signature, 40% complete.</desc>
+  <style>.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}.dot{stroke-dasharray:1.5 4}.t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}.solid{fill:#211e1a}.accfill{fill:#a3352a}.wash{fill:rgba(163,53,42,0.18)}.paper{fill:#f1ece0}</style>
+  <rect class="ink thin" x="40" y="25" width="320" height="215"/>
+  <line class="ink thin" x1="60" y1="50" x2="260" y2="50"/>
+  <line class="ink thin" x1="60" y1="64" x2="280" y2="64"/>
+  <line class="ink thin" x1="60" y1="78" x2="300" y2="78"/>
+  <line class="ink thin" x1="60" y1="92" x2="260" y2="92"/>
+  <line class="ink thin" x1="60" y1="106" x2="280" y2="106"/>
+  <line class="ink" x1="80" y1="175" x2="330" y2="175"/>
+  <text class="t" x="80" y="189" font-size="9">Signature</text>
+  <path class="ink" d="M90,168 c6,-26 16,-6 18,-2 s6,-22 16,-10 s4,14 12,4 s12,-18 18,-6 s8,10 16,2 s10,-8 14,0"/>
+  <path class="ink thin dash" d="M184,166 c6,-6 10,2 16,-2 s8,-4 14,0 s8,2 12,0"/>
+  <line class="ink" x1="232" y1="160" x2="318" y2="102"/>
+  <line class="ink" x1="238" y1="164" x2="324" y2="106"/>
+  <line class="ink" x1="232" y1="160" x2="226" y2="168"/>
+  <line class="ink" x1="238" y1="164" x2="226" y2="168"/>
+  <line class="ink" x1="318" y1="102" x2="324" y2="106"/>
+  <line class="acc" x1="88" y1="205" x2="186" y2="205"/>
+  <line class="acc" x1="88" y1="199" x2="88" y2="205"/>
+  <line class="acc" x1="186" y1="199" x2="186" y2="205"/>
+  <text class="t ta" x="125" y="222">40%</text>
+  <text class="t lbl" x="368" y="44">A</text>
+  <line class="ink thin" x1="373" y1="47" x2="360" y2="52"/>
+  <text class="t lbl" x="300" y="140">B</text>
+  <line class="ink thin" x1="305" y1="128" x2="290" y2="126"/>
+  <text class="t lbl ta" x="60" y="222">C</text>
+  <line class="acc thin" x1="65" y1="210" x2="86" y2="206"/>
+</svg>

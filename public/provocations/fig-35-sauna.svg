@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 258" role="img" aria-labelledby="t d">
+  <title id="t">Fig. 35 — sauna, unrequested löyly</title>
+  <desc id="d">A: subject, top bench. B: ladle, 4th pour. C: temperature.</desc>
+  <style>.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}.dot{stroke-dasharray:1.5 4}.t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}.solid{fill:#211e1a}.accfill{fill:#a3352a}.wash{fill:rgba(163,53,42,0.18)}.paper{fill:#f1ece0}</style>
+  <line class="ink" x1="20" y1="215" x2="385" y2="215"/>
+  <line class="ink" x1="200" y1="170" x2="385" y2="170"/>
+  <line class="ink thin" x1="200" y1="170" x2="200" y2="215"/>
+  <line class="ink" x1="260" y1="120" x2="385" y2="120"/>
+  <line class="ink thin" x1="260" y1="120" x2="260" y2="170"/>
+  <rect class="ink" x="35" y="145" width="60" height="70"/>
+  <circle class="ink" cx="42" cy="140" r="5"/>
+  <circle class="ink" cx="52" cy="140" r="5"/>
+  <circle class="ink" cx="62" cy="140" r="5"/>
+  <circle class="ink" cx="72" cy="140" r="5"/>
+  <circle class="ink" cx="82" cy="140" r="5"/>
+  <path class="ink thin" d="M48,128 c-8,-10 8,-16 0,-26 s8,-16 0,-26"/>
+  <path class="ink thin" d="M72,128 c-8,-10 8,-16 0,-26 s8,-16 0,-26"/>
+  <circle class="ink" cx="150" cy="112" r="9"/>
+  <line class="ink" x1="150" y1="121" x2="150" y2="168"/>
+  <line class="ink" x1="150" y1="168" x2="140" y2="214"/>
+  <line class="ink" x1="150" y1="168" x2="160" y2="214"/>
+  <line class="ink" x1="150" y1="134" x2="118" y2="128"/>
+  <line class="ink" x1="118" y1="128" x2="98" y2="128"/>
+  <path class="ink" d="M92,124 a6 6 0 0 0 12,0 z"/>
+  <text class="t ta" x="112" y="116" font-size="10">×4</text>
+  <circle class="ink" cx="318" cy="74" r="9"/>
+  <line class="ink" x1="320" y1="83" x2="326" y2="118"/>
+  <line class="ink" x1="326" y1="118" x2="300" y2="118"/>
+  <line class="ink" x1="300" y1="118" x2="300" y2="168"/>
+  <line class="ink" x1="320" y1="92" x2="304" y2="112"/>
+  <rect class="ink" x="222" y="25" width="16" height="66" rx="8"/>
+  <circle class="ink" cx="230" cy="96" r="7"/>
+  <line class="acc" x1="230" y1="90" x2="230" y2="18"/>
+  <polygon class="acc" points="225,22 230,12 235,22"/>
+  <text class="t ta" x="244" y="30" font-size="10">110°</text>
+  <text class="t lbl" x="345" y="66">A</text>
+  <line class="ink thin" x1="350" y1="69" x2="328" y2="72"/>
+  <text class="t lbl" x="84" y="104">B</text>
+  <line class="ink thin" x1="89" y1="107" x2="96" y2="120"/>
+  <text class="t lbl ta" x="196" y="56">C</text>
+  <line class="acc thin" x1="201" y1="44" x2="220" y2="52"/>
+</svg>

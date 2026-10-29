@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 258" role="img" aria-labelledby="t d">
+  <title id="t">Fig. 26 — flat-pack shelf, assembly complete</title>
+  <desc id="d">A: shelf. B: instructions, step 31 of 31. C: screw, surplus.</desc>
+  <style>.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}.dot{stroke-dasharray:1.5 4}.t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}.solid{fill:#211e1a}.accfill{fill:#a3352a}.wash{fill:rgba(163,53,42,0.18)}.paper{fill:#f1ece0}</style>
+  <g transform="rotate(3 200 215)">
+  <rect class="ink" x="150" y="45" width="100" height="170"/>
+  <line class="ink" x1="150" y1="88" x2="250" y2="88"/>
+  <line class="ink" x1="150" y1="130" x2="250" y2="130"/>
+  <line class="ink" x1="150" y1="172" x2="250" y2="172"/>
+  <line class="ink thin" x1="156" y1="45" x2="156" y2="215"/>
+  <line class="ink thin" x1="244" y1="45" x2="244" y2="215"/>
+  </g>
+  <line class="ink" x1="20" y1="215" x2="385" y2="215"/>
+  <polygon class="ink" points="40,212 75,200 75,188 40,198"/>
+  <polygon class="ink" points="75,200 112,212 112,200 75,188"/>
+  <line class="ink thin" x1="46" y1="203" x2="70" y2="195"/>
+  <line class="ink thin" x1="46" y1="199" x2="70" y2="191"/>
+  <line class="ink thin" x1="46" y1="195" x2="70" y2="187"/>
+  <text class="t" x="80" y="232" font-size="9">31 / 31</text>
+  <line class="ink" x1="304" y1="209" x2="318" y2="209"/>
+  <line class="ink" x1="303" y1="205" x2="303" y2="213"/>
+  <line class="ink thin" x1="307" y1="206" x2="309" y2="212"/>
+  <line class="ink thin" x1="311" y1="206" x2="313" y2="212"/>
+  <line class="ink thin" x1="315" y1="206" x2="317" y2="212"/>
+  <circle class="acc dash" cx="311" cy="209" r="18"/>
+  <text class="t lbl" x="270" y="40">A</text>
+  <line class="ink thin" x1="275" y1="43" x2="250" y2="52"/>
+  <text class="t lbl" x="40" y="175">B</text>
+  <line class="ink thin" x1="45" y1="178" x2="55" y2="192"/>
+  <text class="t lbl ta" x="338" y="186">C</text>
+  <line class="acc thin" x1="343" y1="189" x2="326" y2="198"/>
+</svg>

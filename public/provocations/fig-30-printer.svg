@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 258" role="img" aria-labelledby="t d">
+  <title id="t">Fig. 30 — printer, paper jam (no paper present)</title>
+  <desc id="d">A: display, “PAPER JAM”. B: tray, empty. C: jam, not located.</desc>
+  <style>.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}.dot{stroke-dasharray:1.5 4}.t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}.solid{fill:#211e1a}.accfill{fill:#a3352a}.wash{fill:rgba(163,53,42,0.18)}.paper{fill:#f1ece0}</style>
+  <line class="ink" x1="15" y1="215" x2="385" y2="215"/>
+  <rect class="ink" x="110" y="90" width="180" height="80"/>
+  <polygon class="ink thin" points="110,90 128,40 272,40 290,90"/>
+  <rect class="ink" x="206" y="98" width="76" height="20"/>
+  <text class="t" x="212" y="112" font-size="9">PAPER JAM</text>
+  <polygon class="ink" points="120,170 280,170 300,196 100,196"/>
+  <line class="ink" x1="290" y1="108" x2="322" y2="96"/>
+  <line class="ink" x1="322" y1="96" x2="322" y2="150"/>
+  <line class="ink" x1="322" y1="150" x2="290" y2="160"/>
+  <circle class="acc dash" cx="200" cy="66" r="14"/>
+  <text class="t ta" x="195" y="72" font-size="15">?</text>
+  <circle class="ink" cx="66" cy="150" r="9"/>
+  <line class="ink" x1="70" y1="158" x2="46" y2="186"/>
+  <line class="ink" x1="46" y1="186" x2="62" y2="214"/>
+  <line class="ink" x1="62" y1="214" x2="30" y2="214"/>
+  <line class="ink" x1="64" y1="166" x2="104" y2="186"/>
+  <text class="t lbl" x="296" y="84">A</text>
+  <line class="ink thin" x1="301" y1="87" x2="282" y2="100"/>
+  <text class="t lbl" x="196" y="236">B</text>
+  <line class="ink thin" x1="201" y1="224" x2="200" y2="198"/>
+  <text class="t lbl ta" x="228" y="40">C</text>
+  <line class="acc thin" x1="233" y1="43" x2="212" y2="56"/>
+</svg>
