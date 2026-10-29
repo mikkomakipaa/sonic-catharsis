@@ -15,6 +15,7 @@ import {
 import StageHeader from '@/components/StageHeader';
 import DescentRail from '@/components/DescentRail';
 import DiagnosticReceipt from '@/components/DiagnosticReceipt';
+import type { Stimulus } from '@/lib/provocations';
 
 interface ScreenAnalysisProps {
   stage: Stage;
@@ -26,6 +27,13 @@ interface ScreenAnalysisProps {
   onContinue: () => void;
   onRetry: () => void;
   onBack: () => void;
+  // Provoke Me (lib/provocations.ts): offered only when the reading is too
+  // calm to treat — the parent decides via shouldOfferProvocation().
+  offerProvocation: boolean;
+  onProvoke: () => void;
+  // Set when this reading came from an administered stimulus — shown as an
+  // "iatrogenic" aetiology line under the diagnosis.
+  provokedBy: Stimulus | null;
 }
 
 // Two-tone capsule for the Get Prescription button — flat colors (no
@@ -58,6 +66,9 @@ export default function ScreenAnalysis({
   onContinue,
   onRetry,
   onBack,
+  offerProvocation,
+  onProvoke,
+  provokedBy,
 }: ScreenAnalysisProps) {
   const hasResult = Boolean(cause || choice);
   const isLoading = isAnalyzing || (!hasResult && !error);
@@ -80,6 +91,19 @@ export default function ScreenAnalysis({
             <StageHeader stage={stage} align="left" />
 
             <DescentRail activeStage={stage} />
+
+            {/* Deterministic, not left to the model: if the clinic itself
+                administered the stimulus, the chart says so. The Matcher is
+                told too (see the iatrogenic directive in
+                api/matcher/route.ts) so the Observation can riff on it. */}
+            {provokedBy && !error && (
+              <span
+                className="uppercase text-[11px] max-[640px]:text-[10.5px] mt-1"
+                style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TREATMENT_ACCENT_TEXT }}
+              >
+                Aetiology: iatrogenic (induced by this clinic, Fig. {provokedBy.fig})
+              </span>
+            )}
           </div>
         </>
       )}
@@ -177,6 +201,42 @@ export default function ScreenAnalysis({
               <br />
               Extreme music does not escalate anger; it matches it.
             </p>
+          )}
+
+          {/* Provoke Me referral — only for readings too calm to treat.
+              Sits above Get Prescription: the anticlimactic prescription is
+              still available, this is the clinic offering to do better. */}
+          {offerProvocation && choice && (
+            <div className="mt-6 max-[640px]:mt-4 pt-5 max-[640px]:pt-3" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
+              <span
+                className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+                style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
+              >
+                Referral / 03
+              </span>
+              <p
+                className="m-0 mt-2 max-w-[62ch] text-[15px] max-[640px]:text-[16px] leading-[1.45]"
+                style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
+              >
+                Patient presents as insufficiently vexed. The clinic may administer a controlled stimulus. Side effects may
+                include vitutus.
+              </p>
+              <button
+                onClick={onProvoke}
+                className="mt-3 px-4 py-2 text-xs font-semibold uppercase rounded-sm active:scale-[0.98]"
+                style={{
+                  letterSpacing: '0.06em',
+                  color: TREATMENT_ACCENT_TEXT,
+                  background: 'transparent',
+                  border: `1px solid ${TREATMENT_ACCENT_BORDER}`,
+                  transition: `all 0.2s ${EASE}`,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = TREATMENT_ACCENT_BG)}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+              >
+                Provoke me
+              </button>
+            </div>
           )}
 
           {/* Narrow, centered action — a ritual step, not a form submit
