@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-labelledby="f31t f31d">
+  <title id="f31t">Fig. 31 — Bus "arriving"</title>
+  <desc id="f31d">A bus stop display shows "55, 1 min" at zero, four, eight and twelve minutes. A graph shows the subject's patience falling over time.</desc>
+  <style>
+    .bg{fill:#f1ece0}.ink{stroke:#211e1a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+    .thin{stroke-width:1}.acc{stroke:#a3352a;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.dash{stroke-dasharray:4 4}
+    .t{fill:#211e1a;font-family:'Special Elite','Courier New',monospace;font-size:11px}.lbl{font-size:14px}.ta{fill:#a3352a}
+    .led{fill:#211e1a}.ledt{fill:#f1ece0;font-family:'Courier New',monospace;font-size:13px;font-weight:bold}
+    @media (prefers-color-scheme:dark){.bg{fill:#1b1917}.ink{stroke:#e6dfd0}.acc{stroke:#e0715f}.t{fill:#e6dfd0}.ta{fill:#e0715f}.led{fill:#e6dfd0}.ledt{fill:#1b1917}}
+  </style>
+  <rect class="bg" width="400" height="300"/>
+  <rect class="ink thin" x="6" y="6" width="388" height="288"/>
+
+  <!-- B: display at four intervals -->
+  <text class="t" x="22" y="26" font-size="9">t = 0</text>
+  <text class="t" x="111" y="26" font-size="9">t = 4 min</text>
+  <text class="t" x="200" y="26" font-size="9">t = 8 min</text>
+  <text class="t" x="289" y="26" font-size="9">t = 12 min</text>
+  <rect class="led" x="20" y="32" width="80" height="30"/>
+  <rect class="led" x="109" y="32" width="80" height="30"/>
+  <rect class="led" x="198" y="32" width="80" height="30"/>
+  <rect class="led" x="287" y="32" width="80" height="30"/>
+  <text class="ledt" x="27" y="52">55  1 min</text>
+  <text class="ledt" x="116" y="52">55  1 min</text>
+  <text class="ledt" x="205" y="52">55  1 min</text>
+  <text class="ledt" x="294" y="52">55  1 min</text>
+  <text class="t lbl" x="374" y="52">B</text>
+
+  <!-- C: patience curve -->
+  <line class="ink" x1="50" y1="90" x2="50" y2="220"/>
+  <line class="ink" x1="50" y1="220" x2="230" y2="220"/>
+  <line class="ink thin" x1="50" y1="220" x2="50" y2="226"/>
+  <line class="ink thin" x1="105" y1="220" x2="105" y2="226"/>
+  <line class="ink thin" x1="160" y1="220" x2="160" y2="226"/>
+  <line class="ink thin" x1="215" y1="220" x2="215" y2="226"/>
+  <text class="t" x="47" y="238" font-size="9">0</text>
+  <text class="t" x="102" y="238" font-size="9">4</text>
+  <text class="t" x="157" y="238" font-size="9">8</text>
+  <text class="t" x="209" y="238" font-size="9">12</text>
+  <text class="t" x="236" y="224" font-size="9">min</text>
+  <text class="t" x="22" y="155" font-size="9" transform="rotate(-90 32 155)">PATIENCE</text>
+  <path class="acc" d="M52,96 L105,104 L112,128 L160,138 L166,178 L212,190 L215,216"/>
+  <circle class="acc" cx="215" cy="216" r="2.5"/>
+  <text class="t lbl ta" x="124" y="116">C</text>
+
+  <!-- A: subject at stop -->
+  <line class="ink" x1="270" y1="225" x2="385" y2="225"/>
+  <line class="ink" x1="295" y1="120" x2="295" y2="225"/>
+  <rect class="ink" x="281" y="100" width="28" height="20"/>
+  <text class="t" x="286" y="114" font-size="10">55</text>
+  <circle class="ink" cx="342" cy="150" r="9"/>
+  <line class="ink" x1="341" y1="159" x2="338" y2="192"/>
+  <line class="ink" x1="340" y1="168" x2="330" y2="190"/>
+  <line class="ink" x1="340" y1="168" x2="350" y2="190"/>
+  <line class="ink" x1="338" y1="192" x2="332" y2="224"/>
+  <line class="ink" x1="338" y1="192" x2="346" y2="224"/>
+  <text class="t" x="356" y="138" font-size="10">…</text>
+  <text class="t lbl" x="368" y="166">A</text>
+  <line class="ink thin" x1="366" y1="162" x2="354" y2="156"/>
+
+  <!-- caption -->
+  <text class="t" x="20" y="270" font-size="10">FIG. 31 — Stimulus: bus 55, status "arriving".</text>
+  <text class="t" x="20" y="285" font-size="8.5">A: subject. B: display, four readings. C: patience, observed.</text>
+</svg>
