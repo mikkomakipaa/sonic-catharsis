@@ -116,8 +116,9 @@ by reference, never by `index`.
   "Aetiology: iatrogenic (induced by this clinic, Fig. n)" deterministically,
   and the Matcher's cause text gets an iatrogenic note.
 - Plate art: `public/provocations/*.svg` (light-only, no captions — the
-  caption is HTML in `StimulusPlate.tsx`). Undrawn stimuli render an
-  "Illustration withheld" plate.
+  caption is HTML in `StimulusPlate.tsx`). All 30 are drawn; a future
+  stimulus without `image` renders an "Illustration withheld" plate. New
+  plates in the same style: `docs/design/provoke-me/generate_plates.py`.
 
 Stage is computed from `(intensity, physicalSymptoms, duration)` — see
 [`formulas.md`](./formulas.md) for the exact formula, weights, and its
