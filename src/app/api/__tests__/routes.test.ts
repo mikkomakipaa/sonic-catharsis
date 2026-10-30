@@ -154,8 +154,8 @@ describe('/api/vittuilu', () => {
 
   it('rejects an over-long user message and too many user messages', async () => {
     expect((await send([user('a'.repeat(301))])).status).toBe(400);
-    const seven = Array.from({ length: 7 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
-    expect((await send(seven)).status).toBe(400);
+    const four = Array.from({ length: 4 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
+    expect((await send(four)).status).toBe(400);
     expect(create).not.toHaveBeenCalled();
   });
 
@@ -166,14 +166,14 @@ describe('/api/vittuilu', () => {
     expect(res.status).toBe(200);
     expect(json).toEqual({ reply: 'SIIS MITÄ VITTUA?!', end_chat: false });
     const input = create.mock.calls[0][0].input as string;
-    expect(input).toContain('turn: 2 of 6');
+    expect(input).toContain('turn: 2 of 3');
     expect(input).toContain('is_final_turn: false');
     expect(input).toContain('stimuli_declined: 5');
   });
 
   it('forces end_chat on the final user message even if the model does not', async () => {
     create.mockResolvedValue(ok);
-    const msgs = Array.from({ length: 6 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
+    const msgs = Array.from({ length: 3 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
     const res = await send(msgs);
     expect((await res.json()).end_chat).toBe(true);
     expect(create.mock.calls[0][0].input).toContain('is_final_turn: true');
