@@ -161,6 +161,7 @@ combined values — enforced by `SonicProfileSchema` (Zod `z.enum`).
   symptoms: PhysicalSymptomType[]; // optional, multi-select, defaults to []
   duration: DurationType | null;  // optional, single-select, no default — null until chosen
   provoked?: boolean;      // optional, additive — true when pre-filled from a Provoke Me stimulus (§3.1)
+  chatNote?: string | null; // optional, additive, ≤300 chars — Seppo's `observation_note` on the chat; the Matcher builds the cause text on it
 }
 ```
 

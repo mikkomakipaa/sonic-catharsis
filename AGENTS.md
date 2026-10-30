@@ -151,6 +151,7 @@ interface EmotionData {
   symptoms: PhysicalSymptomType[]; // optional, defaults to []
   duration: DurationType | null;   // no default — null until chosen; required by canSubmit before this is ever sent
   provoked: boolean;               // true when the intake was pre-filled from a Provoke Me stimulus → Matcher adds an iatrogenic note
+  chatNote?: string;               // Seppo's observation_note on the chat (final-turn assessment); Matcher builds the cause text on it, iatrogenic becomes an aside
 }
 ```
 

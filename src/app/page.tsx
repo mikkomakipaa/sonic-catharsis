@@ -45,6 +45,8 @@ interface AssistantInput {
   symptoms: PhysicalSymptomType[];
   duration: DurationType | null;
   provoked: boolean;
+  // Seppo's note on the chat, when the intake came from his verdict.
+  chatNote?: string;
 }
 
 interface Reading {
@@ -71,6 +73,8 @@ interface EmotionData {
   // True when this intake was pre-filled from a Provoke Me stimulus — the
   // Matcher then treats the vitutus as iatrogenic. See lib/provocations.ts.
   provoked: boolean;
+  // Seppo's note on the chat; only the Matcher reads it. See lib/validation.ts.
+  chatNote?: string;
 }
 
 export default function Home() {
@@ -180,6 +184,7 @@ export default function Home() {
       symptoms: input.symptoms,
       duration: input.duration,
       provoked: input.provoked,
+      chatNote: input.chatNote,
     };
 
     try {
@@ -343,7 +348,7 @@ export default function Home() {
 
     const reading = await startAssistant({
       stepAfter: 'descent',
-      input: { selection: sel, incidentText: assessment.incident, symptoms: assessment.symptoms, duration: assessment.duration, provoked: true },
+      input: { selection: sel, incidentText: assessment.incident, symptoms: assessment.symptoms, duration: assessment.duration, provoked: true, chatNote: assessment.observation_note },
     });
     if (!reading) {
       setStep('analysis');
