@@ -21,7 +21,9 @@ interface ScreenVittuiluProps {
   // them in his first reply.
   intake: VittuiluIntake;
   // "Joko vituttaa?" after the chat: re-assess, pre-filled from the chat.
-  onConfirm: () => void;
+  // Receives Seppo's note on the chat (if he filed one) so the fallback path
+  // can still hand it to the Matcher.
+  onConfirm: (note?: string) => void;
   // Seppo's verdict on his last message: after a short delay the app files
   // it as the assessment and goes straight to the prescription.
   onAssessed: (assessment: VittuiluAssessment) => void;
@@ -94,6 +96,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
   const [isSending, setIsSending] = useState(false);
   const [ended, setEnded] = useState(false);
   const [assessment, setAssessment] = useState<VittuiluAssessment | null>(null);
+  const [note, setNote] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -139,6 +142,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
       setMessages([...next, { role: 'seppo', text: data.reply }]);
       if (data.end_chat) setEnded(true);
       if (data.assessment) setAssessment(data.assessment);
+      if (typeof data.observation_note === 'string') setNote(data.observation_note);
     } catch (e) {
       // Roll the failed turn back so the user can resend it unchanged.
       setMessages(messages);
@@ -245,7 +249,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
             </div>
           )}
           {!assessment && <button
-            onClick={onConfirm}
+            onClick={() => onConfirm(note)}
             className="w-full max-w-[280px] py-3.5 font-semibold text-sm uppercase rounded-lg active:scale-[0.98]"
             style={{
               transition: `all 0.2s ${EASE}`,

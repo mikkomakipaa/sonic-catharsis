@@ -362,7 +362,7 @@ export default function Home() {
   // are no symptoms, and the intake is submitted straight to the analysis, so
   // the patient lands on the diagnosis instead of a pre-filled form. If the
   // assessor is unavailable, fall back to the pre-filled form.
-  const acceptStimulus = async (stimulus: Stimulus) => {
+  const acceptStimulus = async (stimulus: Stimulus, chatNote?: string) => {
     goBackToSelection();
     setStep('analysis');
     setIsAnalyzing(true);
@@ -384,7 +384,7 @@ export default function Home() {
       setDuration('just_now');
       setProvokedBy(stimulus);
       await startAssistant({
-        input: { selection: sel, incidentText: stimulus.incident, symptoms: [], duration: 'just_now', provoked: true },
+        input: { selection: sel, incidentText: stimulus.incident, symptoms: [], duration: 'just_now', provoked: true, chatNote },
       });
     } catch (error) {
       console.error('Error assessing stimulus:', error);
@@ -492,7 +492,7 @@ export default function Home() {
               symptoms,
               duration,
             }}
-            onConfirm={() => void acceptStimulus(SEPPO_STIMULUS)}
+            onConfirm={(note) => void acceptStimulus(SEPPO_STIMULUS, note)}
             onAssessed={(a) => void prescribeFromSeppo(a)}
             onBack={() => setStep(provokeOrigin)}
             onReset={resetSelections}

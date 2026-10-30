@@ -83,16 +83,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Seppo is unavailable' }, { status: 500 });
     }
 
-    if ((isFinalTurn || result.end_chat) && result.assessment && !result.assessment.observation_note) {
+    if ((isFinalTurn || result.end_chat) && result.assessment && !result.observation_note) {
       console.warn('Vittuilu: final assessment carried no observation_note');
     }
+
+    // Only the closing message carries a verdict, with Seppo's note attached.
+    // Absent (e.g. the self-harm drop-out) the client falls back to the manual button.
+    const ended = isFinalTurn || result.end_chat;
+    const verdict = ended && result.assessment
+      ? { ...result.assessment, ...(result.observation_note ? { observation_note: result.observation_note } : {}) }
+      : null;
 
     return NextResponse.json({
       reply: result.reply,
       end_chat: isFinalTurn || result.end_chat,
-      // Only the closing message carries a verdict. Absent (e.g. the
-      // self-harm drop-out) the client falls back to the manual button.
-      assessment: isFinalTurn || result.end_chat ? result.assessment ?? null : null,
+      assessment: verdict,
+      // Also sent on its own: when the model botches the verdict object, the
+      // manual "re-assess me" path still carries the note to the Observation.
+      ...(ended && result.observation_note ? { observation_note: result.observation_note } : {}),
     });
   } catch (error) {
     console.error('Vittuilu API error:', error);

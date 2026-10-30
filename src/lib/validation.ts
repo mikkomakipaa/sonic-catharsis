@@ -193,16 +193,6 @@ export const VittuiluAssessmentSchema = z.object({
   // One first-person sentence in the patient's voice, fed to the Matcher
   // as the incident text.
   incident: z.string().trim().min(1).max(500),
-  // Seppo's clinical note on how the patient behaved in the chat. Rides along
-  // to the Matcher so the Observation can use the conversation, not only the
-  // iatrogenic flag. Optional: a missing or malformed note degrades to
-  // undefined and never costs the patient the verdict.
-  // Over-length is cut to fit rather than dropped, since the model drifts past
-  // the limit it is given far more often than it omits the note.
-  observation_note: z
-    .preprocess((v) => (typeof v === 'string' ? v.trim().slice(0, 300) : v), z.string().min(1))
-    .optional()
-    .catch(undefined),
 });
 
 // Stimulus assessment ("Joko vituttaa?" → yes): the stimulus only supplies a
@@ -225,9 +215,16 @@ export const VittuiluReplySchema = z.object({
   // A malformed verdict must never cost the patient Seppo's reply: it
   // degrades to null and the client falls back to the manual button.
   assessment: VittuiluAssessmentSchema.nullable().optional().catch(null),
+  // Seppo's clinical note on how the patient behaved in the chat, a separate
+  // top-level key so the model never mistakes the verdict object for prose.
+  // The route attaches it to the assessment. Over-length is cut to fit rather
+  // than dropped; anything that isn't a string is ignored.
+  observation_note: z
+    .preprocess((v) => (typeof v === 'string' ? v.trim().slice(0, 300) : undefined), z.string().min(1).optional())
+    .catch(undefined),
 });
 
-export type VittuiluAssessment = z.infer<typeof VittuiluAssessmentSchema>;
+export type VittuiluAssessment = z.infer<typeof VittuiluAssessmentSchema> & { observation_note?: string };
 
 export type VittuiluMessage = z.infer<typeof VittuiluMessageSchema>;
 export type VittuiluIntake = z.input<typeof VittuiluIntakeSchema>;
