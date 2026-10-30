@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import type { VittuiluMessage } from '@/lib/validation';
+import type { VittuiluIntake, VittuiluMessage } from '@/lib/validation';
 import { MAX_VITTUILU_USER_MESSAGES, MAX_VITTUILU_USER_TEXT } from '@/lib/validation';
 import {
   EASE,
@@ -17,6 +17,9 @@ import {
 } from '@/lib/theme';
 
 interface ScreenVittuiluProps {
+  // The assessment-page answers, sent with every request so Seppo can use
+  // them in his first reply.
+  intake: VittuiluIntake;
   // "Nyt vituttaa?" after the chat: re-assess, pre-filled from the chat.
   onConfirm: () => void;
   onBack: () => void;
@@ -78,7 +81,7 @@ function TypingIndicator() {
   );
 }
 
-export default function ScreenVittuilu({ onConfirm, onBack, onReset }: ScreenVittuiluProps) {
+export default function ScreenVittuilu({ intake, onConfirm, onBack, onReset }: ScreenVittuiluProps) {
   const [greeted, setGreeted] = useState(false);
   const [messages, setMessages] = useState<VittuiluMessage[]>([]);
   const [draft, setDraft] = useState('');
@@ -112,7 +115,7 @@ export default function ScreenVittuilu({ onConfirm, onBack, onReset }: ScreenVit
       const res = await fetch('/api/vittuilu', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify({ intake, messages: next }),
       });
       const data = await res.json();
       if (!res.ok || data.error || typeof data.reply !== 'string') {

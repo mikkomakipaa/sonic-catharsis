@@ -146,7 +146,21 @@ export const VittuiluMessageSchema = z.object({
   text: z.string().trim().min(1).max(MAX_VITTUILU_REPLY_TEXT),
 });
 
+// What the patient already told the assessment page (the intake form). Sent
+// once with every request (the route is stateless) and used by Seppo as
+// ammunition, mainly in his first reply. Every field is optional: the form
+// only requires a trigger, and a re-assessment can leave any of it empty.
+// The diagnosis Stage is deliberately NOT part of this.
+export const VittuiluIntakeSchema = z.object({
+  event: z.string().max(500).nullable().optional(),
+  trigger: z.enum(TriggerTypes).nullable().optional(),
+  intensity: z.number().min(0).max(10).nullable().optional(),
+  symptoms: z.array(z.enum(PhysicalSymptomTypes)).max(PhysicalSymptomTypes.length).optional().default([]),
+  duration: z.enum(DurationTypes).nullable().optional(),
+});
+
 export const VittuiluRequestSchema = z.object({
+  intake: VittuiluIntakeSchema.optional(),
   messages: z
     .array(VittuiluMessageSchema)
     .min(1)
@@ -171,6 +185,7 @@ export const VittuiluReplySchema = z.object({
 });
 
 export type VittuiluMessage = z.infer<typeof VittuiluMessageSchema>;
+export type VittuiluIntake = z.input<typeof VittuiluIntakeSchema>;
 
 // Validation helper function
 export function validateRequest<T>(schema: z.ZodSchema<T>, data: unknown): {

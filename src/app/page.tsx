@@ -387,6 +387,13 @@ export default function Home() {
 
         {step === 'vittuilu' && (
           <ScreenVittuilu
+            intake={{
+              event: incidentText.trim() || null,
+              trigger: selection?.trigger ?? null,
+              intensity: selection?.intensity ?? null,
+              symptoms,
+              duration,
+            }}
             onConfirm={() => acceptStimulus(SEPPO_STIMULUS)}
             onBack={() => setStep('analysis')}
             onReset={resetSelections}
