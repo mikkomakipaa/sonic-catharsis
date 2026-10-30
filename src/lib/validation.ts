@@ -191,6 +191,18 @@ export const VittuiluAssessmentSchema = z.object({
   incident: z.string().trim().min(1).max(500),
 });
 
+// Stimulus assessment ("Nyt vituttaa?" → yes): the stimulus only supplies a
+// trigger and an incident, so the model reads off how annoyed the patient is
+// and the app submits straight to the analysis instead of pre-filling the
+// intake form. Duration ("just now") and symptoms (none) aren't asked of it.
+export const AssessRequestSchema = z.object({
+  trigger: z.enum(TriggerTypes),
+  incident: z.string().trim().min(1).max(500),
+});
+export const AssessReplySchema = z.object({
+  intensity: z.number().min(0).max(10).transform((n) => Math.round(n)),
+});
+
 // Vittuilubotti OUTPUT contract. Only `reply`, `end_chat` and (on the final
 // turn) `assessment` leave the server.
 export const VittuiluReplySchema = z.object({
