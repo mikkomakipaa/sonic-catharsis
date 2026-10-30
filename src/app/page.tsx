@@ -8,6 +8,7 @@ import ScreenSelection from '@/components/screens/ScreenSelection';
 import ScreenAnalysis from '@/components/screens/ScreenAnalysis';
 import ScreenDescent from '@/components/screens/ScreenDescent';
 import ScreenProvoke from '@/components/screens/ScreenProvoke';
+import ScreenVittuilu from '@/components/screens/ScreenVittuilu';
 import { Stimulus, pickStimuli, shouldOfferProvocation } from '@/lib/provocations';
 import {
   MAX_STRESS_INTENSITY,
@@ -16,7 +17,7 @@ import {
 } from '@/lib/theme';
 
 type ArtistItem = string | { artist?: string; name?: string; link?: string };
-type Step = 'selection' | 'analysis' | 'provoke' | 'descent';
+type Step = 'selection' | 'analysis' | 'provoke' | 'vittuilu' | 'descent';
 
 // The clinical loading documents are intentional feedback, not a flash of
 // chrome. Fast model responses stay visible long enough to complete their
@@ -378,6 +379,14 @@ export default function Home() {
           <ScreenProvoke
             stimuli={provokeStimuli}
             onConfirm={acceptStimulus}
+            onEscalate={() => setStep('vittuilu')}
+            onBack={() => setStep('analysis')}
+            onReset={resetSelections}
+          />
+        )}
+
+        {step === 'vittuilu' && (
+          <ScreenVittuilu
             onBack={() => setStep('analysis')}
             onReset={resetSelections}
           />

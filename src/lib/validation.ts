@@ -131,6 +131,47 @@ export const CuratorArtistSchema = z.object({
 
 export const CuratorArtistsSchema = z.array(CuratorArtistSchema).min(1).max(15);
 
+// Vittuilubotti ("Seppo", the last-resort live-chat agent after Provoke Me's
+// five noes — see VITTUILUBOTTI_INSTRUCTIONS in lib/prompts.ts). The route is
+// stateless: the client sends the whole transcript every turn, and the SERVER
+// derives the turn number and the final-turn flag from it, so a client can't
+// skip the cap. The opening greeting is hardcoded in the UI and is not part
+// of the transcript.
+export const MAX_VITTUILU_USER_MESSAGES = 6;
+export const MAX_VITTUILU_USER_TEXT = 300;
+export const MAX_VITTUILU_REPLY_TEXT = 800;
+
+export const VittuiluMessageSchema = z.object({
+  role: z.enum(['user', 'seppo']),
+  text: z.string().trim().min(1).max(MAX_VITTUILU_REPLY_TEXT),
+});
+
+export const VittuiluRequestSchema = z.object({
+  messages: z
+    .array(VittuiluMessageSchema)
+    .min(1)
+    .max(MAX_VITTUILU_USER_MESSAGES * 2)
+    .superRefine((messages, ctx) => {
+      if (messages[messages.length - 1].role !== 'user') {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Last message must be from the user' });
+      }
+      if (messages.some((m) => m.role === 'user' && m.text.length > MAX_VITTUILU_USER_TEXT)) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: `User messages are capped at ${MAX_VITTUILU_USER_TEXT} characters` });
+      }
+      if (messages.filter((m) => m.role === 'user').length > MAX_VITTUILU_USER_MESSAGES) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Too many user messages' });
+      }
+    }),
+});
+
+// Vittuilubotti OUTPUT contract. Only `reply` and `end_chat` leave the server.
+export const VittuiluReplySchema = z.object({
+  reply: z.string().trim().min(1).max(MAX_VITTUILU_REPLY_TEXT),
+  end_chat: z.boolean().optional().default(false),
+});
+
+export type VittuiluMessage = z.infer<typeof VittuiluMessageSchema>;
+
 // Validation helper function
 export function validateRequest<T>(schema: z.ZodSchema<T>, data: unknown): {
   success: boolean;
