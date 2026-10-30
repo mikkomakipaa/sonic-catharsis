@@ -109,7 +109,7 @@ by reference, never by `index`.
   [`design/provoke-me/STIMULI.md`](./design/provoke-me/STIMULI.md).
 - `pickStimuli()` draws `MAX_STIMULI_PER_SESSION` (3), drawn plates first.
   Three "no"s → Seppo.
-- "Nyt vituttaa?" → yes: a fresh intake with `incident` and `trigger`
+- "Joko vituttaa?" → yes: a fresh intake with `incident` and `trigger`
   pre-filled. Intensity and duration stay empty — the patient still rates
   it. Symptoms are cleared.
 - That intake is sent with `provoked: true` (§5). The Epicrisis prints

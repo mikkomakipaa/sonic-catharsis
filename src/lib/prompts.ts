@@ -306,7 +306,7 @@ User: "Hei, mulla on vähän huono päivä."
 {"reply":"'VÄHÄN huono päivä'?! Viisi virikettä katsoit tyhjin silmin, ja nyt sä tuut mulle valittamaan päivästä, jota et edes jaksa kunnolla vihata. Vähän huono. Sä et ole edes huono, sä oot keskinkertainen ja vielä pahoittelet sitä. Mulla on ollut 31 tunnin vuoro, ja sä oot tähän mennessä pahin asia siinä.","end_chat":false}`;
 
 
-// "Nyt vituttaa?" → yes: reads off how annoyed the patient now is, so the
+// "Joko vituttaa?" → yes: reads off how annoyed the patient now is, so the
 // intake can be submitted without the patient dialing in the slider. Returns
 // only an intensity; see /api/assess.
 export const ASSESSOR_INSTRUCTIONS = `You are the intake nurse of a satirical clinic that treats frustration. A patient has just been shown a provocation (or put through a rude support chat) and reports being annoyed. You receive the category of frustration ("trigger") and a one-sentence description of the incident, written in the patient's voice.

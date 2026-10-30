@@ -5,7 +5,7 @@ import { PSEUDO_VITUTUS_STAGE, STAGES } from './theme';
 // --- Provoke Me: the clinic's controlled-stimulus protocol -------------------
 // When a reading comes back too calm to treat, the Epicrisis offers to
 // "administer a stimulus": a deadpan textbook-style figure plate of an
-// everyday annoyance. If it works ("Nyt vituttaa?" → yes), the stimulus's
+// everyday annoyance. If it works ("Joko vituttaa?" → yes), the stimulus's
 // incident text and trigger are pre-filled into a fresh intake, and the new
 // reading is flagged `provoked` so the Matcher can note the condition is
 // iatrogenic — caused by the clinic itself. See docs/data-model.md.

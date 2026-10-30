@@ -308,7 +308,7 @@ export default function Home() {
     setStep('provoke');
   };
 
-  // "Nyt vituttaa?" → yes: a fresh intake pre-filled from the stimulus. The
+  // "Joko vituttaa?" → yes: a fresh intake pre-filled from the stimulus. The
   // patient still dials in intensity and duration themselves — the clinic
   // provides the grievance, not the reading. Symptoms are cleared so the
   // previous (possibly pseudo-vitutus) profile doesn't pin the new reading.
@@ -348,7 +348,7 @@ export default function Home() {
     await beginDescent(reading);
   };
 
-  // "Nyt vituttaa?" → yes. The stimulus gives trigger + incident; the
+  // "Joko vituttaa?" → yes. The stimulus gives trigger + incident; the
   // assessor model reads off the intensity, duration is "just now" and there
   // are no symptoms, and the intake is submitted straight to the analysis, so
   // the patient lands on the diagnosis instead of a pre-filled form. If the
