@@ -9,12 +9,31 @@ import { VITTUILUBOTTI_INSTRUCTIONS } from '@/lib/prompts';
 import { createWithRetry } from '@/lib/openai-response';
 import { getOpenAI } from '@/lib/openai-client';
 import { MAX_STIMULI_PER_SESSION } from '@/lib/provocations';
+import { getTriggerMeta } from '@/lib/trigger';
+import { getSymptomMeta } from '@/lib/symptoms';
+import { getDurationMeta } from '@/lib/duration';
+import type { VittuiluIntake } from '@/lib/validation';
 
 const VITTUILU_MODEL = 'gpt-4.1';
 
 // Newlines are flattened so a user message can't forge a "Seppo:" line in
 // the transcript the model reads.
 const oneLine = (text: string) => text.replace(/\s+/g, ' ').trim();
+
+// Renders the assessment-page answers as flat "key: value" lines for the
+// model. Free text is flattened like the transcript; the rest comes from
+// closed vocabularies. Returns '' when the patient gave nothing.
+function renderIntake(intake: VittuiluIntake | undefined): string {
+  if (!intake) return '';
+  const lines: string[] = [];
+  const event = intake.event ? oneLine(intake.event) : '';
+  if (event) lines.push(`intake_incident: ${event}`);
+  if (intake.trigger) lines.push(`intake_trigger: ${getTriggerMeta(intake.trigger).label}`);
+  if (typeof intake.intensity === 'number') lines.push(`intake_intensity: ${intake.intensity} of 10`);
+  if (intake.symptoms?.length) lines.push(`intake_symptoms: ${intake.symptoms.map((s) => getSymptomMeta(s).label).join(', ')}`);
+  if (intake.duration) lines.push(`intake_duration: ${getDurationMeta(intake.duration).label}`);
+  return lines.length ? `${lines.join('\n')}\n` : '';
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,7 +49,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    const { messages } = validation.data!;
+    const { messages, intake } = validation.data!;
 
     // Turn number and the final-turn flag are derived here, never trusted
     // from the client — the cap is what bounds the cost of this route.
@@ -49,7 +68,7 @@ export async function POST(request: NextRequest) {
       () => getOpenAI().responses.create({
         model: VITTUILU_MODEL,
         instructions: VITTUILUBOTTI_INSTRUCTIONS,
-        input: `stimuli_declined: ${MAX_STIMULI_PER_SESSION}\nturn: ${turn} of ${MAX_VITTUILU_USER_MESSAGES}\nis_final_turn: ${isFinalTurn}\ntranscript:\n${transcript}`,
+        input: `stimuli_declined: ${MAX_STIMULI_PER_SESSION}\nturn: ${turn} of ${MAX_VITTUILU_USER_MESSAGES}\nis_final_turn: ${isFinalTurn}\n${renderIntake(intake)}transcript:\n${transcript}`,
         temperature: 1,
         max_output_tokens: 400,
       }),
