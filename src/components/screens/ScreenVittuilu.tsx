@@ -20,7 +20,7 @@ interface ScreenVittuiluProps {
   // The assessment-page answers, sent with every request so Seppo can use
   // them in his first reply.
   intake: VittuiluIntake;
-  // "Nyt vituttaa?" after the chat: re-assess, pre-filled from the chat.
+  // "Joko vituttaa?" after the chat: re-assess, pre-filled from the chat.
   onConfirm: () => void;
   // Seppo's verdict on his last message: after a short delay the app files
   // it as the assessment and goes straight to the prescription.
@@ -237,7 +237,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
           ) : (
             <div className="text-center">
               <p className="m-0 text-[22px] font-bold" style={{ color: TEXT_PRIMARY }} lang="fi">
-                Nyt vituttaa?
+                Joko vituttaa?
               </p>
               <p className="m-0 mt-1 text-[13px]" style={{ color: TEXT_SECONDARY }}>
                 Report any change in condition following the consultation.

@@ -19,7 +19,7 @@ interface ScreenProvokeProps {
   // This session's stimuli, already picked (see pickStimuli()). Shown one
   // at a time; declining the last one hands the patient straight to Seppo.
   stimuli: Stimulus[];
-  // "Nyt vituttaa?" → yes: the parent re-opens intake pre-filled from it.
+  // "Joko vituttaa?" → yes: the parent re-opens intake pre-filled from it.
   onConfirm: (stimulus: Stimulus) => void;
   // Called when the last stimulus is declined: hand the patient to
   // a human (Seppo, the vittuilubotti — see ScreenVittuilu).
@@ -61,7 +61,7 @@ export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack }
 
           <div className="mt-7 max-[640px]:mt-5 text-center">
             <p className="m-0 text-[22px] font-bold" style={{ color: TEXT_PRIMARY }} lang="fi">
-              Nyt vituttaa?
+              Joko vituttaa?
             </p>
             <p className="m-0 mt-1 text-[13px]" style={{ color: TEXT_SECONDARY }}>
               Observe the plate. Report any change in condition.
