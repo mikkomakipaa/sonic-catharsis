@@ -43,7 +43,7 @@ that stimulus; the chart then records the vitutus as *iatrogenic*.
 
 Decline all three and you are escalated to **Seppo**, a furious "human"
 live-chat agent who insults you for up to three messages, then files an
-assessment of you; you press the assess button to take it to the prescription. Seppo's hard limits
+assessment of you; you press the assess button to see the diagnosis, then Get Prescription for the artists. Seppo's hard limits
 (no protected-trait insults, no slurs, no realistic threats, self-harm drops
 the act) live in his prompt.
 
