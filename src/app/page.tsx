@@ -9,7 +9,7 @@ import ScreenAnalysis from '@/components/screens/ScreenAnalysis';
 import ScreenDescent from '@/components/screens/ScreenDescent';
 import ScreenProvoke from '@/components/screens/ScreenProvoke';
 import ScreenVittuilu from '@/components/screens/ScreenVittuilu';
-import { Stimulus, pickStimuli, shouldOfferProvocation } from '@/lib/provocations';
+import { SEPPO_STIMULUS, Stimulus, pickStimuli, shouldOfferProvocation } from '@/lib/provocations';
 import {
   MAX_STRESS_INTENSITY,
   getActiveStage,
@@ -387,6 +387,7 @@ export default function Home() {
 
         {step === 'vittuilu' && (
           <ScreenVittuilu
+            onConfirm={() => acceptStimulus(SEPPO_STIMULUS)}
             onBack={() => setStep('analysis')}
             onReset={resetSelections}
           />

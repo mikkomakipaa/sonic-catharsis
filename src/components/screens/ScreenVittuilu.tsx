@@ -17,6 +17,8 @@ import {
 } from '@/lib/theme';
 
 interface ScreenVittuiluProps {
+  // "Nyt vituttaa?" after the chat: re-assess, pre-filled from the chat.
+  onConfirm: () => void;
   onBack: () => void;
   onReset: () => void;
 }
@@ -76,7 +78,7 @@ function TypingIndicator() {
   );
 }
 
-export default function ScreenVittuilu({ onBack, onReset }: ScreenVittuiluProps) {
+export default function ScreenVittuilu({ onConfirm, onBack, onReset }: ScreenVittuiluProps) {
   const [greeted, setGreeted] = useState(false);
   const [messages, setMessages] = useState<VittuiluMessage[]>([]);
   const [draft, setDraft] = useState('');
@@ -208,7 +210,32 @@ export default function ScreenVittuilu({ onBack, onReset }: ScreenVittuiluProps)
           </div>
         </form>
       ) : (
-        <div className="flex flex-wrap items-center justify-center gap-3 mt-8 pt-5" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
+        <div className="flex flex-col items-center gap-4 mt-8 pt-5" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
+          <div className="text-center">
+            <p className="m-0 text-[22px] font-bold" style={{ color: TEXT_PRIMARY }} lang="fi">
+              Nyt vituttaa?
+            </p>
+            <p className="m-0 mt-1 text-[13px]" style={{ color: TEXT_SECONDARY }}>
+              Report any change in condition following the consultation.
+            </p>
+          </div>
+          <button
+            onClick={onConfirm}
+            className="w-full max-w-[280px] py-3.5 font-semibold text-sm uppercase rounded-lg active:scale-[0.98]"
+            style={{
+              transition: `all 0.2s ${EASE}`,
+              letterSpacing: '0.08em',
+              background: TREATMENT_ACCENT_BG,
+              color: TREATMENT_ACCENT_TEXT,
+              border: `1px solid ${TREATMENT_ACCENT_BORDER}`,
+              boxShadow: `0 2px 6px -2px ${TREATMENT_ACCENT_BORDER}40`,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = TREATMENT_ACCENT_BG_HOVER)}
+            onMouseLeave={(e) => (e.currentTarget.style.background = TREATMENT_ACCENT_BG)}
+          >
+            Yes. Re-assess me
+          </button>
+          <div className="flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={onBack}
             className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium uppercase tracking-wide rounded-sm active:scale-[0.98]"
@@ -224,6 +251,7 @@ export default function ScreenVittuilu({ onBack, onReset }: ScreenVittuiluProps)
           >
             New Intake
           </button>
+          </div>
         </div>
       )}
 
