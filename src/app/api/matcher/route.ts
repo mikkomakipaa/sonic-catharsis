@@ -85,6 +85,16 @@ export async function POST(request: NextRequest) {
       ? `\n\nSPECIAL CASE: The event description is trivial ("${trimmedEvent || 'nothing typed at all'}") yet the header shows the most severe diagnosis. For "cause" ONLY, do not invent drama about the event — instead call out this exact mismatch directly, in the same dark comic voice: how little was given versus how much the app is dramatizing it. Keep "choice" normal.`
       : '';
 
+    // The incident field is optional. With nothing typed, the Matcher would
+    // otherwise invent a specific grievance (an office, a colleague, a slide
+    // deck) and present it as the patient's own. Keep it to what is actually
+    // known — the category, severity, symptoms and duration — and make the
+    // vagueness itself the joke. Skipped when the gap directive already
+    // handles the empty-and-severe case.
+    const noIncidentDirective = !trimmedEvent && !isGapMoment
+      ? `\n\nSPECIAL CASE: The patient wrote nothing about the incident. For "cause" ONLY, do NOT invent a specific event, place, person or object — no offices, colleagues, meetings or other details the patient never gave. Work only from the trigger category, severity, symptoms and duration, and you may note, in the same dark comic voice, that the patient declined to describe the incident. Keep "choice" normal.`
+      : '';
+
     // "Pseudo-vitutus" — the real Vitutusviisari study found severe vitutus
     // is characterized by sympathetic-activation symptoms (head exploding,
     // muscle tension, heart pounding, accelerated breathing); weakness and
@@ -140,7 +150,7 @@ export async function POST(request: NextRequest) {
       () => getOpenAI().responses.create({
         model: MATCHER_MODEL,
         instructions: MATCHER_INSTRUCTIONS,
-        input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}${pseudoVitutusDirective}${iatrogenicDirective}`,
+        input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}${noIncidentDirective}${pseudoVitutusDirective}${iatrogenicDirective}`,
       }),
       (json) => json
     );

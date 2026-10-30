@@ -105,6 +105,16 @@ export default function StateOfMindPanel({
     return () => cancelAnimationFrame(frame);
   }, [selection]);
 
+  // What still blocks submission, in the order the form asks for it. Only
+  // meaningful once a category exists (the submit area doesn't mount before).
+  const missingStep = !selection
+    ? null
+    : selection.intensity === null
+      ? 'Dial in how bad it is to continue.'
+      : duration === null
+        ? 'Say how long it has been festering to continue.'
+        : null;
+
   return (
     <div className="flex flex-col items-center">
       {/* Document identifier, matching the Epicrisis screen's "Clinical Note
@@ -250,9 +260,10 @@ export default function StateOfMindPanel({
             <button
               onClick={onSubmit}
               disabled={!canSubmit}
+              aria-describedby={missingStep ? 'submit-hint' : undefined}
               className={cn(
                 "px-10 py-4 font-semibold text-sm uppercase tracking-wide transition-all duration-200 flex items-center justify-center gap-2 rounded-lg active:scale-[0.98]",
-                canSubmit ? undefined : "cursor-not-allowed"
+                canSubmit ? undefined : "cursor-not-allowed opacity-50"
               )}
               style={{
                 transition: `all 0.2s ${EASE}`,
@@ -276,6 +287,11 @@ export default function StateOfMindPanel({
                 </>
               )}
             </button>
+            {missingStep && !isProcessing && (
+              <p id="submit-hint" className="text-center mt-2 text-[11px] max-[640px]:text-[12px]" style={{ color: TEXT_TERTIARY }}>
+                {missingStep}
+              </p>
+            )}
           </div>
         </div>
       )}
