@@ -159,12 +159,12 @@ describe('/api/vittuilu', () => {
     expect(create).not.toHaveBeenCalled();
   });
 
-  it('returns only reply and end_chat, and derives the turn server-side', async () => {
+  it('returns only reply, end_chat and no assessment mid-chat, and derives the turn server-side', async () => {
     create.mockResolvedValue(ok);
     const res = await send([user('hei'), seppo('vittu'), user('moi taas')]);
     const json = await res.json();
     expect(res.status).toBe(200);
-    expect(json).toEqual({ reply: 'SIIS MITÄ VITTUA?!', end_chat: false });
+    expect(json).toEqual({ reply: 'SIIS MITÄ VITTUA?!', end_chat: false, assessment: null });
     const input = create.mock.calls[0][0].input as string;
     expect(input).toContain('turn: 2 of 3');
     expect(input).toContain('is_final_turn: false');
@@ -177,6 +177,19 @@ describe('/api/vittuilu', () => {
     const res = await send(msgs);
     expect((await res.json()).end_chat).toBe(true);
     expect(create.mock.calls[0][0].input).toContain('is_final_turn: true');
+  });
+
+  it('returns Seppo\'s assessment on the final turn only, and drops an invalid one', async () => {
+    const assessment = { trigger: 'conflict', intensity: 7, symptoms: ['muscle_tension'], duration: 'about_hour', incident: 'A support agent screamed at me.' };
+    const finalMsgs = Array.from({ length: 3 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment }) });
+    expect((await (await send(finalMsgs)).json()).assessment).toEqual(assessment);
+    // Mid-chat (chat not ending) a stray assessment is never forwarded.
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'VITTU', end_chat: false, assessment }) });
+    expect((await (await send([user('hei')])).json()).assessment).toBeNull();
+    // Out-of-vocabulary values fail the reply schema (retry, then 500).
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment: { ...assessment, trigger: 'rage' } }) });
+    expect((await send(finalMsgs)).status).toBe(500);
   });
 
   it('passes the assessment intake to the model, flattened, and rejects a bad one', async () => {

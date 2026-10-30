@@ -9,6 +9,7 @@ import ScreenAnalysis from '@/components/screens/ScreenAnalysis';
 import ScreenDescent from '@/components/screens/ScreenDescent';
 import ScreenProvoke from '@/components/screens/ScreenProvoke';
 import ScreenVittuilu from '@/components/screens/ScreenVittuilu';
+import type { VittuiluAssessment } from '@/lib/validation';
 import { SEPPO_STIMULUS, Stimulus, pickStimuli, shouldOfferProvocation } from '@/lib/provocations';
 import {
   MAX_STRESS_INTENSITY,
@@ -35,6 +36,22 @@ function waitForMinimumLoadingDuration(startedAt: number): Promise<void> {
 // expects. `primary` is derived from the user's trigger pick via
 // triggerToEmotion() (lib/trigger.ts), never asked for directly — see that
 // file for why this translation layer exists.
+// What startAssistant needs to diagnose. Defaults to the intake form's state;
+// Seppo's assessment passes its own values because React state set in the
+// same tick isn't visible yet.
+interface AssistantInput {
+  selection: TriggerSelection;
+  incidentText: string;
+  symptoms: PhysicalSymptomType[];
+  duration: DurationType | null;
+  provoked: boolean;
+}
+
+interface Reading {
+  analysis: unknown;
+  emotionData: EmotionData;
+}
+
 interface EmotionData {
   primary: ReturnType<typeof triggerToEmotion>;
   // The user's actual selection, sent alongside its lossy `primary`
@@ -132,13 +149,17 @@ export default function Home() {
 
   // Step 1 of the rite: analyze the input. Stops here and waits for the user
   // to choose to descend — it never advances on its own.
-  const startAssistant = async () => {
-    if (!selection || selection.intensity === null) return;
+  const startAssistant = async (opts?: { input?: AssistantInput; stepAfter?: Step }): Promise<Reading | null> => {
+    const input: AssistantInput | null = opts?.input ?? (selection
+      ? { selection, incidentText, symptoms, duration, provoked: provokedBy !== null }
+      : null);
+    if (!input || input.selection.intensity === null) return null;
 
     const loadingStartedAt = performance.now();
     let completed = false;
+    let reading: Reading | null = null;
 
-    setStep('analysis');
+    setStep(opts?.stepAfter ?? 'analysis');
     setIsProcessing(true);
     setIsAnalyzing(true);
     setReasoning(null);
@@ -149,13 +170,13 @@ export default function Home() {
     setSubgenre(null);
 
     const emotionData: EmotionData = {
-      primary: triggerToEmotion(selection.trigger),
-      trigger: selection.trigger,
-      stressLevel: selection.intensity,
-      event: incidentText.trim() || null,
-      symptoms,
-      duration,
-      provoked: provokedBy !== null,
+      primary: triggerToEmotion(input.selection.trigger),
+      trigger: input.selection.trigger,
+      stressLevel: input.selection.intensity,
+      event: input.incidentText.trim() || null,
+      symptoms: input.symptoms,
+      duration: input.duration,
+      provoked: input.provoked,
     };
 
     try {
@@ -177,6 +198,7 @@ export default function Home() {
       setSubgenre(matcherData.subgenre || null);
       setPendingAnalysis(matcherData.analysis);
       setPendingEmotionData(emotionData);
+      reading = { analysis: matcherData.analysis, emotionData };
       completed = true;
     } catch (error) {
       console.error('Error processing incident analysis:', error);
@@ -187,11 +209,14 @@ export default function Home() {
       setIsAnalyzing(false);
       setIsProcessing(false);
     }
+    return reading;
   };
 
   // Step 2: only fires when the user explicitly chooses to descend.
-  const beginDescent = async () => {
-    if (!pendingEmotionData) return;
+  const beginDescent = async (reading?: Reading) => {
+    const emotionData = reading?.emotionData ?? pendingEmotionData;
+    const analysis = reading ? reading.analysis : pendingAnalysis;
+    if (!emotionData) return;
 
     // Already curated this reading (e.g. the user stepped back to analysis
     // and is descending again) — just show it, don't re-fetch.
@@ -209,7 +234,7 @@ export default function Home() {
       const curatorResponse = await fetch('/api/curator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ analysis: pendingAnalysis, emotionData: pendingEmotionData }),
+        body: JSON.stringify({ analysis, emotionData }),
       });
 
       const curatorData = await curatorResponse.json();
@@ -237,7 +262,7 @@ export default function Home() {
         setPlaylist({
           id: `ai-generated-${Date.now()}`,
           name: 'Curated Artists',
-          description: `10 curated artists for ${triggerLabel ?? 'this'}`,
+          description: `10 curated artists for ${getTriggerMeta(emotionData.trigger).label}`,
           tracks,
         });
       }
@@ -297,6 +322,32 @@ export default function Home() {
     setProvokedBy(stimulus);
   };
 
+  // Seppo's verdict replaces the intake form: his values become the
+  // selection, then the normal Matcher → Curator pipeline runs and the
+  // patient lands on the prescription. The Matcher is flagged iatrogenic, as
+  // for every other Seppo/Provoke Me reading. If the Matcher fails, the
+  // analysis screen (with its retry) takes over.
+  const prescribeFromSeppo = async (assessment: VittuiluAssessment) => {
+    const sel: TriggerSelection = { trigger: assessment.trigger, intensity: assessment.intensity };
+    goBackToSelection();
+    setSelection(sel);
+    setIncidentText(assessment.incident);
+    setSymptoms(assessment.symptoms);
+    setDuration(assessment.duration);
+    setSubgenre(null);
+    setProvokedBy(SEPPO_STIMULUS);
+
+    const reading = await startAssistant({
+      stepAfter: 'descent',
+      input: { selection: sel, incidentText: assessment.incident, symptoms: assessment.symptoms, duration: assessment.duration, provoked: true },
+    });
+    if (!reading) {
+      setStep('analysis');
+      return;
+    }
+    await beginDescent(reading);
+  };
+
   // Back from the analysis screen: return to selection but keep the
   // existing trigger/intensity picks so the user can just adjust and
   // resubmit, rather than a full reset. Clears the analysis result state so
@@ -353,7 +404,7 @@ export default function Home() {
             onDurationChange={setDuration}
             isProcessing={isProcessing}
             canSubmit={canSubmit}
-            onSubmit={startAssistant}
+            onSubmit={() => void startAssistant()}
             onReset={clearInputs}
           />
         )}
@@ -366,8 +417,8 @@ export default function Home() {
             subgenre={subgenre}
             isAnalyzing={isAnalyzing}
             error={analysisError}
-            onContinue={beginDescent}
-            onRetry={startAssistant}
+            onContinue={() => void beginDescent()}
+            onRetry={() => void startAssistant()}
             onBack={goBackToSelection}
             offerProvocation={shouldOfferProvocation(stage)}
             onProvoke={startProvocation}
@@ -395,6 +446,7 @@ export default function Home() {
               duration,
             }}
             onConfirm={() => acceptStimulus(SEPPO_STIMULUS)}
+            onAssessed={(a) => void prescribeFromSeppo(a)}
             onBack={() => setStep('analysis')}
             onReset={resetSelections}
           />

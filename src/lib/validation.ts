@@ -178,11 +178,28 @@ export const VittuiluRequestSchema = z.object({
     }),
 });
 
-// Vittuilubotti OUTPUT contract. Only `reply` and `end_chat` leave the server.
+// Seppo's verdict, delivered with his last message: the intake values the
+// app then diagnoses from, in place of the patient filling the form in
+// again. Same closed vocabularies as the assessment form (EmotionDataSchema).
+export const VittuiluAssessmentSchema = z.object({
+  trigger: z.enum(TriggerTypes),
+  intensity: z.number().int().min(0).max(10),
+  symptoms: z.array(z.enum(PhysicalSymptomTypes)).max(PhysicalSymptomTypes.length).optional().default([]),
+  duration: z.enum(DurationTypes),
+  // One first-person sentence in the patient's voice, fed to the Matcher
+  // as the incident text.
+  incident: z.string().trim().min(1).max(500),
+});
+
+// Vittuilubotti OUTPUT contract. Only `reply`, `end_chat` and (on the final
+// turn) `assessment` leave the server.
 export const VittuiluReplySchema = z.object({
   reply: z.string().trim().min(1).max(MAX_VITTUILU_REPLY_TEXT),
   end_chat: z.boolean().optional().default(false),
+  assessment: VittuiluAssessmentSchema.nullable().optional(),
 });
+
+export type VittuiluAssessment = z.infer<typeof VittuiluAssessmentSchema>;
 
 export type VittuiluMessage = z.infer<typeof VittuiluMessageSchema>;
 export type VittuiluIntake = z.input<typeof VittuiluIntakeSchema>;
