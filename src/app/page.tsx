@@ -156,7 +156,7 @@ export default function Home() {
 
   // Step 1 of the rite: analyze the input. Stops here and waits for the user
   // to choose to descend — it never advances on its own.
-  const startAssistant = async (opts?: { input?: AssistantInput; stepAfter?: Step }): Promise<Reading | null> => {
+  const startAssistant = async (opts?: { input?: AssistantInput }): Promise<Reading | null> => {
     const input: AssistantInput | null = opts?.input ?? (selection
       ? { selection, incidentText, symptoms, duration, provoked: provokedBy !== null }
       : null);
@@ -166,7 +166,7 @@ export default function Home() {
     let completed = false;
     let reading: Reading | null = null;
 
-    setStep(opts?.stepAfter ?? 'analysis');
+    setStep('analysis');
     setIsProcessing(true);
     setIsAnalyzing(true);
     setReasoning(null);
@@ -332,10 +332,11 @@ export default function Home() {
   };
 
   // Seppo's verdict replaces the intake form: his values become the
-  // selection, then the normal Matcher → Curator pipeline runs and the
-  // patient lands on the prescription. The Matcher is flagged iatrogenic, as
-  // for every other Seppo/Provoke Me reading. If the Matcher fails, the
-  // analysis screen (with its retry) takes over.
+  // selection and the Matcher runs, then the patient lands on the diagnosis
+  // (Observation / Treatment) like every other reading and presses Get
+  // Prescription themselves. The Matcher is flagged iatrogenic, as for every
+  // other Seppo/Provoke Me reading, and gets Seppo's note on the chat. If the
+  // Matcher fails, the analysis screen's retry takes over.
   const prescribeFromSeppo = async (assessment: VittuiluAssessment) => {
     const sel: TriggerSelection = { trigger: assessment.trigger, intensity: assessment.intensity };
     goBackToSelection();
@@ -346,15 +347,9 @@ export default function Home() {
     setSubgenre(null);
     setProvokedBy(SEPPO_STIMULUS);
 
-    const reading = await startAssistant({
-      stepAfter: 'descent',
+    await startAssistant({
       input: { selection: sel, incidentText: assessment.incident, symptoms: assessment.symptoms, duration: assessment.duration, provoked: true, chatNote: assessment.observation_note },
     });
-    if (!reading) {
-      setStep('analysis');
-      return;
-    }
-    await beginDescent(reading);
   };
 
   // "Joko vituttaa?" → yes. The stimulus gives trigger + incident; the
