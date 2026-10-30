@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         instructions: VITTUILUBOTTI_INSTRUCTIONS,
         input: `stimuli_declined: ${MAX_STIMULI_PER_SESSION}\nturn: ${turn} of ${MAX_VITTUILU_USER_MESSAGES}\nis_final_turn: ${isFinalTurn}\n${renderIntake(intake)}transcript:\n${transcript}`,
         temperature: 1,
-        max_output_tokens: 700,
+        max_output_tokens: 900,
       }),
       (json) => {
         const parsed = VittuiluReplySchema.safeParse(json);
@@ -81,6 +81,10 @@ export async function POST(request: NextRequest) {
     if (!result) {
       console.error('Vittuilu: no valid reply in model response after retry');
       return NextResponse.json({ error: 'Seppo is unavailable' }, { status: 500 });
+    }
+
+    if ((isFinalTurn || result.end_chat) && result.assessment && !result.assessment.observation_note) {
+      console.warn('Vittuilu: final assessment carried no observation_note');
     }
 
     return NextResponse.json({
