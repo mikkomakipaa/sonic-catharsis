@@ -58,7 +58,7 @@ export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack, 
           </span>
 
           {/* key= restarts the reveal animation for each new plate */}
-          <div key={stimulus.id} className="mt-5 max-[640px]:mt-4 animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
+          <div key={stimulus.id} className="mt-5 max-[640px]:mt-4 w-full max-w-md mx-auto animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
             <StimulusPlate stimulus={stimulus} />
           </div>
 
