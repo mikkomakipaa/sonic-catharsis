@@ -35,6 +35,19 @@ export interface Stimulus {
   image?: string;
 }
 
+// Not part of the STIMULI pool: the "stimulus" administered by Seppo, the
+// escalation live-chat (ScreenVittuilu). It reuses the Provoke Me re-assessment
+// path, so the new reading is flagged iatrogenic like any other.
+export const SEPPO_STIMULUS: Stimulus = {
+  id: 'seppo',
+  fig: 31,
+  trigger: 'conflict',
+  stimulus: 'escalated live chat, agent Seppo.',
+  legend: 'A: subject. B: agent (31 h on shift). C: messages exchanged.',
+  incident: 'I escalated to a human at the clinic and the live-chat agent screamed at me, mocked my messages and then stormed off mid-conversation.',
+  imageBrief: 'Not drawn — never shown as a plate.',
+};
+
 export const STIMULI: Stimulus[] = [
   // --- injustice ---
   {
