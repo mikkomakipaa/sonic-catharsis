@@ -97,7 +97,7 @@ The application uses a **sequential two-agent pipeline** orchestrated from
    - Output: exactly 10 `{ artist, link }` objects (`link` may be `null`)
 
 3. **Seppo, the vittuilubotti** (`/api/vittuilu`, `src/app/api/vittuilu/route.ts`) — optional last resort *outside* the Matcher→Curator pipeline
-   - Reached only from `ScreenProvoke`'s Discharge Note ("Escalate to a human", after all 5 stimuli were declined) → `ScreenVittuilu.tsx` (a live-chat window)
+   - Reached only from `ScreenProvoke`: declining the 5th stimulus ("No. Still nothing") goes straight to chat, no discharge screen → `ScreenVittuilu.tsx` (a live-chat window)
    - Multi-turn but **stateless**: the client resends the whole transcript (`VittuiluRequestSchema`, `src/lib/validation.ts`); the server derives `turn`/`is_final_turn` itself (cap: `MAX_VITTUILU_USER_MESSAGES` = 3, user text ≤ `MAX_VITTUILU_USER_TEXT` = 300). The opening greeting is hardcoded in the UI, not a model call
    - Uses `VITTUILUBOTTI_INSTRUCTIONS` (`src/lib/prompts.ts`), `temperature: 1`, `max_output_tokens: 400`. Output `{ reply, end_chat, assessment }` (`VittuiluReplySchema`); only those fields leave the server
    - Persona: a furious "human" support-chat agent insulting the *user* in absurd, hyperbolic terms. Hard limits (no protected-trait insults, no slurs, no realistic threats, self-harm → drop the act and point to help) live in the prompt — keep them when editing. It receives the assessment-page intake (incident text, trigger, intensity, symptoms, duration; `VittuiluIntakeSchema`, rendered as `intake_*` lines by `renderIntake` in the route) and uses it mainly in its first reply, combined with the user's first chat message. It never receives the diagnosis Stage, so it can't leak it
@@ -120,7 +120,7 @@ Four screens, orchestrated by `src/app/page.tsx` via a `Step` union
 
 - **`ScreenSelection.tsx`** → `panels/StateOfMindPanel.tsx` — incident text, `ClassificationGrid.tsx` (trigger picker), `IntensitySlider.tsx`, `SymptomChecklist.tsx`, `DurationSelect.tsx`
 - **`ScreenAnalysis.tsx`** — loading/diagnosis view while the Matcher call is in flight (`DiagnosticReceipt.tsx`, `StageHeader.tsx`, `DescentRail.tsx`)
-- **`ScreenProvoke.tsx`** — Provoke Me: one `StimulusPlate.tsx` at a time, "Nyt vituttaa?" yes/no, discharge note after 5 noes. Reached only from the Epicrisis "Referral / 03", which `shouldOfferProvocation()` (`src/lib/provocations.ts`) shows for Level 0 (Pseudo-vitutus) and Stage I. See `docs/data-model.md` §3.1
+- **`ScreenProvoke.tsx`** — Provoke Me: one `StimulusPlate.tsx` at a time, "Nyt vituttaa?" yes/no; the 5th no escalates straight to Seppo. Reached only from the Epicrisis "Referral / 03", which `shouldOfferProvocation()` (`src/lib/provocations.ts`) shows for Level 0 (Pseudo-vitutus) and Stage I. See `docs/data-model.md` §3.1
 - **`ScreenDescent.tsx`** → `panels/ResultsPanel.tsx` — final cause/choice/subgenre + curated artist list; `PrescriptionCalibration.tsx` for the (theatrical, not data-driven) curator-loading calibration display; `ReceiptCard.tsx` for the shareable QR receipt
 
 Shared chrome: `RiteHeader.tsx`. Design tokens (colors, typography, spacing,
@@ -326,7 +326,7 @@ src/
 │   └── screens/
 │       ├── ScreenSelection.tsx      # Step 1: intake
 │       ├── ScreenAnalysis.tsx       # Step 2: matcher loading/diagnosis (+ Provoke Me referral)
-│       ├── ScreenProvoke.tsx        # Provoke Me stimulus loop + discharge note (+ "Escalate to a human")
+│       ├── ScreenProvoke.tsx        # Provoke Me stimulus loop (5th no → Seppo)
 │       ├── ScreenVittuilu.tsx       # Referral / 04: Seppo live-chat
 │       └── ScreenDescent.tsx        # Step 3: final results
 ├── lib/

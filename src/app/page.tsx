@@ -432,7 +432,6 @@ export default function Home() {
             onConfirm={acceptStimulus}
             onEscalate={() => setStep('vittuilu')}
             onBack={() => setStep('analysis')}
-            onReset={resetSelections}
           />
         )}
 
