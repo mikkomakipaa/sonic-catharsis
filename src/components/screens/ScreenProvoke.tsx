@@ -9,7 +9,6 @@ import {
   TEXT_PRIMARY,
   TEXT_SECONDARY,
   TEXT_TERTIARY,
-  DIVIDER_COLOR,
   TREATMENT_ACCENT_BG,
   TREATMENT_ACCENT_BG_HOVER,
   TREATMENT_ACCENT_BORDER,
@@ -18,15 +17,14 @@ import {
 
 interface ScreenProvokeProps {
   // This session's stimuli, already picked (see pickStimuli()). Shown one
-  // at a time; running out of them discharges the patient.
+  // at a time; declining the last one hands the patient straight to Seppo.
   stimuli: Stimulus[];
   // "Nyt vituttaa?" → yes: the parent re-opens intake pre-filled from it.
   onConfirm: (stimulus: Stimulus) => void;
-  // Last resort once every stimulus has been declined: hand the patient to
+  // Called when the last stimulus is declined: hand the patient to
   // a human (Seppo, the vittuilubotti — see ScreenVittuilu).
   onEscalate: () => void;
   onBack: () => void;
-  onReset: () => void;
 }
 
 const EYEBROW_STYLE = {
@@ -43,63 +41,14 @@ const SECONDARY_BUTTON_STYLE = {
   transition: `all 0.2s ${EASE}`,
 } as const;
 
-export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack, onReset }: ScreenProvokeProps) {
+export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack }: ScreenProvokeProps) {
   const [index, setIndex] = useState(0);
-  const discharged = index >= stimuli.length;
   const stimulus = stimuli[index];
+  const isLast = index + 1 >= stimuli.length;
 
   return (
     <div className="flex flex-col max-w-2xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]">
-      {discharged || !stimulus ? (
-        <div className="flex flex-col">
-          <span className="uppercase text-[11px] max-[640px]:text-[10.5px]" style={EYEBROW_STYLE}>
-            Discharge Note
-          </span>
-          <p
-            className="m-0 mt-4 text-[17px] max-[640px]:text-[16px] leading-[1.45] font-semibold"
-            style={{ color: TEXT_PRIMARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
-          >
-            Patient remained unresponsive to {stimuli.length} consecutive stimuli.
-          </p>
-          <p
-            className="m-0 mt-2 text-[15px] max-[640px]:text-[16px] leading-[1.45]"
-            style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
-          >
-            Assessment: constitutionally unbothered. No further treatment indicated. Please leave the premises calmly, as you
-            evidently are able to.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3 mt-8 pt-5" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
-            <button
-              onClick={onEscalate}
-              className="px-4 py-2 text-xs font-semibold uppercase tracking-wide rounded-sm active:scale-[0.98]"
-              style={{
-                letterSpacing: '0.05em',
-                color: TREATMENT_ACCENT_TEXT,
-                background: TREATMENT_ACCENT_BG,
-                border: `1px solid ${TREATMENT_ACCENT_BORDER}`,
-                transition: `all 0.2s ${EASE}`,
-              }}
-            >
-              Escalate to a human
-            </button>
-            <button
-              onClick={onBack}
-              className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium uppercase tracking-wide rounded-sm active:scale-[0.98]"
-              style={SECONDARY_BUTTON_STYLE}
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              Back to Epicrisis
-            </button>
-            <button
-              onClick={onReset}
-              className="px-4 py-2 text-xs font-medium uppercase tracking-wide rounded-sm active:scale-[0.98]"
-              style={SECONDARY_BUTTON_STYLE}
-            >
-              New Intake
-            </button>
-          </div>
-        </div>
-      ) : (
+      {stimulus && (
         <div className="flex flex-col">
           <span className="uppercase text-[11px] max-[640px]:text-[10.5px]" style={EYEBROW_STYLE}>
             Provocation Protocol / Stimulus {index + 1} of {stimuli.length}
@@ -137,11 +86,12 @@ export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack, 
               Yes. Re-assess me
             </button>
             <button
-              onClick={() => setIndex((i) => i + 1)}
+              // The last "No" goes straight to Seppo — no discharge screen in between.
+              onClick={() => (isLast ? onEscalate() : setIndex((i) => i + 1))}
               className="w-full max-w-[280px] py-2.5 text-xs font-medium uppercase rounded-lg active:scale-[0.98]"
               style={SECONDARY_BUTTON_STYLE}
             >
-              {index + 1 < stimuli.length ? 'No. Next stimulus' : 'No. Still nothing'}
+              {isLast ? 'No. Still nothing' : 'No. Next stimulus'}
             </button>
           </div>
 

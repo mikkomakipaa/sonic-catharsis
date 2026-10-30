@@ -139,7 +139,7 @@ export const CuratorArtistsSchema = z.array(CuratorArtistSchema).min(1).max(15);
 // of the transcript.
 export const MAX_VITTUILU_USER_MESSAGES = 3;
 export const MAX_VITTUILU_USER_TEXT = 300;
-export const MAX_VITTUILU_REPLY_TEXT = 800;
+export const MAX_VITTUILU_REPLY_TEXT = 1200;
 
 export const VittuiluMessageSchema = z.object({
   role: z.enum(['user', 'seppo']),
@@ -183,7 +183,7 @@ export const VittuiluRequestSchema = z.object({
 // again. Same closed vocabularies as the assessment form (EmotionDataSchema).
 export const VittuiluAssessmentSchema = z.object({
   trigger: z.enum(TriggerTypes),
-  intensity: z.number().int().min(0).max(10),
+  intensity: z.number().min(0).max(10).transform((n) => Math.round(n)),
   symptoms: z.array(z.enum(PhysicalSymptomTypes)).max(PhysicalSymptomTypes.length).optional().default([]),
   duration: z.enum(DurationTypes),
   // One first-person sentence in the patient's voice, fed to the Matcher
@@ -196,7 +196,9 @@ export const VittuiluAssessmentSchema = z.object({
 export const VittuiluReplySchema = z.object({
   reply: z.string().trim().min(1).max(MAX_VITTUILU_REPLY_TEXT),
   end_chat: z.boolean().optional().default(false),
-  assessment: VittuiluAssessmentSchema.nullable().optional(),
+  // A malformed verdict must never cost the patient Seppo's reply: it
+  // degrades to null and the client falls back to the manual button.
+  assessment: VittuiluAssessmentSchema.nullable().optional().catch(null),
 });
 
 export type VittuiluAssessment = z.infer<typeof VittuiluAssessmentSchema>;
