@@ -197,7 +197,12 @@ export const VittuiluAssessmentSchema = z.object({
   // to the Matcher so the Observation can use the conversation, not only the
   // iatrogenic flag. Optional: a missing or malformed note degrades to
   // undefined and never costs the patient the verdict.
-  observation_note: z.string().trim().min(1).max(300).optional().catch(undefined),
+  // Over-length is cut to fit rather than dropped, since the model drifts past
+  // the limit it is given far more often than it omits the note.
+  observation_note: z
+    .preprocess((v) => (typeof v === 'string' ? v.trim().slice(0, 300) : v), z.string().min(1))
+    .optional()
+    .catch(undefined),
 });
 
 // Stimulus assessment ("Joko vituttaa?" → yes): the stimulus only supplies a
