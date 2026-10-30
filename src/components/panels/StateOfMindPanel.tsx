@@ -33,6 +33,7 @@ interface StateOfMindPanelProps {
   canSubmit: boolean;
   onSubmit: () => void;
   onReset: () => void;
+  onProvoke: () => void;
 }
 
 // Single shared style for all three "question eyebrow" headers on this
@@ -71,6 +72,7 @@ export default function StateOfMindPanel({
   canSubmit,
   onSubmit,
   onReset,
+  onProvoke,
 }: StateOfMindPanelProps) {
   const showReset = Boolean(selection || incidentText);
   const intensitySectionRef = useRef<HTMLDivElement>(null);
@@ -311,6 +313,30 @@ export default function StateOfMindPanel({
           Reset
         </button>
       )}
+
+      {/* Always available, even on a blank form: someone who arrives calm
+          shouldn't have to invent a grievance before the clinic can help. */}
+      <div className="mt-10 w-full max-w-2xl flex flex-col items-center">
+        <div className="h-px w-16" style={{ background: DIVIDER_COLOR }} />
+        <button
+          type="button"
+          onClick={onProvoke}
+          disabled={isProcessing}
+          className="mt-5 px-5 py-2.5 text-xs font-medium uppercase rounded-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+          style={{
+            letterSpacing: '0.05em',
+            color: '#5c584f',
+            background: '#f2efe7',
+            border: '1px solid #e6e2d8',
+            transition: `all 0.2s ${EASE}`,
+          }}
+        >
+          Not angry? Let the clinic fix that
+        </button>
+        <p className="mt-2 text-[11px] max-[640px]:text-[12px]" style={{ color: TEXT_TERTIARY }} lang="fi">
+          Joko vituttaa?
+        </p>
+      </div>
     </div>
   );
 }

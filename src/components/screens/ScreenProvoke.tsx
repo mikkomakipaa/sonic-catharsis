@@ -25,6 +25,9 @@ interface ScreenProvokeProps {
   // a human (Seppo, the vittuilubotti — see ScreenVittuilu).
   onEscalate: () => void;
   onBack: () => void;
+  // Where "back" leads: the Epicrisis when the referral came from a too-calm
+  // reading, the intake form when the patient came straight from the front page.
+  backLabel: string;
 }
 
 const EYEBROW_STYLE = {
@@ -41,7 +44,7 @@ const SECONDARY_BUTTON_STYLE = {
   transition: `all 0.2s ${EASE}`,
 } as const;
 
-export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack }: ScreenProvokeProps) {
+export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack, backLabel }: ScreenProvokeProps) {
   const [index, setIndex] = useState(0);
   const stimulus = stimuli[index];
   const isLast = index + 1 >= stimuli.length;
@@ -102,7 +105,7 @@ export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack }
               style={{ letterSpacing: '0.05em', color: TEXT_SECONDARY }}
             >
               <ArrowLeft className="h-3 w-3" />
-              Back to Epicrisis
+              {backLabel}
             </button>
           </div>
         </div>

@@ -1,261 +1,156 @@
 # Sonic Catharsis
 
 A situation-first web app that turns a petty, everyday grievance into a
-clinically-deadpan "diagnosis" and a matching metal prescription — powered by
-a two-agent AI pipeline that derives a sonic profile from what you actually
-typed, not just two dropdowns.
+clinically-deadpan "diagnosis" and a matching metal prescription. A two-agent
+AI pipeline derives a sonic profile from what you actually typed, picks a
+metal subgenre, and names ten real bands to treat it. If you turn out to be
+too calm to treat, the clinic provokes you.
 
 <img width="1287" height="797" alt="image" src="https://github.com/user-attachments/assets/ca3659ee-5793-461c-a853-9f2a5354a7a4" />
 
-## Overview
+## How it works
 
-You describe an incident in your own words, pick the closest of 8 frustration
-categories (a checkbox grid — not an emotion wheel), and rate how bad it
-is on a 0–10 scale. From there:
+The app is a short ritual, presented as pages of one case file:
 
-1. **Matcher** reads your incident text and category, derives a 5-dimension
-   sonic profile (activation, agency, friction, cognitive density, weight),
-   picks a metal subgenre, and writes a darkly comic "Epicrisis" — a
-   diagnosis (`Stage I–IX`, Finnish "Vitutus" terminology) plus a
-   prescription rationale.
-2. **Curator** takes that sonic profile and subgenre and finds 10 real,
-   existing artists that deliver it — nothing else.
+1. **Intake / Case 001** — describe the incident in your own words
+   (optional, ≤500 characters), pick the closest of 8 trigger categories,
+   dial in how bad it is (intensity) and how long it has been festering
+   (duration), and optionally tick physical symptoms. Intensity and duration
+   are required; the submit button says which one is missing.
+2. **Clinical Note / Epicrisis 001** — a deterministic severity **Stage**
+   (I–IX, Finnish "vitutus" names) and the Matcher's darkly comic
+   observation and treatment (the chosen subgenre).
+3. **Prescription / Case 001** — ten real bands, each linking to a Bandcamp
+   search for the name, plus a printable receipt with a QR code to the real
+   study the app borrows from.
 
-Full architecture and derivation details live in [`docs/data-model.md`](docs/data-model.md)
-and [`docs/formulas.md`](docs/formulas.md).
+Two agents sit behind steps 2 and 3:
 
-## Features
+- **Matcher** reads the incident, trigger, intensity, symptoms and duration,
+  derives a 5-axis sonic profile (activation, agency, friction, cognitive
+  density, weight), picks a subgenre, and writes the observation and
+  treatment text. A deterministic `(emotion, intensity)` table supplies a
+  stabilising anchor subgenre, which the model may deviate from.
+- **Curator** receives only the subgenre and sonic profile — never the
+  incident, trigger or diagnosis — and returns 10 real, distinct artists.
 
-- **Situation-first intake**: a free-text incident field is the dominant
-  first interaction — not a category picker pretending to know how you feel.
-- **Trigger classification grid**: 8 categories (injustice, failure,
-  conflict, helplessness, overload, exhaustion, uncertainty, absurdity) as a
-  plain, pseudo-clinical checkbox matrix.
-- **Two-agent AI pipeline**: Matcher (incident → sonic profile + subgenre +
-  diagnosis) and Curator (sonic profile + subgenre → 10 real artists),
-  entirely separate concerns — Curator never sees the incident, emotion, or
-  diagnosis.
-- **Anchor-guided, not hardcoded, genre selection**: a deterministic
-  `(emotion, intensity)` lookup table provides a stabilizing prior, but the
-  model can deviate from it when the incident text warrants it — genre isn't
-  a rigid 1:1 mapping.
-- **The Nine Stages of Vitutus**: a deterministic I–IX severity scale
-  (loosely inspired by a real, tongue-in-cheek Finnish "vitutus" study,
-  cited via QR on every receipt) computed from intensity and category.
-- **No fabricated links**: the Curator returns `null` rather than guessing a
-  plausible-looking Bandcamp URL when it isn't sure one exists.
+### Provoke Me and Seppo
 
-## Tech Stack
+If the reading is too calm to treat (Level 0 pseudo-vitutus or Stage I), the
+Epicrisis offers a **referral**. The clinic then shows up to **three**
+illustrated stimuli ("Joko vituttaa?"). Saying yes re-runs the diagnosis from
+that stimulus; the chart then records the vitutus as *iatrogenic*.
 
-- **Frontend**: Next.js 15 (App Router) + React + TypeScript + Tailwind CSS
-- **AI**: OpenAI Responses API (GPT-4.1), instructions owned in-repo
-  (`src/lib/prompts.ts`) — not hosted OpenAI Prompt Objects
-- **Validation**: Zod schemas for every API request/response shape
-- **Deployment**: Vercel-ready
+Decline all three and you are escalated to **Seppo**, a furious "human"
+live-chat agent who insults you for up to three messages, then files an
+assessment of you that goes straight to the prescription. Seppo's hard limits
+(no protected-trait insults, no slurs, no realistic threats, self-harm drops
+the act) live in his prompt.
 
-## Getting Started
+### The Nine Stages of Vitutus
 
-### Prerequisites
+Stage is computed deterministically, not by the model: **85% intensity,
+10% physical symptoms, 5% duration**. The trigger category is deliberately not
+an input. Reporting only weakness and limp legs yields a dedicated
+"Level 0: Pseudo-vitutus" instead of a real stage. The scale is loosely
+inspired by a real, tongue-in-cheek Finnish study, cited on every receipt.
+Details are in [`docs/formulas.md`](docs/formulas.md).
 
-- Node.js 18+
-- OpenAI API key
+Intensity is 0–10 on the slider, with a hidden 11th position past the end
+of the track that breaks the printed scale on purpose.
 
-### Installation
+## Tech stack
+
+- **Frontend**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4
+- **AI**: OpenAI Responses API (`gpt-4.1`) for the Matcher, Curator, Assessor
+  and Seppo; instructions live in-repo in `src/lib/prompts.ts`
+- **Validation**: Zod schemas for every API request and response
+- **Tests**: Vitest (the OpenAI client is mocked; no key or network needed)
+- **Deployment**: Vercel
+
+## Getting started
+
+Requires Node.js 20.9+ and an OpenAI API key.
 
 ```bash
-# Clone the repository
-git clone https://github.com/mikkomakipaa/soniccatharsis.git
-cd soniccatharsis
-
-# Install dependencies
+git clone https://github.com/mikkomakipaa/sonic-catharsis.git
+cd sonic-catharsis
 npm install
-
-# Set up environment variables
-# Create .env.local with:
-# OPENAI_API_KEY=your_openai_api_key_here
-
-# Start development server
+echo "OPENAI_API_KEY=sk-..." > .env.local
 npm run dev
 ```
 
-Visit [http://localhost:3001](http://localhost:3001) to use the application.
-
-## Project Structure
-
-```
-soniccatharsis/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx                  # Orchestration: selection → analysis → descent
-│   │   ├── layout.tsx
-│   │   └── api/
-│   │       ├── matcher/route.ts      # Agent 1: incident → sonic profile + subgenre + diagnosis
-│   │       └── curator/route.ts      # Agent 2: sonic profile + subgenre → 10 artists
-│   ├── components/
-│   │   ├── ClassificationGrid.tsx    # 3x3 trigger-category checkbox matrix
-│   │   ├── IntensitySlider.tsx       # 0-10 intensity control (hidden 11th "ELEVEN" tier)
-│   │   ├── StageHeader.tsx           # "Stage VII — Raivovitutus" display
-│   │   ├── DescentRail.tsx           # I-IX progress rail
-│   │   ├── ReceiptCard.tsx           # Printable receipt (Vitutus study QR)
-│   │   ├── panels/                   # StateOfMindPanel, ResultsPanel
-│   │   └── screens/                  # ScreenSelection, ScreenAnalysis, ScreenDescent
-│   ├── lib/
-│   │   ├── trigger.ts                # Trigger category metadata + legacy-emotion translation
-│   │   ├── theme.ts                  # Stage (Vitutus) formula, design tokens
-│   │   ├── genre-mapping.ts          # Deterministic anchor genre table
-│   │   ├── prompts.ts                # In-repo Matcher/Curator instructions
-│   │   ├── validation.ts             # Zod schemas (Trigger, sonic profile, API contracts)
-│   │   └── artist-library.ts         # Unused — see docs/data-model.md
-│   └── types/
-│       └── index.ts                  # TriggerType, TriggerSelection, EmotionType, Playlist
-├── data/                             # Legacy — superseded, see note below
-├── docs/
-│   ├── data-model.md                 # Data shapes: Trigger, Stage, sonic profile, API contracts
-│   ├── formulas.md                   # Stage formula + anchor genre table + tuning history
-│   ├── model.md                      # Superseded — points to the two docs above
-│   ├── SECURITY_REVIEW.md
-│   └── SECURITY_FIXES_IMPLEMENTED.md
-└── package.json
-```
-
-> **`data/*.json` are legacy.** `full_mapping_matrix.json` was the original
-> source for part of the anchor genre table (now a static TS lookup in
-> `genre-mapping.ts`, not read from JSON at runtime). The artist JSON files
-> and `src/lib/artist-library.ts` are unreferenced — the Curator uses the
-> model's own artist knowledge, unconstrained by a code-side candidate pool.
-> Neither is read by the running app.
-
-## The Trigger Model
-
-Not an emotion wheel — a situation-first classification. Users describe an
-**incident** in free text, then pick the closest of 8 **trigger** categories:
-
-```
-injustice · failure · conflict
-helplessness · overload · exhaustion
-uncertainty · absurdity
-```
-
-Internally, each trigger has a compatibility translation into one of
-8 basic emotions (`triggerToEmotion()`, `src/lib/trigger.ts`) —
-the recommendation engine's Stage formula and anchor genre table are still
-keyed on that internal vocabulary, but the Matcher is told explicitly to
-weigh the user's actual trigger and incident text over this lossy
-translation. See [`docs/data-model.md`](docs/data-model.md) for the full
-translation table.
-
-**Intensity** is 0–10 (displayed `1/10`–`10/10`, plus a hidden 11th
-position at the same top value, displayed as `11/10` to deliberately break
-the printed scale).
-
-**Stage** (the "Vitutus" diagnosis, I–IX) is computed deterministically from
-intensity and the translated emotion — intensity is the dominant driver,
-spanning nearly the full range on its own; emotion only applies a small
-flavor tilt. See [`docs/formulas.md`](docs/formulas.md) for the exact
-formula and the floor/ceiling bug it replaced.
-
-## API Endpoints
-
-### POST /api/matcher (Agent 1: interpretation + sonic matching)
-
-**Request**:
-
-```json
-{
-  "emotionData": {
-    "primary": "anger",
-    "trigger": "injustice",
-    "stressLevel": 7,
-    "event": "Manager took credit for my project in the all-hands meeting."
-  }
-}
-```
-
-**Response**:
-
-```json
-{
-  "analysis": {
-    "subgenre": "death metal",
-    "sonic_profile": {
-      "activation": "aggressive",
-      "agency": "confrontation",
-      "friction": "abrasive",
-      "cognitive_density": "direct",
-      "weight": "heavy"
-    },
-    "cause": "This is textbook Raivovitutus, Stage VII...",
-    "choice": "Death metal is the indicated treatment..."
-  },
-  "reasoning": "...",
-  "cause": "...",
-  "choice": "...",
-  "subgenre": "death metal"
-}
-```
-
-`reasoning` is kept for compatibility and is always non-empty
-(`cause || choice || subgenre`). It never contains the raw model reply.
-Only schema-validated fields are returned.
-
-`subgenre` is the model's own reasoned pick, guided by a deterministic
-`(emotion, intensity)` anchor table (a stabilizing prior, not a forced
-answer) — never a hardcoded `trigger → genre` rule.
-
-### POST /api/curator (Agent 2: sound → artists)
-
-**Request**:
-
-```json
-{
-  "analysis": {
-    "subgenre": "death metal",
-    "sonic_profile": { "activation": "aggressive", "agency": "confrontation", "friction": "abrasive", "cognitive_density": "direct", "weight": "heavy" }
-  },
-  "emotionData": { "primary": "anger", "trigger": "injustice", "stressLevel": 7, "event": "..." }
-}
-```
-
-**Response**:
-
-```json
-{
-  "artists": [
-    { "artist": "Napalm Death", "link": "https://napalmdeath.bandcamp.com" },
-    { "artist": "Undeath", "link": null },
-    { "artist": "Deathspell Omega", "link": "https://deathspellomega.bandcamp.com" }
-  ],
-  "type": "artists"
-}
-```
-
-Exactly 10 artists (the schema accepts 1-15), all real and distinct.
-`link` is `null` rather than a guessed URL when the Curator isn't confident
-one exists. The client ignores `link` either way and always builds its own
-Bandcamp search link from the artist name. `analysis.subgenre` must be 1-120
-genre-name characters, or the request gets a 400. If the model's reply isn't
-valid after one retry, the route returns 500 rather than placeholder
-artists.
-
-## Development
+Open [http://localhost:3001](http://localhost:3001). `OPENAI_API_KEY` is the
+only environment variable the app reads.
 
 ```bash
-# Development
-npm run dev
-
-# Production build
-npm run build
-npm run start
-
-# Linting
+npm run build       # production build
+npm run start       # serve the build on port 3001
 npm run lint
-
-# Type checking
 npm run typecheck
-
-# Tests (Vitest; OpenAI is mocked, no key or network needed)
 npm run test
 ```
+
+## Project structure
+
+```
+src/
+├── app/
+│   ├── page.tsx                 # Orchestration: selection → analysis → (provoke → vittuilu) → descent
+│   └── api/
+│       ├── matcher/route.ts     # Incident → sonic profile + subgenre + observation
+│       ├── curator/route.ts     # Sonic profile + subgenre → 10 artists
+│       ├── assess/route.ts      # Stimulus → intensity (Joko vituttaa? → yes)
+│       └── vittuilu/route.ts    # Seppo: stateless multi-turn rant chat + assessment
+├── components/
+│   ├── screens/                 # ScreenSelection, ScreenAnalysis, ScreenProvoke, ScreenVittuilu, ScreenDescent
+│   ├── panels/                  # StateOfMindPanel (intake form), ResultsPanel (prescription)
+│   └── …                        # ClassificationGrid, IntensitySlider, DurationSelect, SymptomChecklist,
+│                                # StageHeader, DescentRail, StimulusPlate, ReceiptCard, …
+├── lib/
+│   ├── theme.ts                 # Stage formula (getActiveStage), design tokens
+│   ├── genre-mapping.ts         # Deterministic anchor-genre table
+│   ├── provocations.ts          # Provoke Me stimuli, session size, Seppo's stand-in stimulus
+│   ├── prompts.ts               # In-repo Matcher / Curator / Assessor / Seppo instructions
+│   ├── validation.ts            # Zod schemas and API contracts
+│   ├── trigger.ts, symptoms.ts, duration.ts
+│   └── openai-client.ts, openai-response.ts
+public/provocations/             # Drawn SVG plates for the stimuli
+data/                            # App icons only; no runtime data
+docs/                            # data-model, formulas, design guidelines, security reviews
+```
+
+`AGENTS.md` is the guide for AI coding agents, with the detailed architecture.
+`docs/data-model.md` is the authoritative reference for data shapes, and
+`docs/design_guidelines.md` for the visual system.
+
+## API
+
+All routes are unauthenticated `POST` endpoints that call a paid model, so
+production should sit behind a rate limit (Vercel WAF). Model output is
+untrusted: every route returns only schema-validated fields, and none logs
+request payloads.
+
+| Route | Request | Response |
+|---|---|---|
+| `/api/matcher` | `{ emotionData: { primary, trigger, stressLevel, event, symptoms, duration, provoked } }` | `{ analysis, reasoning, cause, choice, subgenre }` |
+| `/api/curator` | `{ analysis: { subgenre, sonic_profile }, emotionData }` | `{ artists: [{ artist, link }] (10), type }` |
+| `/api/assess` | `{ trigger, incident }` | `{ intensity }` |
+| `/api/vittuilu` | `{ messages, intake? }` (full transcript each turn) | `{ reply, end_chat, assessment? }` |
+
+Notes:
+
+- `reasoning` is always non-empty (`cause || choice || subgenre`) and never
+  contains the raw model reply.
+- The Curator returns `link: null` rather than a guessed URL, and the client
+  ignores `link` anyway: it builds a Bandcamp *search* link from the artist
+  name. Because names are ambiguous, a search can surface the wrong band.
+- If the Matcher or Curator reply is invalid after one retry, the route
+  returns 500 rather than placeholder content.
+- `emotionData.primary` is an internal vocabulary derived from the trigger
+  (`triggerToEmotion()`), used only to look up the anchor subgenre.
+
+Full shapes and schemas: [`docs/data-model.md`](docs/data-model.md).
 
 ## License
 
