@@ -24,8 +24,8 @@ interface ScreenVittuiluProps {
   // Receives Seppo's note on the chat (if he filed one) so the fallback path
   // can still hand it to the Matcher.
   onConfirm: (note?: string) => void;
-  // Seppo's verdict on his last message: after a short delay the app files
-  // it as the assessment and goes straight to the prescription.
+  // Seppo's verdict on his last message: when the patient presses the assess
+  // button the app files it as the assessment and goes to the prescription.
   onAssessed: (assessment: VittuiluAssessment) => void;
   onBack: () => void;
   onReset: () => void;
@@ -35,9 +35,6 @@ interface ScreenVittuiluProps {
 // real reply is the joke. Not part of the transcript sent to /api/vittuilu.
 const GREETING = 'Vitutuspalvelu, Seppo online. Miten voin auttaa?';
 const GREETING_DELAY_MS = 1100;
-// How long the closing message and "Seppo has left the chat" stay readable
-// before the patient is moved on to the prescription.
-const ASSESSMENT_DELAY_MS = 4500;
 
 const EYEBROW_STYLE = {
   fontFamily: 'var(--font-special-elite), monospace',
@@ -104,14 +101,6 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
     const t = window.setTimeout(() => setGreeted(true), GREETING_DELAY_MS);
     return () => window.clearTimeout(t);
   }, []);
-
-  // Cleared on unmount, so Back / New Intake during the delay cancels the hand-off.
-  useEffect(() => {
-    if (!assessment) return;
-    const t = window.setTimeout(() => onAssessed(assessment), ASSESSMENT_DELAY_MS);
-    return () => window.clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assessment]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'end' });
@@ -234,22 +223,19 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
         </form>
       ) : (
         <div className="flex flex-col items-center gap-4 mt-8 pt-5" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
-          {assessment ? (
-            <p className="m-0 text-center text-[13px] uppercase" style={EYEBROW_STYLE} role="status">
-              Seppo is filing your assessment…
+          <div className="text-center">
+            <p className="m-0 text-[22px] font-bold" style={{ color: TEXT_PRIMARY }} lang="fi">
+              Joko vituttaa?
             </p>
-          ) : (
-            <div className="text-center">
-              <p className="m-0 text-[22px] font-bold" style={{ color: TEXT_PRIMARY }} lang="fi">
-                Joko vituttaa?
-              </p>
-              <p className="m-0 mt-1 text-[13px]" style={{ color: TEXT_SECONDARY }}>
-                Report any change in condition following the consultation.
-              </p>
-            </div>
-          )}
-          {!assessment && <button
-            onClick={() => onConfirm(note)}
+            <p className="m-0 mt-1 text-[13px]" style={{ color: TEXT_SECONDARY }}>
+              Report any change in condition following the consultation.
+            </p>
+          </div>
+          <button
+            // Seppo's verdict when he filed a valid one, else the plain re-assessment
+            // (which still carries his note). Nothing moves on until this is pressed,
+            // so the closing message stays readable.
+            onClick={() => (assessment ? onAssessed(assessment) : onConfirm(note))}
             className="w-full max-w-[280px] py-3.5 font-semibold text-sm uppercase rounded-lg active:scale-[0.98]"
             style={{
               transition: `all 0.2s ${EASE}`,
@@ -263,7 +249,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
             onMouseLeave={(e) => (e.currentTarget.style.background = TREATMENT_ACCENT_BG)}
           >
             Yes. Re-assess me
-          </button>}
+          </button>
           <div className="flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={onBack}
