@@ -184,6 +184,23 @@ describe('/api/vittuilu', () => {
     expect(create).not.toHaveBeenCalled();
   });
 
+  it('enforces the reply shape with a strict schema: assessment is an object only on the final turn', async () => {
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'VITTU', end_chat: false }) });
+    await send([user('hei')]);
+    const mid = create.mock.calls.at(-1)![0].text.format;
+    expect(mid).toMatchObject({ type: 'json_schema', strict: true });
+    expect(Object.keys(mid.schema.properties)).toEqual(['reply', 'end_chat']);
+
+    const finalMsgs = Array.from({ length: 3 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
+    await send(finalMsgs);
+    const fin = create.mock.calls.at(-1)![0].text.format;
+    expect(Object.keys(fin.schema.properties)).toEqual(['reply', 'end_chat', 'assessment', 'observation_note']);
+    expect(fin.schema.required).toEqual(Object.keys(fin.schema.properties));
+    const verdict = fin.schema.properties.assessment.anyOf[0];
+    expect(verdict.properties.trigger.enum).toContain('injustice');
+    expect(verdict.required).toEqual(['trigger', 'intensity', 'symptoms', 'duration', 'incident']);
+  });
+
   it('returns only reply, end_chat and no assessment mid-chat, and derives the turn server-side', async () => {
     create.mockResolvedValue(ok);
     const res = await send([user('hei'), seppo('vittu'), user('moi taas')]);
@@ -209,14 +226,25 @@ describe('/api/vittuilu', () => {
     const finalMsgs = Array.from({ length: 3 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
     create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment }) });
     expect((await (await send(finalMsgs)).json()).assessment).toEqual(assessment);
-    // The chat note is optional and passes through; a malformed one is dropped, the verdict stays.
-    const withNote = { ...assessment, observation_note: 'Patient apologised twice.' };
-    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment: withNote }) });
-    expect((await (await send(finalMsgs)).json()).assessment).toEqual(withNote);
-    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment: { ...assessment, observation_note: 'x'.repeat(400) } }) });
-    expect((await (await send(finalMsgs)).json()).assessment.observation_note).toHaveLength(300);
-    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment: { ...assessment, observation_note: 42 } }) });
-    expect((await (await send(finalMsgs)).json()).assessment).toEqual(assessment);
+    // The note is a separate top-level key: attached to the verdict and also sent on its own.
+    const note = 'Patient apologised twice.';
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment, observation_note: note }) });
+    const withNote = await (await send(finalMsgs)).json();
+    expect(withNote.assessment).toEqual({ ...assessment, observation_note: note });
+    expect(withNote.observation_note).toBe(note);
+    // Over-length is cut to 300, not dropped.
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment, observation_note: 'x'.repeat(400) }) });
+    expect((await (await send(finalMsgs)).json()).observation_note).toHaveLength(300);
+    // A botched verdict (prose) still delivers the note for the manual re-assess path.
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment: 'prose', observation_note: note }) });
+    const botched = await (await send(finalMsgs)).json();
+    expect(botched.assessment).toBeNull();
+    expect(botched.observation_note).toBe(note);
+    // A non-string note is ignored; the verdict is untouched.
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment, observation_note: 42 }) });
+    const junk = await (await send(finalMsgs)).json();
+    expect(junk.assessment).toEqual(assessment);
+    expect(junk).not.toHaveProperty('observation_note');
     create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment }) });
     // Mid-chat (chat not ending) a stray assessment is never forwarded.
     create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'VITTU', end_chat: false, assessment }) });

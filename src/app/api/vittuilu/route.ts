@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
+  DurationTypes,
   MAX_VITTUILU_USER_MESSAGES,
+  PhysicalSymptomTypes,
+  TriggerTypes,
   VittuiluReplySchema,
   VittuiluRequestSchema,
   validateRequest,
@@ -15,6 +18,44 @@ import { getDurationMeta } from '@/lib/duration';
 import type { VittuiluIntake } from '@/lib/validation';
 
 const VITTUILU_MODEL = 'gpt-4.1';
+
+// Structured output for the reply. Prompting alone left gpt-4.1 writing the
+// final-turn `assessment` as a paragraph about the patient, which nulled the
+// whole verdict, so the API now enforces the shape. Mid-chat turns only need
+// reply + end_chat. On the final turn `assessment` must be an object, except
+// that it may be null for the self-harm drop-out, where the prompt says to
+// omit it. Strict mode wants every key required and no extras; the Zod schema
+// (VittuiluReplySchema) still validates what comes back.
+const str = { type: 'string' } as const;
+function replyFormat(isFinalTurn: boolean) {
+  const properties: Record<string, unknown> = { reply: str, end_chat: { type: 'boolean' } };
+  if (isFinalTurn) {
+    properties.assessment = {
+      anyOf: [
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['trigger', 'intensity', 'symptoms', 'duration', 'incident'],
+          properties: {
+            trigger: { type: 'string', enum: [...TriggerTypes] },
+            intensity: { type: 'integer' },
+            symptoms: { type: 'array', items: { type: 'string', enum: [...PhysicalSymptomTypes] } },
+            duration: { type: 'string', enum: [...DurationTypes] },
+            incident: str,
+          },
+        },
+        { type: 'null' },
+      ],
+    };
+    properties.observation_note = str;
+  }
+  return {
+    type: 'json_schema' as const,
+    name: isFinalTurn ? 'seppo_final_reply' : 'seppo_reply',
+    strict: true,
+    schema: { type: 'object', additionalProperties: false, required: Object.keys(properties), properties },
+  };
+}
 
 // Newlines are flattened so a user message can't forge a "Seppo:" line in
 // the transcript the model reads.
@@ -69,6 +110,7 @@ export async function POST(request: NextRequest) {
         model: VITTUILU_MODEL,
         instructions: VITTUILUBOTTI_INSTRUCTIONS,
         input: `stimuli_declined: ${MAX_STIMULI_PER_SESSION}\nturn: ${turn} of ${MAX_VITTUILU_USER_MESSAGES}\nis_final_turn: ${isFinalTurn}\n${renderIntake(intake)}transcript:\n${transcript}`,
+        text: { format: replyFormat(isFinalTurn) },
         temperature: 1,
         max_output_tokens: 900,
       }),
@@ -83,16 +125,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Seppo is unavailable' }, { status: 500 });
     }
 
-    if ((isFinalTurn || result.end_chat) && result.assessment && !result.assessment.observation_note) {
+    if ((isFinalTurn || result.end_chat) && result.assessment && !result.observation_note) {
       console.warn('Vittuilu: final assessment carried no observation_note');
     }
+
+    // Only the closing message carries a verdict, with Seppo's note attached.
+    // Absent (e.g. the self-harm drop-out) the client falls back to the manual button.
+    const ended = isFinalTurn || result.end_chat;
+    const verdict = ended && result.assessment
+      ? { ...result.assessment, ...(result.observation_note ? { observation_note: result.observation_note } : {}) }
+      : null;
 
     return NextResponse.json({
       reply: result.reply,
       end_chat: isFinalTurn || result.end_chat,
-      // Only the closing message carries a verdict. Absent (e.g. the
-      // self-harm drop-out) the client falls back to the manual button.
-      assessment: isFinalTurn || result.end_chat ? result.assessment ?? null : null,
+      assessment: verdict,
+      // Also sent on its own: when the model botches the verdict object, the
+      // manual "re-assess me" path still carries the note to the Observation.
+      ...(ended && result.observation_note ? { observation_note: result.observation_note } : {}),
     });
   } catch (error) {
     console.error('Vittuilu API error:', error);
