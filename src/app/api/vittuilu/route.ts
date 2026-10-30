@@ -63,14 +63,14 @@ export async function POST(request: NextRequest) {
     // The model is pushed to its most unhinged here, so sampling is left
     // hot on purpose; max_output_tokens is a second guard on top of the
     // reply schema's length cap. Model output is untrusted: only a bounded
-    // { reply, end_chat } (VittuiluReplySchema) leaves the server.
+    // { reply, end_chat, assessment } (VittuiluReplySchema) leaves the server.
     const result = await createWithRetry(
       () => getOpenAI().responses.create({
         model: VITTUILU_MODEL,
         instructions: VITTUILUBOTTI_INSTRUCTIONS,
         input: `stimuli_declined: ${MAX_STIMULI_PER_SESSION}\nturn: ${turn} of ${MAX_VITTUILU_USER_MESSAGES}\nis_final_turn: ${isFinalTurn}\n${renderIntake(intake)}transcript:\n${transcript}`,
         temperature: 1,
-        max_output_tokens: 400,
+        max_output_tokens: 700,
       }),
       (json) => {
         const parsed = VittuiluReplySchema.safeParse(json);
@@ -86,6 +86,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       reply: result.reply,
       end_chat: isFinalTurn || result.end_chat,
+      // Only the closing message carries a verdict. Absent (e.g. the
+      // self-harm drop-out) the client falls back to the manual button.
+      assessment: isFinalTurn || result.end_chat ? result.assessment ?? null : null,
     });
   } catch (error) {
     console.error('Vittuilu API error:', error);
