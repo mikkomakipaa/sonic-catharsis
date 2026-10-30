@@ -169,7 +169,7 @@ describe('/api/vittuilu', () => {
     const input = create.mock.calls[0][0].input as string;
     expect(input).toContain('turn: 2 of 3');
     expect(input).toContain('is_final_turn: false');
-    expect(input).toContain('stimuli_declined: 5');
+    expect(input).toContain('stimuli_declined: 3');
   });
 
   it('forces end_chat on the final user message even if the model does not', async () => {

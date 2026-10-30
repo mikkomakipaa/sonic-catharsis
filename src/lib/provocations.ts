@@ -368,7 +368,7 @@ export const STIMULI: Stimulus[] = [
 
 // How many stimuli one session administers before the patient is
 // discharged as immune.
-export const MAX_STIMULI_PER_SESSION = 5;
+export const MAX_STIMULI_PER_SESSION = 3;
 
 // Where Provoke Me is offered: the two readings that are "too calm to
 // treat" — Level 0 (Pseudo-vitutus, the clinic declined to certify it) and

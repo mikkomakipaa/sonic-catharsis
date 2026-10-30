@@ -107,8 +107,8 @@ by reference, never by `index`.
   `stimulus` (caption), `legend` (A/B/C key), `incident` (pre-fill text),
   `imageBrief` (drawing brief, never shown), optional `image`. Review copy:
   [`design/provoke-me/STIMULI.md`](./design/provoke-me/STIMULI.md).
-- `pickStimuli()` draws `MAX_STIMULI_PER_SESSION` (5), drawn plates first.
-  Five "no"s → discharge note.
+- `pickStimuli()` draws `MAX_STIMULI_PER_SESSION` (3), drawn plates first.
+  Three "no"s → Seppo.
 - "Nyt vituttaa?" → yes: a fresh intake with `incident` and `trigger`
   pre-filled. Intensity and duration stay empty — the patient still rates
   it. Symptoms are cleared.

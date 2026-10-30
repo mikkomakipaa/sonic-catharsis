@@ -121,7 +121,7 @@ Four screens, orchestrated by `src/app/page.tsx` via a `Step` union
 
 - **`ScreenSelection.tsx`** → `panels/StateOfMindPanel.tsx` — incident text, `ClassificationGrid.tsx` (trigger picker), `IntensitySlider.tsx`, `SymptomChecklist.tsx`, `DurationSelect.tsx`
 - **`ScreenAnalysis.tsx`** — loading/diagnosis view while the Matcher call is in flight (`DiagnosticReceipt.tsx`, `StageHeader.tsx`, `DescentRail.tsx`)
-- **`ScreenProvoke.tsx`** — Provoke Me: one `StimulusPlate.tsx` at a time, "Nyt vituttaa?" yes/no; the 5th no escalates straight to Seppo. Reached only from the Epicrisis "Referral / 03", which `shouldOfferProvocation()` (`src/lib/provocations.ts`) shows for Level 0 (Pseudo-vitutus) and Stage I. See `docs/data-model.md` §3.1
+- **`ScreenProvoke.tsx`** — Provoke Me: one `StimulusPlate.tsx` at a time, "Nyt vituttaa?" yes/no; the 3rd no escalates straight to Seppo. Reached only from the Epicrisis "Referral / 03", which `shouldOfferProvocation()` (`src/lib/provocations.ts`) shows for Level 0 (Pseudo-vitutus) and Stage I. See `docs/data-model.md` §3.1
 - **`ScreenDescent.tsx`** → `panels/ResultsPanel.tsx` — final cause/choice/subgenre + curated artist list; `PrescriptionCalibration.tsx` for the (theatrical, not data-driven) curator-loading calibration display; `ReceiptCard.tsx` for the shareable QR receipt
 
 Shared chrome: `RiteHeader.tsx`. Design tokens (colors, typography, spacing,
@@ -327,7 +327,7 @@ src/
 │   └── screens/
 │       ├── ScreenSelection.tsx      # Step 1: intake
 │       ├── ScreenAnalysis.tsx       # Step 2: matcher loading/diagnosis (+ Provoke Me referral)
-│       ├── ScreenProvoke.tsx        # Provoke Me stimulus loop (5th no → Seppo)
+│       ├── ScreenProvoke.tsx        # Provoke Me stimulus loop (3rd no → Seppo)
 │       ├── ScreenVittuilu.tsx       # Referral / 04: Seppo live-chat
 │       └── ScreenDescent.tsx        # Step 3: final results
 ├── lib/
