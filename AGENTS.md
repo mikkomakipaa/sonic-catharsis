@@ -83,9 +83,9 @@ The application uses a **sequential two-agent pipeline** orchestrated from
 `src/app/page.tsx`:
 
 1. **Agent 1: Matcher** (`/api/matcher`, `src/app/api/matcher/route.ts`)
-   - Input: incident text, trigger, intensity, physical symptoms, duration, plus `anchor_subgenre` (via `getDeterministicGenre()`, `src/lib/genre-mapping.ts`). `getDeterministicGenre()` is keyed on the internal `EmotionType` vocabulary, computed server-side from `trigger` via `triggerToEmotion()` (`src/lib/trigger.ts`) — that translation is used only to pick the anchor and is **not** sent to the model as its own field (the model already gets the more informative `trigger` value directly)
+   - Input: incident text, trigger, intensity, physical symptoms, duration, and **no genre hint** — the model is not given an anchor. `getDeterministicGenre()` (`src/lib/genre-mapping.ts`, keyed on the internal `EmotionType` computed from `trigger` via `triggerToEmotion()` in `src/lib/trigger.ts`) is used server-side only as a fallback when the model's subgenre is missing or invalid
    - Uses OpenAI Responses API, `model: 'gpt-4.1'`, in-repo `instructions: MATCHER_INSTRUCTIONS` (`src/lib/prompts.ts`) — no hosted OpenAI Prompt Object
-   - The model derives its own 5-axis **sonic profile** (activation, agency, friction, cognitive_density, weight — see `SonicProfileSchema` in `src/lib/validation.ts`) from the incident + trigger, and picks the subgenre itself — the anchor is a stabilizing prior, not a forced answer. This is a deliberate change from the old fully-deterministic scheme: **`getDeterministicGenre()` no longer has final say over the subgenre**, only over the anchor handed to the model.
+   - The model derives its own 5-axis **sonic profile** (activation, agency, friction, cognitive_density, weight — see `SonicProfileSchema` in `src/lib/validation.ts`) from the incident + trigger, and picks the subgenre itself, from the prompt alone, for more variability. History: first a fully-deterministic table, then that table handed to the model as `anchor_subgenre`, now no anchor at all — **`getDeterministicGenre()` is a safety-net fallback only**.
    - Output: `{ subgenre, sonic_profile, cause, choice }` — see `AnalysisSchema`
    - **Special-case directives**: `route.ts` detects a couple of precise input patterns server-side and appends an extra one-line directive to the prompt `input`, scoped to `cause` only (never `subgenre`/`sonic_profile`/`choice`) — `isGapMoment` (trivial event text at the most severe Stage) and `isPseudoVitutusMoment` (the *only* reported `physical_symptoms` are `weakness` + `legs_limp` — the exact inverse of the real Vitutusviisari study's severe-episode symptom profile, which is sympathetic-dominant — at ANY intensity). Both are additive and independent — see the comments directly above them in `route.ts` before changing either.
    - **`isPseudoVitutusMoment` also drives a dedicated displayed Stage**, not just the prompt directive: `getActiveStage()` (`src/lib/theme.ts`) returns `PSEUDO_VITUTUS_STAGE` ("Level 0: Pseudo-vitutus" — its own `Stage` object, distinct from both real Stages I-IX and from `SURFACE`, though it shares `SURFACE`'s `index: 0` by design; distinguish the two by reference, never by raw index) whenever `isPseudoVitutusProfile()` (`src/lib/symptoms.ts`) matches — unconditionally, regardless of intensity/duration. `DescentRail` renders it as an 11th band (Surface, Level 0, I-IX) matched by object reference, not array position. Both the directive gate and the Stage override call the same `isPseudoVitutusProfile()` predicate — never duplicate this exact-match logic; import it instead. See `docs/formulas.md` § "Exception: Level 0: Pseudo-vitutus" for the full reasoning.
@@ -136,7 +136,7 @@ component already covers the job.
 
 **Flow**:
 1. User fills incident text, picks trigger + intensity + duration (+ optional symptoms) on `ScreenSelection` — the "Begin Diagnosis" CTA stays disabled (`canSubmit`) until trigger, intensity, AND duration are all set
-2. `triggerToEmotion()` derives the internal `primary` (`EmotionType`) value used only server-side, to compute `anchor_subgenre` — never sent to the model as its own field
+2. `triggerToEmotion()` derives the internal `primary` (`EmotionType`) value used only server-side, to compute the fallback genre — never sent to the model
 3. POST `/api/matcher` with `EmotionData` (see below) → display Matcher's cause/choice/subgenre
 4. POST `/api/curator` with the Matcher's `analysis` → display curated artists
 5. `ScreenDescent` renders the combined result
@@ -200,7 +200,7 @@ import { MATCHER_INSTRUCTIONS } from '@/lib/prompts';
 const result = await createWithRetry(() => getOpenAI().responses.create({
   model: 'gpt-4.1',
   instructions: MATCHER_INSTRUCTIONS,
-  input: `trigger: ...\nstress_level: ...\ncondition: ...\nevent: ...\nanchor_subgenre: ...\nphysical_symptoms: ...\nduration_persistence: ...`,
+  input: `trigger: ...\nstress_level: ...\ncondition: ...\nevent: ...\nphysical_symptoms: ...\nduration_persistence: ...`,
 }), (json) => json);
 ```
 `getOpenAI()` (`src/lib/openai-client.ts`) creates the client lazily and
@@ -217,7 +217,7 @@ acceptable, then gives up and the route returns 500. **Do not add prose
 salvage or placeholder results back.** The old keyword heuristics and fake
 "<genre> Artist 1" bands were removed on purpose (review items C5/C6): a
 made-up diagnosis or fake band shown as real is worse than a retry prompt.
-The Matcher still falls back to the anchor subgenre and a neutral
+The Matcher still falls back to the deterministic fallback subgenre and a neutral
 `sonic_profile` when those fields are invalid, because those are
 calibration inputs the user never reads.
 
@@ -361,7 +361,7 @@ There is no `data/` directory — see "Two-Agent System" above.
 - Ensure the payload sends a numeric `stressLevel`, not a string label
 
 **Issue: Matcher returns an odd or off-tone subgenre**
-- Check `getDeterministicGenre()` in `genre-mapping.ts` for the anchor it handed the model — it's a prior, not a mandate, so the model may reasonably deviate
+- The model chooses the subgenre freely (no anchor); `getDeterministicGenre()` in `genre-mapping.ts` only supplies the fallback when its pick is invalid
 - Check `MATCHER_INSTRUCTIONS` in `prompts.ts` for the sonic-profile derivation steps
 
 **Issue: "Failed to parse analysis response" / "No structured playlist received"**
