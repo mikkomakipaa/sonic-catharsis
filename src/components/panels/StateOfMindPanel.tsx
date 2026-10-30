@@ -333,9 +333,6 @@ export default function StateOfMindPanel({
         >
           Not angry? Let the clinic fix that
         </button>
-        <p className="mt-2 text-[11px] max-[640px]:text-[12px]" style={{ color: TEXT_TERTIARY }} lang="fi">
-          Joko vituttaa?
-        </p>
       </div>
     </div>
   );
