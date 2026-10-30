@@ -179,7 +179,7 @@ describe('/api/vittuilu', () => {
     expect(create.mock.calls[0][0].input).toContain('is_final_turn: true');
   });
 
-  it('returns Seppo\'s assessment on the final turn only, and drops an invalid one', async () => {
+  it('returns Seppo\'s assessment on the final turn only, and degrades an invalid one to null', async () => {
     const assessment = { trigger: 'conflict', intensity: 7, symptoms: ['muscle_tension'], duration: 'about_hour', incident: 'A support agent screamed at me.' };
     const finalMsgs = Array.from({ length: 3 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
     create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment }) });
@@ -187,9 +187,11 @@ describe('/api/vittuilu', () => {
     // Mid-chat (chat not ending) a stray assessment is never forwarded.
     create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'VITTU', end_chat: false, assessment }) });
     expect((await (await send([user('hei')])).json()).assessment).toBeNull();
-    // Out-of-vocabulary values fail the reply schema (retry, then 500).
+    // An out-of-vocabulary verdict degrades to no assessment; Seppo's reply survives.
     create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment: { ...assessment, trigger: 'rage' } }) });
-    expect((await send(finalMsgs)).status).toBe(500);
+    const degraded = await send(finalMsgs);
+    expect(degraded.status).toBe(200);
+    expect((await degraded.json()).assessment).toBeNull();
   });
 
   it('passes the assessment intake to the model, flattened, and rejects a bad one', async () => {
