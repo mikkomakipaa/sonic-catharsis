@@ -184,6 +184,23 @@ describe('/api/vittuilu', () => {
     expect(create).not.toHaveBeenCalled();
   });
 
+  it('enforces the reply shape with a strict schema: assessment is an object only on the final turn', async () => {
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'VITTU', end_chat: false }) });
+    await send([user('hei')]);
+    const mid = create.mock.calls.at(-1)![0].text.format;
+    expect(mid).toMatchObject({ type: 'json_schema', strict: true });
+    expect(Object.keys(mid.schema.properties)).toEqual(['reply', 'end_chat']);
+
+    const finalMsgs = Array.from({ length: 3 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
+    await send(finalMsgs);
+    const fin = create.mock.calls.at(-1)![0].text.format;
+    expect(Object.keys(fin.schema.properties)).toEqual(['reply', 'end_chat', 'assessment', 'observation_note']);
+    expect(fin.schema.required).toEqual(Object.keys(fin.schema.properties));
+    const verdict = fin.schema.properties.assessment.anyOf[0];
+    expect(verdict.properties.trigger.enum).toContain('injustice');
+    expect(verdict.required).toEqual(['trigger', 'intensity', 'symptoms', 'duration', 'incident']);
+  });
+
   it('returns only reply, end_chat and no assessment mid-chat, and derives the turn server-side', async () => {
     create.mockResolvedValue(ok);
     const res = await send([user('hei'), seppo('vittu'), user('moi taas')]);
