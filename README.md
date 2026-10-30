@@ -29,8 +29,8 @@ Two agents sit behind steps 2 and 3:
 - **Matcher** reads the incident, trigger, intensity, symptoms and duration,
   derives a 5-axis sonic profile (activation, agency, friction, cognitive
   density, weight), picks a subgenre, and writes the observation and
-  treatment text. A deterministic `(emotion, intensity)` table supplies a
-  stabilising anchor subgenre, which the model may deviate from.
+  treatment text. The subgenre is chosen by the model from the prompt alone; a
+  deterministic `(emotion, intensity)` table is only a fallback if its pick is invalid.
 - **Curator** receives only the subgenre and sonic profile — never the
   incident, trigger or diagnosis — and returns 10 real, distinct artists.
 
@@ -109,7 +109,7 @@ src/
 │                                # StageHeader, DescentRail, StimulusPlate, ReceiptCard, …
 ├── lib/
 │   ├── theme.ts                 # Stage formula (getActiveStage), design tokens
-│   ├── genre-mapping.ts         # Deterministic anchor-genre table
+│   ├── genre-mapping.ts         # Fallback genre table (model picks the subgenre)
 │   ├── provocations.ts          # Provoke Me stimuli, session size, Seppo's stand-in stimulus
 │   ├── prompts.ts               # In-repo Matcher / Curator / Assessor / Seppo instructions
 │   ├── validation.ts            # Zod schemas and API contracts
@@ -148,7 +148,7 @@ Notes:
 - If the Matcher or Curator reply is invalid after one retry, the route
   returns 500 rather than placeholder content.
 - `emotionData.primary` is an internal vocabulary derived from the trigger
-  (`triggerToEmotion()`), used only to look up the anchor subgenre.
+  (`triggerToEmotion()`), used only to look up the fallback subgenre.
 
 Full shapes and schemas: [`docs/data-model.md`](docs/data-model.md).
 

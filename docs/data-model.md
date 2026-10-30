@@ -194,8 +194,8 @@ was introduced.
 
 Also sent to the model but not part of the Zod-validated output: `condition`
 (the Stage string, e.g. `"Stage VII — Raivovitutus"`, computed server-side
-and handed to the model as context to reference in `cause`/`choice`), and
-`anchor_subgenre` (see formulas.md).
+and handed to the model as context to reference in `cause`/`choice`). No genre
+hint is sent; the model chooses the subgenre itself (see formulas.md).
 
 ## 6. Curator — request / response contract
 
@@ -242,10 +242,10 @@ incidentText, trigger, intensity, physicalSymptoms, duration
         │                            ▼
         │                     Stage (condition string)
         ▼
-   getDeterministicGenre(legacyEmotion, intensity) → anchor_subgenre
+   (getDeterministicGenre(...) is held back as a fallback only)
         │
         ▼
-   MATCHER (incidentText, trigger, legacyEmotion, condition, anchor_subgenre,
+   MATCHER (incidentText, trigger, condition,
             physicalSymptoms, duration)
         │
         ▼

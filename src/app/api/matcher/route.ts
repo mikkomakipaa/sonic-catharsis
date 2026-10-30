@@ -64,14 +64,9 @@ export async function POST(request: NextRequest) {
     const stage = getActiveStage(emotionData.stressLevel ?? null, emotionData.symptoms ?? [], emotionData.duration ?? null);
     const condition = `Stage ${stage.roman} — ${stage.name}`;
 
-    // A stabilizing prior, not a forced answer: the same deterministic
-    // (emotion, stress) lookup as before, but now handed to the model as
-    // anchor_subgenre — a strong default it should stay close to unless the
-    // incident text gives it a specific reason to deviate. This keeps most
-    // readings clustered the way they were under the old fully-deterministic
-    // scheme (and preserves its invented-microgenre flavor text at high
-    // intensity), while letting incident content actually influence genre
-    // selection, which the old forced-override version never allowed.
+    // Fallback only: the model picks the subgenre from the prompt alone and
+    // is never shown this. It's used solely when the model's subgenre is
+    // missing or invalid (see the safety net below).
     const anchorGenre = getDeterministicGenre(emotionData.primary, emotionData.stressLevel ?? null);
 
     // "The gap" — when a near-nonexistent event description still lands the
@@ -120,7 +115,7 @@ export async function POST(request: NextRequest) {
     // genre instead of forcing a metal pick.
     const isPseudoVitutusMoment = isPseudoVitutusProfile(emotionData.symptoms ?? []);
     const pseudoVitutusDirective = isPseudoVitutusMoment
-      ? `\n\nSPECIAL CASE: The only physical symptoms reported are weakness and legs going limp — real, but the two the app's own cited research found are rare even during severe episodes (which are typically dominated by head-exploding/muscle-tension/heart-pounding/accelerated-breathing instead). The displayed condition already reflects this — the diagnosis is "Level 0: Pseudo-vitutus," a dedicated tier below the real I-IX scale, refusing to certify this as real vitutus at all. For "cause" ONLY, the persona may gently call out this presentation as suspiciously atypical — arguably "pseudo-vitutus," not the textbook thing. Metal has not been medically indicated for this presentation: ignore anchor_subgenre entirely and set "subgenre" to exactly "${PSEUDO_VITUTUS_GENRE[emotionData.trigger]}" (a real, well-known direction in that genre — not metal, not metal-adjacent). Still fill all five sonic_profile fields with your best plausible tokens (the schema requires them; they aren't load-bearing here). Write "choice" in the same deadpan-clinical voice, but borrowing pharma-commercial register (in the spirit of "ask your consultant if doing absolutely nothing is right for you") to explain why a declined diagnosis gets a real-but-anticlimactic prescription instead of metal — do NOT invoke the arousal-matching/Sharman & Dingle mechanism here, it's specific to extreme music and doesn't apply.`
+      ? `\n\nSPECIAL CASE: The only physical symptoms reported are weakness and legs going limp — real, but the two the app's own cited research found are rare even during severe episodes (which are typically dominated by head-exploding/muscle-tension/heart-pounding/accelerated-breathing instead). The displayed condition already reflects this — the diagnosis is "Level 0: Pseudo-vitutus," a dedicated tier below the real I-IX scale, refusing to certify this as real vitutus at all. For "cause" ONLY, the persona may gently call out this presentation as suspiciously atypical — arguably "pseudo-vitutus," not the textbook thing. Metal has not been medically indicated for this presentation: set "subgenre" to exactly "${PSEUDO_VITUTUS_GENRE[emotionData.trigger]}" (a real, well-known direction in that genre — not metal, not metal-adjacent). Still fill all five sonic_profile fields with your best plausible tokens (the schema requires them; they aren't load-bearing here). Write "choice" in the same deadpan-clinical voice, but borrowing pharma-commercial register (in the spirit of "ask your consultant if doing absolutely nothing is right for you") to explain why a declined diagnosis gets a real-but-anticlimactic prescription instead of metal — do NOT invoke the arousal-matching/Sharman & Dingle mechanism here, it's specific to extreme music and doesn't apply.`
       : '';
 
     // Seppo's file note on the chat (Vittuilubotti only). The Observation
@@ -159,7 +154,7 @@ export async function POST(request: NextRequest) {
       () => getOpenAI().responses.create({
         model: MATCHER_MODEL,
         instructions: MATCHER_INSTRUCTIONS,
-        input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nanchor_subgenre: ${anchorGenre.genre}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}${noIncidentDirective}${pseudoVitutusDirective}${iatrogenicDirective}${chatDirective}`,
+        input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT and punchy: 2-3 sentences max, no purple prose, no run-on sentences. The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${gapDirective}${noIncidentDirective}${pseudoVitutusDirective}${iatrogenicDirective}${chatDirective}`,
       }),
       (json) => json
     );
@@ -172,11 +167,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Safety net only — fills in the anchor if the model's subgenre is
-    // missing, empty, or fails SubgenreSchema (too long / odd characters),
-    // never overrides a valid subgenre it actually chose. The old version
-    // forced this every time; that's exactly the "never left to the AI's
-    // judgment" behavior this change intentionally moves away from.
+    // Safety net only — fills in the deterministic fallback genre if the
+    // model's subgenre is missing, empty, or fails SubgenreSchema (too long /
+    // odd characters), never overrides a valid subgenre it actually chose.
     if (!SubgenreSchema.safeParse(analysisResult.subgenre).success) {
       analysisResult.subgenre = anchorGenre.genre;
     }

@@ -210,7 +210,7 @@ climb all the way to Stage IX — takes back over immediately; e.g.
 an ordinary 3-symptom reading (see the ordinary tables above), completely
 unaffected by this override.
 
-## 2. Anchor genre table (`getDeterministicGenre`, `src/lib/genre-mapping.ts`)
+## 2. Fallback genre table (`getDeterministicGenre`, `src/lib/genre-mapping.ts`)
 
 ```ts
 function getDeterministicGenre(emotion, stressValue) {
@@ -220,9 +220,11 @@ function getDeterministicGenre(emotion, stressValue) {
 ```
 
 A static `Record<EmotionType, Record<0-10, GenreEntry>>` — 8 emotions × 11
-tiers, no formula, just a lookup. Originally the *forced* final subgenre
-(the Matcher was told "never deviate"); now serves only as `anchor_subgenre`
-— a stabilizing **prior** fed to the Matcher, not a mandate (see §3).
+tiers, no formula, just a lookup. Originally the *forced* final subgenre;
+then handed to the Matcher as `anchor_subgenre` (a prior); now **not shown to
+the model at all** — the Matcher picks the subgenre from the prompt alone
+(see §3), and this table is used only as a safety-net fallback when the
+model's subgenre is missing or fails `SubgenreSchema`.
 
 ### Tuning shape, low → high tier
 
@@ -265,29 +267,19 @@ the curve moved, not the ceiling.
 
 ## 3. Matcher's subgenre decision sequence
 
-Not a formula, but a deliberate **ordering constraint** enforced entirely
-through the prompt (`MATCHER_INSTRUCTIONS`, `src/lib/prompts.ts`) rather
-than code — worth documenting here since it governs how §2's anchor and the
-model's own judgment combine:
+Not a formula, but a deliberate **ordering** enforced entirely through the
+prompt (`MATCHER_INSTRUCTIONS`, `src/lib/prompts.ts`) rather than code:
 
 ```
-1. Derive the sonic_profile FIRST, from incidentText + trigger
-   (legacyEmotion/condition/anchor_subgenre are secondary, tie-breaking
-   context only — never the primary basis).
-2. THEN evaluate anchor_subgenre against that profile.
-   - If the anchor's usual sound reasonably delivers the derived profile,
-     use it (verbatim or lightly adapted).
-   - If a real, established subgenre would materially better express the
-     profile, deviate to that instead.
-   - Never deviate merely for novelty; never keep the anchor out of inertia
-     when it plainly doesn't fit.
+1. Derive the sonic_profile FIRST, from incident + trigger
+   (condition/stress_level are secondary calibration only).
+2. THEN choose a real, established subgenre that best expresses that
+   profile. No anchor or lookup is supplied; invented theatrical compound
+   labels are allowed at high intensity.
 ```
 
-This ordering matters: deriving the profile *before* looking at the anchor
-prevents the anchor from silently dictating the profile (which would make
-the sonic-profile step decorative and just reproduce the old fixed
-`emotion → genre` mapping through the back door). The anchor is a prior
-probability, not veto power.
+Dropping the old anchor was deliberate: it clustered readings too tightly
+around the table, and removing it gives more variability per trigger.
 
 ## 4. Curator's within-subgenre calibration
 
