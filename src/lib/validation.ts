@@ -58,7 +58,11 @@ export const EmotionDataSchema = z.object({
   // Me stimulus (lib/provocations.ts). Absent is treated as false, so older
   // clients are unaffected. The Matcher uses it for its iatrogenic note; the
   // Curator ignores it.
-  provoked: z.boolean().optional()
+  provoked: z.boolean().optional(),
+  // Optional, additive: Seppo's note on the patient's behaviour in the
+  // Vittuilubotti chat. Only the Matcher reads it (cause prose); absent for
+  // every other path.
+  chatNote: z.string().max(300).nullable().optional()
 });
 
 // Matcher API request schema
@@ -189,6 +193,11 @@ export const VittuiluAssessmentSchema = z.object({
   // One first-person sentence in the patient's voice, fed to the Matcher
   // as the incident text.
   incident: z.string().trim().min(1).max(500),
+  // Seppo's clinical note on how the patient behaved in the chat. Rides along
+  // to the Matcher so the Observation can use the conversation, not only the
+  // iatrogenic flag. Optional: a missing or malformed note degrades to
+  // undefined and never costs the patient the verdict.
+  observation_note: z.string().trim().min(1).max(300).optional().catch(undefined),
 });
 
 // Stimulus assessment ("Joko vituttaa?" → yes): the stimulus only supplies a
