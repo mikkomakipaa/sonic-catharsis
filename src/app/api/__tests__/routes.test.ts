@@ -11,6 +11,7 @@ vi.mock('openai', () => ({
 
 const { POST: matcherPOST } = await import('@/app/api/matcher/route');
 const { POST: curatorPOST } = await import('@/app/api/curator/route');
+const { POST: assessPOST } = await import('@/app/api/assess/route');
 const { POST: vittuiluPOST } = await import('@/app/api/vittuilu/route');
 
 const post = (url: string, body: string) =>
@@ -229,6 +230,30 @@ describe('/api/vittuilu', () => {
     create.mockResolvedValue({ output_text: 'not json' });
     const res = await send([user('hei')]);
     expect(res.status).toBe(500);
+    expect(create).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('/api/assess', () => {
+  const body = (o: unknown) => post('/api/assess', JSON.stringify(o));
+
+  it('rejects malformed JSON and unknown triggers without calling OpenAI', async () => {
+    expect((await assessPOST(post('/api/assess', '{nope'))).status).toBe(400);
+    expect((await assessPOST(body({ trigger: 'rage', incident: 'x' }))).status).toBe(400);
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('returns only a rounded intensity and strips anything else', async () => {
+    create.mockResolvedValue({ output_text: JSON.stringify({ intensity: 6.6, injected: 'nope' }) });
+    const res = await assessPOST(body({ trigger: 'injustice', incident: 'Trolley left\nin the bay.' }));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ intensity: 7 });
+    expect(create.mock.calls[0][0].input).toContain('incident: Trolley left in the bay.');
+  });
+
+  it('returns 500 after a retry when the model output is invalid', async () => {
+    create.mockResolvedValue({ output_text: JSON.stringify({ intensity: 42 }) });
+    expect((await assessPOST(body({ trigger: 'failure', incident: 'x' }))).status).toBe(500);
     expect(create).toHaveBeenCalledTimes(2);
   });
 });

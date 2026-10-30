@@ -312,7 +312,7 @@ export default function Home() {
   // patient still dials in intensity and duration themselves — the clinic
   // provides the grievance, not the reading. Symptoms are cleared so the
   // previous (possibly pseudo-vitutus) profile doesn't pin the new reading.
-  const acceptStimulus = (stimulus: Stimulus) => {
+  const prefillFromStimulus = (stimulus: Stimulus) => {
     goBackToSelection();
     setSelection({ trigger: stimulus.trigger, intensity: null });
     setIncidentText(stimulus.incident);
@@ -346,6 +346,43 @@ export default function Home() {
       return;
     }
     await beginDescent(reading);
+  };
+
+  // "Nyt vituttaa?" → yes. The stimulus gives trigger + incident; the
+  // assessor model reads off the intensity, duration is "just now" and there
+  // are no symptoms, and the intake is submitted straight to the analysis, so
+  // the patient lands on the diagnosis instead of a pre-filled form. If the
+  // assessor is unavailable, fall back to the pre-filled form.
+  const acceptStimulus = async (stimulus: Stimulus) => {
+    goBackToSelection();
+    setStep('analysis');
+    setIsAnalyzing(true);
+    setIsProcessing(true);
+    setSubgenre(null);
+    try {
+      const res = await fetch('/api/assess', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ trigger: stimulus.trigger, incident: stimulus.incident }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error || typeof data.intensity !== 'number') throw new Error(data.error || 'Assessment unavailable');
+
+      const sel: TriggerSelection = { trigger: stimulus.trigger, intensity: data.intensity };
+      setSelection(sel);
+      setIncidentText(stimulus.incident);
+      setSymptoms([]);
+      setDuration('just_now');
+      setProvokedBy(stimulus);
+      await startAssistant({
+        input: { selection: sel, incidentText: stimulus.incident, symptoms: [], duration: 'just_now', provoked: true },
+      });
+    } catch (error) {
+      console.error('Error assessing stimulus:', error);
+      setIsAnalyzing(false);
+      setIsProcessing(false);
+      prefillFromStimulus(stimulus);
+    }
   };
 
   // Back from the analysis screen: return to selection but keep the
@@ -429,7 +466,7 @@ export default function Home() {
         {step === 'provoke' && (
           <ScreenProvoke
             stimuli={provokeStimuli}
-            onConfirm={acceptStimulus}
+            onConfirm={(s) => void acceptStimulus(s)}
             onEscalate={() => setStep('vittuilu')}
             onBack={() => setStep('analysis')}
           />
@@ -444,7 +481,7 @@ export default function Home() {
               symptoms,
               duration,
             }}
-            onConfirm={() => acceptStimulus(SEPPO_STIMULUS)}
+            onConfirm={() => void acceptStimulus(SEPPO_STIMULUS)}
             onAssessed={(a) => void prescribeFromSeppo(a)}
             onBack={() => setStep('analysis')}
             onReset={resetSelections}
