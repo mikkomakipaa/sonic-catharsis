@@ -137,7 +137,7 @@ export const CuratorArtistsSchema = z.array(CuratorArtistSchema).min(1).max(15);
 // derives the turn number and the final-turn flag from it, so a client can't
 // skip the cap. The opening greeting is hardcoded in the UI and is not part
 // of the transcript.
-export const MAX_VITTUILU_USER_MESSAGES = 6;
+export const MAX_VITTUILU_USER_MESSAGES = 3;
 export const MAX_VITTUILU_USER_TEXT = 300;
 export const MAX_VITTUILU_REPLY_TEXT = 800;
 
