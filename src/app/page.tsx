@@ -97,6 +97,9 @@ export default function Home() {
   // to (null unless the current intake came from a stimulus).
   const [provokeStimuli, setProvokeStimuli] = useState<Stimulus[]>([]);
   const [provokedBy, setProvokedBy] = useState<Stimulus | null>(null);
+  // Where Provoke Me was entered from, so "back" returns there: the Epicrisis
+  // after a too-calm reading, or the intake form via the front-page button.
+  const [provokeOrigin, setProvokeOrigin] = useState<'selection' | 'analysis'>('analysis');
 
   // Held between the analysis and descent steps: the curator call needs both,
   // but it only fires once the user chooses to descend, not automatically.
@@ -303,7 +306,8 @@ export default function Home() {
   };
 
   // Provoke Me — a fresh draw each time the referral is accepted.
-  const startProvocation = () => {
+  const startProvocation = (origin: 'selection' | 'analysis') => {
+    setProvokeOrigin(origin);
     setProvokeStimuli(pickStimuli());
     setStep('provoke');
   };
@@ -443,6 +447,7 @@ export default function Home() {
             canSubmit={canSubmit}
             onSubmit={() => void startAssistant()}
             onReset={clearInputs}
+            onProvoke={() => startProvocation('selection')}
           />
         )}
 
@@ -458,7 +463,7 @@ export default function Home() {
             onRetry={() => void startAssistant()}
             onBack={goBackToSelection}
             offerProvocation={shouldOfferProvocation(stage)}
-            onProvoke={startProvocation}
+            onProvoke={() => startProvocation('analysis')}
             provokedBy={provokedBy}
           />
         )}
@@ -468,7 +473,8 @@ export default function Home() {
             stimuli={provokeStimuli}
             onConfirm={(s) => void acceptStimulus(s)}
             onEscalate={() => setStep('vittuilu')}
-            onBack={() => setStep('analysis')}
+            onBack={() => setStep(provokeOrigin)}
+            backLabel={provokeOrigin === 'selection' ? 'Back to intake' : 'Back to Epicrisis'}
           />
         )}
 
@@ -483,7 +489,7 @@ export default function Home() {
             }}
             onConfirm={() => void acceptStimulus(SEPPO_STIMULUS)}
             onAssessed={(a) => void prescribeFromSeppo(a)}
-            onBack={() => setStep('analysis')}
+            onBack={() => setStep(provokeOrigin)}
             onReset={resetSelections}
           />
         )}

@@ -16,6 +16,7 @@ interface ScreenSelectionProps {
   canSubmit: boolean;
   onSubmit: () => void;
   onReset: () => void;
+  onProvoke: () => void;
 }
 
 export default function ScreenSelection(props: ScreenSelectionProps) {
@@ -34,6 +35,7 @@ export default function ScreenSelection(props: ScreenSelectionProps) {
         canSubmit={props.canSubmit}
         onSubmit={props.onSubmit}
         onReset={props.onReset}
+        onProvoke={props.onProvoke}
       />
     </div>
   );
