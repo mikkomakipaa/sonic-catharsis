@@ -93,6 +93,8 @@ export interface Track {
   bandcampUrl?: string;
   // Seppo's remark on this artist; only set on the Seppo path, filled in after the list.
   seppoNote?: string;
+  // The clinic physician's indication; set for everyone who did not go through Seppo.
+  physicianNote?: string;
   artworkUrl?: string;
   duration?: number;
   explicitContent?: boolean;
