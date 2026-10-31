@@ -57,7 +57,7 @@ Three questions, never framed as "how do you feel":
 - **intensity** — 0-10 scale, displayed as 1-11 ("these go to eleven"; see `MAX_STRESS_INTENSITY`/`STRESS_TIERS` in `src/lib/theme.ts`)
 
 Two optional, decorative-only inputs, both real items from the same
-(tongue-in-cheek) "Vitutus" academic instrument the app cites on its receipt:
+(tongue-in-cheek) "Vitutus" academic instrument the app cites via the QR code in the Prescription header:
 - **physical_symptoms** — multi-select, `src/lib/symptoms.ts` (`PHYSICAL_SYMPTOMS`), no default — empty array until chosen
 - **duration_persistence** — single-select, `src/lib/duration.ts` (`DURATION_TIERS`), no default — `null` until chosen, same "nothing dialed in until touched" contract as intensity. Gates the "Begin Diagnosis" CTA (`canSubmit`, `src/app/page.tsx`) alongside trigger+intensity.
 
@@ -74,7 +74,7 @@ e.g. `Stage VII — Raivovitutus`). Three of the nine names (III, IV, VI)
 are genuine terms from the real study; the rest are original extensions in
 the same register — this distinction must never be stated or implied in any
 user-facing output. The stage is displayed prominently in the UI (Epicrisis
-header / receipt) — the Matcher prompt is told never to name or paraphrase it
+header / prescription) — the Matcher prompt is told never to name or paraphrase it
 in prose, since the visual diagnosis already carries that information.
 
 ### Two-Agent System (Trigger+incident → Music)
@@ -123,7 +123,7 @@ Four screens, orchestrated by `src/app/page.tsx` via a `Step` union
 - **`ScreenSelection.tsx`** → `panels/StateOfMindPanel.tsx` — incident text, `ClassificationGrid.tsx` (trigger picker), `IntensitySlider.tsx`, `SymptomChecklist.tsx`, `DurationSelect.tsx`
 - **`ScreenAnalysis.tsx`** — loading/diagnosis view while the Matcher call is in flight (`DiagnosticReceipt.tsx`, `StageHeader.tsx`, `DescentRail.tsx`)
 - **`ScreenProvoke.tsx`** — Provoke Me: one `StimulusPlate.tsx` at a time, "Joko vituttaa?" yes/no; the 3rd no escalates straight to Seppo. Reached only from the Epicrisis "Referral / 03", which `shouldOfferProvocation()` (`src/lib/provocations.ts`) shows for Level 0 (Pseudo-vitutus) and Stage I. See `docs/data-model.md` §3.1
-- **`ScreenDescent.tsx`** → `panels/ResultsPanel.tsx` — final cause/choice/subgenre + curated artist list; `PrescriptionCalibration.tsx` for the (theatrical, not data-driven) curator-loading calibration display; `ReceiptCard.tsx` for the shareable QR receipt
+- **`ScreenDescent.tsx`** → `panels/ResultsPanel.tsx` — final cause/choice/subgenre + curated artist list; `PrescriptionCalibration.tsx` for the (theatrical, not data-driven) curator-loading calibration display; `StudyQr.tsx` for the Vitutus study QR + link in the header
 
 Shared chrome: `RiteHeader.tsx`. Design tokens (colors, typography, spacing,
 animation — `TEXT_PRIMARY`/`SECONDARY`/`TERTIARY`, `EASE`, `STAGES`,
@@ -322,7 +322,7 @@ src/
 │   ├── PrescriptionCalibration.tsx  # curator-stage loading calibration display (theatrical)
 │   ├── StageHeader.tsx              # Stage Roman numeral + vitutus name header
 │   ├── DescentRail.tsx              # depth rail visualizing stage progression
-│   ├── ReceiptCard.tsx              # shareable QR receipt
+│   ├── StudyQr.tsx                  # Vitutus study QR (Prescription header)
 │   ├── StimulusPlate.tsx            # Provoke Me figure plate (drawn SVG or "illustration withheld")
 │   ├── RiteHeader.tsx               # shared top chrome
 │   ├── panels/

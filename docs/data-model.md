@@ -87,7 +87,7 @@ V    Kova vitutus
 ```
 
 Terminology is loosely inspired by a real (tongue-in-cheek) Finnish
-"vitutus" study (cited via QR on the receipt) — only **III, IV, VI**
+"vitutus" study (cited via QR in the Prescription header) — only **III, IV, VI**
 (Perusvitutus, Keskivaikea vitutus, Syvävitutus) are the
 study's own terms; the rest are original, built in the same register. Never
 claim otherwise in generated copy.
@@ -288,4 +288,4 @@ incidentText, trigger, intensity, physicalSymptoms, duration
 | Orchestration, `EmotionData` payload construction | `src/app/page.tsx` |
 | Provoke Me stimuli, offer rule, session pick | `src/lib/provocations.ts` |
 | Stimulus plate + Provoke Me screen | `src/components/StimulusPlate.tsx`, `src/components/screens/ScreenProvoke.tsx` |
-| Vitutus study citation QR | `src/components/ReceiptCard.tsx`, opened on demand from the Prescription's receipt overlay |
+| Vitutus study citation QR | `src/components/StudyQr.tsx`, shown in the Prescription header |

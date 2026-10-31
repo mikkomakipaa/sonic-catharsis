@@ -28,8 +28,8 @@ never override or badly demote what the user explicitly said.
 
 **Trigger/emotion is deliberately NOT an input.** See History below — this
 is the second time a trigger/emotion-based severity term has been tried and
-removed. The real "Vitutusviisari" study this app cites elsewhere (QR on
-the receipt, footnote on the Epicrisis card) has no situational axis either
+removed. The real "Vitutusviisari" study this app cites elsewhere (QR in
+the Prescription header, footnote on the Epicrisis card) has no situational axis either
 — it's a pure current-state measure. Trigger stays meaningful elsewhere
 (the anchor genre pick in §2, the Matcher's cause text) but never shifts
 the stage number.

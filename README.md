@@ -21,7 +21,7 @@ The app is a short ritual, presented as pages of one case file:
    (I–IX, Finnish "vitutus" names) and the Matcher's darkly comic
    observation and treatment (the chosen subgenre).
 3. **Prescription / Case 001** — seven real bands, each linking to a Bandcamp
-   search for the name, plus a printable receipt with a QR code to the real
+   search for the name, plus a header with the case details and a QR code to the real
    study the app borrows from.
 
 Two agents sit behind steps 2 and 3:
@@ -53,7 +53,7 @@ Stage is computed deterministically, not by the model: **85% intensity,
 10% physical symptoms, 5% duration**. The trigger category is deliberately not
 an input. Reporting only weakness and limp legs yields a dedicated
 "Level 0: Pseudo-vitutus" instead of a real stage. The scale is loosely
-inspired by a real, tongue-in-cheek Finnish study, cited on every receipt.
+inspired by a real, tongue-in-cheek Finnish study, cited by the QR code on every prescription.
 Details are in [`docs/formulas.md`](docs/formulas.md).
 
 Intensity is 0–10 on the slider, with a hidden 11th position past the end
@@ -106,7 +106,7 @@ src/
 │   ├── screens/                 # ScreenSelection, ScreenAnalysis, ScreenProvoke, ScreenVittuilu, ScreenDescent
 │   ├── panels/                  # StateOfMindPanel (intake form), ResultsPanel (prescription)
 │   └── …                        # ClassificationGrid, IntensitySlider, DurationSelect, SymptomChecklist,
-│                                # StageHeader, DescentRail, StimulusPlate, ReceiptCard, …
+│                                # StageHeader, DescentRail, StimulusPlate, StudyQr, …
 ├── lib/
 │   ├── theme.ts                 # Stage formula (getActiveStage), design tokens
 │   ├── genre-mapping.ts         # Fallback genre table (model picks the subgenre)
