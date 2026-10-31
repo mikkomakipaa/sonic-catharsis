@@ -125,12 +125,13 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         {playlist.tracks.map((track, index) => (
           <div
             key={track.id}
-            className="group flex items-center py-2.5 max-[480px]:py-0 max-[480px]:min-h-[48px]"
+            className="group py-2.5 max-[480px]:py-0"
             style={{
               borderTop: index > 0 ? `1px solid ${DIVIDER_COLOR}` : 'none',
               animationDelay: `${index * 60}ms`,
             }}
           >
+            <div className="flex items-center max-[480px]:min-h-[48px]">
             {/* Indexing metadata, not information — quieter than the label
                 row above it, so it recedes behind the band name. */}
             <span
@@ -164,6 +165,18 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
                 <Radio className="h-2.5 w-2.5" />
               </span>
             </a>
+            </div>
+            {/* Seppo's remark (Seppo path only, arrives after the list). Quiet
+                italic under the band name, aligned with it past the index. */}
+            {track.seppoNote && (
+              <p
+                className="m-0 mt-0.5 mb-2 ml-7 text-[12px] max-[480px]:text-[13px] italic leading-snug animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]"
+                style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
+              >
+                <span className="not-italic uppercase text-[10px] mr-1.5" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}>Seppo:</span>
+                {track.seppoNote}
+              </p>
+            )}
           </div>
         ))}
       </div>

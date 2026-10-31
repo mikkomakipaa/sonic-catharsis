@@ -91,6 +91,8 @@ export interface Track {
   genre: string;
   previewUrl?: string;
   bandcampUrl?: string;
+  // Seppo's remark on this artist; only set on the Seppo path, filled in after the list.
+  seppoNote?: string;
   artworkUrl?: string;
   duration?: number;
   explicitContent?: boolean;

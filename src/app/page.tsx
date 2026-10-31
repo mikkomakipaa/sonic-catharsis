@@ -220,6 +220,35 @@ export default function Home() {
     return reading;
   };
 
+  // Seppo's remarks arrive after the list is already on screen: they are
+  // decoration, so a failure leaves the prescription untouched. The playlist
+  // id guards against the patient having reset or re-run in the meantime.
+  const attachSeppoNotes = async (curated: Playlist, incident: string | null) => {
+    try {
+      const res = await fetch('/api/seppo-notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          artists: curated.tracks.map((t) => t.artist),
+          subgenre,
+          ...(incident ? { incident } : {}),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error || !Array.isArray(data.notes)) throw new Error(data.error || 'Seppo is unavailable');
+      const byArtist = new Map<string, string>(
+        data.notes.map((n: { artist: string; note: string }) => [n.artist.toLowerCase(), n.note])
+      );
+      setPlaylist((current) =>
+        current && current.id === curated.id
+          ? { ...current, tracks: current.tracks.map((t) => ({ ...t, seppoNote: byArtist.get(t.artist.toLowerCase()) })) }
+          : current
+      );
+    } catch (error) {
+      console.error('Error fetching Seppo notes:', error);
+    }
+  };
+
   // Step 2: only fires when the user explicitly chooses to descend.
   const beginDescent = async (reading?: Reading) => {
     const emotionData = reading?.emotionData ?? pendingEmotionData;
@@ -267,12 +296,15 @@ export default function Home() {
           };
         });
 
-        setPlaylist({
+        const curated: Playlist = {
           id: `ai-generated-${Date.now()}`,
           name: 'Curated Artists',
           description: `10 curated artists for ${getTriggerMeta(emotionData.trigger).label}`,
           tracks,
-        });
+        };
+        setPlaylist(curated);
+        // Seppo annotates the list only when he is the one who diagnosed.
+        if (provokedBy === SEPPO_STIMULUS && subgenre) void attachSeppoNotes(curated, emotionData.event);
       }
       completed = true;
     } catch (error) {
