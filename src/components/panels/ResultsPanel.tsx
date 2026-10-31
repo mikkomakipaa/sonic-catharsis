@@ -25,6 +25,14 @@ interface ResultsPanelProps {
   onViewReceipt?: () => void;
 }
 
+// Row grid: index | band | (Seppo) | link. On narrow screens the Seppo cell
+// drops under the band instead (see the row below), so the mobile grid is the
+// same three columns with or without notes.
+const ROW_COLS = 'grid-cols-[1.5rem_minmax(0,1fr)_4.5rem] max-[480px]:grid-cols-[1.5rem_minmax(0,1fr)_2.75rem]';
+const ROW_COLS_WITH_NOTES = 'grid-cols-[1.5rem_minmax(0,1fr)_4.5rem] min-[481px]:grid-cols-[1.5rem_11rem_minmax(0,1fr)_4.5rem] max-[480px]:grid-cols-[1.5rem_minmax(0,1fr)_2.75rem]';
+
+const HEADER_STYLE = { fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY } as const;
+
 export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage, subgenre, onViewReceipt }: ResultsPanelProps) {
   if (!playlist) {
     // No background/border box around the loading state itself — see
@@ -51,6 +59,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
   // stage.index alone can't distinguish "unassessed" (SURFACE) from
   // "assessed, pseudo-vitutus" (PSEUDO_VITUTUS_STAGE) — both are index 0 by
   // design (see lib/theme.ts) — so this compares by reference instead.
+  const hasNotes = playlist.tracks.some((t) => t.seppoNote);
   const severityLabel = stage && stage !== SURFACE ? `${stage.roman} · ${stage.name.toUpperCase()}` : null;
   return (
     <div
@@ -122,30 +131,49 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
           tertiary ink) so the band name — the actual payoff — carries the
           row. */}
       <div className="mt-1">
+        {/* Column headers, wide screens only: on narrow screens each remark
+            sits under its band and carries its own label. */}
+        <div className={`hidden min-[481px]:grid ${hasNotes ? ROW_COLS_WITH_NOTES : ROW_COLS} gap-x-3 pt-2 pb-1 uppercase text-[10px]`} style={HEADER_STYLE}>
+          <span className="col-start-2">Artist</span>
+          {hasNotes && <span className="col-start-3">Contraindications</span>}
+          <span className={`justify-self-end ${hasNotes ? 'col-start-4' : 'col-start-3'}`}>Link</span>
+        </div>
         {playlist.tracks.map((track, index) => (
           <div
             key={track.id}
-            className="group py-2.5 max-[480px]:py-0"
+            className={`group grid items-center gap-x-3 py-2.5 max-[480px]:py-0 ${hasNotes ? ROW_COLS_WITH_NOTES : ROW_COLS}`}
             style={{
               borderTop: index > 0 ? `1px solid ${DIVIDER_COLOR}` : 'none',
               animationDelay: `${index * 60}ms`,
             }}
           >
-            <div className="flex items-center max-[480px]:min-h-[48px]">
             {/* Indexing metadata, not information — quieter than the label
                 row above it, so it recedes behind the band name. */}
             <span
-              className="text-[9px] max-[480px]:text-[12px] tabular-nums shrink-0 w-6"
+              className="text-[9px] max-[480px]:text-[12px] tabular-nums max-[480px]:min-h-[48px] max-[480px]:flex max-[480px]:items-center"
               style={{ fontFamily: "'Courier New', monospace", color: TEXT_TERTIARY, opacity: 0.6 }}
             >
               {String(index + 1).padStart(2, '0')}
             </span>
             <span
-              className="min-w-0 flex-1 truncate text-[14px] font-bold ml-1"
+              className="min-w-0 truncate text-[14px] font-bold max-[480px]:min-h-[48px] max-[480px]:flex max-[480px]:items-center"
               style={{ color: TEXT_PRIMARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
+              title={track.name}
             >
               {track.name}
             </span>
+            {/* Seppo's remark (Seppo path only, arrives after the list): its
+                own column on wide screens, under the band name on narrow
+                ones. Always the third grid cell on wide screens. */}
+            {track.seppoNote && (
+              <p
+                className="m-0 min-w-0 text-[12px] max-[480px]:text-[13px] italic leading-snug min-[481px]:col-start-3 min-[481px]:row-start-1 max-[480px]:col-start-2 max-[480px]:row-start-2 max-[480px]:col-span-2 max-[480px]:mb-2 animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]"
+                style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
+              >
+                <span className="min-[481px]:hidden not-italic uppercase text-[10px] mr-1.5" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}>Seppo:</span>
+                {track.seppoNote}
+              </p>
+            )}
             {/* Outer <a> is the touch target — 44x44 minimum on mobile —
                 while the visible circle stays small, centered inside it.
                 Quiet until hover/focus (group-hover on the row, or the
@@ -155,7 +183,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
               href={track.bandcampUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative flex items-center justify-center shrink-0 ml-2 w-5 h-5 max-[480px]:w-11 max-[480px]:h-11"
+              className={`relative flex items-center justify-center w-5 h-5 max-[480px]:w-11 max-[480px]:h-11 max-[480px]:row-start-1 max-[480px]:col-start-3 justify-self-end ${hasNotes ? 'min-[481px]:col-start-4' : ''}`}
               title={`Search ${track.name} on Bandcamp`}
             >
               <span
@@ -165,18 +193,6 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
                 <Radio className="h-2.5 w-2.5" />
               </span>
             </a>
-            </div>
-            {/* Seppo's remark (Seppo path only, arrives after the list). Quiet
-                italic under the band name, aligned with it past the index. */}
-            {track.seppoNote && (
-              <p
-                className="m-0 mt-0.5 mb-2 ml-7 text-[12px] max-[480px]:text-[13px] italic leading-snug animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]"
-                style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
-              >
-                <span className="not-italic uppercase text-[10px] mr-1.5" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}>Seppo:</span>
-                {track.seppoNote}
-              </p>
-            )}
           </div>
         ))}
       </div>
