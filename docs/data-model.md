@@ -221,14 +221,14 @@ resolves to something clickable.
 
 ### 6.1 Artist notes — `/api/seppo-notes`, `/api/physician-notes`
 
-Two routes, one contract (`handleArtistNotes`, `src/lib/artist-notes.ts`), two voices: Seppo (`SEPPO_ARTIST_NOTES_INSTRUCTIONS`, `Track.seppoNote`, header "Contraindications") when `provokedBy === SEPPO_STIMULUS`, the clinic physician (`PHYSICIAN_ARTIST_NOTES_INSTRUCTIONS`, `Track.physicianNote`, header "Indication") for everyone else. After the Curator's
-list is on screen, `page.tsx` POSTs `{ artists: string[], subgenre, incident? }`
+Two routes, one contract (`handleArtistNotes`, `src/lib/artist-notes.ts`), two voices: Seppo (`SEPPO_ARTIST_NOTES_INSTRUCTIONS`, `Track.seppoNote`, header "Contraindications") when `provokedBy === SEPPO_STIMULUS`, the clinic physician (`PHYSICIAN_ARTIST_NOTES_INSTRUCTIONS`, `Track.physicianNote`, header "Indication") for everyone else. After the Curator
+returns, `page.tsx` (while the prescription loading screen is still up) POSTs `{ artists: string[], subgenre, incident? }`
 (`SeppoNotesRequestSchema`; the incident is the Matcher's `event`). The Curator
 itself still never sees the incident. Response: `{ notes: [{ artist, note }] }`
 (`SeppoNotesSchema`, note ≤160 chars), filtered server-side to the requested
-artists, one each. The client merges them into `Track.seppoNote` by
-case-insensitive artist name, guarded by the playlist id. Failure is silent:
-the prescription renders without notes.
+artists, one each. The client merges them into the track by
+case-insensitive artist name and shows the list once, in its final layout.
+Failure or a 20 s timeout is silent: the prescription renders without notes.
 
 ## 7. Rendered types
 
