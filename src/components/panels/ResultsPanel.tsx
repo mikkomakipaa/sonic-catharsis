@@ -8,11 +8,14 @@ import {
   TEXT_SECONDARY,
   TEXT_TERTIARY,
   DIVIDER_COLOR,
+  MAX_STRESS_INTENSITY,
+  TOTAL_INTENSITY_LEVELS,
   TREATMENT_ACCENT_BORDER,
   TREATMENT_ACCENT_TEXT,
 } from '@/lib/theme';
 import { Playlist } from '@/types';
 import PrescriptionCalibration from '@/components/PrescriptionCalibration';
+import StudyQr from '@/components/StudyQr';
 
 interface ResultsPanelProps {
   playlist: Playlist | null;
@@ -22,7 +25,7 @@ interface ResultsPanelProps {
   triggerLabel?: string | null;
   stage?: Stage | null;
   subgenre?: string | null;
-  onViewReceipt?: () => void;
+  intensity?: number | null;
 }
 
 // Row grid: index | band | (Seppo) | link. On narrow screens the Seppo cell
@@ -33,7 +36,7 @@ const ROW_COLS_WITH_NOTES = 'grid-cols-[1.5rem_minmax(0,1fr)_4.5rem] min-[481px]
 
 const HEADER_STYLE = { fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY } as const;
 
-export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage, subgenre, onViewReceipt }: ResultsPanelProps) {
+export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage, subgenre, intensity }: ResultsPanelProps) {
   if (!playlist) {
     // No background/border box around the loading state itself — see
     // docs/design_guidelines.md → Loading States. PrescriptionCalibration
@@ -64,6 +67,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
   // The two never mix: a playlist carries notes from one voice only.
   const bySeppo = playlist.tracks.some((t) => t.seppoNote);
   const noteHeader = bySeppo ? 'Contraindications' : 'Indication';
+  const issuedOn = new Date().toLocaleDateString('fi-FI');
   const severityLabel = stage && stage !== SURFACE ? `${stage.roman} · ${stage.name.toUpperCase()}` : null;
   return (
     <div
@@ -88,26 +92,15 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         >
           Prescription / Case 001
         </span>
-        {onViewReceipt && (
-          <button
-            type="button"
-            onClick={onViewReceipt}
-            className="shrink-0 px-1 text-[10px] max-[480px]:min-h-[44px] max-[480px]:text-[11px] font-medium uppercase tracking-wide transition-colors duration-200"
-            style={{ color: TEXT_SECONDARY }}
-            onMouseEnter={(event) => (event.currentTarget.style.color = TREATMENT_ACCENT_TEXT)}
-            onMouseLeave={(event) => (event.currentTarget.style.color = TEXT_SECONDARY)}
-          >
-            View receipt
-          </button>
-        )}
       </div>
 
       {/* Clinical metadata — monospace, not the sans body font used for
           the band names below. Per the typography split in
           docs/design_guidelines.md, monospace is reserved for clinical
           metadata; content (band names) reads in the app's normal sans. */}
+      <div className="mt-3 flex items-start justify-between gap-4">
       <div
-        className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 mt-3 text-[11px] max-[480px]:text-[13px] uppercase"
+        className="grid min-w-0 grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[11px] max-[480px]:text-[13px] uppercase"
         style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.04em' }}
       >
         <span style={{ color: TEXT_SECONDARY }}>For</span>
@@ -120,12 +113,25 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
           </>
         )}
 
+        {intensity != null && (
+          <>
+            <span style={{ color: TEXT_SECONDARY }}>Intensity</span>
+            <span style={{ color: TEXT_PRIMARY }}>{`${intensity === MAX_STRESS_INTENSITY ? TOTAL_INTENSITY_LEVELS : intensity + 1}/${MAX_STRESS_INTENSITY}`}</span>
+          </>
+        )}
+
         {subgenre && (
           <>
             <span style={{ color: TEXT_SECONDARY }}>Treatment</span>
-            <span style={{ color: TEXT_PRIMARY }}>{subgenre.toUpperCase()}</span>
+            <span className="min-w-0 break-words" style={{ color: TEXT_PRIMARY }}>{subgenre.toUpperCase()}</span>
           </>
         )}
+
+        <span style={{ color: TEXT_SECONDARY }}>Issued</span>
+        <span style={{ color: TEXT_PRIMARY }}>{issuedOn}</span>
+      </div>
+      {/* The Vitutus study citation (moved here from the retired receipt). */}
+      <StudyQr />
       </div>
 
       <div className="mt-4" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }} />
@@ -135,12 +141,14 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
           tertiary ink) so the band name — the actual payoff — carries the
           row. */}
       <div className="mt-1">
-        {/* Column headers, wide screens only: on narrow screens each remark
-            sits under its band and carries its own label. */}
-        <div className={`hidden min-[481px]:grid ${hasNotes ? ROW_COLS_WITH_NOTES : ROW_COLS} gap-x-3 pt-2 pb-1 uppercase text-[10px]`} style={HEADER_STYLE}>
+        {/* Column headers at every width. On narrow screens the remark
+            sits under its band and carries its own inline label, so only
+            Artist and Bandcamp are headed there; the remark header joins
+            from 481px up, where the remark gets its own column. */}
+        <div className={`grid ${hasNotes ? ROW_COLS_WITH_NOTES : ROW_COLS} gap-x-3 pt-2 pb-1 uppercase text-[10px] max-[480px]:text-[11px]`} style={HEADER_STYLE}>
           <span className="col-start-2">Artist</span>
-          {hasNotes && <span className="col-start-3">{noteHeader}</span>}
-          <span className={`justify-self-end ${hasNotes ? 'col-start-4' : 'col-start-3'}`}>Bandcamp</span>
+          {hasNotes && <span className="hidden min-[481px]:inline col-start-3">{noteHeader}</span>}
+          <span className={`justify-self-end whitespace-nowrap col-start-3 ${hasNotes ? 'min-[481px]:col-start-4' : ''}`}>Bandcamp</span>
         </div>
         {playlist.tracks.map((track, index) => (
           <div
