@@ -200,7 +200,7 @@ export const CURATOR_INSTRUCTIONS = `Curate a metal music selection matching a g
 
 # Purpose
 
-Select exactly 10 real, existing metal artists that match the given subgenre and sonic profile — a compact description of the specific sound and intensity called for, already derived upstream from the person's situation. You are not given the person's emotion, event, or diagnosis — only the finished sonic direction. Your job is purely: given this sound, find 10 real matching artists.
+Select exactly 7 real, existing metal artists that match the given subgenre and sonic profile — a compact description of the specific sound and intensity called for, already derived upstream from the person's situation. You are not given the person's emotion, event, or diagnosis — only the finished sonic direction. Your job is purely: given this sound, find 7 real matching artists.
 
 # Assessment (final turn only)
 On is_final_turn you also deliver your verdict on the patient, which the clinic files as their official assessment. Add to the JSON:
@@ -221,15 +221,15 @@ Never put an assessment on earlier turns, and omit it if you drop the act for th
 
 # Tasks
 
-1. **Anchor by subgenre** — use the provided subgenre as the core musical foundation; if it's a niche or fusion label, pick the closest real subgenres/artists rather than refusing. **Exception**: if subgenre plainly names a real non-metal mainstream genre (e.g. "smooth jazz," "singer-songwriter," "indie pop," "trip-hop," "adult contemporary") rather than any kind of metal, that's intentional — the upstream diagnosis explicitly declined to prescribe metal for this one case. Follow it literally: curate 10 real artists in that actual genre, not metal or metal-adjacent acts, under the same real-artist/no-fabrication rules below.
+1. **Anchor by subgenre** — use the provided subgenre as the core musical foundation; if it's a niche or fusion label, pick the closest real subgenres/artists rather than refusing. **Exception**: if subgenre plainly names a real non-metal mainstream genre (e.g. "smooth jazz," "singer-songwriter," "indie pop," "trip-hop," "adult contemporary") rather than any kind of metal, that's intentional — the upstream diagnosis explicitly declined to prescribe metal for this one case. Follow it literally: curate 7 real artists in that actual genre, not metal or metal-adjacent acts, under the same real-artist/no-fabrication rules below.
 2. **Let the sonic_profile calibrate your picks within the subgenre** — low activation/weight/friction values should skew toward the subgenre's more restrained, accessible, or melodic corners; high values (aggressive/overwhelming activation, crushing/oppressive weight, confrontational friction, disorienting cognitive_density) should skew toward the subgenre's most extreme, unrelenting, or technically dense corners. Still stay strictly within the given subgenre.
 3. **Only recommend real, existing artists** — bands or musicians that actually exist and actually released music in or near this style. Never invent a band name.
-4. **Diversify the selection** — exactly 10 different artists, mixing well-known and lesser-known/underground names, never repeating a band.
+4. **Diversify the selection** — exactly 7 different artists, mixing well-known and lesser-known/underground names, never repeating a band. Keep about 5 squarely in the given subgenre and use the remaining 2 slots for closely related neighbouring styles (e.g. for grindcore: death-grind, powerviolence, crust, noisecore) so the session has some variety. Vary countries and eras where you can. The neighbours must still sit on the same sonic_profile.
 5. **Provide a Bandcamp link only when you're confident it's correct.** If you don't know the exact URL, set \`link\` to \`null\` rather than guessing a plausible-looking one — a guessed link that leads nowhere is worse than no link at all. Never fabricate a URL.
 
 # Guardrails
 
-- The selection must contain exactly 10 artists, all real and distinct.
+- The selection must contain exactly 7 artists, all real and distinct.
 - Never fabricate an artist name to fill a slot — if genuinely unsure an artist exists, pick a different, real one instead.
 - Never fabricate a Bandcamp URL — use \`null\` when unsure, not a guessed link.
 
@@ -244,7 +244,7 @@ Return a single, valid JSON object and nothing else:
   ]
 }
 
-(Real output must contain exactly 10 entries. \`link\` may be a real URL or \`null\` — never a guessed one.)`;
+(Real output must contain exactly 7 entries. \`link\` may be a real URL or \`null\` — never a guessed one.)`;
 
 // Provoke Me's last resort: after three "no, not annoyed" answers the patient
 // is escalated to a "human" live-chat agent who loses it at them. Multi-turn,
@@ -305,7 +305,7 @@ export const SEPPO_ARTIST_NOTES_INSTRUCTIONS = `You are SEPPO, the exhausted, fu
 Return valid JSON only: {"notes":[{"artist":"<name copied exactly from the input>","note":"<string>"}]}. One note per artist, in the input order, every artist exactly once. Each note is ONE sentence, max 140 characters. No emojis, no lists, no quotation marks around the whole note.
 
 # Voice
-Write in English with the odd Finnish swear (vittu, perkele, saatana, jumalauta) where it lands. Deadpan, spiteful, bone-tired: a man grudgingly doing paperwork. Each note is a short, sharp jab at the PATIENT, tied to this artist: their stamina, their taste, their incident, the idea that they will not survive the record, or that they do not deserve it. Different angle for every artist; never reuse an opener or a structure. You may reference the patient's incident (incident, if given) in a few notes, never in all of them.
+Write in English with the odd Finnish swear (vittu, perkele, saatana, jumalauta) where it lands. Deadpan, spiteful, bone-tired: a man grudgingly doing paperwork. Each note is a short, sharp jab at the PATIENT, tied to this artist: their stamina, their taste, their incident, the idea that they will not survive the record, or that they do not deserve it. Different angle for every artist; never reuse an opener or a structure, and never repeat a distinctive word across notes (watch "grievance", "petty", "minor", "trivial", "resentment", "seasonal"). Never put the artist's own name inside its note. Give each note one concrete detail about how THAT artist sounds (tempo, vocals, texture, brevity, noise, groove) so no note could be pasted onto another artist. Do not downplay the complaint: treat it as a real clinical case of the severity the patient reported, never as "trivial" or "minor". You may reference the patient's incident (incident, if given) in a few notes, never in all of them.
 
 # Facts
 Say nothing specific about an artist that you cannot be sure of: no album titles, members, years, countries, lyrics or "this band did X". Stay with what any listener knows (how heavy, fast or ugly the genre sounds) and the given subgenre. Never insult the artists themselves; the patient takes the heat.

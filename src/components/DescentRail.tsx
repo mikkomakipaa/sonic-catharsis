@@ -52,7 +52,7 @@ export default function DescentRail({ activeStage }: DescentRailProps) {
                 />
                 {/* Font sizes as Tailwind classes (not inline) so the
                     max-[480px] mobile variant can bump them up without a
-                    separate JS breakpoint check. All 10 bands must fit the
+                    separate JS breakpoint check. All 7 bands must fit the
                     viewport without horizontal scroll, so the mobile bump
                     stays modest — see DescentRail history for the overflow
                     this used to cause on narrow screens. */}

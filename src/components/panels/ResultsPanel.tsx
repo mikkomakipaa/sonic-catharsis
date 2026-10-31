@@ -140,7 +140,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         <div className={`hidden min-[481px]:grid ${hasNotes ? ROW_COLS_WITH_NOTES : ROW_COLS} gap-x-3 pt-2 pb-1 uppercase text-[10px]`} style={HEADER_STYLE}>
           <span className="col-start-2">Artist</span>
           {hasNotes && <span className="col-start-3">{noteHeader}</span>}
-          <span className={`justify-self-end ${hasNotes ? 'col-start-4' : 'col-start-3'}`}>Link</span>
+          <span className={`justify-self-end ${hasNotes ? 'col-start-4' : 'col-start-3'}`}>Bandcamp</span>
         </div>
         {playlist.tracks.map((track, index) => (
           <div
@@ -180,18 +180,20 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
             )}
             {/* Outer <a> is the touch target — 44x44 minimum on mobile —
                 while the visible circle stays small, centered inside it.
-                Quiet until hover/focus (group-hover on the row, or the
+                Slightly muted until hover/focus (group-hover on the row, or the
                 link's own :hover/:focus-visible) so every row doesn't end
-                with a coral circle competing with the band name. */}
+                with a coral circle competing with the band name, but strong
+                enough to read as a control. */}
             <a
               href={track.bandcampUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`relative flex items-center justify-center w-5 h-5 max-[480px]:w-11 max-[480px]:h-11 max-[480px]:row-start-1 max-[480px]:col-start-3 justify-self-end ${hasNotes ? 'min-[481px]:col-start-4' : ''}`}
               title={`Search ${track.name} on Bandcamp`}
+              aria-label={`Search ${track.name} on Bandcamp`}
             >
               <span
-                className="flex items-center justify-center w-5 h-5 rounded-full opacity-40 group-hover:opacity-100 group-focus-within:opacity-100 hover:!opacity-100 transition-opacity duration-200"
+                className="flex items-center justify-center w-5 h-5 rounded-full opacity-75 group-hover:opacity-100 group-focus-within:opacity-100 hover:!opacity-100 transition-opacity duration-200"
                 style={{ border: `1px solid ${TREATMENT_ACCENT_BORDER}`, color: TREATMENT_ACCENT_TEXT }}
               >
                 <Radio className="h-2.5 w-2.5" />
@@ -206,7 +208,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.04em', borderTop: `1px solid ${DIVIDER_COLOR}` }}
       >
         <span style={{ color: TEXT_SECONDARY }}>Dosage:</span>
-        <span style={{ color: TEXT_PRIMARY }}>Take ten (10) bands. Repeat ad nauseam. No known cure.</span>
+        <span style={{ color: TEXT_PRIMARY }}>Take seven (7) bands. Repeat ad nauseam. No known cure.</span>
       </div>
     </div>
   );
