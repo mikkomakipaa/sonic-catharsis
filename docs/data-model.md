@@ -219,11 +219,22 @@ plausible-looking Bandcamp URLs; the client (`page.tsx`) already falls back
 to a Bandcamp *search* URL when `link` is falsy, so a `null` link still
 resolves to something clickable.
 
+### 6.1 Seppo's artist notes — `/api/seppo-notes`
+
+Only on the Seppo path (`provokedBy === SEPPO_STIMULUS`). After the Curator's
+list is on screen, `page.tsx` POSTs `{ artists: string[], subgenre, incident? }`
+(`SeppoNotesRequestSchema`; the incident is the Matcher's `event`). The Curator
+itself still never sees the incident. Response: `{ notes: [{ artist, note }] }`
+(`SeppoNotesSchema`, note ≤160 chars), filtered server-side to the requested
+artists, one each. The client merges them into `Track.seppoNote` by
+case-insensitive artist name, guarded by the playlist id. Failure is silent:
+the prescription renders without notes.
+
 ## 7. Rendered types
 
 ```ts
 // src/types/index.ts
-interface Track { id, name, artist, album, genre, bandcampUrl?, ... }
+interface Track { id, name, artist, album, genre, bandcampUrl?, seppoNote?, ... }
 interface Playlist { id, name, description?, tracks: Track[] }
 ```
 

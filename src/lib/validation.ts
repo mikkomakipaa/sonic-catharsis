@@ -135,6 +135,22 @@ export const CuratorArtistSchema = z.object({
 
 export const CuratorArtistsSchema = z.array(CuratorArtistSchema).min(1).max(15);
 
+// Seppo's remarks on the prescribed artists (/api/seppo-notes). The route is
+// stateless: the client sends the Curator's names back with the subgenre and,
+// for material, the incident. Both caps mirror what the model may return.
+export const MAX_SEPPO_NOTE_LENGTH = 160;
+
+export const SeppoNotesRequestSchema = z.object({
+  artists: z.array(z.string().trim().min(1).max(100)).min(1).max(15),
+  subgenre: SubgenreSchema,
+  incident: z.string().trim().max(500).optional(),
+});
+
+export const SeppoNotesSchema = z.array(z.object({
+  artist: z.string().trim().min(1).max(100),
+  note: z.string().trim().min(1).max(MAX_SEPPO_NOTE_LENGTH),
+})).min(1).max(15);
+
 // Vittuilubotti ("Seppo", the last-resort live-chat agent after Provoke Me's
 // five noes — see VITTUILUBOTTI_INSTRUCTIONS in lib/prompts.ts). The route is
 // stateless: the client sends the whole transcript every turn, and the SERVER
