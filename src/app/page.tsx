@@ -220,34 +220,26 @@ export default function Home() {
     return reading;
   };
 
-  // The remarks arrive after the list is already on screen: they are
-  // decoration, so a failure leaves the prescription untouched. Seppo writes
-  // them when he is the one who diagnosed, the physician otherwise. The
-  // playlist id guards against the patient having reset or re-run meanwhile.
-  const attachNotes = async (curated: Playlist, incident: string | null, bySeppo: boolean) => {
+  // The patient waits on the prescription loading screen for the remarks, so
+  // the list appears once, in its final layout. They are decoration, though:
+  // on failure or timeout the list renders without them. Seppo writes them
+  // when he is the one who diagnosed, the physician otherwise. Returns notes
+  // keyed by lowercase artist name, or null.
+  const NOTES_TIMEOUT_MS = 20000;
+  const fetchArtistNotes = async (artists: string[], incident: string | null, bySeppo: boolean): Promise<Map<string, string> | null> => {
     try {
       const res = await fetch(bySeppo ? '/api/seppo-notes' : '/api/physician-notes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          artists: curated.tracks.map((t) => t.artist),
-          subgenre,
-          ...(incident ? { incident } : {}),
-        }),
+        body: JSON.stringify({ artists, subgenre, ...(incident ? { incident } : {}) }),
+        signal: AbortSignal.timeout(NOTES_TIMEOUT_MS),
       });
       const data = await res.json();
       if (!res.ok || data.error || !Array.isArray(data.notes)) throw new Error(data.error || 'Notes unavailable');
-      const byArtist = new Map<string, string>(
-        data.notes.map((n: { artist: string; note: string }) => [n.artist.toLowerCase(), n.note])
-      );
-      const field = bySeppo ? 'seppoNote' : 'physicianNote';
-      setPlaylist((current) =>
-        current && current.id === curated.id
-          ? { ...current, tracks: current.tracks.map((t) => ({ ...t, [field]: byArtist.get(t.artist.toLowerCase()) })) }
-          : current
-      );
+      return new Map(data.notes.map((n: { artist: string; note: string }) => [n.artist.toLowerCase(), n.note]));
     } catch (error) {
       console.error('Error fetching artist notes:', error);
+      return null;
     }
   };
 
@@ -283,29 +275,30 @@ export default function Home() {
       }
 
       if (curatorData.artists && curatorData.artists.length > 0) {
-        const tracks = curatorData.artists.map((artistItem: ArtistItem, index: number) => {
-          const displayName = typeof artistItem === 'string' ? artistItem : artistItem.artist || artistItem.name || '';
-          return {
-            id: `artist-${index}`,
-            name: displayName,
-            artist: displayName,
-            album: 'Artist Collection',
-            genre: 'metal',
-            // A name-prefilled search is more reliable than a model-supplied
-            // direct URL and lets the listener choose the right artist page,
-            // release, or label listing on Bandcamp.
-            bandcampUrl: `https://bandcamp.com/search?q=${encodeURIComponent(displayName)}`,
-          };
-        });
+        const names: string[] = curatorData.artists.map((artistItem: ArtistItem) =>
+          typeof artistItem === 'string' ? artistItem : artistItem.artist || artistItem.name || ''
+        );
+        const bySeppo = provokedBy === SEPPO_STIMULUS;
+        const notes = subgenre ? await fetchArtistNotes(names, emotionData.event, bySeppo) : null;
+        const tracks = names.map((displayName, index) => ({
+          id: `artist-${index}`,
+          name: displayName,
+          artist: displayName,
+          album: 'Artist Collection',
+          genre: 'metal',
+          // A name-prefilled search is more reliable than a model-supplied
+          // direct URL and lets the listener choose the right artist page,
+          // release, or label listing on Bandcamp.
+          bandcampUrl: `https://bandcamp.com/search?q=${encodeURIComponent(displayName)}`,
+          ...(notes?.get(displayName.toLowerCase()) ? { [bySeppo ? 'seppoNote' : 'physicianNote']: notes.get(displayName.toLowerCase()) } : {}),
+        }));
 
-        const curated: Playlist = {
+        setPlaylist({
           id: `ai-generated-${Date.now()}`,
           name: 'Curated Artists',
           description: `10 curated artists for ${getTriggerMeta(emotionData.trigger).label}`,
           tracks,
-        };
-        setPlaylist(curated);
-        if (subgenre) void attachNotes(curated, emotionData.event, provokedBy === SEPPO_STIMULUS);
+        });
       }
       completed = true;
     } catch (error) {
