@@ -219,9 +219,9 @@ plausible-looking Bandcamp URLs; the client (`page.tsx`) already falls back
 to a Bandcamp *search* URL when `link` is falsy, so a `null` link still
 resolves to something clickable.
 
-### 6.1 Seppo's artist notes — `/api/seppo-notes`
+### 6.1 Artist notes — `/api/seppo-notes`, `/api/physician-notes`
 
-Only on the Seppo path (`provokedBy === SEPPO_STIMULUS`). After the Curator's
+Two routes, one contract (`handleArtistNotes`, `src/lib/artist-notes.ts`), two voices: Seppo (`SEPPO_ARTIST_NOTES_INSTRUCTIONS`, `Track.seppoNote`, header "Contraindications") when `provokedBy === SEPPO_STIMULUS`, the clinic physician (`PHYSICIAN_ARTIST_NOTES_INSTRUCTIONS`, `Track.physicianNote`, header "Indication") for everyone else. After the Curator's
 list is on screen, `page.tsx` POSTs `{ artists: string[], subgenre, incident? }`
 (`SeppoNotesRequestSchema`; the incident is the Matcher's `event`). The Curator
 itself still never sees the incident. Response: `{ notes: [{ artist, note }] }`

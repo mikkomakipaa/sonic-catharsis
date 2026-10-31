@@ -59,7 +59,11 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
   // stage.index alone can't distinguish "unassessed" (SURFACE) from
   // "assessed, pseudo-vitutus" (PSEUDO_VITUTUS_STAGE) — both are index 0 by
   // design (see lib/theme.ts) — so this compares by reference instead.
-  const hasNotes = playlist.tracks.some((t) => t.seppoNote);
+  const hasNotes = playlist.tracks.some((t) => t.seppoNote || t.physicianNote);
+  // Seppo's remarks are contraindications; the physician's are indications.
+  // The two never mix: a playlist carries notes from one voice only.
+  const bySeppo = playlist.tracks.some((t) => t.seppoNote);
+  const noteHeader = bySeppo ? 'Contraindications' : 'Indication';
   const severityLabel = stage && stage !== SURFACE ? `${stage.roman} · ${stage.name.toUpperCase()}` : null;
   return (
     <div
@@ -135,7 +139,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
             sits under its band and carries its own label. */}
         <div className={`hidden min-[481px]:grid ${hasNotes ? ROW_COLS_WITH_NOTES : ROW_COLS} gap-x-3 pt-2 pb-1 uppercase text-[10px]`} style={HEADER_STYLE}>
           <span className="col-start-2">Artist</span>
-          {hasNotes && <span className="col-start-3">Contraindications</span>}
+          {hasNotes && <span className="col-start-3">{noteHeader}</span>}
           <span className={`justify-self-end ${hasNotes ? 'col-start-4' : 'col-start-3'}`}>Link</span>
         </div>
         {playlist.tracks.map((track, index) => (
@@ -162,16 +166,16 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
             >
               {track.name}
             </span>
-            {/* Seppo's remark (Seppo path only, arrives after the list): its
+            {/* The remark (Seppo's or the physician's; arrives after the list): its
                 own column on wide screens, under the band name on narrow
                 ones. Always the third grid cell on wide screens. */}
-            {track.seppoNote && (
+            {(track.seppoNote || track.physicianNote) && (
               <p
                 className="m-0 min-w-0 text-[12px] max-[480px]:text-[13px] italic leading-snug min-[481px]:col-start-3 min-[481px]:row-start-1 max-[480px]:col-start-2 max-[480px]:row-start-2 max-[480px]:col-span-2 max-[480px]:mb-2 animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]"
                 style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
               >
-                <span className="min-[481px]:hidden not-italic uppercase text-[10px] mr-1.5" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}>Seppo:</span>
-                {track.seppoNote}
+                <span className="min-[481px]:hidden not-italic uppercase text-[10px] mr-1.5" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}>{bySeppo ? 'Seppo:' : 'Indication:'}</span>
+                {track.seppoNote ?? track.physicianNote}
               </p>
             )}
             {/* Outer <a> is the touch target — 44x44 minimum on mobile —

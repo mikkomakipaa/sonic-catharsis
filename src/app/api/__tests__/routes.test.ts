@@ -14,6 +14,7 @@ const { POST: curatorPOST } = await import('@/app/api/curator/route');
 const { POST: assessPOST } = await import('@/app/api/assess/route');
 const { POST: vittuiluPOST } = await import('@/app/api/vittuilu/route');
 const { POST: seppoNotesPOST } = await import('@/app/api/seppo-notes/route');
+const { POST: physicianNotesPOST } = await import('@/app/api/physician-notes/route');
 
 const post = (url: string, body: string) =>
   new NextRequest(`http://localhost${url}`, { method: 'POST', body, headers: { 'Content-Type': 'application/json' } });
@@ -357,5 +358,27 @@ describe('/api/seppo-notes', () => {
     const res = await send(request);
     expect(res.status).toBe(500);
     expect(create).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('/api/physician-notes', () => {
+  const send = (body: unknown) => physicianNotesPOST(post('/api/physician-notes', JSON.stringify(body)));
+  const request = { artists: ['Undeath', 'Napalm Death'], subgenre: 'death metal' };
+
+  it('returns 400 for a malformed JSON body without calling OpenAI', async () => {
+    const res = await physicianNotesPOST(post('/api/physician-notes', '{not json'));
+    expect(res.status).toBe(400);
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('asks the physician, not Seppo, and returns notes for requested artists only', async () => {
+    create.mockResolvedValue({
+      output_text: JSON.stringify({ notes: [{ artist: 'Undeath', note: 'Indicated for pent-up admin rage.' }, { artist: 'Stranger', note: 'Nope.' }] }),
+    });
+    const res = await send(request);
+    expect(res.status).toBe(200);
+    expect((await res.json()).notes).toEqual([{ artist: 'Undeath', note: 'Indicated for pent-up admin rage.' }]);
+    expect(create.mock.calls[0][0].instructions).toContain('attending physician');
+    expect(create.mock.calls[0][0].instructions).not.toContain('SEPPO');
   });
 });

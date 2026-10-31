@@ -220,12 +220,13 @@ export default function Home() {
     return reading;
   };
 
-  // Seppo's remarks arrive after the list is already on screen: they are
-  // decoration, so a failure leaves the prescription untouched. The playlist
-  // id guards against the patient having reset or re-run in the meantime.
-  const attachSeppoNotes = async (curated: Playlist, incident: string | null) => {
+  // The remarks arrive after the list is already on screen: they are
+  // decoration, so a failure leaves the prescription untouched. Seppo writes
+  // them when he is the one who diagnosed, the physician otherwise. The
+  // playlist id guards against the patient having reset or re-run meanwhile.
+  const attachNotes = async (curated: Playlist, incident: string | null, bySeppo: boolean) => {
     try {
-      const res = await fetch('/api/seppo-notes', {
+      const res = await fetch(bySeppo ? '/api/seppo-notes' : '/api/physician-notes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -235,17 +236,18 @@ export default function Home() {
         }),
       });
       const data = await res.json();
-      if (!res.ok || data.error || !Array.isArray(data.notes)) throw new Error(data.error || 'Seppo is unavailable');
+      if (!res.ok || data.error || !Array.isArray(data.notes)) throw new Error(data.error || 'Notes unavailable');
       const byArtist = new Map<string, string>(
         data.notes.map((n: { artist: string; note: string }) => [n.artist.toLowerCase(), n.note])
       );
+      const field = bySeppo ? 'seppoNote' : 'physicianNote';
       setPlaylist((current) =>
         current && current.id === curated.id
-          ? { ...current, tracks: current.tracks.map((t) => ({ ...t, seppoNote: byArtist.get(t.artist.toLowerCase()) })) }
+          ? { ...current, tracks: current.tracks.map((t) => ({ ...t, [field]: byArtist.get(t.artist.toLowerCase()) })) }
           : current
       );
     } catch (error) {
-      console.error('Error fetching Seppo notes:', error);
+      console.error('Error fetching artist notes:', error);
     }
   };
 
@@ -303,8 +305,7 @@ export default function Home() {
           tracks,
         };
         setPlaylist(curated);
-        // Seppo annotates the list only when he is the one who diagnosed.
-        if (provokedBy === SEPPO_STIMULUS && subgenre) void attachSeppoNotes(curated, emotionData.event);
+        if (subgenre) void attachNotes(curated, emotionData.event, provokedBy === SEPPO_STIMULUS);
       }
       completed = true;
     } catch (error) {
