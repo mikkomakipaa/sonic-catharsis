@@ -3,7 +3,7 @@
 A situation-first web app that turns a petty, everyday grievance into a
 clinically-deadpan "diagnosis" and a matching metal prescription. A two-agent
 AI pipeline derives a sonic profile from what you actually typed, picks a
-metal subgenre, and names ten real bands to treat it. If you turn out to be
+metal subgenre, and names seven real bands to treat it. If you turn out to be
 too calm to treat, the clinic provokes you.
 
 <img width="1287" height="797" alt="image" src="https://github.com/user-attachments/assets/ca3659ee-5793-461c-a853-9f2a5354a7a4" />
@@ -20,7 +20,7 @@ The app is a short ritual, presented as pages of one case file:
 2. **Clinical Note / Epicrisis 001** — a deterministic severity **Stage**
    (I–IX, Finnish "vitutus" names) and the Matcher's darkly comic
    observation and treatment (the chosen subgenre).
-3. **Prescription / Case 001** — ten real bands, each linking to a Bandcamp
+3. **Prescription / Case 001** — seven real bands, each linking to a Bandcamp
    search for the name, plus a printable receipt with a QR code to the real
    study the app borrows from.
 
@@ -32,7 +32,7 @@ Two agents sit behind steps 2 and 3:
   treatment text. The subgenre is chosen by the model from the prompt alone; a
   deterministic `(emotion, intensity)` table is only a fallback if its pick is invalid.
 - **Curator** receives only the subgenre and sonic profile — never the
-  incident, trigger or diagnosis — and returns 10 real, distinct artists.
+  incident, trigger or diagnosis — and returns 7 real, distinct artists.
 
 ### Provoke Me and Seppo
 
@@ -99,7 +99,7 @@ src/
 │   ├── page.tsx                 # Orchestration: selection → analysis → (provoke → vittuilu) → descent
 │   └── api/
 │       ├── matcher/route.ts     # Incident → sonic profile + subgenre + observation
-│       ├── curator/route.ts     # Sonic profile + subgenre → 10 artists
+│       ├── curator/route.ts     # Sonic profile + subgenre → 7 artists
 │       ├── assess/route.ts      # Stimulus → intensity (Joko vituttaa? → yes)
 │       └── vittuilu/route.ts    # Seppo: stateless multi-turn rant chat + assessment
 ├── components/

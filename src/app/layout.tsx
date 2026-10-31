@@ -50,7 +50,7 @@ const fraunces = Fraunces({
 
 const SITE_URL = "https://sonic-catharsis-tau.vercel.app";
 const DESCRIPTION =
-  "Turn a petty, everyday grievance into a deadpan clinical diagnosis and a matching metal prescription — 10 real artists picked for your exact frustration, not a genre quiz.";
+  "Turn a petty, everyday grievance into a deadpan clinical diagnosis and a matching metal prescription — 7 real artists picked for your exact frustration, not a genre quiz.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

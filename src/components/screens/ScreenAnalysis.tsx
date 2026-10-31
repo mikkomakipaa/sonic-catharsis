@@ -163,7 +163,7 @@ export default function ScreenAnalysis({
           {choice && (
             <div className="mt-6 max-[640px]:mt-4 pt-5 max-[640px]:pt-3" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
               {/* "Treatment" (not "Prescribed Response") since the actual
-                  prescription — the 10 bands — arrives on the next screen;
+                  prescription — the 7 bands — arrives on the next screen;
                   this is the diagnosis's recommended direction, not the
                   prescription itself. Same clinical eyebrow style as
                   Observation above. */}

@@ -94,7 +94,7 @@ The application uses a **sequential two-agent pipeline** orchestrated from
    - Input: only the Matcher's `subgenre` + `sonic_profile` — no emotion, event, or diagnosis. That interpretation work is entirely the Matcher's job.
    - Uses OpenAI Responses API, `model: 'gpt-4.1'`, in-repo `instructions: CURATOR_INSTRUCTIONS` (`src/lib/prompts.ts`)
    - **No code-side candidate pool or dataset anymore.** There used to be a local artist database (`data/artists-complete-genres.json`) pre-filtered by genre-token overlap (`src/lib/artist-library.ts`) to guarantee real, genre-matched artists, but that dataset's genre tagging was too thin (~326 metal artists, mostly generic "metal"/"heavy" tags) to give good matches across the full intensity range. Both the JSON files and `artist-library.ts` have been **deleted**; the Curator now relies entirely on the model's own knowledge, instructed to only name real, existing artists and to return `link: null` rather than a guessed Bandcamp URL.
-   - Output: exactly 10 `{ artist, link }` objects (`link` may be `null`)
+   - Output: exactly 7 `{ artist, link }` objects (`link` may be `null`)
 
 3. **Assessor** (`/api/assess`, `src/app/api/assess/route.ts`) — tiny single-shot call for "Joko vituttaa?" → "Yes. Re-assess me" (Provoke Me and Seppo's fallback button). Input `{ trigger, incident }` from the stimulus; output only `{ intensity }`. `acceptStimulus` (`src/app/page.tsx`) then submits straight to the Matcher with duration `just_now`, no symptoms, `provoked: true`, so the patient lands on the diagnosis (analysis) screen, not the pre-filled form. On failure it falls back to `prefillFromStimulus` (the old pre-filled form). Add this route to the Vercel WAF rate limit
 4. **Seppo, the vittuilubotti** (`/api/vittuilu`, `src/app/api/vittuilu/route.ts`) — optional last resort *outside* the Matcher→Curator pipeline
@@ -107,7 +107,7 @@ The application uses a **sequential two-agent pipeline** orchestrated from
    - **Seppo annotates the prescription.** When the reading came through Seppo (`provokedBy === SEPPO_STIMULUS`), `beginDescent` (`src/app/page.tsx`) calls `/api/seppo-notes` (while the loading screen is still up, so the list appears once in its final layout; 20 s timeout) (`SEPPO_ARTIST_NOTES_INSTRUCTIONS`) with the artist names, subgenre and incident. One short remark per artist lands in `Track.seppoNote` and renders under the band name in `ResultsPanel`. Failure or timeout is silent (list renders without notes); the Curator never sees the incident. See `docs/data-model.md` §6.1. Everyone else gets the physician's indication instead (`/api/physician-notes`, same contract, `Track.physicianNote`). Add both routes to the WAF rate limit too
    - Same route rules apply: no payload logging, unauthenticated paid-model route covered by the Vercel WAF rate limit (add this route to that rule)
 
-**Critical Flow**: User Input (incident + trigger + intensity [+ symptoms/duration]) → Matcher (subgenre + sonic_profile + cause/choice) → Curator (10 artists) → UI Display (`ScreenDescent` → `ResultsPanel`)
+**Critical Flow**: User Input (incident + trigger + intensity [+ symptoms/duration]) → Matcher (subgenre + sonic_profile + cause/choice) → Curator (7 artists) → UI Display (`ScreenDescent` → `ResultsPanel`)
 
 **There is no `data/` directory anymore.** All emotion→genre calibration
 lives in code (`src/lib/genre-mapping.ts`); there is no static JSON dataset
@@ -292,7 +292,7 @@ will silently drift if the source files change without a corresponding edit.
 
 **Always Validate**:
 - Intensity is numeric (0-10) in API payload
-- Artist count = exactly 10 in curator response, all real and distinct
+- Artist count = exactly 7 in curator response, all real and distinct
 - Emotion is one of `CoreEmotions`, trigger is one of `TriggerTypes` (`src/lib/validation.ts`)
 - Matcher/curator prose never names or paraphrases the displayed Stage/condition
 
@@ -309,7 +309,7 @@ src/
 │   ├── layout.tsx                   # Meta tags (title: "Sonic Catharsis")
 │   └── api/
 │       ├── matcher/route.ts         # Agent 1: incident+trigger+intensity → subgenre + sonic_profile
-│       ├── curator/route.ts         # Agent 2: subgenre + sonic_profile → 10 artists
+│       ├── curator/route.ts         # Agent 2: subgenre + sonic_profile → 7 artists
 │       ├── physician-notes/route.ts # the physician's one-line indication per artist (non-Seppo path)
 │       ├── seppo-notes/route.ts     # Seppo's one-line remark per prescribed artist (Seppo path only)
 │       └── vittuilu/route.ts        # Seppo the vittuilubotti: stateless multi-turn rant chat
@@ -370,7 +370,7 @@ There is no `data/` directory — see "Two-Agent System" above.
 **Issue: "Failed to parse analysis response" / "No structured playlist received"**
 - The model returned non-JSON (or, for the Curator, a `Selection` that failed `CuratorArtistsSchema`) twice in a row. The server log has a one-line reason but no payload. Reproduce locally and inspect the reply, and tighten the JSON-format section of the prompt if it recurs.
 
-**Issue: Curator returns fewer than 10 artists, or a fabricated-looking one**
+**Issue: Curator returns fewer than 7 artists, or a fabricated-looking one**
 - There's no code-side candidate pool anymore — the model is relying entirely on its own knowledge (see "Two-Agent System" above)
 - Review `CURATOR_INSTRUCTIONS` in `prompts.ts`'s guardrails section; tighten the "never fabricate" language if this recurs
 

@@ -211,7 +211,7 @@ gain right now (see `curator/route.ts` comments).
 **Response**:
 
 ```ts
-{ Selection: [ { artist: string, link: string | null }, ... ] } // exactly 10
+{ Selection: [ { artist: string, link: string | null }, ... ] } // exactly 7
 ```
 
 `link` may be `null` — the Curator is explicitly instructed not to guess
