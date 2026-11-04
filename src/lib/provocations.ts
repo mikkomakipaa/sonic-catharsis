@@ -34,8 +34,9 @@ export interface Stimulus {
   // Public path of the drawn plate, if one exists yet.
   image?: string;
   // How the stimulus is presented. Absent = a figure plate. 'audio' is
-  // played, never drawn (see AUDIO_STIMULUS and AudioStimulus.tsx).
-  kind?: 'audio';
+  // played, never drawn (AUDIO_STIMULUS, AudioStimulus.tsx); 'ui' is an
+  // interactive annoyance (IRRITATION_STIMULUS, IrritationStimulus.tsx).
+  kind?: 'audio' | 'ui';
 }
 
 // Not part of the STIMULI pool: the "stimulus" administered by Seppo, the
@@ -64,6 +65,21 @@ export const AUDIO_STIMULUS: Stimulus = {
   legend: 'A: subject. B: recorder, sharp. C: resolution, withheld.',
   incident: 'Someone played Hot Cross Buns on a recorder. It got faster every time and a bit higher. It never finished the song.',
   imageBrief: 'Not drawn — an audio stimulus.',
+};
+
+// Not part of the STIMULI pool either: the irritation-UI stimulus, always the
+// third of a session. A verification bar stalled at 99%, a lying ETA and a
+// "Skip" button that dodges (lib/irritation-loader.ts). The patient's real
+// Yes/No buttons stay outside it, so it can never trap anyone.
+export const IRRITATION_STIMULUS: Stimulus = {
+  id: 'verification',
+  fig: 33,
+  kind: 'ui',
+  trigger: 'helplessness',
+  stimulus: 'verification, stalled at 99%.',
+  legend: 'A: subject. B: skip button, evasive. C: ETA, “about 1 minute”.',
+  incident: 'A progress bar reached 99% and stayed there. The Skip button moved away every time I tried to click it.',
+  imageBrief: 'Not drawn — an interactive stimulus.',
 };
 
 export const STIMULI: Stimulus[] = [
@@ -418,14 +434,15 @@ export function pickStimuli(
   return [...drawn, ...undrawn].slice(0, count);
 }
 
-// One Provoke Me session: a figure plate first, the audio stimulus second,
-// the rest plates. Delegates to pickStimuli for the plates, so `random` stays
-// injectable for tests. (The third slot becomes the irritation-UI stimulus
-// once it exists.)
+// One Provoke Me session: a figure plate first, then the audio stimulus, then
+// the irritation-UI stimulus (each one worse than the last), any remaining
+// slots plates. Delegates to pickStimuli for the plates, so `random` stays
+// injectable for tests.
 export function pickSession(
   count: number = MAX_STIMULI_PER_SESSION,
   random: () => number = Math.random
 ): Stimulus[] {
-  const plates = pickStimuli(Math.max(0, count - 1), random);
-  return [...plates.slice(0, 1), AUDIO_STIMULUS, ...plates.slice(1)].slice(0, count);
+  const special = [AUDIO_STIMULUS, IRRITATION_STIMULUS];
+  const plates = pickStimuli(Math.max(0, count - special.length), random);
+  return [...plates.slice(0, 1), ...special, ...plates.slice(1)].slice(0, count);
 }

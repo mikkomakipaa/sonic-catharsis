@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import type { Stimulus } from '@/lib/provocations';
 import StimulusPlate from '@/components/StimulusPlate';
 import AudioStimulus from '@/components/AudioStimulus';
+import IrritationStimulus from '@/components/IrritationStimulus';
 import {
   EASE,
   TEXT_PRIMARY,
@@ -60,7 +61,13 @@ export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack, 
 
           {/* key= restarts the reveal animation for each new plate */}
           <div key={stimulus.id} className="mt-5 max-[640px]:mt-4 w-full max-w-md mx-auto animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
-            {stimulus.kind === 'audio' ? <AudioStimulus stimulus={stimulus} /> : <StimulusPlate stimulus={stimulus} />}
+            {stimulus.kind === 'audio' ? (
+              <AudioStimulus stimulus={stimulus} />
+            ) : stimulus.kind === 'ui' ? (
+              <IrritationStimulus stimulus={stimulus} />
+            ) : (
+              <StimulusPlate stimulus={stimulus} />
+            )}
           </div>
 
           <div className="mt-7 max-[640px]:mt-5 text-center">
