@@ -1,12 +1,9 @@
 // --- Provoke Me: the irritation-UI stimulus ----------------------------------
 // A video "buffering" bar that races to 60%, crawls to 99% and stays
-// there, an ETA that never improves, and a "Reload" button that dodges the
-// pointer. Catching the button costs the patient their progress. All of the
+// there, an ETA that never improves, and a "Reload" button that, when
+// pressed, costs the patient their progress. All of the
 // tunable behaviour lives here as pure functions so it can be tested; the
 // timers and DOM live in components/IrritationStimulus.tsx.
-
-// How many times the button dodges before it can finally be caught.
-export const DODGE_LIMIT = 5;
 
 // Progress a setback drops the bar to.
 export const SETBACK_PERCENT = 62;
@@ -38,27 +35,4 @@ export function statusText(percent: number, setbacks: number): string {
   if (setbacks > 0) return 'Thank you for your patience.';
   if (percent >= 99) return 'Almost there…';
   return 'Buffering…';
-}
-
-export function canBeCaught(dodges: number): boolean {
-  return dodges >= DODGE_LIMIT;
-}
-
-export interface DodgePosition {
-  // 0-1 across the free space of the button zone.
-  x: number;
-  y: number;
-}
-
-export const DODGE_START: DodgePosition = { x: 0.5, y: 0.5 };
-
-// Next place for the button: random, but always a decent hop from where it
-// was. `random` is injectable for tests.
-export function nextDodge(prev: DodgePosition, random: () => number = Math.random): DodgePosition {
-  for (let i = 0; i < 8; i++) {
-    const next = { x: random(), y: random() };
-    if (Math.hypot(next.x - prev.x, next.y - prev.y) >= 0.4) return next;
-  }
-  // Fall back to the opposite corner of wherever it was.
-  return { x: prev.x < 0.5 ? 1 : 0, y: prev.y < 0.5 ? 1 : 0 };
 }

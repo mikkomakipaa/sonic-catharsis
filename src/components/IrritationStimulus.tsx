@@ -3,31 +3,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { Play } from 'lucide-react';
 import type { Stimulus } from '@/lib/provocations';
-import {
-  DODGE_START,
-  canBeCaught,
-  etaText,
-  nextDodge,
-  progressAt,
-  statusText,
-  type DodgePosition,
-} from '@/lib/irritation-loader';
+import { etaText, progressAt, statusText } from '@/lib/irritation-loader';
 
 // The third stimulus, dressed as a figure plate like StimulusPlate. After an
 // image and an audio clip the patient expects a video, so that is what is
 // "loading": a dark player frame whose buffer bar stalls at 99%, with a lying
-// ETA and a "Reload" button that dodges the pointer a few times before it can
-// be caught. Catching it opens a confirm whose Yes/No answers both lead to the
-// same place: back to 62%. The video never plays.
+// ETA and a perfectly ordinary "Reload" button. Pressing it opens a confirm
+// whose Yes/No answers both lead to the same place: back to 62%. The video
+// never plays. The joke is deliberately quiet: nothing moves or misbehaves.
 // The patient's real Yes/No buttons live outside this panel (ScreenProvoke),
-// so nothing here can trap them. Dodging is off under prefers-reduced-motion;
-// keyboard focus never dodges.
+// so nothing here can trap them.
 
 const PAPER = '#f1ece0';
 const INK = '#211e1a';
 const TYPEWRITER = 'var(--font-special-elite), "Courier New", monospace';
-const BUTTON_W = 88;
-const BUTTON_H = 32;
 
 const FAKE_BUTTON_STYLE = {
   letterSpacing: '0.06em',
@@ -40,18 +29,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
   const caption = `VID. ${stimulus.fig} — Stimulus: ${stimulus.stimulus}`;
   const [seconds, setSeconds] = useState(0);
   const [setbacks, setSetbacks] = useState(0);
-  const [dodges, setDodges] = useState(0);
-  const [position, setPosition] = useState<DodgePosition>(DODGE_START);
   const [confirming, setConfirming] = useState(false);
-  // Only ever mounted after a click (never server-rendered), so reading
-  // matchMedia in the initialiser is safe.
-  const [reducedMotion] = useState(() => {
-    try {
-      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch {
-      return false;
-    }
-  });
   const roundStart = useRef<number | null>(null);
 
   useEffect(() => {
@@ -65,24 +43,10 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
   const percent = progressAt(seconds, setbacks);
   const eta = etaText(seconds, setbacks);
 
-  const dodge = () => {
-    if (reducedMotion || canBeCaught(dodges)) return;
-    setDodges((n) => n + 1);
-    setPosition((prev) => nextDodge(prev));
-  };
-
-  // Mouse dodges on approach; touch and pen have no hover, so they dodge on
-  // pointerdown, moving the button out from under the finger before the tap
-  // can complete.
-  const onPointerEnter = (e: React.PointerEvent) => { if (e.pointerType === 'mouse') dodge(); };
-  const onPointerDown = (e: React.PointerEvent) => { if (e.pointerType !== 'mouse') dodge(); };
-
   const sendBack = () => {
     roundStart.current = Date.now();
     setSeconds(0);
     setSetbacks((n) => n + 1);
-    setDodges(0);
-    setPosition(DODGE_START);
     setConfirming(false);
   };
 
@@ -137,21 +101,11 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
               </div>
             </div>
           ) : (
-            <div className="relative" style={{ height: 56 }}>
+            <div style={{ minHeight: 56 }}>
               <button
-                onPointerEnter={onPointerEnter}
-                onPointerDown={onPointerDown}
-                // detail 0 = keyboard activation, which never has to chase the button.
-                onClick={(e) => { if (e.detail === 0 || canBeCaught(dodges) || reducedMotion) setConfirming(true); }}
-                className="absolute text-[11px] uppercase rounded-[2px]"
-                style={{
-                  ...FAKE_BUTTON_STYLE,
-                  width: BUTTON_W,
-                  height: BUTTON_H,
-                  left: `calc((100% - ${BUTTON_W}px) * ${position.x})`,
-                  top: `calc((100% - ${BUTTON_H}px) * ${position.y})`,
-                  transition: reducedMotion ? undefined : 'left 0.12s ease-out, top 0.12s ease-out',
-                }}
+                onClick={() => setConfirming(true)}
+                className="px-3 py-1.5 text-[11px] uppercase rounded-[2px]"
+                style={FAKE_BUTTON_STYLE}
               >
                 Reload
               </button>

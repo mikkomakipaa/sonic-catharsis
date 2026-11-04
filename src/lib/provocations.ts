@@ -82,7 +82,7 @@ export const AUDIO_STIMULUS: Stimulus = {
 
 // Not part of the STIMULI pool either: the irritation-UI stimulus, always the
 // third of a session. A video that never loads: a buffer bar stalled at 99%, a lying ETA and a
-// "Reload" button that dodges (lib/irritation-loader.ts). The patient's real
+// ordinary "Reload" button (lib/irritation-loader.ts). The patient's real
 // Yes/No buttons stay outside it, so it can never trap anyone.
 export const IRRITATION_STIMULUS: Stimulus = {
   id: 'video',
@@ -92,7 +92,7 @@ export const IRRITATION_STIMULUS: Stimulus = {
   stimulus: 'video, clinic archive.',
   legend: 'Runtime: 14:00. Resolution: 720p.',
   reading: { intensity: 8, symptoms: ['heart_pounding', 'accelerated_breathing'], duration: 'about_hour' },
-  incident: 'The video got to 99% buffered and stayed there for fourteen minutes. The Reload button moved away every time I tried to click it.',
+  incident: 'The video got to 99% buffered and stayed there for fourteen minutes. I pressed Reload and it went back to 62%.',
   imageBrief: 'Not drawn — an interactive stimulus.',
 };
 
