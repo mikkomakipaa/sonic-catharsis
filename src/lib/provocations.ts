@@ -62,7 +62,7 @@ export const AUDIO_STIMULUS: Stimulus = {
   kind: 'audio',
   trigger: 'absurdity',
   stimulus: 'recorder, “Hot Cross Buns”, ×4.',
-  legend: 'A: subject. B: recorder. C: duration, 27 s.',
+  legend: 'Runtime: 0:27. Channels: mono.',
   incident: 'Someone played Hot Cross Buns on a recorder. It got faster every time and a bit higher. It never finished the song.',
   imageBrief: 'Not drawn — an audio stimulus.',
 };
@@ -76,8 +76,8 @@ export const IRRITATION_STIMULUS: Stimulus = {
   fig: 33,
   kind: 'ui',
   trigger: 'helplessness',
-  stimulus: 'video, buffering, 14 min.',
-  legend: 'A: subject. B: video. C: remaining, “about 1 minute”.',
+  stimulus: 'video, clinic archive.',
+  legend: 'Runtime: 14:00. Resolution: 720p.',
   incident: 'The video got to 99% buffered and stayed there for fourteen minutes. The Reload button moved away every time I tried to click it.',
   imageBrief: 'Not drawn — an interactive stimulus.',
 };

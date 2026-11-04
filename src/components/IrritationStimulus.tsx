@@ -37,7 +37,7 @@ const FAKE_BUTTON_STYLE = {
 } as const;
 
 export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus }) {
-  const caption = `FIG. ${stimulus.fig} — Stimulus: ${stimulus.stimulus}`;
+  const caption = `VID. ${stimulus.fig} — Stimulus: ${stimulus.stimulus}`;
   const [seconds, setSeconds] = useState(0);
   const [setbacks, setSetbacks] = useState(0);
   const [dodges, setDodges] = useState(0);
