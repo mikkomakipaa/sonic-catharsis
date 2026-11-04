@@ -1,6 +1,6 @@
 // --- Provoke Me: the irritation-UI stimulus ----------------------------------
-// A "diagnosis loading" progress bar that races to 60%, crawls to 99% and stays
-// there, an ETA that never improves, and a "Cancel" button that dodges the
+// A video "buffering" bar that races to 60%, crawls to 99% and stays
+// there, an ETA that never improves, and a "Reload" button that dodges the
 // pointer. Catching the button costs the patient their progress. All of the
 // tunable behaviour lives here as pure functions so it can be tested; the
 // timers and DOM live in components/IrritationStimulus.tsx.
@@ -37,7 +37,7 @@ export function etaText(seconds: number, setbacks = 0): string {
 export function statusText(percent: number, setbacks: number): string {
   if (setbacks > 0) return 'Thank you for your patience.';
   if (percent >= 99) return 'Almost there…';
-  return 'Analysing…';
+  return 'Buffering…';
 }
 
 export function canBeCaught(dodges: number): boolean {

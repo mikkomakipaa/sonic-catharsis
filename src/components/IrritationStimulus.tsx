@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Play } from 'lucide-react';
 import type { Stimulus } from '@/lib/provocations';
 import {
   DODGE_START,
@@ -12,13 +13,15 @@ import {
   type DodgePosition,
 } from '@/lib/irritation-loader';
 
-// The irritation-UI stimulus, dressed as a figure plate like StimulusPlate.
-// The clinic's own "diagnosis" bar stalls at 99%, the ETA lies, and a "Cancel" button dodges
-// the pointer a few times before it can be caught. Catching it opens a
-// confirm whose Yes/No answer both lead to the same place: back to 62%.
+// The third stimulus, dressed as a figure plate like StimulusPlate. After an
+// image and an audio clip the patient expects a video, so that is what is
+// "loading": a dark player frame whose buffer bar stalls at 99%, with a lying
+// ETA and a "Reload" button that dodges the pointer a few times before it can
+// be caught. Catching it opens a confirm whose Yes/No answers both lead to the
+// same place: back to 62%. The video never plays.
 // The patient's real Yes/No buttons live outside this panel (ScreenProvoke),
-// so nothing here can trap them.
-// Dodging is off under prefers-reduced-motion; keyboard focus never dodges.
+// so nothing here can trap them. Dodging is off under prefers-reduced-motion;
+// keyboard focus never dodges.
 
 const PAPER = '#f1ece0';
 const INK = '#211e1a';
@@ -86,36 +89,43 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
   return (
     <figure className="m-0 p-2 rounded-[2px]" style={{ background: PAPER, boxShadow: '0 1px 3px rgba(0,0,0,0.18)' }}>
       <div className="px-3 pt-3 pb-3 max-[480px]:px-2" style={{ border: `1px solid ${INK}` }}>
-        <div
-          className="flex flex-col justify-center gap-3 px-2"
-          style={{ aspectRatio: '400 / 258', color: INK, fontFamily: TYPEWRITER }}
-        >
-          <span className="uppercase text-[11px] tracking-[0.12em] opacity-70 text-center">Diagnosis</span>
+        <div className="flex flex-col gap-2" style={{ color: INK, fontFamily: TYPEWRITER }}>
+          <span className="uppercase text-[11px] tracking-[0.12em] opacity-70 text-center">Video stimulus</span>
 
-          <div>
-            <div className="flex justify-between text-[12px]">
-              <span role="status">{statusText(percent, setbacks)}</span>
-              <span>{percent}%</span>
+          {/* The "player": a dark frame, a play icon that does nothing, and
+              the buffer bar along the bottom edge. */}
+          <div className="relative w-full" style={{ aspectRatio: '16 / 9', background: INK }}>
+            <Play
+              className="absolute left-1/2 top-[42%] h-9 w-9 -translate-x-1/2 -translate-y-1/2"
+              style={{ color: PAPER, opacity: 0.55 }}
+              aria-hidden
+            />
+            <div className="absolute inset-x-3 bottom-3">
+              <div
+                role="progressbar"
+                aria-label="Video buffering progress"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={percent}
+                aria-valuetext={`${percent}%. ${eta}`}
+                className="h-1.5 w-full"
+                style={{ background: 'rgba(241,236,224,0.25)' }}
+              >
+                <div className="h-full" style={{ width: `${percent}%`, background: PAPER }} />
+              </div>
             </div>
-            <div
-              role="progressbar"
-              aria-label="Diagnosis progress"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={percent}
-              aria-valuetext={`${percent}%. ${eta}`}
-              className="mt-1 h-3 w-full"
-              style={{ border: `1px solid ${INK}` }}
-            >
-              <div className="h-full" style={{ width: `${percent}%`, background: INK }} />
-            </div>
-            <div className="mt-1 text-[11px] opacity-70">{eta}</div>
           </div>
+
+          <div className="flex justify-between text-[12px]">
+            <span role="status">{statusText(percent, setbacks)}</span>
+            <span>{percent}%</span>
+          </div>
+          <div className="-mt-1 text-[11px] opacity-70">{eta}</div>
 
           {confirming ? (
             <div className="text-[12px]" style={{ minHeight: 56 }}>
               <p className="m-0 leading-snug">
-                Cancelling will lose your {percent}% progress. Do you want to not cancel the cancellation?
+                Reloading will lose the {percent}% already buffered. Do you want to not cancel the reload?
               </p>
               <div className="mt-2 flex gap-2">
                 <button onClick={sendBack} className="px-3 py-1.5 text-[11px] uppercase rounded-[2px]" style={FAKE_BUTTON_STYLE}>
@@ -143,7 +153,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
                   transition: reducedMotion ? undefined : 'left 0.12s ease-out, top 0.12s ease-out',
                 }}
               >
-                Cancel
+                Reload
               </button>
             </div>
           )}
