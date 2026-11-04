@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { AUDIO_STIMULUS, IRRITATION_STIMULUS, STIMULI, MAX_STIMULI_PER_SESSION, pickSession, pickStimuli, shouldOfferProvocation } from './provocations';
-import { PSEUDO_VITUTUS_STAGE, STAGES, SURFACE } from './theme';
+import { AUDIO_STIMULUS, IRRITATION_STIMULUS, SEPPO_STIMULUS, STIMULI, MAX_STIMULI_PER_SESSION, pickSession, pickStimuli, shouldOfferProvocation } from './provocations';
+import { PSEUDO_VITUTUS_STAGE, STAGES, SURFACE, getActiveStage } from './theme';
 import { TriggerTypes, EmotionDataSchema } from './validation';
 
 describe('STIMULI', () => {
@@ -72,5 +72,33 @@ describe('pickSession', () => {
         special.id
       ).toBe(true);
     }
+  });
+});
+
+describe('stimulus readings', () => {
+  const stageOf = (r: NonNullable<(typeof STIMULI)[number]['reading']>) => getActiveStage(r.intensity, r.symptoms, r.duration);
+
+  it('gives every plate a mild reading of its own', () => {
+    for (const s of STIMULI) {
+      expect(s.reading, s.id).toBeDefined();
+      expect(s.reading!.intensity, s.id).toBeGreaterThanOrEqual(2);
+      expect(s.reading!.intensity, s.id).toBeLessThanOrEqual(5);
+    }
+    expect(new Set(STIMULI.map((s) => s.reading!.intensity)).size).toBeGreaterThan(1);
+  });
+
+  it('escalates: plates < audio < video', () => {
+    const worstPlate = Math.max(...STIMULI.map((s) => stageOf(s.reading!).index));
+    expect(stageOf(AUDIO_STIMULUS.reading!).index).toBeGreaterThan(worstPlate);
+    expect(stageOf(IRRITATION_STIMULUS.reading!).index).toBeGreaterThan(stageOf(AUDIO_STIMULUS.reading!).index);
+  });
+
+  it('lands the audio and video readings on Stage V and Stage VII', () => {
+    expect(stageOf(AUDIO_STIMULUS.reading!).roman).toBe('V');
+    expect(stageOf(IRRITATION_STIMULUS.reading!).roman).toBe('VII');
+  });
+
+  it('leaves Seppo without a reading, so he keeps using the assessor', () => {
+    expect(SEPPO_STIMULUS.reading).toBeUndefined();
   });
 });

@@ -378,11 +378,13 @@ export default function Home() {
     });
   };
 
-  // "Joko vituttaa?" → yes. The stimulus gives trigger + incident; the
-  // assessor model reads off the intensity, duration is "just now" and there
-  // are no symptoms, and the intake is submitted straight to the analysis, so
-  // the patient lands on the diagnosis instead of a pre-filled form. If the
-  // assessor is unavailable, fall back to the pre-filled form.
+  // "Joko vituttaa?" → yes. The intake is submitted straight to the analysis,
+  // so the patient lands on the diagnosis instead of a pre-filled form. A
+  // stimulus carries its own fixed reading (intensity, symptoms, duration:
+  // nastier stimuli read higher, see StimulusReading). One without a reading
+  // (Seppo) has the assessor model read the intensity off its incident, with
+  // duration "just now" and no symptoms; if the assessor is unavailable, fall
+  // back to the pre-filled form.
   const acceptStimulus = async (stimulus: Stimulus, chatNote?: string) => {
     goBackToSelection();
     setStep('analysis');
@@ -390,22 +392,26 @@ export default function Home() {
     setIsProcessing(true);
     setSubgenre(null);
     try {
-      const res = await fetch('/api/assess', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ trigger: stimulus.trigger, incident: stimulus.incident }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.error || typeof data.intensity !== 'number') throw new Error(data.error || 'Assessment unavailable');
+      let reading = stimulus.reading;
+      if (!reading) {
+        const res = await fetch('/api/assess', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ trigger: stimulus.trigger, incident: stimulus.incident }),
+        });
+        const data = await res.json();
+        if (!res.ok || data.error || typeof data.intensity !== 'number') throw new Error(data.error || 'Assessment unavailable');
+        reading = { intensity: data.intensity, symptoms: [], duration: 'just_now' };
+      }
 
-      const sel: TriggerSelection = { trigger: stimulus.trigger, intensity: data.intensity };
+      const sel: TriggerSelection = { trigger: stimulus.trigger, intensity: reading.intensity };
       setSelection(sel);
       setIncidentText(stimulus.incident);
-      setSymptoms([]);
-      setDuration('just_now');
+      setSymptoms(reading.symptoms);
+      setDuration(reading.duration);
       setProvokedBy(stimulus);
       await startAssistant({
-        input: { selection: sel, incidentText: stimulus.incident, symptoms: [], duration: 'just_now', provoked: true, chatNote },
+        input: { selection: sel, incidentText: stimulus.incident, symptoms: reading.symptoms, duration: reading.duration, provoked: true, chatNote },
       });
     } catch (error) {
       console.error('Error assessing stimulus:', error);
