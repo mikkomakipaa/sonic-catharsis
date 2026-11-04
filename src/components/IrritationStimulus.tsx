@@ -13,7 +13,7 @@ import {
 } from '@/lib/irritation-loader';
 
 // The irritation-UI stimulus, dressed as a figure plate like StimulusPlate.
-// A verification bar stalls at 99%, the ETA lies, and a "Skip" button dodges
+// An update bar stalls at 99%, the ETA lies, and a "Skip" button dodges
 // the pointer a few times before it can be caught. Catching it opens a
 // confirm whose Yes/No answer both lead to the same place: back to 62%.
 // The patient's real Yes/No buttons live outside this panel (ScreenProvoke),
@@ -90,7 +90,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
           className="flex flex-col justify-center gap-3 px-2"
           style={{ aspectRatio: '400 / 258', color: INK, fontFamily: TYPEWRITER }}
         >
-          <span className="uppercase text-[11px] tracking-[0.12em] opacity-70 text-center">Verification</span>
+          <span className="uppercase text-[11px] tracking-[0.12em] opacity-70 text-center">System update</span>
 
           <div>
             <div className="flex justify-between text-[12px]">
@@ -99,7 +99,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
             </div>
             <div
               role="progressbar"
-              aria-label="Verification progress"
+              aria-label="Update progress"
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={percent}
