@@ -1,4 +1,4 @@
-import type { TriggerType } from '@/types';
+import type { DurationType, PhysicalSymptomType, TriggerType } from '@/types';
 import type { Stage } from './theme';
 import { PSEUDO_VITUTUS_STAGE, STAGES } from './theme';
 
@@ -16,6 +16,16 @@ import { PSEUDO_VITUTUS_STAGE, STAGES } from './theme';
 // only once the plate has actually been drawn; until then the UI shows a
 // text-only "illustration withheld" plate built from the same fields.
 
+// The reading a "Yes. Re-assess me" produces. Fixed per stimulus, so the
+// stage is deterministic and escalates with how nasty the stimulus was:
+// mild plates, a nastier audio clip, the never-loading video worst. A
+// stimulus without one (Seppo) falls back to the assessor model.
+export interface StimulusReading {
+  intensity: number; // 0-10, like the intake slider
+  symptoms: PhysicalSymptomType[];
+  duration: DurationType;
+}
+
 export interface Stimulus {
   id: string;
   // Figure number on the plate. Deliberately non-sequential — reads as
@@ -31,6 +41,8 @@ export interface Stimulus {
   incident: string;
   // What to draw. For whoever makes the plate — never shown to users.
   imageBrief: string;
+  // What the patient is diagnosed with if they answer "yes".
+  reading?: StimulusReading;
   // Public path of the drawn plate, if one exists yet.
   image?: string;
   // How the stimulus is presented. Absent = a figure plate. 'audio' is
@@ -63,6 +75,7 @@ export const AUDIO_STIMULUS: Stimulus = {
   trigger: 'absurdity',
   stimulus: 'recorder, ×4.',
   legend: 'Runtime: 0:27. Channels: mono.',
+  reading: { intensity: 6, symptoms: ['head_exploding', 'muscle_tension'], duration: 'just_now' },
   incident: 'Someone played Hot Cross Buns on a recorder. It got faster every time and a bit higher. It never finished the song.',
   imageBrief: 'Not drawn — an audio stimulus.',
 };
@@ -78,15 +91,21 @@ export const IRRITATION_STIMULUS: Stimulus = {
   trigger: 'helplessness',
   stimulus: 'video, clinic archive.',
   legend: 'Runtime: 14:00. Resolution: 720p.',
+  reading: { intensity: 8, symptoms: ['heart_pounding', 'accelerated_breathing'], duration: 'about_hour' },
   incident: 'The video got to 99% buffered and stayed there for fourteen minutes. The Reload button moved away every time I tried to click it.',
   imageBrief: 'Not drawn — an interactive stimulus.',
 };
+
+// Plates are mild: a bare intensity, no symptoms, fresh. Each plate sets its
+// own, from a trolley (3) to a mosquito at 3 a.m. (5).
+const plateReading = (intensity: number): StimulusReading => ({ intensity, symptoms: [], duration: 'just_now' });
 
 export const STIMULI: Stimulus[] = [
   // --- injustice ---
   {
     id: 'trolley',
     fig: 14,
+    reading: plateReading(3),
     trigger: 'injustice',
     stimulus: 'unattended trolley, bay 3.',
     legend: 'A: subject, departing. B: trolley. C: return, empty.',
@@ -97,6 +116,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'fish-microwave',
     fig: 22,
+    reading: plateReading(4),
     trigger: 'injustice',
     stimulus: 'reheated fish, shared microwave.',
     legend: 'A: source. B: odour radius (est.). C: subject, desk 14 m.',
@@ -107,6 +127,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'late-merge',
     fig: 3,
+    reading: plateReading(4),
     trigger: 'injustice',
     stimulus: 'late merge, lane 2.',
     legend: 'A: queue, 14 vehicles. B: subject. C: merging vehicle.',
@@ -117,6 +138,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'lift-door',
     fig: 9,
+    reading: plateReading(3),
     trigger: 'injustice',
     stimulus: 'lift door, closing.',
     legend: 'A: subject, running. B: occupant, finger on CLOSE. C: gap, 1.5 m.',
@@ -129,6 +151,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'usb',
     fig: 5,
+    reading: plateReading(2),
     trigger: 'failure',
     stimulus: 'USB insertion, attempt 3.',
     legend: 'A: plug. B: port. C: orientation, attempts 1–3.',
@@ -139,6 +162,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'toast',
     fig: 17,
+    reading: plateReading(2),
     trigger: 'failure',
     stimulus: 'toast, buttered, in descent.',
     legend: 'A: table edge. B: toast, trajectory. C: point of impact, butter side.',
@@ -149,6 +173,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'flatpack',
     fig: 26,
+    reading: plateReading(4),
     trigger: 'failure',
     stimulus: 'flat-pack shelf, assembly complete.',
     legend: 'A: shelf. B: instructions, step 31 of 31. C: screw, surplus.',
@@ -159,6 +184,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'pen',
     fig: 33,
+    reading: plateReading(3),
     trigger: 'failure',
     stimulus: 'signature, interrupted.',
     legend: 'A: document. B: pen, empty. C: signature, 40% complete.',
@@ -171,6 +197,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'armrest',
     fig: 8,
+    reading: plateReading(4),
     trigger: 'conflict',
     stimulus: 'shared armrest, row 23.',
     legend: 'A: subject. B: neighbour, elbow. C: armrest, available width 0 cm.',
@@ -181,6 +208,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'thermostat',
     fig: 20,
+    reading: plateReading(3),
     trigger: 'conflict',
     stimulus: 'office thermostat, contested.',
     legend: 'A: subject. B: thermostat. C: setpoint over 5 days.',
@@ -191,6 +219,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'fridge-note',
     fig: 27,
+    reading: plateReading(4),
     trigger: 'conflict',
     stimulus: 'communal fridge, annotated.',
     legend: 'A: note. B: milk, contested. C: subject’s milk, 0 ml.',
@@ -201,6 +230,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'sauna',
     fig: 35,
+    reading: plateReading(5),
     trigger: 'conflict',
     stimulus: 'sauna, unrequested löyly.',
     legend: 'A: subject, top bench. B: ladle, 4th pour. C: temperature.',
@@ -213,6 +243,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'bus',
     fig: 31,
+    reading: plateReading(3),
     trigger: 'helplessness',
     stimulus: 'bus 55, status “arriving”.',
     legend: 'A: subject. B: display, four readings. C: patience, observed.',
@@ -223,6 +254,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'progress-bar',
     fig: 6,
+    reading: plateReading(4),
     trigger: 'helplessness',
     stimulus: 'software update, 99%.',
     legend: 'A: progress bar. B: clock. C: time at 99%, 40 min.',
@@ -233,6 +265,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'hold-music',
     fig: 12,
+    reading: plateReading(5),
     trigger: 'helplessness',
     stimulus: 'telephone queue, minute 47.',
     legend: 'A: subject. B: handset, hold music. C: queue position, unchanged.',
@@ -243,6 +276,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'parking-fine',
     fig: 24,
+    reading: plateReading(4),
     trigger: 'helplessness',
     stimulus: 'parking fine, 1 minute over.',
     legend: 'A: subject, returning. B: ticket. C: time exceeded.',
@@ -255,6 +289,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'headphone-knot',
     fig: 4,
+    reading: plateReading(2),
     trigger: 'overload',
     stimulus: 'headphone cable, spontaneous knot.',
     legend: 'A: pocket. B: cable. C: knot, detail ×4.',
@@ -265,6 +300,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'inbox',
     fig: 11,
+    reading: plateReading(3),
     trigger: 'overload',
     stimulus: 'return from leave, day 1, 09:00.',
     legend: 'A: subject. B: laptop. C: unread, 147.',
@@ -275,6 +311,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'reply-all',
     fig: 19,
+    reading: plateReading(3),
     trigger: 'overload',
     stimulus: 'reply-all, cascade.',
     legend: 'A: origin, “thanks!”. B: recipients, 214. C: replies asking to be removed.',
@@ -285,6 +322,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'open-office',
     fig: 23,
+    reading: plateReading(4),
     trigger: 'overload',
     stimulus: 'open-plan office, three calls on speaker.',
     legend: 'A: subject. B: sources, 3. C: overlapping wavefronts.',
@@ -297,6 +335,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'snooze',
     fig: 2,
+    reading: plateReading(2),
     trigger: 'exhaustion',
     stimulus: 'alarm, snoozed ×4.',
     legend: 'A: subject. B: alarm, 06:00–06:36. C: alertness, inverse.',
@@ -307,6 +346,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'lift-out-of-order',
     fig: 15,
+    reading: plateReading(4),
     trigger: 'exhaustion',
     stimulus: 'lift, out of service.',
     legend: 'A: subject, groceries ×3. B: sign. C: destination, floor 7.',
@@ -317,6 +357,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'mosquito',
     fig: 21,
+    reading: plateReading(5),
     trigger: 'exhaustion',
     stimulus: 'mosquito, single, 03:12.',
     legend: 'A: subject. B: mosquito, flight path. C: location, never confirmed.',
@@ -329,6 +370,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'delivery-window',
     fig: 7,
+    reading: plateReading(4),
     trigger: 'uncertainty',
     stimulus: 'parcel, delivery window 08–21.',
     legend: 'A: subject, at window. B: clock, window shaded. C: arrival, unknown.',
@@ -339,6 +381,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'queue-choice',
     fig: 13,
+    reading: plateReading(3),
     trigger: 'uncertainty',
     stimulus: 'checkout queues, selection error.',
     legend: 'A: subject, queue 1. B: queue 2. C: relative progress.',
@@ -349,6 +392,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'seen',
     fig: 29,
+    reading: plateReading(3),
     trigger: 'uncertainty',
     stimulus: 'message, read, no reply.',
     legend: 'A: message. B: status, “seen 14:02”. C: elapsed, 4 h 38 min.',
@@ -361,6 +405,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'push-door',
     fig: 10,
+    reading: plateReading(2),
     trigger: 'absurdity',
     stimulus: 'door, labelled PUSH.',
     legend: 'A: subject. B: sign. C: handle, pull type.',
@@ -371,6 +416,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'captcha',
     fig: 16,
+    reading: plateReading(3),
     trigger: 'absurdity',
     stimulus: 'verification, traffic lights, attempt 3.',
     legend: 'A: grid, 3 × 3. B: traffic light, partial. C: result, “try again”.',
@@ -381,6 +427,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'crossing-button',
     fig: 25,
+    reading: plateReading(3),
     trigger: 'absurdity',
     stimulus: 'pedestrian button, pressed ×11.',
     legend: 'A: subject. B: button. C: signal, unchanged.',
@@ -391,6 +438,7 @@ export const STIMULI: Stimulus[] = [
   {
     id: 'printer',
     fig: 30,
+    reading: plateReading(3),
     trigger: 'absurdity',
     stimulus: 'printer, paper jam (no paper present).',
     legend: 'A: display, “PAPER JAM”. B: tray, empty. C: jam, not located.',

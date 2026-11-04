@@ -109,9 +109,15 @@ by reference, never by `index`.
   [`design/provoke-me/STIMULI.md`](./design/provoke-me/STIMULI.md).
 - `pickStimuli()` draws `MAX_STIMULI_PER_SESSION` (3), drawn plates first.
   Three "no"s → Seppo.
-- "Joko vituttaa?" → yes: a fresh intake with `incident` and `trigger`
-  pre-filled. Intensity and duration stay empty — the patient still rates
-  it. Symptoms are cleared.
+- "Joko vituttaa?" → yes: the intake is submitted straight to the analysis
+  (no form). Each stimulus carries a fixed `reading` (intensity, symptoms,
+  duration), so the stage is deterministic and escalates with the stimulus:
+  plates read mild (intensity 2-5, each plate its own, no symptoms, fresh),
+  the audio stimulus reads Stage V (6, head exploding + muscle tension), the
+  never-loading video Stage VII (8, heart pounding + accelerated breathing,
+  about an hour). A stimulus without a `reading` (Seppo's) has `/api/assess`
+  read the intensity off its incident, duration `just_now`, no symptoms; if
+  that fails, the pre-filled intake form is the fallback.
 - That intake is sent with `provoked: true` (§5). The Epicrisis prints
   "Aetiology: iatrogenic (induced by this clinic, Fig. n)" deterministically,
   and the Matcher's cause text gets an iatrogenic note.
