@@ -248,7 +248,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
             onMouseEnter={(e) => (e.currentTarget.style.background = TREATMENT_ACCENT_BG_HOVER)}
             onMouseLeave={(e) => (e.currentTarget.style.background = TREATMENT_ACCENT_BG)}
           >
-            Yes. Re-assess me
+            {assessment ? 'See Seppo’s diagnosis' : 'Yes. Re-assess me'}
           </button>
           <div className="flex flex-wrap items-center justify-center gap-3">
           <button
