@@ -33,6 +33,9 @@ export interface Stimulus {
   imageBrief: string;
   // Public path of the drawn plate, if one exists yet.
   image?: string;
+  // How the stimulus is presented. Absent = a figure plate. 'audio' is
+  // played, never drawn (see AUDIO_STIMULUS and AudioStimulus.tsx).
+  kind?: 'audio';
 }
 
 // Not part of the STIMULI pool: the "stimulus" administered by Seppo, the
@@ -46,6 +49,21 @@ export const SEPPO_STIMULUS: Stimulus = {
   legend: 'A: subject. B: agent (31 h on shift). C: messages exchanged.',
   incident: 'I escalated to a human at the clinic and the live-chat agent screamed at me, mocked my messages and then stormed off mid-conversation.',
   imageBrief: 'Not drawn — never shown as a plate.',
+};
+
+// Not part of the STIMULI pool either: the audio stimulus, always the second
+// stimulus of a session (see pickSession). A synthesised school recorder
+// playing "Hot Cross Buns" (lib/recorder-clip.ts), played on request, never
+// autoplayed.
+export const AUDIO_STIMULUS: Stimulus = {
+  id: 'recorder',
+  fig: 32,
+  kind: 'audio',
+  trigger: 'absurdity',
+  stimulus: 'recorder, “Hot Cross Buns”, ×4, accelerating.',
+  legend: 'A: subject. B: recorder, sharp. C: resolution, withheld.',
+  incident: 'Someone played Hot Cross Buns on a recorder. It got faster every time and a bit higher. It never finished the song.',
+  imageBrief: 'Not drawn — an audio stimulus.',
 };
 
 export const STIMULI: Stimulus[] = [
@@ -398,4 +416,16 @@ export function pickStimuli(
   const drawn = shuffle(pool.filter((s) => s.image));
   const undrawn = shuffle(pool.filter((s) => !s.image));
   return [...drawn, ...undrawn].slice(0, count);
+}
+
+// One Provoke Me session: a figure plate first, the audio stimulus second,
+// the rest plates. Delegates to pickStimuli for the plates, so `random` stays
+// injectable for tests. (The third slot becomes the irritation-UI stimulus
+// once it exists.)
+export function pickSession(
+  count: number = MAX_STIMULI_PER_SESSION,
+  random: () => number = Math.random
+): Stimulus[] {
+  const plates = pickStimuli(Math.max(0, count - 1), random);
+  return [...plates.slice(0, 1), AUDIO_STIMULUS, ...plates.slice(1)].slice(0, count);
 }

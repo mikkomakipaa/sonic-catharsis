@@ -10,7 +10,7 @@ import ScreenDescent from '@/components/screens/ScreenDescent';
 import ScreenProvoke from '@/components/screens/ScreenProvoke';
 import ScreenVittuilu from '@/components/screens/ScreenVittuilu';
 import type { VittuiluAssessment } from '@/lib/validation';
-import { SEPPO_STIMULUS, Stimulus, pickStimuli, shouldOfferProvocation } from '@/lib/provocations';
+import { SEPPO_STIMULUS, Stimulus, pickSession, shouldOfferProvocation } from '@/lib/provocations';
 import {
   MAX_STRESS_INTENSITY,
   getActiveStage,
@@ -339,7 +339,7 @@ export default function Home() {
   // Provoke Me — a fresh draw each time the referral is accepted.
   const startProvocation = (origin: 'selection' | 'analysis') => {
     setProvokeOrigin(origin);
-    setProvokeStimuli(pickStimuli());
+    setProvokeStimuli(pickSession());
     setStep('provoke');
   };
 

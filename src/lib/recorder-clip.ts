@@ -52,7 +52,7 @@ export function renderRecorderClip({
   sampleRate = 44100,
   loops = 4,
   seed = 1,
-}: RecorderClipOptions = {}): Float32Array {
+}: RecorderClipOptions = {}): Float32Array<ArrayBuffer> {
   const random = makeRandom(seed);
   const chunks: Float32Array[] = [];
   let phase = 0;

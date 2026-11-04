@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { STIMULI, MAX_STIMULI_PER_SESSION, pickStimuli, shouldOfferProvocation } from './provocations';
+import { AUDIO_STIMULUS, STIMULI, MAX_STIMULI_PER_SESSION, pickSession, pickStimuli, shouldOfferProvocation } from './provocations';
 import { PSEUDO_VITUTUS_STAGE, STAGES, SURFACE } from './theme';
 import { TriggerTypes, EmotionDataSchema } from './validation';
 
@@ -52,5 +52,21 @@ describe('pickStimuli', () => {
 
   it('never returns more than the pool holds', () => {
     expect(pickStimuli(100)).toHaveLength(STIMULI.length);
+  });
+});
+
+describe('pickSession', () => {
+  it('puts a plate first and the audio stimulus second', () => {
+    const session = pickSession();
+    expect(session).toHaveLength(MAX_STIMULI_PER_SESSION);
+    expect(session[0].kind).toBeUndefined();
+    expect(session[1]).toBe(AUDIO_STIMULUS);
+  });
+
+  it('keeps the audio stimulus out of the plate pool', () => {
+    expect(STIMULI.some((s) => s.id === AUDIO_STIMULUS.id)).toBe(false);
+    expect(
+      EmotionDataSchema.safeParse({ primary: 'anger', trigger: AUDIO_STIMULUS.trigger, event: AUDIO_STIMULUS.incident, provoked: true }).success
+    ).toBe(true);
   });
 });
