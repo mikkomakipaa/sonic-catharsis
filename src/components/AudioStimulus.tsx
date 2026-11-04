@@ -14,7 +14,7 @@ const INK = '#211e1a';
 const TYPEWRITER = 'var(--font-special-elite), "Courier New", monospace';
 
 export default function AudioStimulus({ stimulus }: { stimulus: Stimulus }) {
-  const caption = `FIG. ${stimulus.fig} — Stimulus: ${stimulus.stimulus}`;
+  const caption = `AUD. ${stimulus.fig} — Stimulus: ${stimulus.stimulus}`;
   const [playing, setPlaying] = useState(false);
   const contextRef = useRef<AudioContext | null>(null);
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);

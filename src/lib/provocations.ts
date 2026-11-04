@@ -61,8 +61,8 @@ export const AUDIO_STIMULUS: Stimulus = {
   fig: 32,
   kind: 'audio',
   trigger: 'absurdity',
-  stimulus: 'recorder, “Hot Cross Buns”, ×4, accelerating.',
-  legend: 'A: subject. B: recorder, sharp. C: resolution, withheld.',
+  stimulus: 'recorder, “Hot Cross Buns”, ×4.',
+  legend: 'A: subject. B: recorder. C: duration, 27 s.',
   incident: 'Someone played Hot Cross Buns on a recorder. It got faster every time and a bit higher. It never finished the song.',
   imageBrief: 'Not drawn — an audio stimulus.',
 };
