@@ -76,8 +76,8 @@ export const IRRITATION_STIMULUS: Stimulus = {
   fig: 33,
   kind: 'ui',
   trigger: 'helplessness',
-  stimulus: 'verification, stalled at 99%.',
-  legend: 'A: subject. B: skip button, evasive. C: ETA, “about 1 minute”.',
+  stimulus: 'verification, in progress.',
+  legend: 'A: subject. B: bar. C: remaining, “about 1 minute”.',
   incident: 'A progress bar reached 99% and stayed there. The Skip button moved away every time I tried to click it.',
   imageBrief: 'Not drawn — an interactive stimulus.',
 };
