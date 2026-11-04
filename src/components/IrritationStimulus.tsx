@@ -13,7 +13,7 @@ import {
 } from '@/lib/irritation-loader';
 
 // The irritation-UI stimulus, dressed as a figure plate like StimulusPlate.
-// An update bar stalls at 99%, the ETA lies, and a "Skip" button dodges
+// A file-copy bar stalls at 99%, the ETA lies, and a "Cancel" button dodges
 // the pointer a few times before it can be caught. Catching it opens a
 // confirm whose Yes/No answer both lead to the same place: back to 62%.
 // The patient's real Yes/No buttons live outside this panel (ScreenProvoke),
@@ -90,7 +90,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
           className="flex flex-col justify-center gap-3 px-2"
           style={{ aspectRatio: '400 / 258', color: INK, fontFamily: TYPEWRITER }}
         >
-          <span className="uppercase text-[11px] tracking-[0.12em] opacity-70 text-center">System update</span>
+          <span className="uppercase text-[11px] tracking-[0.12em] opacity-70 text-center">Copying files</span>
 
           <div>
             <div className="flex justify-between text-[12px]">
@@ -99,7 +99,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
             </div>
             <div
               role="progressbar"
-              aria-label="Update progress"
+              aria-label="File copy progress"
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={percent}
@@ -115,7 +115,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
           {confirming ? (
             <div className="text-[12px]" style={{ minHeight: 56 }}>
               <p className="m-0 leading-snug">
-                Skipping will lose your {percent}% progress. Do you want to not cancel the skip?
+                Cancelling will lose your {percent}% progress. Do you want to not cancel the cancellation?
               </p>
               <div className="mt-2 flex gap-2">
                 <button onClick={sendBack} className="px-3 py-1.5 text-[11px] uppercase rounded-[2px]" style={FAKE_BUTTON_STYLE}>
@@ -143,7 +143,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
                   transition: reducedMotion ? undefined : 'left 0.12s ease-out, top 0.12s ease-out',
                 }}
               >
-                Skip
+                Cancel
               </button>
             </div>
           )}

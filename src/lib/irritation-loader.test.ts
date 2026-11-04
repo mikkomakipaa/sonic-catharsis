@@ -46,7 +46,7 @@ describe('etaText', () => {
 
 describe('statusText', () => {
   it('thanks the patient for their patience after a setback', () => {
-    expect(statusText(70, 0)).toBe('Installing…');
+    expect(statusText(70, 0)).toBe('Copying…');
     expect(statusText(99, 0)).toBe('Almost there…');
     expect(statusText(70, 1)).toBe('Thank you for your patience.');
   });

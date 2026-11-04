@@ -68,17 +68,17 @@ export const AUDIO_STIMULUS: Stimulus = {
 };
 
 // Not part of the STIMULI pool either: the irritation-UI stimulus, always the
-// third of a session. An update bar stalled at 99%, a lying ETA and a
-// "Skip" button that dodges (lib/irritation-loader.ts). The patient's real
+// third of a session. A file-copy bar stalled at 99%, a lying ETA and a
+// "Cancel" button that dodges (lib/irritation-loader.ts). The patient's real
 // Yes/No buttons stay outside it, so it can never trap anyone.
 export const IRRITATION_STIMULUS: Stimulus = {
-  id: 'update',
+  id: 'file-copy',
   fig: 33,
   kind: 'ui',
   trigger: 'helplessness',
-  stimulus: 'update, installing.',
+  stimulus: 'file transfer, progress bar, 14 min.',
   legend: 'A: subject. B: bar. C: remaining, “about 1 minute”.',
-  incident: 'A progress bar reached 99% and stayed there. The Skip button moved away every time I tried to click it.',
+  incident: 'A file copy reached 99% and stayed there for fourteen minutes. The Cancel button moved away every time I tried to click it.',
   imageBrief: 'Not drawn — an interactive stimulus.',
 };
 
