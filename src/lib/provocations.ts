@@ -33,6 +33,10 @@ export interface Stimulus {
   imageBrief: string;
   // Public path of the drawn plate, if one exists yet.
   image?: string;
+  // How the stimulus is presented. Absent = a figure plate. 'audio' is
+  // played, never drawn (AUDIO_STIMULUS, AudioStimulus.tsx); 'ui' is an
+  // interactive annoyance (IRRITATION_STIMULUS, IrritationStimulus.tsx).
+  kind?: 'audio' | 'ui';
 }
 
 // Not part of the STIMULI pool: the "stimulus" administered by Seppo, the
@@ -46,6 +50,36 @@ export const SEPPO_STIMULUS: Stimulus = {
   legend: 'A: subject. B: agent (31 h on shift). C: messages exchanged.',
   incident: 'I escalated to a human at the clinic and the live-chat agent screamed at me, mocked my messages and then stormed off mid-conversation.',
   imageBrief: 'Not drawn — never shown as a plate.',
+};
+
+// Not part of the STIMULI pool either: the audio stimulus, always the second
+// stimulus of a session (see pickSession). A synthesised school recorder
+// playing "Hot Cross Buns" (lib/recorder-clip.ts), played on request, never
+// autoplayed.
+export const AUDIO_STIMULUS: Stimulus = {
+  id: 'recorder',
+  fig: 32,
+  kind: 'audio',
+  trigger: 'absurdity',
+  stimulus: 'recorder, ×4.',
+  legend: 'Runtime: 0:27. Channels: mono.',
+  incident: 'Someone played Hot Cross Buns on a recorder. It got faster every time and a bit higher. It never finished the song.',
+  imageBrief: 'Not drawn — an audio stimulus.',
+};
+
+// Not part of the STIMULI pool either: the irritation-UI stimulus, always the
+// third of a session. A video that never loads: a buffer bar stalled at 99%, a lying ETA and a
+// "Reload" button that dodges (lib/irritation-loader.ts). The patient's real
+// Yes/No buttons stay outside it, so it can never trap anyone.
+export const IRRITATION_STIMULUS: Stimulus = {
+  id: 'video',
+  fig: 33,
+  kind: 'ui',
+  trigger: 'helplessness',
+  stimulus: 'video, clinic archive.',
+  legend: 'Runtime: 14:00. Resolution: 720p.',
+  incident: 'The video got to 99% buffered and stayed there for fourteen minutes. The Reload button moved away every time I tried to click it.',
+  imageBrief: 'Not drawn — an interactive stimulus.',
 };
 
 export const STIMULI: Stimulus[] = [
@@ -398,4 +432,17 @@ export function pickStimuli(
   const drawn = shuffle(pool.filter((s) => s.image));
   const undrawn = shuffle(pool.filter((s) => !s.image));
   return [...drawn, ...undrawn].slice(0, count);
+}
+
+// One Provoke Me session: a figure plate first, then the audio stimulus, then
+// the irritation-UI stimulus (each one worse than the last), any remaining
+// slots plates. Delegates to pickStimuli for the plates, so `random` stays
+// injectable for tests.
+export function pickSession(
+  count: number = MAX_STIMULI_PER_SESSION,
+  random: () => number = Math.random
+): Stimulus[] {
+  const special = [AUDIO_STIMULUS, IRRITATION_STIMULUS];
+  const plates = pickStimuli(Math.max(0, count - special.length), random);
+  return [...plates.slice(0, 1), ...special, ...plates.slice(1)].slice(0, count);
 }

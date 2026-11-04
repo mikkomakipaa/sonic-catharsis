@@ -122,7 +122,7 @@ Four screens, orchestrated by `src/app/page.tsx` via a `Step` union
 
 - **`ScreenSelection.tsx`** → `panels/StateOfMindPanel.tsx` — incident text, `ClassificationGrid.tsx` (trigger picker), `IntensitySlider.tsx`, `SymptomChecklist.tsx`, `DurationSelect.tsx`
 - **`ScreenAnalysis.tsx`** — loading/diagnosis view while the Matcher call is in flight (`DiagnosticReceipt.tsx`, `StageHeader.tsx`, `DescentRail.tsx`)
-- **`ScreenProvoke.tsx`** — Provoke Me: one `StimulusPlate.tsx` at a time, "Joko vituttaa?" yes/no; the 3rd no escalates straight to Seppo. Reached only from the Epicrisis "Referral / 03", which `shouldOfferProvocation()` (`src/lib/provocations.ts`) shows for Level 0 (Pseudo-vitutus) and Stage I. See `docs/data-model.md` §3.1
+- **`ScreenProvoke.tsx`** — Provoke Me: one stimulus at a time, "Joko vituttaa?" yes/no; the 3rd no escalates straight to Seppo. A session is `pickSession()`: a figure plate (`StimulusPlate.tsx`), then the audio stimulus (`AudioStimulus.tsx`: click-to-play synthesized bad recorder, `lib/recorder-clip.ts`, never autoplays), then the irritation UI (`IrritationStimulus.tsx`: a video that never loads: buffer bar stalled at 99%, lying ETA, dodging "Reload" button, `lib/irritation-loader.ts`; dodging is off under reduced motion, and the real yes/no buttons stay outside it). The audio and UI stimuli (`kind: 'audio' | 'ui'`) live outside the `STIMULI` pool. Reached only from the Epicrisis "Referral / 03", which `shouldOfferProvocation()` (`src/lib/provocations.ts`) shows for Level 0 (Pseudo-vitutus) and Stage I. See `docs/data-model.md` §3.1
 - **`ScreenDescent.tsx`** → `panels/ResultsPanel.tsx` — final cause/choice/subgenre + curated artist list; `PrescriptionCalibration.tsx` for the (theatrical, not data-driven) curator-loading calibration display; `StudyQr.tsx` for the Vitutus study QR + link in the header
 
 Shared chrome: `RiteHeader.tsx`. Design tokens (colors, typography, spacing,
@@ -324,6 +324,8 @@ src/
 │   ├── DescentRail.tsx              # depth rail visualizing stage progression
 │   ├── StudyQr.tsx                  # Vitutus study QR (Prescription header)
 │   ├── StimulusPlate.tsx            # Provoke Me figure plate (drawn SVG or "illustration withheld")
+│   ├── AudioStimulus.tsx            # Provoke Me audio stimulus (click-to-play recorder clip)
+│   ├── IrritationStimulus.tsx       # Provoke Me irritation UI (stalled loader + dodging Reload)
 │   ├── RiteHeader.tsx               # shared top chrome
 │   ├── panels/
 │   │   ├── StateOfMindPanel.tsx     # ScreenSelection's intake panel
@@ -345,7 +347,9 @@ src/
 │   ├── theme.ts                     # Design tokens + STAGES + getActiveStage() severity formula
 │   ├── symptoms.ts                  # PHYSICAL_SYMPTOMS (optional intake field)
 │   ├── duration.ts                  # DURATION_TIERS (optional intake field)
-│   ├── provocations.ts              # Provoke Me: STIMULI, shouldOfferProvocation(), pickStimuli()
+│   ├── provocations.ts              # Provoke Me: STIMULI, AUDIO_/IRRITATION_STIMULUS, shouldOfferProvocation(), pickStimuli(), pickSession()
+│   ├── recorder-clip.ts             # synthesized bad-recorder "Hot Cross Buns" (pure samples)
+│   ├── irritation-loader.ts         # progress curve, lying ETA, dodge rules (pure)
 │   └── utils.ts                     # cn() for className merging
 └── types/
     └── index.ts                     # TypeScript definitions

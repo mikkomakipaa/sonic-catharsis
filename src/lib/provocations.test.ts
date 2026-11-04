@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { STIMULI, MAX_STIMULI_PER_SESSION, pickStimuli, shouldOfferProvocation } from './provocations';
+import { AUDIO_STIMULUS, IRRITATION_STIMULUS, STIMULI, MAX_STIMULI_PER_SESSION, pickSession, pickStimuli, shouldOfferProvocation } from './provocations';
 import { PSEUDO_VITUTUS_STAGE, STAGES, SURFACE } from './theme';
 import { TriggerTypes, EmotionDataSchema } from './validation';
 
@@ -52,5 +52,25 @@ describe('pickStimuli', () => {
 
   it('never returns more than the pool holds', () => {
     expect(pickStimuli(100)).toHaveLength(STIMULI.length);
+  });
+});
+
+describe('pickSession', () => {
+  it('runs plate, audio, then the irritation UI', () => {
+    const session = pickSession();
+    expect(session).toHaveLength(MAX_STIMULI_PER_SESSION);
+    expect(session[0].kind).toBeUndefined();
+    expect(session[1]).toBe(AUDIO_STIMULUS);
+    expect(session[2]).toBe(IRRITATION_STIMULUS);
+  });
+
+  it('keeps the special stimuli out of the plate pool, with valid prefills', () => {
+    for (const special of [AUDIO_STIMULUS, IRRITATION_STIMULUS]) {
+      expect(STIMULI.some((s) => s.id === special.id), special.id).toBe(false);
+      expect(
+        EmotionDataSchema.safeParse({ primary: 'anger', trigger: special.trigger, event: special.incident, provoked: true }).success,
+        special.id
+      ).toBe(true);
+    }
   });
 });
