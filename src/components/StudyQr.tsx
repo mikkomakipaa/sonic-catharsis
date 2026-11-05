@@ -26,7 +26,7 @@ export default function StudyQr() {
 
   return (
     <div
-      className="shrink-0 flex flex-col items-center gap-1 text-center uppercase text-[8px] max-[480px]:text-[9px] leading-tight"
+      className="shrink-0 flex flex-col items-center gap-1 text-center uppercase text-[8px] max-[480px]:text-[14px] leading-tight"
       style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.04em', color: TEXT_SECONDARY }}
     >
       <a href={VITUTUS_STUDY_URL} target="_blank" rel="noopener noreferrer" aria-label="Open the Vitutus study" className="block">

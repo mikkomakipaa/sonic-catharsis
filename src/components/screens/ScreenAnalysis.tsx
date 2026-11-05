@@ -81,7 +81,7 @@ export default function ScreenAnalysis({
       {!isLoading && (
         <>
           <span
-            className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+            className="uppercase text-[13px] max-[640px]:text-[14px]"
             style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
           >
             Clinical Note / Epicrisis 001
@@ -98,7 +98,7 @@ export default function ScreenAnalysis({
                 api/matcher/route.ts) so the Observation can riff on it. */}
             {provokedBy && !error && (
               <span
-                className="uppercase text-[11px] max-[640px]:text-[10.5px] mt-1"
+                className="uppercase text-[13px] max-[640px]:text-[14px] mt-1"
                 style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TREATMENT_ACCENT_TEXT }}
               >
                 Aetiology: iatrogenic (induced by this clinic, Fig. {provokedBy.fig})
@@ -146,7 +146,7 @@ export default function ScreenAnalysis({
                   since the incident itself was already captured at Intake —
                   this is the system's read of it, not a repeat of it. */}
               <span
-                className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+                className="uppercase text-[13px] max-[640px]:text-[14px]"
                 style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
               >
                 Observation / 01
@@ -168,7 +168,7 @@ export default function ScreenAnalysis({
                   prescription itself. Same clinical eyebrow style as
                   Observation above. */}
               <span
-                className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+                className="uppercase text-[13px] max-[640px]:text-[14px]"
                 style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
               >
                 Treatment / 02
@@ -194,7 +194,7 @@ export default function ScreenAnalysis({
               paper-card ink tint and onto the shared neutral tokens. */}
           {choice && (
             <p
-              className="uppercase m-0 mt-5 max-[640px]:mt-3 pt-3 max-[640px]:pt-2 text-[10px] leading-[1.5]"
+              className="uppercase m-0 mt-5 max-[640px]:mt-3 pt-3 max-[640px]:pt-2 text-[14px] leading-[1.5]"
               style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.03em', color: TEXT_TERTIARY, borderTop: `1px solid ${DIVIDER_COLOR}` }}
             >
               Treatment protocol per Sharman &amp; Dingle (2015), Front. Hum. Neurosci.:
@@ -209,7 +209,7 @@ export default function ScreenAnalysis({
           {offerProvocation && choice && (
             <div className="mt-6 max-[640px]:mt-4 pt-5 max-[640px]:pt-3" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
               <span
-                className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+                className="uppercase text-[13px] max-[640px]:text-[14px]"
                 style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
               >
                 Referral / 03
@@ -264,7 +264,7 @@ export default function ScreenAnalysis({
           <div className="flex items-center justify-center gap-6 mt-5 max-[640px]:mt-4">
             <button
               onClick={onBack}
-              className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide transition-colors duration-200"
+              className="flex items-center gap-1 text-[13px] font-medium uppercase tracking-wide transition-colors duration-200"
               style={{ letterSpacing: '0.05em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
               onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
               onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}

@@ -117,7 +117,7 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
                 style={{
                   width: '15px',
                   height: '15px',
-                  border: `1.4px solid ${isSelected ? '#2f2e2b' : '#a6a297'}`,
+                  border: `1.4px solid ${isSelected ? '#2f2e2b' : '#8a867a'}`,
                   background: isSelected ? '#2f2e2b' : 'transparent',
                   transition: `background 0.2s ${EASE}, border-color 0.2s ${EASE}`,
                 }}
@@ -126,12 +126,12 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
               </span>
 
               <span
-                className="uppercase whitespace-nowrap max-[640px]:whitespace-normal max-[640px]:!text-[13px]"
+                className="uppercase whitespace-nowrap max-[640px]:whitespace-normal max-[640px]:!text-[15px]"
                 style={{
-                  fontSize: '12px',
+                  fontSize: '14px',
                   letterSpacing: '0.05em',
                   fontWeight: 500,
-                  color: isSelected ? '#2f2e2b' : isHovered ? '#3f3b33' : '#5c584f',
+                  color: isSelected ? '#2f2e2b' : isHovered ? '#3f3b33' : '#47433b',
                   transition: `color 0.2s ${EASE}`,
                 }}
               >

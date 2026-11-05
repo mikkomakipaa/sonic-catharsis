@@ -39,7 +39,7 @@ function CompoundRow({ label, locked }: { label: string; locked: boolean }) {
 
   return (
     <div
-      className="receipt-line-print grid grid-cols-[104px_minmax(0,1fr)] items-baseline gap-3 text-[12px] max-[480px]:text-[14px] font-medium uppercase"
+      className="receipt-line-print grid grid-cols-[104px_minmax(0,1fr)] items-baseline gap-3 text-[14px] max-[480px]:text-[14px] font-medium uppercase"
       style={{
         letterSpacing: '0.03em',
         animation: `receipt-line-print 0.3s ${EASE} both`,
@@ -75,7 +75,7 @@ export default function PrescriptionCalibration() {
       className="w-full max-w-[320px] mx-auto"
       style={{ fontFamily: "'Courier New', monospace", color: TEXT_PRIMARY }}
     >
-      <div className="text-center mb-3 text-[11px] max-[480px]:text-[13px] font-medium uppercase" style={{ letterSpacing: '0.08em', color: TEXT_PRIMARY }}>
+      <div className="text-center mb-3 text-[13px] max-[480px]:text-[15px] font-medium uppercase" style={{ letterSpacing: '0.08em', color: TEXT_PRIMARY }}>
         Dose Calibration
       </div>
 
@@ -87,7 +87,7 @@ export default function PrescriptionCalibration() {
 
       <div className="border-t border-dashed mt-2 mb-3" style={{ borderColor: TEXT_TERTIARY }} />
 
-      <div className="text-center text-[12px] max-[480px]:text-[13px] font-medium uppercase" style={{ letterSpacing: '0.08em', color: TEXT_PRIMARY }}>
+      <div className="text-center text-[14px] max-[480px]:text-[15px] font-medium uppercase" style={{ letterSpacing: '0.08em', color: TEXT_PRIMARY }}>
         {allLocked ? (
           <span>
             Preparing prescription

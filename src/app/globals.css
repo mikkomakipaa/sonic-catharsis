@@ -208,10 +208,10 @@
    the only nav control on screen. Media-query (not JS) so the existing
    hover/mouseleave color toggle keeps working unmodified. */
 .rite-kicker {
-  color: #7d7869; /* TEXT_TERTIARY */
+  color: #5c584f; /* TEXT_TERTIARY */
 }
 @media (max-width: 480px) {
   .rite-kicker {
-    color: #726f66;
+    color: #4a463e;
   }
 }

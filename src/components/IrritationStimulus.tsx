@@ -54,7 +54,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
     <figure className="m-0 p-2 rounded-[2px]" style={{ background: PAPER, boxShadow: '0 1px 3px rgba(0,0,0,0.18)' }}>
       <div className="px-3 pt-3 pb-3 max-[480px]:px-2" style={{ border: `1px solid ${INK}` }}>
         <div className="flex flex-col gap-2" style={{ color: INK, fontFamily: TYPEWRITER }}>
-          <span className="uppercase text-[11px] tracking-[0.12em] opacity-70 text-center">Video stimulus</span>
+          <span className="uppercase text-[13px] tracking-[0.12em] opacity-70 text-center">Video stimulus</span>
 
           {/* The "player": a dark frame, a play icon that does nothing, and
               the buffer bar along the bottom edge. */}
@@ -80,22 +80,22 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
             </div>
           </div>
 
-          <div className="flex justify-between text-[12px]">
+          <div className="flex justify-between text-[14px]">
             <span role="status">{statusText(percent, setbacks)}</span>
             <span>{percent}%</span>
           </div>
-          <div className="-mt-1 text-[11px] opacity-70">{eta}</div>
+          <div className="-mt-1 text-[13px] opacity-70">{eta}</div>
 
           {confirming ? (
-            <div className="text-[12px]" style={{ minHeight: 56 }}>
+            <div className="text-[14px]" style={{ minHeight: 56 }}>
               <p className="m-0 leading-snug">
                 Reloading will lose the {percent}% already buffered. Do you want to not cancel the reload?
               </p>
               <div className="mt-2 flex gap-2">
-                <button onClick={sendBack} className="px-3 py-1.5 text-[11px] uppercase rounded-[2px]" style={FAKE_BUTTON_STYLE}>
+                <button onClick={sendBack} className="px-3 py-1.5 text-[13px] uppercase rounded-[2px]" style={FAKE_BUTTON_STYLE}>
                   Yes
                 </button>
-                <button onClick={sendBack} className="px-3 py-1.5 text-[11px] uppercase rounded-[2px]" style={FAKE_BUTTON_STYLE}>
+                <button onClick={sendBack} className="px-3 py-1.5 text-[13px] uppercase rounded-[2px]" style={FAKE_BUTTON_STYLE}>
                   No
                 </button>
               </div>
@@ -104,7 +104,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
             <div style={{ minHeight: 56 }}>
               <button
                 onClick={() => setConfirming(true)}
-                className="px-3 py-1.5 text-[11px] uppercase rounded-[2px]"
+                className="px-3 py-1.5 text-[13px] uppercase rounded-[2px]"
                 style={FAKE_BUTTON_STYLE}
               >
                 Reload
@@ -114,8 +114,8 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
         </div>
 
         <figcaption className="mt-3" style={{ color: INK, fontFamily: TYPEWRITER }}>
-          <span className="block text-[12.5px] max-[480px]:text-[12px] leading-snug">{caption}</span>
-          <span className="block mt-1 text-[11px] leading-snug opacity-80">{stimulus.legend}</span>
+          <span className="block text-[12.5px] max-[480px]:text-[14px] leading-snug">{caption}</span>
+          <span className="block mt-1 text-[13px] leading-snug opacity-80">{stimulus.legend}</span>
         </figcaption>
       </div>
     </figure>

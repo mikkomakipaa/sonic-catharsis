@@ -88,7 +88,7 @@ export default function DurationSelect({ value, onChange }: DurationSelectProps)
           IntensitySlider's readout. */}
       <span
         className="uppercase transition-colors"
-        style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', color: DURATION_ACCENT, transition: `color 0.15s ${EASE}` }}
+        style={{ fontSize: '13px', fontWeight: 500, letterSpacing: '0.08em', color: DURATION_ACCENT, transition: `color 0.15s ${EASE}` }}
       >
         {isSet ? current?.label : '—'}
       </span>
@@ -149,7 +149,7 @@ export default function DurationSelect({ value, onChange }: DurationSelectProps)
         </div>
       </div>
 
-      <div className="flex items-center justify-between w-full text-[9px] uppercase" style={{ letterSpacing: '0.06em', color: TEXT_TERTIARY }}>
+      <div className="flex items-center justify-between w-full text-[14px] uppercase" style={{ letterSpacing: '0.06em', color: TEXT_TERTIARY }}>
         <span>{DURATION_TIERS[0].label}</span>
         <span>{DURATION_TIERS[LAST_INDEX].label}</span>
       </div>
