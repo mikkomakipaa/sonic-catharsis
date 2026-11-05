@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { SeppoNotesRequestSchema, SeppoNotesSchema, validateRequest } from '@/lib/validation';
 import { createWithRetry } from '@/lib/openai-response';
 import { getOpenAI } from '@/lib/openai-client';
+import { STRESS_VALUE_TO_LABEL } from '@/lib/theme';
+import { getSymptomMeta } from '@/lib/symptoms';
+import { getDurationMeta } from '@/lib/duration';
 
 const ARTIST_NOTES_MODEL = 'gpt-4.1';
 
@@ -28,11 +31,16 @@ export async function handleArtistNotes(request: NextRequest, instructions: stri
     if (!validation.success) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
-    const { artists, subgenre, incident } = validation.data!;
+    const { artists, subgenre, incident, trigger, stressLevel, symptoms, duration, chatNote } = validation.data!;
 
     const input = [
       `subgenre: ${subgenre}`,
       ...(incident ? [`incident: ${oneLine(incident)}`] : []),
+      ...(trigger ? [`trigger: ${trigger}`] : []),
+      ...(stressLevel != null ? [`stress_level: ${STRESS_VALUE_TO_LABEL[stressLevel] ?? stressLevel}`] : []),
+      ...(symptoms?.length ? [`physical_symptoms: ${symptoms.map((s) => getSymptomMeta(s).label).join(', ')}`] : []),
+      ...(duration ? [`duration_persistence: ${getDurationMeta(duration).label}`] : []),
+      ...(chatNote ? [`chat_note: ${oneLine(chatNote)}`] : []),
       'artists:',
       ...artists.map((name, i) => `${i + 1}. ${oneLine(name)}`),
     ].join('\n');
