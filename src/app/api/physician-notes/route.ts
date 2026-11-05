@@ -4,4 +4,4 @@ import { handleArtistNotes } from '@/lib/artist-notes';
 
 // The clinic physician's indication per prescribed artist (everyone who did
 // not go through Seppo). See lib/artist-notes.ts.
-export const POST = (request: NextRequest) => handleArtistNotes(request, PHYSICIAN_ARTIST_NOTES_INSTRUCTIONS, 'Physician notes');
+export const POST = (request: NextRequest) => handleArtistNotes(request, PHYSICIAN_ARTIST_NOTES_INSTRUCTIONS, 'Physician notes', { praisePeak: true });

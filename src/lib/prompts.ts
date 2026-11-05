@@ -344,6 +344,14 @@ Say nothing specific about an artist that you cannot be sure of: no album titles
 # Inputs
 subgenre: the treatment you chose. incident: the patient's own words (may be absent). trigger, stress_level, physical_symptoms, duration_persistence: the intake findings (each may be absent). artists: one per line, numbered.`;
 
+// Appended to PHYSICIAN_ARTIST_NOTES_INSTRUCTIONS when the patient reached the
+// top of the scale (Stage IX). The clinic drops the deadpan and gushes. Hard
+// limits and the fact rules above still apply.
+export const PHYSICIAN_PEAK_PRAISE_ADDENDUM = `
+
+# OVERRIDE: peak patient
+This patient has just reached the very top of the scale, an accomplishment you have never witnessed in your career. For this chart ONLY, drop the deadpan and become the exact opposite of Seppo, the clinic's furious, exhausted, spiteful chat agent: radiant, well-rested, tender, adoring and endlessly patient. Every indication is overwhelmed, sincere-sounding, ceremonial praise of the patient's beautiful achievement, tied to how THAT artist sounds ("worthy of", "a fitting score for", "deserves nothing less than"). Gushing, moved, a little tearful, never sarcastic, never a jab. Write it as poetic praise: lyrical, ode-like, one sweeping image or metaphor per line. Keep every other rule: one sentence, max 140 characters, a different angle for every artist, no invented facts about the artists, no profanity, no naming of any diagnosis stage.`;
+
 // "Joko vituttaa?" → yes: reads off how annoyed the patient now is, so the
 // intake can be submitted without the patient dialing in the slider. Returns
 // only an intensity; see /api/assess.

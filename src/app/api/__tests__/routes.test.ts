@@ -60,6 +60,25 @@ describe('/api/matcher iatrogenic note (Provoke Me)', () => {
   });
 });
 
+describe('/api/matcher multi-climax praise', () => {
+  const ok = { output_text: JSON.stringify({ subgenre: 'doom metal', sonic_profile, cause: 'Bravo.', choice: 'Bravo.' }) };
+  const peak = { ...emotionData, stressLevel: 10, symptoms: ['head_exploding', 'muscle_tension', 'heart_pounding', 'accelerated_breathing', 'weakness', 'legs_limp'], duration: 'several_days', provoked: true };
+
+  it('turns the clinic to praise at Stage IX, replacing the other cause directives', async () => {
+    create.mockResolvedValue(ok);
+    await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData: peak })));
+    const input = create.mock.calls[0][0].input as string;
+    expect(input).toContain('beautiful accomplishment');
+    expect(input).not.toContain('iatrogenic');
+  });
+
+  it('stays deadpan below Stage IX', async () => {
+    create.mockResolvedValue(ok);
+    await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData })));
+    expect(create.mock.calls[0][0].input).not.toContain('beautiful accomplishment');
+  });
+});
+
 describe('/api/matcher chat note (Seppo)', () => {
   const ok = { output_text: JSON.stringify({ subgenre: 'doom metal', sonic_profile, cause: 'Because.', choice: 'Slow.' }) };
 
@@ -387,6 +406,15 @@ describe('/api/physician-notes', () => {
     const res = await physicianNotesPOST(post('/api/physician-notes', '{not json'));
     expect(res.status).toBe(400);
     expect(create).not.toHaveBeenCalled();
+  });
+
+  it('turns the physician to praise at Stage IX only', async () => {
+    create.mockResolvedValue({ output_text: JSON.stringify({ notes: [{ artist: 'Undeath', note: 'Magnificent.' }] }) });
+    const symptoms = ['head_exploding', 'muscle_tension', 'heart_pounding', 'accelerated_breathing', 'weakness', 'legs_limp'];
+    await send({ ...request, stressLevel: 10, symptoms, duration: 'several_days' });
+    expect(create.mock.calls[0][0].instructions).toContain('OVERRIDE: peak patient');
+    await send({ ...request, stressLevel: 3 });
+    expect(create.mock.calls[1][0].instructions).not.toContain('OVERRIDE: peak patient');
   });
 
   it('asks the physician, not Seppo, and returns notes for requested artists only', async () => {
