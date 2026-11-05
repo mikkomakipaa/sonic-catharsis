@@ -3,8 +3,8 @@ import { SeppoNotesRequestSchema, SeppoNotesSchema, validateRequest } from '@/li
 import { createWithRetry } from '@/lib/openai-response';
 import { getOpenAI } from '@/lib/openai-client';
 import { STRESS_VALUE_TO_LABEL, getActiveStage } from '@/lib/theme';
-import { PHYSICIAN_PEAK_PRAISE_ADDENDUM } from '@/lib/prompts';
 import { getSymptomMeta } from '@/lib/symptoms';
+import { SEPPO_PEAK_PRAISE_ADDENDUM } from '@/lib/prompts';
 import { getDurationMeta } from '@/lib/duration';
 
 const ARTIST_NOTES_MODEL = 'gpt-4.1';
@@ -12,7 +12,7 @@ const ARTIST_NOTES_MODEL = 'gpt-4.1';
 // Newlines are flattened so the incident can't forge an extra input line.
 const oneLine = (text: string) => text.replace(/\s+/g, ' ').trim();
 
-// `opts.praisePeak` (physician only) switches the voice to praise at Stage IX.
+// At Stage IX both voices (physician, Seppo) switch to one: Seppo's tearful praise.
 // Shared by /api/seppo-notes and /api/physician-notes: the same stateless,
 // single-shot job in two voices. The Curator's artist names plus the subgenre
 // (and the incident, as material) in, a bounded list of { artist, note } out.
@@ -20,7 +20,7 @@ const oneLine = (text: string) => text.replace(/\s+/g, ' ').trim();
 // only agents that see both. Model output is untrusted: notes are matched back
 // to the requested artists, so a made-up or duplicated name never reaches the
 // client. `label` only names the route in logs.
-export async function handleArtistNotes(request: NextRequest, instructions: string, label: string, opts: { praisePeak?: boolean } = {}) {
+export async function handleArtistNotes(request: NextRequest, instructions: string, label: string) {
   try {
     let body: unknown;
     try {
@@ -35,10 +35,10 @@ export async function handleArtistNotes(request: NextRequest, instructions: stri
     }
     const { artists, subgenre, incident, trigger, stressLevel, symptoms, duration, chatNote } = validation.data!;
 
-    // Easter egg: at Stage IX the physician's notes turn into gushing praise.
+    // Easter egg: at Stage IX the notes turn into gushing praise.
     // Derived here from the same intake fields as the Matcher's stage, not
     // taken on the client's word.
-    const peak = opts.praisePeak && getActiveStage(stressLevel ?? null, symptoms ?? [], duration ?? null).index === 9;
+    const peak = getActiveStage(stressLevel ?? null, symptoms ?? [], duration ?? null).index === 9;
 
     const input = [
       `subgenre: ${subgenre}`,
@@ -55,7 +55,7 @@ export async function handleArtistNotes(request: NextRequest, instructions: stri
     const notes = await createWithRetry(
       () => getOpenAI().responses.create({
         model: ARTIST_NOTES_MODEL,
-        instructions: peak ? instructions + PHYSICIAN_PEAK_PRAISE_ADDENDUM : instructions,
+        instructions: peak ? instructions + SEPPO_PEAK_PRAISE_ADDENDUM : instructions,
         input,
         temperature: 1,
         max_output_tokens: 1200,
