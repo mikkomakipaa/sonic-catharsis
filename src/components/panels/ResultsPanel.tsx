@@ -49,9 +49,9 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
             <PrescriptionCalibration />
           ) : (
             <>
-              <Music className="h-10 w-10 mx-auto mb-4" style={{ color: '#7d7869' }} />
+              <Music className="h-10 w-10 mx-auto mb-4" style={{ color: '#5c584f' }} />
               <h3 className="text-sm font-semibold mb-2 uppercase tracking-wide" style={{ color: '#2f2e2b' }}>Artists</h3>
-              <p className="text-xs" style={{ color: '#7d7869' }}>Complete analysis first</p>
+              <p className="text-xs" style={{ color: '#5c584f' }}>Complete analysis first</p>
             </>
           )}
         </div>
@@ -87,7 +87,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
             "Clinical Note / Epicrisis 001" — the three intake/diagnosis/
             prescription screens read as consecutive pages of one case file. */}
         <span
-          className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+          className="uppercase text-[13px] max-[640px]:text-[14px]"
           style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
         >
           Prescription / Case 001
@@ -98,9 +98,9 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
           the band names below. Per the typography split in
           docs/design_guidelines.md, monospace is reserved for clinical
           metadata; content (band names) reads in the app's normal sans. */}
-      <div className="mt-3 flex items-start justify-between gap-4">
+      <div className="mt-3 flex items-center justify-between gap-4">
       <div
-        className="grid min-w-0 grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[11px] max-[480px]:text-[13px] uppercase"
+        className="grid min-w-0 grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[13px] max-[480px]:text-[15px] uppercase"
         style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.04em' }}
       >
         <span style={{ color: TEXT_SECONDARY }}>For</span>
@@ -145,7 +145,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
             sits under its band and carries its own inline label, so only
             Artist and Bandcamp are headed there; the remark header joins
             from 481px up, where the remark gets its own column. */}
-        <div className={`grid ${hasNotes ? ROW_COLS_WITH_NOTES : ROW_COLS} gap-x-3 pt-2 pb-1 uppercase text-[10px] max-[480px]:text-[11px]`} style={HEADER_STYLE}>
+        <div className={`grid ${hasNotes ? ROW_COLS_WITH_NOTES : ROW_COLS} gap-x-3 pt-2 pb-1 uppercase text-[14px] max-[480px]:text-[14px]`} style={HEADER_STYLE}>
           <span className="col-start-2">Artist</span>
           {hasNotes && <span className="hidden min-[481px]:inline col-start-3">{noteHeader}</span>}
           <span className={`justify-self-end whitespace-nowrap col-start-3 ${hasNotes ? 'min-[481px]:col-start-4' : ''}`}>Bandcamp</span>
@@ -162,7 +162,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
             {/* Indexing metadata, not information — quieter than the label
                 row above it, so it recedes behind the band name. */}
             <span
-              className="text-[9px] max-[480px]:text-[12px] tabular-nums max-[480px]:min-h-[48px] max-[480px]:flex max-[480px]:items-center"
+              className="text-[14px] max-[480px]:text-[14px] tabular-nums max-[480px]:min-h-[48px] max-[480px]:flex max-[480px]:items-center"
               style={{ fontFamily: "'Courier New', monospace", color: TEXT_TERTIARY, opacity: 0.6 }}
             >
               {String(index + 1).padStart(2, '0')}
@@ -179,10 +179,10 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
                 ones. Always the third grid cell on wide screens. */}
             {(track.seppoNote || track.physicianNote) && (
               <p
-                className="m-0 min-w-0 text-[12px] max-[480px]:text-[13px] italic leading-snug min-[481px]:col-start-3 min-[481px]:row-start-1 max-[480px]:col-start-2 max-[480px]:row-start-2 max-[480px]:col-span-2 max-[480px]:mb-2 animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]"
+                className="m-0 min-w-0 text-[14px] max-[480px]:text-[15px] italic leading-snug min-[481px]:col-start-3 min-[481px]:row-start-1 max-[480px]:col-start-2 max-[480px]:row-start-2 max-[480px]:col-span-2 max-[480px]:mb-2 animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]"
                 style={{ color: TEXT_SECONDARY, fontFamily: 'var(--font-plex-sans), Arial, sans-serif' }}
               >
-                <span className="min-[481px]:hidden not-italic uppercase text-[10px] mr-1.5" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}>{bySeppo ? 'Seppo:' : 'Indication:'}</span>
+                <span className="min-[481px]:hidden not-italic uppercase text-[14px] mr-1.5" style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}>{bySeppo ? 'Seppo:' : 'Indication:'}</span>
                 {track.seppoNote ?? track.physicianNote}
               </p>
             )}
@@ -212,7 +212,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
       </div>
 
       <div
-        className="grid grid-cols-[auto_1fr] gap-x-4 mt-2 pt-4 text-[11px] max-[480px]:text-[13px] uppercase"
+        className="grid grid-cols-[auto_1fr] gap-x-4 mt-2 pt-4 text-[13px] max-[480px]:text-[15px] uppercase"
         style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.04em', borderTop: `1px solid ${DIVIDER_COLOR}` }}
       >
         <span style={{ color: TEXT_SECONDARY }}>Dosage:</span>

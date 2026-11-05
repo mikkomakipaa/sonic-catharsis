@@ -58,10 +58,10 @@ export default function DescentRail({ activeStage }: DescentRailProps) {
                     this used to cause on narrow screens. */}
                 <span
                   className={cn(
-                    'font-mono mt-2 transition-all duration-300 max-[480px]:text-[11px]',
-                    isActive ? 'text-[13px] max-[480px]:text-[12px] font-bold' : 'text-[11px] font-normal'
+                    'font-mono mt-2 transition-all duration-300 max-[480px]:text-[13px]',
+                    isActive ? 'text-[13px] max-[480px]:text-[14px] font-bold' : 'text-[13px] font-normal'
                   )}
-                  style={{ color: isActive ? band.color : isPast ? '#726f66' : '#7d7869' }}
+                  style={{ color: isActive ? band.color : isPast ? '#4a463e' : '#5c584f' }}
                 >
                   {band.roman}
                 </span>

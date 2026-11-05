@@ -55,7 +55,7 @@ export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack, 
     <div className="flex flex-col max-w-2xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]">
       {stimulus && (
         <div className="flex flex-col">
-          <span className="uppercase text-[11px] max-[640px]:text-[10.5px]" style={EYEBROW_STYLE}>
+          <span className="uppercase text-[13px] max-[640px]:text-[14px]" style={EYEBROW_STYLE}>
             Provocation Protocol / Stimulus {index + 1} of {stimuli.length}
           </span>
 
@@ -109,7 +109,7 @@ export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack, 
           <div className="flex items-center justify-center mt-6">
             <button
               onClick={onBack}
-              className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide"
+              className="flex items-center gap-1 text-[13px] font-medium uppercase tracking-wide"
               style={{ letterSpacing: '0.05em', color: TEXT_SECONDARY }}
             >
               <ArrowLeft className="h-3 w-3" />

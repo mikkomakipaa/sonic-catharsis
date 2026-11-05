@@ -50,7 +50,7 @@ export default function ScreenDescent({
         <div className="flex items-center justify-center gap-6 mt-10">
           <button
             onClick={onBack}
-            className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide transition-colors duration-200"
+            className="flex items-center gap-1 text-[13px] font-medium uppercase tracking-wide transition-colors duration-200"
             style={{ letterSpacing: '0.05em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
             onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
             onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}

@@ -43,15 +43,15 @@ export default function StimulusPlate({ stimulus }: { stimulus: Stimulus }) {
             <span className="uppercase text-[13px] tracking-[0.12em] px-2 py-1" style={{ border: `1px solid ${INK}`, background: PAPER }}>
               Illustration withheld
             </span>
-            <span className="text-[11px] opacity-70" style={{ background: PAPER }}>
+            <span className="text-[13px] opacity-70" style={{ background: PAPER }}>
               Pending ethics review.
             </span>
           </div>
         )}
 
         <figcaption className="mt-3" style={{ color: INK, fontFamily: TYPEWRITER }}>
-          <span className="block text-[12.5px] max-[480px]:text-[12px] leading-snug">{caption}</span>
-          <span className="block mt-1 text-[11px] leading-snug opacity-80">{stimulus.legend}</span>
+          <span className="block text-[12.5px] max-[480px]:text-[14px] leading-snug">{caption}</span>
+          <span className="block mt-1 text-[13px] leading-snug opacity-80">{stimulus.legend}</span>
         </figcaption>
       </div>
     </figure>

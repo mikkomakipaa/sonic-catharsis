@@ -217,7 +217,7 @@ export default function IntensitySlider({ value, onChange }: IntensitySliderProp
           10-tick scale (STRESS_TIERS[NORMAL_MAX_TIER], "Multi-climax" — see
           the ordering note in theme.ts), so the caption stays truthful to
           where 10/10 and the hidden ELEVEN zone actually sit. */}
-      <div className="flex items-start justify-between gap-2 w-full pr-9 text-[9px] uppercase" style={{ letterSpacing: '0.06em', color: TEXT_TERTIARY }}>
+      <div className="flex items-start justify-between gap-2 w-full pr-9 text-[14px] uppercase" style={{ letterSpacing: '0.06em', color: TEXT_TERTIARY }}>
         {/* Each caption gets its own half-width, wrapping onto a second
             line rather than colliding with the other — "Intolerable
             Lightness" / "Multi-climax" are longer than Duration's

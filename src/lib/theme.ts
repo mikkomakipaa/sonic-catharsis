@@ -17,8 +17,8 @@ export const EASE = 'cubic-bezier(0.25, 1, 0.5, 1)';
 // TEXT_DECORATIVE is reserved for non-text structure (rules, borders,
 // inactive dots).
 export const TEXT_PRIMARY = '#2f2e2b'; // headings, entered/selected content
-export const TEXT_SECONDARY = '#5c584f'; // labels, interaction text, instructions, disabled-but-readable text
-export const TEXT_TERTIARY = '#7d7869'; // brand eyebrow, genuinely de-emphasized metadata
+export const TEXT_SECONDARY = '#47433b'; // labels, interaction text, instructions, disabled-but-readable text
+export const TEXT_TERTIARY = '#5c584f'; // brand eyebrow, genuinely de-emphasized metadata
 export const TEXT_DECORATIVE = '#a6a297'; // NOT for text — divider lines, inactive dots, borders only
 
 // Shared "section eyebrow" style for the landing page's three question
@@ -30,7 +30,7 @@ export const TEXT_DECORATIVE = '#a6a297'; // NOT for text — divider lines, ina
 // below them, which stay at 500 — a deliberate question > answer contrast,
 // not a mistake to reconcile with the category labels' weight.
 export const SECTION_LABEL_STYLE = {
-  fontSize: '11px',
+  fontSize: '13px',
   fontWeight: 700,
   letterSpacing: '0.12em',
   color: TEXT_SECONDARY,

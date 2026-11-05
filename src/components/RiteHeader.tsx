@@ -22,7 +22,7 @@ export default function RiteHeader({ onGoHome, showHeadline = true }: RiteHeader
         onClick={onGoHome}
         disabled={!onGoHome}
         aria-label="Sonic Catharsis — back to start"
-        className="rite-kicker uppercase transition-opacity duration-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 text-[11px] max-[640px]:text-[12px] tracking-[0.18em] max-[480px]:tracking-[0.14em]"
+        className="rite-kicker uppercase transition-opacity duration-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 text-[13px] max-[640px]:text-[14px] tracking-[0.18em] max-[480px]:tracking-[0.14em]"
         style={{
           fontFamily: 'var(--font-plex-sans, sans-serif)',
           background: 'transparent',
@@ -30,7 +30,7 @@ export default function RiteHeader({ onGoHome, showHeadline = true }: RiteHeader
           padding: 0,
           cursor: onGoHome ? 'pointer' : 'default',
         }}
-        onMouseEnter={(e) => onGoHome && (e.currentTarget.style.color = '#726f66')}
+        onMouseEnter={(e) => onGoHome && (e.currentTarget.style.color = '#4a463e')}
         onMouseLeave={(e) => (e.currentTarget.style.color = '')}
       >
         Sonic Catharsis
@@ -38,7 +38,7 @@ export default function RiteHeader({ onGoHome, showHeadline = true }: RiteHeader
 
       {showHeadline && (
         <p
-          className="mt-1.5 text-[12px] max-[480px]:text-[11px]"
+          className="mt-1.5 text-[14px] max-[480px]:text-[14px]"
           style={{ fontFamily: 'var(--font-plex-sans, sans-serif)', color: TEXT_TERTIARY }}
         >
           Rage, matched.

@@ -45,7 +45,7 @@ interface StateOfMindPanelProps {
 function SectionLabel({ children, className, as = 'p', htmlFor }: { children: ReactNode; className?: string; as?: 'p' | 'label'; htmlFor?: string }) {
   const Tag = as;
   return (
-    <Tag className={cn('text-center uppercase max-[640px]:!text-[13px]', className)} style={SECTION_LABEL_STYLE} htmlFor={htmlFor}>
+    <Tag className={cn('text-center uppercase max-[640px]:!text-[15px]', className)} style={SECTION_LABEL_STYLE} htmlFor={htmlFor}>
       {children}
     </Tag>
   );
@@ -125,7 +125,7 @@ export default function StateOfMindPanel({
           Diagnosis/Prescription screens continue — see ScreenAnalysis.tsx. */}
       <div className="w-full max-w-2xl">
         <span
-          className="uppercase text-[11px] max-[640px]:text-[10.5px]"
+          className="uppercase text-[13px] max-[640px]:text-[14px]"
           style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY }}
         >
           Intake / Case 001
@@ -139,7 +139,7 @@ export default function StateOfMindPanel({
           <SectionLabel as="label" htmlFor="incident" className="mb-0.5">
             What petty injustice did you endure today?
           </SectionLabel>
-          <p id="incident-optional" className="mb-1.5 text-[9px] max-[640px]:text-[11px] uppercase tracking-[0.1em]" style={{ color: TEXT_TERTIARY }}>
+          <p id="incident-optional" className="mb-1.5 text-[13px] max-[640px]:text-[13px] uppercase tracking-[0.1em]" style={{ color: TEXT_TERTIARY }}>
             Optional
           </p>
           <textarea
@@ -161,12 +161,12 @@ export default function StateOfMindPanel({
             // The mobile size stays at Safari's 16px auto-zoom threshold
             // without overpowering the rest of the intake.
             // Placeholder matches the "Optional" label's faintness above —
-            // TEXT_TERTIARY color (#7d7869, hardcoded here since Tailwind's
+            // TEXT_TERTIARY color (#5c584f, hardcoded here since Tailwind's
             // arbitrary-value classes must be static text, not a JS
             // reference) plus placeholder:font-light, since Optional's
             // faintness comes from a genuinely thinner weight, not just a
             // muted color.
-            className="w-full h-14 px-3 py-1 text-sm max-[640px]:text-[16px] text-center resize-none focus:outline-none transition-colors duration-200 font-normal rounded-md placeholder-[#7d7869] placeholder:font-light focus:placeholder:opacity-0"
+            className="w-full h-14 px-3 py-1 text-sm max-[640px]:text-[16px] text-center resize-none focus:outline-none transition-colors duration-200 font-normal rounded-md placeholder-[#5c584f] placeholder:font-light focus:placeholder:opacity-0"
             style={{
               fontFamily: 'var(--font-geist-sans)',
               lineHeight: '1.4',
@@ -190,7 +190,7 @@ export default function StateOfMindPanel({
       {/* Only shown before a category is picked — once selected, the next
           section takes over as guidance and this would just be clutter. */}
       {!selection && (
-        <p className="text-center mt-3 text-[11px] max-[640px]:text-[12px]" style={{ color: TEXT_TERTIARY }}>
+        <p className="text-center mt-3 text-[13px] max-[640px]:text-[14px]" style={{ color: TEXT_TERTIARY }}>
           Pick the closest one. Clinical accuracy is not required.
         </p>
       )}
@@ -247,7 +247,7 @@ export default function StateOfMindPanel({
                       (see lib/symptoms.ts). Purely additional flavor for the
                       Matcher; never blocks submission either way. */}
                   <SectionLabel className="mt-6">Any physical symptoms?</SectionLabel>
-                  <p className="text-center mt-1 text-[11px] max-[640px]:text-[12px]" style={{ color: TEXT_TERTIARY }}>
+                  <p className="text-center mt-1 text-[13px] max-[640px]:text-[14px]" style={{ color: TEXT_TERTIARY }}>
                     Optional. Select any that apply.
                   </p>
                   <div className="mt-3 w-full">
@@ -271,7 +271,7 @@ export default function StateOfMindPanel({
                 transition: `all 0.2s ${EASE}`,
                 letterSpacing: '0.08em',
                 background: canSubmit ? CTA_BACKGROUND : '#f2efe7',
-                color: canSubmit ? CTA_TEXT_COLOR : '#5c584f',
+                color: canSubmit ? CTA_TEXT_COLOR : '#47433b',
                 border: canSubmit ? 'none' : '1px solid #e6e2d8',
                 boxShadow: canSubmit ? CTA_SHADOW : 'none',
                 textShadow: canSubmit ? CTA_TEXT_SHADOW : undefined,
@@ -290,7 +290,7 @@ export default function StateOfMindPanel({
               )}
             </button>
             {missingStep && !isProcessing && (
-              <p id="submit-hint" className="text-center mt-2 text-[11px] max-[640px]:text-[12px]" style={{ color: TEXT_TERTIARY }}>
+              <p id="submit-hint" className="text-center mt-2 text-[13px] max-[640px]:text-[14px]" style={{ color: TEXT_TERTIARY }}>
                 {missingStep}
               </p>
             )}
@@ -304,10 +304,10 @@ export default function StateOfMindPanel({
       {showReset && (
         <button
           onClick={onReset}
-          className="mt-6 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide transition-colors duration-200"
-          style={{ letterSpacing: '0.05em', color: '#5c584f', transition: `color 0.2s ${EASE}` }}
+          className="mt-6 flex items-center gap-1.5 text-[13px] font-medium uppercase tracking-wide transition-colors duration-200"
+          style={{ letterSpacing: '0.05em', color: '#47433b', transition: `color 0.2s ${EASE}` }}
           onMouseEnter={(e) => (e.currentTarget.style.color = '#3f3b33')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
+          onMouseLeave={(e) => (e.currentTarget.style.color = '#47433b')}
         >
           <RefreshCw className="h-3.5 w-3.5" />
           Reset
@@ -322,10 +322,10 @@ export default function StateOfMindPanel({
           type="button"
           onClick={onProvoke}
           disabled={isProcessing}
-          className="mt-5 px-5 py-2.5 text-xs font-medium uppercase rounded-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-5 px-5 py-2.5 text-[13px] font-medium uppercase rounded-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
           style={{
             letterSpacing: '0.05em',
-            color: '#5c584f',
+            color: '#47433b',
             background: '#f2efe7',
             border: '1px solid #e6e2d8',
             transition: `all 0.2s ${EASE}`,

@@ -73,7 +73,7 @@ export default function AudioStimulus({ stimulus }: { stimulus: Stimulus }) {
           className="flex flex-col items-center justify-center gap-3 text-center"
           style={{ aspectRatio: '400 / 258', color: INK, fontFamily: TYPEWRITER }}
         >
-          <span className="uppercase text-[11px] tracking-[0.12em] opacity-70">Audio stimulus</span>
+          <span className="uppercase text-[13px] tracking-[0.12em] opacity-70">Audio stimulus</span>
           <button
             onClick={playing ? stop : play}
             className="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold uppercase rounded-[2px] active:scale-[0.98]"
@@ -83,14 +83,14 @@ export default function AudioStimulus({ stimulus }: { stimulus: Stimulus }) {
             {playing ? <Square className="h-3.5 w-3.5" aria-hidden /> : <Play className="h-3.5 w-3.5" aria-hidden />}
             {playing ? 'Stop stimulus' : 'Play stimulus'}
           </button>
-          <span className="text-[11px] opacity-70" role="status">
+          <span className="text-[13px] opacity-70" role="status">
             {playing ? 'Administering. Observe any change in condition.' : 'Sound on. Press to administer.'}
           </span>
         </div>
 
         <figcaption className="mt-3" style={{ color: INK, fontFamily: TYPEWRITER }}>
-          <span className="block text-[12.5px] max-[480px]:text-[12px] leading-snug">{caption}</span>
-          <span className="block mt-1 text-[11px] leading-snug opacity-80">{stimulus.legend}</span>
+          <span className="block text-[12.5px] max-[480px]:text-[14px] leading-snug">{caption}</span>
+          <span className="block mt-1 text-[13px] leading-snug opacity-80">{stimulus.legend}</span>
         </figcaption>
       </div>
     </figure>

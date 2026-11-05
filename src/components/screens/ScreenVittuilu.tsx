@@ -57,7 +57,7 @@ function Bubble({ role, children }: { role: VittuiluMessage['role']; children: R
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} animate-[rite-reveal_0.3s_cubic-bezier(0.25,1,0.5,1)_both]`}>
       <div className="max-w-[85%]">
-        <span className="block uppercase text-[10px] mb-1" style={{ ...EYEBROW_STYLE, textAlign: isUser ? 'right' : 'left' }}>
+        <span className="block uppercase text-[14px] mb-1" style={{ ...EYEBROW_STYLE, textAlign: isUser ? 'right' : 'left' }}>
           {isUser ? 'You' : 'Seppo'}
         </span>
         <p
@@ -144,7 +144,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
 
   return (
     <div className="flex flex-col max-w-2xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]">
-      <span className="uppercase text-[11px] max-[640px]:text-[10.5px]" style={EYEBROW_STYLE}>
+      <span className="uppercase text-[13px] max-[640px]:text-[14px]" style={EYEBROW_STYLE}>
         Referral / 04 — Vitutuspalvelu Live Chat
       </span>
 
@@ -161,7 +161,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
         ))}
         {isSending && <TypingIndicator />}
         {ended && (
-          <p className="m-0 text-center text-[12px] uppercase" style={EYEBROW_STYLE}>
+          <p className="m-0 text-center text-[14px] uppercase" style={EYEBROW_STYLE}>
             Seppo has left the chat
           </p>
         )}
@@ -200,13 +200,13 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
             style={{ ...BODY_FONT, color: TEXT_PRIMARY, background: '#fbfaf6', border: `1px solid ${DIVIDER_COLOR}` }}
           />
           <div className="flex items-center justify-between">
-            <span className="text-[11px]" style={{ color: TEXT_SECONDARY }}>
+            <span className="text-[13px]" style={{ color: TEXT_SECONDARY }}>
               {userCount} / {MAX_VITTUILU_USER_MESSAGES} messages · {draft.length} / {MAX_VITTUILU_USER_TEXT}
             </span>
             <button
               type="submit"
               disabled={!canSend}
-              className="px-5 py-2.5 font-semibold text-xs uppercase rounded-lg active:scale-[0.98] disabled:opacity-50"
+              className="px-5 py-2.5 font-semibold text-[13px] uppercase rounded-lg active:scale-[0.98] disabled:opacity-50"
               style={{
                 transition: `all 0.2s ${EASE}`,
                 letterSpacing: '0.08em',
@@ -253,7 +253,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
           <div className="flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={onBack}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium uppercase tracking-wide rounded-sm active:scale-[0.98]"
+            className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium uppercase tracking-wide rounded-sm active:scale-[0.98]"
             style={SECONDARY_BUTTON_STYLE}
           >
             <ArrowLeft className="h-3.5 w-3.5" />
@@ -261,7 +261,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
           </button>
           <button
             onClick={onReset}
-            className="px-4 py-2 text-xs font-medium uppercase tracking-wide rounded-sm active:scale-[0.98]"
+            className="px-4 py-2 text-[13px] font-medium uppercase tracking-wide rounded-sm active:scale-[0.98]"
             style={SECONDARY_BUTTON_STYLE}
           >
             New Intake
@@ -274,7 +274,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
         <div className="flex items-center justify-center mt-6">
           <button
             onClick={onBack}
-            className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide"
+            className="flex items-center gap-1 text-[13px] font-medium uppercase tracking-wide"
             style={{ letterSpacing: '0.05em', color: TEXT_SECONDARY }}
           >
             <ArrowLeft className="h-3 w-3" />
