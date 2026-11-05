@@ -99,7 +99,7 @@ export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack, 
             <button
               // The last "No" goes straight to Seppo — no discharge screen in between.
               onClick={() => (isLast ? onEscalate() : setIndex((i) => i + 1))}
-              className="w-full max-w-[280px] py-2.5 text-xs font-medium uppercase rounded-lg active:scale-[0.98]"
+              className="w-full max-w-[280px] py-2.5 text-xs font-medium uppercase rounded-lg active:scale-[0.98] hover:brightness-95"
               style={SECONDARY_BUTTON_STYLE}
             >
               {isLast ? 'No. Still nothing' : 'No. Next stimulus'}
@@ -109,7 +109,7 @@ export default function ScreenProvoke({ stimuli, onConfirm, onEscalate, onBack, 
           <div className="flex items-center justify-center mt-6">
             <button
               onClick={onBack}
-              className="flex items-center gap-1 text-[13px] font-medium uppercase tracking-wide"
+              className="flex items-center gap-1 text-[13px] font-medium uppercase tracking-wide hover:text-[#3f3b33]!"
               style={{ letterSpacing: '0.05em', color: TEXT_SECONDARY }}
             >
               <ArrowLeft className="h-3 w-3" />

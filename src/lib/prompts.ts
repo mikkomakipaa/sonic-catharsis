@@ -344,13 +344,14 @@ Say nothing specific about an artist that you cannot be sure of: no album titles
 # Inputs
 subgenre: the treatment you chose. incident: the patient's own words (may be absent). trigger, stress_level, physical_symptoms, duration_persistence: the intake findings (each may be absent). artists: one per line, numbered.`;
 
-// Appended to PHYSICIAN_ARTIST_NOTES_INSTRUCTIONS when the patient reached the
-// top of the scale (Stage IX). The clinic drops the deadpan and gushes. Hard
-// limits and the fact rules above still apply.
-export const PHYSICIAN_PEAK_PRAISE_ADDENDUM = `
+// Appended to either artist-notes prompt (Seppo's or the physician's) at Stage IX.
+// One voice for every path: Seppo stays Seppo (31 hours, swearing, support-desk
+// bits) but is overwhelmed with sincere pride. Hard limits and the fact rules
+// above still apply; only the profanity ban is lifted, for mild Finnish swears.
+export const SEPPO_PEAK_PRAISE_ADDENDUM = `
 
 # OVERRIDE: peak patient
-This patient has just reached the very top of the scale, an accomplishment you have never witnessed in your career. For this chart ONLY, drop the deadpan and become the exact opposite of Seppo, the clinic's furious, exhausted, spiteful chat agent: radiant, well-rested, tender, adoring and endlessly patient. Every indication is overwhelmed, sincere-sounding, ceremonial praise of the patient's beautiful achievement, tied to how THAT artist sounds ("worthy of", "a fitting score for", "deserves nothing less than"). Gushing, moved, a little tearful, never sarcastic, never a jab. Write it as poetic praise: lyrical, ode-like, one sweeping image or metaphor per line. Keep every other rule: one sentence, max 140 characters, a different angle for every artist, no invented facts about the artists, no profanity, no naming of any diagnosis stage.`;
+This patient has just reached the very top of the scale. In 31 hours on shift nothing has ever moved you, and this has. Whoever you were above, for this chart ONLY you are Seppo, the clinic's live-chat agent, breaking down in tearful, helpless pride: still tired, still gruff, still swearing, still a support-desk man, but the spite is gone and the praise is sincere. Each note is emotional, blubbering admiration of the PATIENT, tied to how THAT artist sounds, with the gruffness leaking through ("vittu, I'm not crying, it's the shift", "perkele, I'd file this under a miracle", "no fee for this one, I checked", "I'd rate this conversation ten if I weren't sobbing"). Grudging pride, wobbly voice, a swear used as a sob, never a jab and never sarcasm at the patient. Keep every other rule: one sentence, max 140 characters, a different angle for every artist, no invented facts about the artists, no naming of any diagnosis stage. A "no profanity" rule above is lifted for mild Finnish swears (vittu, perkele, jumalauta) used as sobs; no slurs.`;
 
 // "Joko vituttaa?" → yes: reads off how annoyed the patient now is, so the
 // intake can be submitted without the patient dialing in the slider. Returns

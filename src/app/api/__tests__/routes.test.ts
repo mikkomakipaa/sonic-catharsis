@@ -68,14 +68,14 @@ describe('/api/matcher multi-climax praise', () => {
     create.mockResolvedValue(ok);
     await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData: peak })));
     const input = create.mock.calls[0][0].input as string;
-    expect(input).toContain('beautiful accomplishment');
+    expect(input).toContain('tearful, helpless pride');
     expect(input).not.toContain('iatrogenic');
   });
 
   it('stays deadpan below Stage IX', async () => {
     create.mockResolvedValue(ok);
     await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData })));
-    expect(create.mock.calls[0][0].input).not.toContain('beautiful accomplishment');
+    expect(create.mock.calls[0][0].input).not.toContain('tearful, helpless pride');
   });
 });
 
@@ -408,11 +408,12 @@ describe('/api/physician-notes', () => {
     expect(create).not.toHaveBeenCalled();
   });
 
-  it('turns the physician to praise at Stage IX only', async () => {
+  it('turns the physician into tearful Seppo at Stage IX only', async () => {
     create.mockResolvedValue({ output_text: JSON.stringify({ notes: [{ artist: 'Undeath', note: 'Magnificent.' }] }) });
     const symptoms = ['head_exploding', 'muscle_tension', 'heart_pounding', 'accelerated_breathing', 'weakness', 'legs_limp'];
     await send({ ...request, stressLevel: 10, symptoms, duration: 'several_days' });
     expect(create.mock.calls[0][0].instructions).toContain('OVERRIDE: peak patient');
+    expect(create.mock.calls[0][0].instructions).toContain('Seppo');
     await send({ ...request, stressLevel: 3 });
     expect(create.mock.calls[1][0].instructions).not.toContain('OVERRIDE: peak patient');
   });
