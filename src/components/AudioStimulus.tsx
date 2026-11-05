@@ -3,52 +3,53 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Play, Square } from 'lucide-react';
 import type { Stimulus } from '@/lib/provocations';
-import { renderRecorderClip } from '@/lib/recorder-clip';
+import { encodeWav, renderRecorderClip } from '@/lib/recorder-clip';
 
 // The audio stimulus, dressed as a figure plate like StimulusPlate. Never
 // autoplays: the patient presses "Play stimulus", and can stop it at any time.
-// The clip is synthesised on first play (lib/recorder-clip.ts) and cached.
+// The clip is synthesised on first play (lib/recorder-clip.ts), encoded as WAV and cached.
 
 const PAPER = '#f1ece0';
 const INK = '#211e1a';
 const TYPEWRITER = 'var(--font-special-elite), "Courier New", monospace';
 
+const SAMPLE_RATE = 44100;
+
+// Played through an <audio> element, not Web Audio: iOS Safari mutes Web Audio
+// when the ringer switch is on silent, and media elements are not muted.
 export default function AudioStimulus({ stimulus }: { stimulus: Stimulus }) {
   const caption = `AUD. ${stimulus.fig} — Stimulus: ${stimulus.stimulus}`;
   const [playing, setPlaying] = useState(false);
-  const contextRef = useRef<AudioContext | null>(null);
-  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
-  const bufferRef = useRef<AudioBuffer | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const urlRef = useRef<string | null>(null);
 
   const stop = useCallback(() => {
-    const source = sourceRef.current;
-    sourceRef.current = null;
-    if (source) {
-      source.onended = null;
-      try { source.stop(); } catch { /* already stopped */ }
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
     }
     setPlaying(false);
   }, []);
 
+  // Not async before audio.play(): iOS only honours play() inside the tap.
   const play = useCallback(async () => {
     try {
-      const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!Ctx) return;
-      const context = (contextRef.current ??= new Ctx());
-      await context.resume();
-      if (!bufferRef.current) {
-        const samples = renderRecorderClip({ sampleRate: context.sampleRate });
-        const buffer = context.createBuffer(1, samples.length, context.sampleRate);
-        buffer.copyToChannel(samples, 0);
-        bufferRef.current = buffer;
+      // Ask iOS 17+ for the playback category so the silent switch is ignored.
+      const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession;
+      if (session) session.type = 'playback';
+      if (!audioRef.current) {
+        const samples = renderRecorderClip({ sampleRate: SAMPLE_RATE });
+        urlRef.current = URL.createObjectURL(new Blob([encodeWav(samples, SAMPLE_RATE)], { type: 'audio/wav' }));
+        const audio = new Audio(urlRef.current);
+        audio.preload = 'auto';
+        audio.onended = () => setPlaying(false);
+        audioRef.current = audio;
       }
-      const source = context.createBufferSource();
-      source.buffer = bufferRef.current;
-      source.connect(context.destination);
-      source.onended = () => { sourceRef.current = null; setPlaying(false); };
-      sourceRef.current = source;
-      source.start();
+      const audio = audioRef.current;
+      audio.currentTime = 0;
       setPlaying(true);
+      await audio.play();
     } catch (error) {
       console.error('Audio stimulus failed to play:', error);
       setPlaying(false);
@@ -57,13 +58,10 @@ export default function AudioStimulus({ stimulus }: { stimulus: Stimulus }) {
 
   // Leaving the stimulus (next one, back, unmount) silences it.
   useEffect(() => () => {
-    const source = sourceRef.current;
-    if (source) {
-      source.onended = null;
-      try { source.stop(); } catch { /* already stopped */ }
-    }
-    void contextRef.current?.close();
-    contextRef.current = null;
+    audioRef.current?.pause();
+    audioRef.current = null;
+    if (urlRef.current) URL.revokeObjectURL(urlRef.current);
+    urlRef.current = null;
   }, []);
 
   return (

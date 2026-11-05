@@ -226,12 +226,23 @@ export default function Home() {
   // when he is the one who diagnosed, the physician otherwise. Returns notes
   // keyed by lowercase artist name, or null.
   const NOTES_TIMEOUT_MS = 20000;
-  const fetchArtistNotes = async (artists: string[], incident: string | null, bySeppo: boolean): Promise<Map<string, string> | null> => {
+  const fetchArtistNotes = async (artists: string[], emotionData: EmotionData, bySeppo: boolean): Promise<Map<string, string> | null> => {
     try {
+      const incident = emotionData.event;
       const res = await fetch(bySeppo ? '/api/seppo-notes' : '/api/physician-notes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ artists, subgenre, ...(incident ? { incident } : {}) }),
+        body: JSON.stringify({
+          artists,
+          subgenre,
+          ...(incident ? { incident } : {}),
+          trigger: emotionData.trigger,
+          stressLevel: emotionData.stressLevel,
+          symptoms: emotionData.symptoms,
+          duration: emotionData.duration,
+          // Seppo's file note on the chat is his alone; the physician never saw it.
+          ...(bySeppo && emotionData.chatNote ? { chatNote: emotionData.chatNote } : {}),
+        }),
         signal: AbortSignal.timeout(NOTES_TIMEOUT_MS),
       });
       const data = await res.json();
@@ -279,7 +290,7 @@ export default function Home() {
           typeof artistItem === 'string' ? artistItem : artistItem.artist || artistItem.name || ''
         );
         const bySeppo = provokedBy === SEPPO_STIMULUS;
-        const notes = subgenre ? await fetchArtistNotes(names, emotionData.event, bySeppo) : null;
+        const notes = subgenre ? await fetchArtistNotes(names, emotionData, bySeppo) : null;
         const tracks = names.map((displayName, index) => ({
           id: `artist-${index}`,
           name: displayName,

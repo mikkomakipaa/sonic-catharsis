@@ -98,7 +98,7 @@ export default function ScreenAnalysis({
                 api/matcher/route.ts) so the Observation can riff on it. */}
             {provokedBy && !error && (
               <span
-                className="uppercase text-[13px] max-[640px]:text-[14px] mt-1"
+                className="uppercase text-[12px] max-[640px]:text-[13px] mt-1"
                 style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TREATMENT_ACCENT_TEXT }}
               >
                 Aetiology: iatrogenic (induced by this clinic, Fig. {provokedBy.fig})
@@ -194,7 +194,7 @@ export default function ScreenAnalysis({
               paper-card ink tint and onto the shared neutral tokens. */}
           {choice && (
             <p
-              className="uppercase m-0 mt-5 max-[640px]:mt-3 pt-3 max-[640px]:pt-2 text-[14px] leading-[1.5]"
+              className="uppercase m-0 mt-5 max-[640px]:mt-3 pt-3 max-[640px]:pt-2 text-[12px] max-[640px]:text-[13px] leading-[1.5]"
               style={{ fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.03em', color: TEXT_TERTIARY, borderTop: `1px solid ${DIVIDER_COLOR}` }}
             >
               Treatment protocol per Sharman &amp; Dingle (2015), Front. Hum. Neurosci.:

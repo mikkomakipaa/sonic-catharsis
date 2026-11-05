@@ -144,6 +144,15 @@ export const SeppoNotesRequestSchema = z.object({
   artists: z.array(z.string().trim().min(1).max(100)).min(1).max(15),
   subgenre: SubgenreSchema,
   incident: z.string().trim().max(500).optional(),
+  // Optional, additive intake context so the remarks can match the patient's
+  // reported severity. Raw enums, mapped to labels server-side (as the
+  // Matcher does). chatNote is Seppo's file note on the chat; only the client
+  // sends it, and only on the Seppo path.
+  trigger: z.enum(TriggerTypes).optional(),
+  stressLevel: z.number().min(0).max(10).nullable().optional(),
+  symptoms: z.array(z.enum(PhysicalSymptomTypes)).max(6).optional(),
+  duration: z.enum(DurationTypes).nullable().optional(),
+  chatNote: z.string().trim().max(300).nullable().optional(),
 });
 
 export const SeppoNotesSchema = z.array(z.object({

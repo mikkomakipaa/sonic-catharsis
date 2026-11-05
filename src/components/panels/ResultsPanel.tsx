@@ -216,7 +216,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.04em', borderTop: `1px solid ${DIVIDER_COLOR}` }}
       >
         <span style={{ color: TEXT_SECONDARY }}>Dosage:</span>
-        <span style={{ color: TEXT_PRIMARY }}>Take seven (7) bands. Repeat ad nauseam. No known cure.</span>
+        <span style={{ color: TEXT_PRIMARY }}>Repeat ad nauseam. No known cure.</span>
       </div>
     </div>
   );
