@@ -253,7 +253,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
           <div className="flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={onBack}
-            className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium uppercase tracking-wide rounded-sm active:scale-[0.98]"
+            className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium uppercase tracking-wide rounded-sm active:scale-[0.98] hover:brightness-95"
             style={SECONDARY_BUTTON_STYLE}
           >
             <ArrowLeft className="h-3.5 w-3.5" />
@@ -261,7 +261,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
           </button>
           <button
             onClick={onReset}
-            className="px-4 py-2 text-[13px] font-medium uppercase tracking-wide rounded-sm active:scale-[0.98]"
+            className="px-4 py-2 text-[13px] font-medium uppercase tracking-wide rounded-sm active:scale-[0.98] hover:brightness-95"
             style={SECONDARY_BUTTON_STYLE}
           >
             New Intake
@@ -274,7 +274,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
         <div className="flex items-center justify-center mt-6">
           <button
             onClick={onBack}
-            className="flex items-center gap-1 text-[13px] font-medium uppercase tracking-wide"
+            className="flex items-center gap-1 text-[13px] font-medium uppercase tracking-wide hover:text-[#3f3b33]!"
             style={{ letterSpacing: '0.05em', color: TEXT_SECONDARY }}
           >
             <ArrowLeft className="h-3 w-3" />

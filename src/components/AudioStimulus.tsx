@@ -74,7 +74,7 @@ export default function AudioStimulus({ stimulus }: { stimulus: Stimulus }) {
           <span className="uppercase text-[13px] tracking-[0.12em] opacity-70">Audio stimulus</span>
           <button
             onClick={playing ? stop : play}
-            className="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold uppercase rounded-[2px] active:scale-[0.98]"
+            className="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold uppercase rounded-[2px] active:scale-[0.98] hover:brightness-95"
             style={{ letterSpacing: '0.08em', color: INK, background: PAPER, border: `1px solid ${INK}` }}
             aria-pressed={playing}
           >

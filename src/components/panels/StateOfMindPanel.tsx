@@ -265,7 +265,7 @@ export default function StateOfMindPanel({
               aria-describedby={missingStep ? 'submit-hint' : undefined}
               className={cn(
                 "px-10 py-4 font-semibold text-sm uppercase tracking-wide transition-all duration-200 flex items-center justify-center gap-2 rounded-lg active:scale-[0.98]",
-                canSubmit ? undefined : "cursor-not-allowed opacity-50"
+                canSubmit ? "hover:brightness-125" : "cursor-not-allowed opacity-50"
               )}
               style={{
                 transition: `all 0.2s ${EASE}`,
@@ -322,7 +322,7 @@ export default function StateOfMindPanel({
           type="button"
           onClick={onProvoke}
           disabled={isProcessing}
-          className="mt-5 px-5 py-2.5 text-[13px] font-medium uppercase rounded-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-5 px-5 py-2.5 text-[13px] font-medium uppercase rounded-lg active:scale-[0.98] hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
           style={{
             letterSpacing: '0.05em',
             color: '#47433b',

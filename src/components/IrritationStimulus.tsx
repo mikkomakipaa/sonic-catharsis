@@ -92,10 +92,10 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
                 Reloading will lose the {percent}% already buffered. Do you want to not cancel the reload?
               </p>
               <div className="mt-2 flex gap-2">
-                <button onClick={sendBack} className="px-3 py-1.5 text-[13px] uppercase rounded-[2px]" style={FAKE_BUTTON_STYLE}>
+                <button onClick={sendBack} className="px-3 py-1.5 text-[13px] uppercase rounded-[2px] hover:brightness-95" style={FAKE_BUTTON_STYLE}>
                   Yes
                 </button>
-                <button onClick={sendBack} className="px-3 py-1.5 text-[13px] uppercase rounded-[2px]" style={FAKE_BUTTON_STYLE}>
+                <button onClick={sendBack} className="px-3 py-1.5 text-[13px] uppercase rounded-[2px] hover:brightness-95" style={FAKE_BUTTON_STYLE}>
                   No
                 </button>
               </div>
@@ -104,7 +104,7 @@ export default function IrritationStimulus({ stimulus }: { stimulus: Stimulus })
             <div style={{ minHeight: 56 }}>
               <button
                 onClick={() => setConfirming(true)}
-                className="px-3 py-1.5 text-[13px] uppercase rounded-[2px]"
+                className="px-3 py-1.5 text-[13px] uppercase rounded-[2px] hover:brightness-95"
                 style={FAKE_BUTTON_STYLE}
               >
                 Reload
