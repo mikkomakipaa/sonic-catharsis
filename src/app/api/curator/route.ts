@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // emotionData is validated (CuratorRequestSchema) but intentionally
+    // emotionData is validated (CuratorRequestSchema, optional: the
+    // genre-first path has none) but intentionally
     // unused — see the comment below.
     const { analysis } = validation.data!;
 

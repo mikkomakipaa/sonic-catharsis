@@ -17,6 +17,7 @@ interface ScreenSelectionProps {
   onSubmit: () => void;
   onReset: () => void;
   onProvoke: () => void;
+  onPrepareMusic: () => void;
 }
 
 export default function ScreenSelection(props: ScreenSelectionProps) {
@@ -36,6 +37,7 @@ export default function ScreenSelection(props: ScreenSelectionProps) {
         onSubmit={props.onSubmit}
         onReset={props.onReset}
         onProvoke={props.onProvoke}
+        onPrepareMusic={props.onPrepareMusic}
       />
     </div>
   );

@@ -9,6 +9,8 @@ import ScreenAnalysis from '@/components/screens/ScreenAnalysis';
 import ScreenDescent from '@/components/screens/ScreenDescent';
 import ScreenProvoke from '@/components/screens/ScreenProvoke';
 import ScreenVittuilu from '@/components/screens/ScreenVittuilu';
+import ScreenMusic from '@/components/screens/ScreenMusic';
+import ScreenScene, { type SceneSound } from '@/components/screens/ScreenScene';
 import type { VittuiluAssessment } from '@/lib/validation';
 import { SEPPO_STIMULUS, Stimulus, pickSession, shouldOfferProvocation } from '@/lib/provocations';
 import {
@@ -18,7 +20,7 @@ import {
 } from '@/lib/theme';
 
 type ArtistItem = string | { artist?: string; name?: string; link?: string };
-type Step = 'selection' | 'analysis' | 'provoke' | 'vittuilu' | 'descent';
+type Step = 'selection' | 'analysis' | 'provoke' | 'vittuilu' | 'music' | 'scene' | 'descent';
 
 // The clinical loading documents are intentional feedback, not a flash of
 // chrome. Fast model responses stay visible long enough to complete their
@@ -104,6 +106,13 @@ export default function Home() {
   // Where Provoke Me was entered from, so "back" returns there: the Epicrisis
   // after a too-calm reading, or the intake form via the front-page button.
   const [provokeOrigin, setProvokeOrigin] = useState<'selection' | 'analysis'>('analysis');
+
+  // "Prepare me for the music": the genre-first path. The patient's free-text
+  // favorite genre goes to Seppo; `musicPath` is set when the patient is ready for the
+  // soundtrack (Seppo's opening has then chosen the sound). It skips the diagnosis entirely (no Stage, no Matcher). Cleared by
+  // resetSelections and when stepping back to the intake.
+  const [musicPath, setMusicPath] = useState(false);
+  const [favoriteGenre, setFavoriteGenre] = useState<string>('');
 
   // Held between the analysis and descent steps: the curator call needs both,
   // but it only fires once the user chooses to descend, not automatically.
@@ -226,23 +235,12 @@ export default function Home() {
   // when he is the one who diagnosed, the physician otherwise. Returns notes
   // keyed by lowercase artist name, or null.
   const NOTES_TIMEOUT_MS = 20000;
-  const fetchArtistNotes = async (artists: string[], emotionData: EmotionData, bySeppo: boolean): Promise<Map<string, string> | null> => {
+  const postArtistNotes = async (url: string, payload: Record<string, unknown>): Promise<Map<string, string> | null> => {
     try {
-      const incident = emotionData.event;
-      const res = await fetch(bySeppo ? '/api/seppo-notes' : '/api/physician-notes', {
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          artists,
-          subgenre,
-          ...(incident ? { incident } : {}),
-          trigger: emotionData.trigger,
-          stressLevel: emotionData.stressLevel,
-          symptoms: emotionData.symptoms,
-          duration: emotionData.duration,
-          // Seppo's file note on the chat is his alone; the physician never saw it.
-          ...(bySeppo && emotionData.chatNote ? { chatNote: emotionData.chatNote } : {}),
-        }),
+        body: JSON.stringify(payload),
         signal: AbortSignal.timeout(NOTES_TIMEOUT_MS),
       });
       const data = await res.json();
@@ -253,6 +251,36 @@ export default function Home() {
       return null;
     }
   };
+
+  const fetchArtistNotes = (artists: string[], emotionData: EmotionData, bySeppo: boolean) => {
+    const incident = emotionData.event;
+    return postArtistNotes(bySeppo ? '/api/seppo-notes' : '/api/physician-notes', {
+      artists,
+      subgenre,
+      ...(incident ? { incident } : {}),
+      trigger: emotionData.trigger,
+      stressLevel: emotionData.stressLevel,
+      symptoms: emotionData.symptoms,
+      duration: emotionData.duration,
+      // Seppo's file note on the chat is his alone; the physician never saw it.
+      ...(bySeppo && emotionData.chatNote ? { chatNote: emotionData.chatNote } : {}),
+    });
+  };
+
+  // The prescription list is built the same way on every path.
+  const buildTracks = (names: string[], notes: Map<string, string> | null, bySeppo: boolean) =>
+    names.map((displayName, index) => ({
+      id: `artist-${index}`,
+      name: displayName,
+      artist: displayName,
+      album: 'Artist Collection',
+      genre: 'metal',
+      // A name-prefilled search is more reliable than a model-supplied
+      // direct URL and lets the listener choose the right artist page,
+      // release, or label listing on Bandcamp.
+      bandcampUrl: `https://bandcamp.com/search?q=${encodeURIComponent(displayName)}`,
+      ...(notes?.get(displayName.toLowerCase()) ? { [bySeppo ? 'seppoNote' : 'physicianNote']: notes.get(displayName.toLowerCase()) } : {}),
+    }));
 
   // Step 2: only fires when the user explicitly chooses to descend.
   const beginDescent = async (reading?: Reading) => {
@@ -291,18 +319,7 @@ export default function Home() {
         );
         const bySeppo = provokedBy === SEPPO_STIMULUS;
         const notes = subgenre ? await fetchArtistNotes(names, emotionData, bySeppo) : null;
-        const tracks = names.map((displayName, index) => ({
-          id: `artist-${index}`,
-          name: displayName,
-          artist: displayName,
-          album: 'Artist Collection',
-          genre: 'metal',
-          // A name-prefilled search is more reliable than a model-supplied
-          // direct URL and lets the listener choose the right artist page,
-          // release, or label listing on Bandcamp.
-          bandcampUrl: `https://bandcamp.com/search?q=${encodeURIComponent(displayName)}`,
-          ...(notes?.get(displayName.toLowerCase()) ? { [bySeppo ? 'seppoNote' : 'physicianNote']: notes.get(displayName.toLowerCase()) } : {}),
-        }));
+        const tracks = buildTracks(names, notes, bySeppo);
 
         setPlaylist({
           id: `ai-generated-${Date.now()}`,
@@ -322,7 +339,74 @@ export default function Home() {
     }
   };
 
+  // Genre-first prescription: the sound Seppo's opening chose (subgenre +
+  // sonic profile, the model's own pick) goes straight to the Curator (no
+  // Matcher, no diagnosis). Seppo annotates it; `scene` is his one-line note on the act, when there was
+  // one. Notes are decoration: a failure just renders the list without them.
+  const prescribeForMusic = async (sound: SceneSound, scene?: string) => {
+    setStep('descent');
+    setPlaylist(null);
+    setSubgenre(sound.subgenre);
+    setReasoning(sound.subgenre);
+    setIsAnalyzing(false);
+    setIsProcessing(true);
+    const loadingStartedAt = performance.now();
+    let completed = false;
+    try {
+      const curatorResponse = await fetch('/api/curator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          analysis: { subgenre: sound.subgenre, sonic_profile: sound.sonic_profile },
+        }),
+      });
+      const curatorData = await curatorResponse.json();
+      if (curatorData.error) throw new Error(curatorData.error);
+
+      if (curatorData.artists && curatorData.artists.length > 0) {
+        const names: string[] = curatorData.artists.map((artistItem: ArtistItem) =>
+          typeof artistItem === 'string' ? artistItem : artistItem.artist || artistItem.name || ''
+        );
+        const notes = await postArtistNotes('/api/seppo-notes', {
+          artists: names,
+          subgenre: sound.subgenre,
+          ...(scene ? { scene } : {}),
+        });
+        setPlaylist({
+          id: `ai-generated-${Date.now()}`,
+          name: 'Curated Artists',
+          description: `Curated artists for ${sound.subgenre}`,
+          tracks: buildTracks(names, notes, true),
+        });
+      }
+      completed = true;
+    } catch (error) {
+      console.error('Error curating for music:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to curate artists. Please try again.';
+      setReasoning(`Error: ${errorMessage}`);
+    } finally {
+      if (completed) await waitForMinimumLoadingDuration(loadingStartedAt);
+      setIsProcessing(false);
+    }
+  };
+
+  const startMusicScene = (favorite: string) => {
+    setFavoriteGenre(favorite);
+    setStep('scene');
+  };
+
+  const leaveMusicPath = () => {
+    setMusicPath(false);
+    setFavoriteGenre('');
+    setPlaylist(null);
+    setReasoning(null);
+    setSubgenre(null);
+    setStep('selection');
+  };
+
   const resetSelections = () => {
+    setMusicPath(false);
+    setFavoriteGenre('');
     setStep('selection');
     setSelection(null);
     setIncidentText('');
@@ -491,6 +575,7 @@ export default function Home() {
             onSubmit={() => void startAssistant()}
             onReset={clearInputs}
             onProvoke={() => startProvocation('selection')}
+            onPrepareMusic={() => setStep('music')}
           />
         )}
 
@@ -537,18 +622,36 @@ export default function Home() {
           />
         )}
 
+        {step === 'music' && (
+          <ScreenMusic initial={favoriteGenre} onSubmit={startMusicScene} onBack={leaveMusicPath} />
+        )}
+
+        {step === 'scene' && (
+          <ScreenScene
+            key={favoriteGenre}
+            favorite={favoriteGenre}
+            onReady={(sound, summary) => {
+              setMusicPath(true);
+              void prescribeForMusic(sound, summary);
+            }}
+            onBack={() => setStep('music')}
+          />
+        )}
+
         {step === 'descent' && (
           <ScreenDescent
-            stage={stage}
-            selection={selection}
-            triggerLabel={triggerLabel}
+            stage={musicPath ? null : stage}
+            selection={musicPath ? null : selection}
+            triggerLabel={musicPath ? favoriteGenre : triggerLabel}
             playlist={playlist}
             isProcessing={isProcessing}
             isAnalyzing={isAnalyzing}
             reasoning={reasoning}
             subgenre={subgenre}
             onReset={resetSelections}
-            onBack={() => setStep('analysis')}
+            onBack={() => (musicPath ? setStep('music') : setStep('analysis'))}
+            backLabel={musicPath ? 'Back to the question' : undefined}
+            diagnosis={!musicPath}
           />
         )}
       </div>

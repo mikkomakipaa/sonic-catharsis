@@ -33,7 +33,7 @@ export async function handleArtistNotes(request: NextRequest, instructions: stri
     if (!validation.success) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
-    const { artists, subgenre, incident, trigger, stressLevel, symptoms, duration, chatNote } = validation.data!;
+    const { artists, subgenre, incident, trigger, stressLevel, symptoms, duration, chatNote, scene } = validation.data!;
 
     // Easter egg: at Stage IX the notes turn into gushing praise.
     // Derived here from the same intake fields as the Matcher's stage, not
@@ -48,6 +48,7 @@ export async function handleArtistNotes(request: NextRequest, instructions: stri
       ...(symptoms?.length ? [`physical_symptoms: ${symptoms.map((s) => getSymptomMeta(s).label).join(', ')}`] : []),
       ...(duration ? [`duration_persistence: ${getDurationMeta(duration).label}`] : []),
       ...(chatNote ? [`chat_note: ${oneLine(chatNote)}`] : []),
+      ...(scene ? [`scene: ${oneLine(scene)}`] : []),
       'artists:',
       ...artists.map((name, i) => `${i + 1}. ${oneLine(name)}`),
     ].join('\n');

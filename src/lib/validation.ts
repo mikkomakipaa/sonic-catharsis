@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MUSIC_GENRE_IDS } from './music-prep';
 
 // 8 basic emotions, as 4 opposing pairs
 export const CoreEmotions = [
@@ -119,9 +120,10 @@ export const AnalysisSchema = z.object({
 });
 
 // Curator API request schema
+// `emotionData` is optional: the genre-first path has no intake at all.
 export const CuratorRequestSchema = z.object({
   analysis: AnalysisSchema,
-  emotionData: EmotionDataSchema
+  emotionData: EmotionDataSchema.optional(),
 });
 
 // Curator OUTPUT contract — what the model must return before anything is
@@ -153,6 +155,9 @@ export const SeppoNotesRequestSchema = z.object({
   symptoms: z.array(z.enum(PhysicalSymptomTypes)).max(6).optional(),
   duration: z.enum(DurationTypes).nullable().optional(),
   chatNote: z.string().trim().max(300).nullable().optional(),
+  // The genre-first path: one sentence on the scene Seppo just staged, when
+  // there was one. There is no intake on that path.
+  scene: z.string().trim().max(300).optional(),
 });
 
 export const SeppoNotesSchema = z.array(z.object({
@@ -218,6 +223,68 @@ export const VittuiluAssessmentSchema = z.object({
   // One first-person sentence in the patient's voice, fed to the Matcher
   // as the incident text.
   incident: z.string().trim().min(1).max(500),
+});
+
+// "Prepare me for the music" scene (/api/scene). The patient answers "What is
+// your favorite music genre?" in free text. Stateless like Vittuilubotti: the
+// client resends the whole transcript and the SERVER derives the turn and the
+// final-turn flag. The first call has no messages: Seppo opens by mocking the
+// answer and the model picks the metal archetype (`genre` in the reply); every
+// later call carries that genre back, so the part stays fixed.
+export const MAX_SCENE_USER_MESSAGES = 1;
+export const MAX_SCENE_USER_TEXT = 300;
+export const MAX_SCENE_SUMMARY_LENGTH = 300;
+
+// Free text, but only genre-name characters. The charset and length cap
+// validate input; they do not stop prompt injection, so the prompt also
+// receives the answer JSON-quoted as data.
+export const FavoriteGenreSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(60)
+  .regex(/^[\p{L}\p{N} &'.,:!()+/-]+$/u, 'Invalid genre');
+
+export const SceneRequestSchema = z
+  .object({
+    favorite: FavoriteGenreSchema,
+    genre: z.enum(MUSIC_GENRE_IDS).optional(),
+    // Empty on the first call. Afterwards it starts with Seppo's own opening
+    // and ends on a user message.
+    messages: z.array(VittuiluMessageSchema).max(MAX_SCENE_USER_MESSAGES * 2),
+  })
+  .superRefine((req, ctx) => {
+    const { messages, genre } = req;
+    if (messages.length === 0) return;
+    if (!genre) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'genre is required once the scene has started' });
+    if (messages[0].role !== 'seppo') ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Transcript must start with Seppo' });
+    if (messages[messages.length - 1].role !== 'user') {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Last message must be from the user' });
+    }
+    if (messages.some((m) => m.role === 'user' && m.text.length > MAX_SCENE_USER_TEXT)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: `User messages are capped at ${MAX_SCENE_USER_TEXT} characters` });
+    }
+    if (messages.filter((m) => m.role === 'user').length > MAX_SCENE_USER_MESSAGES) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Too many user messages' });
+    }
+  });
+
+// Scene OUTPUT contract. `scene_summary` is optional and best-effort: it only
+// feeds Seppo's artist notes, so a missing or malformed one never costs the
+// patient the reply.
+export const SceneReplySchema = z.object({
+  reply: z.string().trim().min(1).max(MAX_VITTUILU_REPLY_TEXT),
+  end_scene: z.boolean().optional().default(false),
+  // Only read on the opening reply, where the model picks the part AND the
+  // sound: a real metal subgenre and its five-axis profile, which go to the
+  // Curator. Each is optional and degrades to undefined, so a botched one never
+  // costs the reply; the route then falls back to the genre table's entry.
+  genre: z.enum(MUSIC_GENRE_IDS).optional().catch(undefined),
+  subgenre: SubgenreSchema.optional().catch(undefined),
+  sonic_profile: SonicProfileSchema.optional().catch(undefined),
+  scene_summary: z
+    .preprocess((v) => (typeof v === 'string' ? v.trim().slice(0, MAX_SCENE_SUMMARY_LENGTH) : undefined), z.string().min(1).optional())
+    .catch(undefined),
 });
 
 // Stimulus assessment ("Joko vituttaa?" → yes): the stimulus only supplies a

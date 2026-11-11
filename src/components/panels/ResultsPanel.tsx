@@ -26,6 +26,9 @@ interface ResultsPanelProps {
   stage?: Stage | null;
   subgenre?: string | null;
   intensity?: number | null;
+  // False on the genre-first path: no diagnosis happened, so the Vitutus
+  // study citation (which belongs to the diagnosis framing) is omitted.
+  diagnosis?: boolean;
 }
 
 // Row grid: index | band | (Seppo) | link. On narrow screens the Seppo cell
@@ -36,7 +39,7 @@ const ROW_COLS_WITH_NOTES = 'grid-cols-[1.5rem_minmax(0,1fr)_4.5rem] min-[481px]
 
 const HEADER_STYLE = { fontFamily: 'var(--font-special-elite), monospace', letterSpacing: '0.04em', color: TEXT_TERTIARY } as const;
 
-export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage, subgenre, intensity }: ResultsPanelProps) {
+export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reasoning, triggerLabel, stage, subgenre, intensity, diagnosis = true }: ResultsPanelProps) {
   if (!playlist) {
     // No background/border box around the loading state itself — see
     // docs/design_guidelines.md → Loading States. PrescriptionCalibration
@@ -131,7 +134,7 @@ export default function ResultsPanel({ playlist, isProcessing, isAnalyzing, reas
         <span style={{ color: TEXT_PRIMARY }}>{issuedOn}</span>
       </div>
       {/* The Vitutus study citation (moved here from the retired receipt). */}
-      <StudyQr />
+      {diagnosis && <StudyQr />}
       </div>
 
       <div className="mt-4" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }} />
