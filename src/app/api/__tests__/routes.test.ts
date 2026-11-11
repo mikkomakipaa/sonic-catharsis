@@ -463,7 +463,7 @@ describe('/api/scene', () => {
     expect(json).toEqual({ reply: 'Pending.', end_scene: false, genre: 'doom', scene_summary: 'Seppo mocked the patient.' });
     const call = create.mock.calls[0][0];
     expect(call.input).toContain('favorite_genre: "Finnish iskelmä"');
-    expect(call.input).toContain('turn: 0 of 3');
+    expect(call.input).toContain('turn: 0 of 2');
     expect(call.instructions).toContain('genre id "power"');
     expect(call.instructions).toContain('genre id "doom"');
   });
@@ -481,16 +481,16 @@ describe('/api/scene', () => {
     const json = await res.json();
     expect(json.genre).toBe('doom');
     const call = create.mock.calls[0][0];
-    expect(call.input).toContain('turn: 1 of 3');
+    expect(call.input).toContain('turn: 1 of 2');
     expect(call.input).toContain('is_final_turn: false');
     expect(call.input).toContain('Seppo: opening');
     expect(call.instructions).toContain('DOOM / FUNERAL DOOM');
     expect(call.instructions).not.toContain('POWER / FOLK');
   });
 
-  it('closes the scene on the third user reply whatever the model says', async () => {
+  it('closes the scene on the second user reply whatever the model says', async () => {
     create.mockResolvedValue(ok);
-    const res = await send({ favorite: 'pop', genre: 'power', messages: [seppo('o'), user('a'), seppo('b'), user('c'), seppo('d'), user('e')] });
+    const res = await send({ favorite: 'pop', genre: 'power', messages: [seppo('o'), user('a'), seppo('b'), user('c')] });
     expect(create.mock.calls[0][0].input).toContain('is_final_turn: true');
     expect((await res.json()).end_scene).toBe(true);
   });

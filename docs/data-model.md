@@ -250,7 +250,7 @@ archetype. Nothing varies the profile.
   (`SceneRequestSchema`). The first call has `messages: []` and no `genre`: the
   model writes Seppo's opening and returns the `genre` it chose. Later calls
   send the full transcript (starting with Seppo's opening, ending on a user
-  message; ≤3 user messages, each ≤300 chars) plus that `genre`, which the
+  message; ≤2 user messages, each ≤300 chars) plus that `genre`, which the
   server keeps fixed. Reply `{ reply, end_scene, genre, scene_summary? }`
   (`SceneReplySchema`). Turn and final turn are derived server-side.
 - **Prescription** — `POST /api/curator` with `{ analysis: { subgenre,
