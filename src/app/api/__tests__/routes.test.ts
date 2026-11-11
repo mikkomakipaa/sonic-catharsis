@@ -464,7 +464,7 @@ describe('/api/scene', () => {
     expect(call.input).toContain('turn: 1 of 3');
     expect(call.input).toContain('is_final_turn: false');
     expect(call.input).toContain('reference_artist: "Sunn O)))"');
-    expect(call.input).toContain('Seppo: Your request has been received.');
+    expect(call.input).toContain('Seppo: Yeah, I got your request.');
     expect(call.instructions).toContain('DOOM / FUNERAL DOOM');
     expect(call.instructions).not.toContain('POWER / FOLK');
   });

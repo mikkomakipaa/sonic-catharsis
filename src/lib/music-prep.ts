@@ -36,7 +36,7 @@ export const MUSIC_GENRES: readonly MusicGenre[] = [
     subgenre: 'Thrash metal / groove metal',
     sonicProfile: { activation: 'aggressive', agency: 'assertion', friction: 'abrasive', cognitive_density: 'direct', weight: 'propulsive' },
     opening:
-      'Right, you. New policy as of four minutes ago: nobody listens to anything without a signed Form 7. And no, I will not tell you where Form 7 is, because you should already know, and frankly I am disappointed in how you handled this.',
+      "Oh, it's you. New rule, came in four minutes ago: nobody listens to anything without a signed Form 7. No, I won't tell you where Form 7 is, you should know that. I'm disappointed in you, and I've been awake 31 hours, so that's saying something.",
   },
   {
     id: 'doom',
@@ -45,7 +45,7 @@ export const MUSIC_GENRES: readonly MusicGenre[] = [
     subgenre: 'Doom metal / funeral doom',
     sonicProfile: { activation: 'restrained', agency: 'surrender', friction: 'textured', cognitive_density: 'primitive', weight: 'crushing' },
     opening:
-      'Your request has been received. It will be processed. It will not be approved. Nothing in this building has ever progressed, and I have the filing cabinets to prove it. Please take a seat. The seat is also pending.',
+      "Yeah, I got your request. It'll be processed. It won't be approved. Nothing in this building has ever moved forward, vittu, I've got 31 hours of shift to prove it. Take a seat. The seat's pending too.",
   },
   {
     id: 'technical',
@@ -54,7 +54,7 @@ export const MUSIC_GENRES: readonly MusicGenre[] = [
     subgenre: 'Technical death metal / progressive death metal',
     sonicProfile: { activation: 'aggressive', agency: 'confrontation', friction: 'abrasive', cognitive_density: 'complex', weight: 'heavy' },
     opening:
-      'Happy to help with that, it is a very simple request. First we just need Form B, which unfortunately requires Form A, which can only be issued once Form B is on file. Let me know if anything about that is unclear. Actually, do not. Asking restarts the process.',
+      "Easy. Just need Form B. Form B needs Form A, Form A needs Form B on file. Any questions? Don't. Asking restarts the whole process and I am NOT doing that again, perkele.",
   },
   {
     id: 'black',
@@ -63,7 +63,7 @@ export const MUSIC_GENRES: readonly MusicGenre[] = [
     subgenre: 'Black metal',
     sonicProfile: { activation: 'overwhelming', agency: 'confrontation', friction: 'confrontational', cognitive_density: 'disorienting', weight: 'oppressive' },
     opening:
-      'Name. No, do not bother, I have already noted your expression on arrival. Your contempt for humanity is at an entry-level stage and, frankly, underdeveloped. I am recording it anyway. Continue.',
+      "Name. Never mind, I already wrote down your face and I'm not impressed. Contempt for humanity: beginner level. Pathetic. I'm logging it anyway. Go on.",
   },
   {
     id: 'power',
@@ -72,7 +72,7 @@ export const MUSIC_GENRES: readonly MusicGenre[] = [
     subgenre: 'Power metal / folk metal',
     sonicProfile: { activation: 'driving', agency: 'assertion', friction: 'smooth', cognitive_density: 'direct', weight: 'propulsive' },
     opening:
-      'STOP. Look at me. You came in here with a slightly bad Tuesday, and I looked at that Tuesday and I saw a dragon. Do not tell me it was a parking ticket. A hero never calls it that. Tonight, we march.',
+      "OI. LOOK AT ME. You walked in here with a slightly shitty Tuesday and I looked at it and I saw a DRAGON. Don't you dare say parking ticket. Heroes don't say parking ticket. Tonight we ride, vittu!",
   },
 ] as const;
 
