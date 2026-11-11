@@ -43,7 +43,9 @@ describe('scene prompt', () => {
     expect(opening).not.toContain('{{PART}}');
   });
 
-  it('mocks non-metal answers and points to proper metal', () => {
+  it('mocks the usual listener, keeps it off identity, and points non-metal answers to proper metal', () => {
+    expect(sceneInstructions()).toContain('STEREOTYPE of the typical listener');
+    expect(sceneInstructions()).toMatch(/NEVER the listener's age/);
     expect(sceneInstructions()).toMatch(/NOT metal[\s\S]*proper metal/);
   });
 });
