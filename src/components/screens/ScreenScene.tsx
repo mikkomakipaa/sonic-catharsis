@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import type { VittuiluMessage } from '@/lib/validation';
 import { MAX_SCENE_USER_MESSAGES, MAX_SCENE_USER_TEXT } from '@/lib/validation';
-import { getMusicGenre, type MusicGenreId } from '@/lib/music-prep';
+import type { MusicGenreId } from '@/lib/music-prep';
 import {
   EASE,
   TEXT_PRIMARY,
@@ -18,12 +18,12 @@ import {
 } from '@/lib/theme';
 
 interface ScreenSceneProps {
-  genre: MusicGenreId;
-  referenceArtist?: string;
-  // "Ready for the soundtrack": hand off to the prescription. The summary is
-  // Seppo's one-line file note on the scene so far, when there is one; there
-  // is none if the patient leaves before replying.
-  onReady: (sceneSummary?: string) => void;
+  // The patient's answer to "What is your favorite music genre?".
+  favorite: string;
+  // "Ready for the soundtrack": hand off to the prescription with the metal
+  // part Seppo picked and, when there is one, his one-line file note on the
+  // scene so far.
+  onReady: (genre: MusicGenreId, sceneSummary?: string) => void;
   onBack: () => void;
 }
 
@@ -54,11 +54,14 @@ function Bubble({ role, children }: { role: VittuiluMessage['role']; children: R
   );
 }
 
-// "Prepare me for the music" step 2: the scene. Seppo's hand-written opening
-// is on screen from the first render (no typing beat, no model call). The
-// transcript sent to /api/scene excludes it; the server prepends it.
-export default function ScreenScene({ genre, referenceArtist, onReady, onBack }: ScreenSceneProps) {
-  const meta = getMusicGenre(genre);
+// "Prepare me for the music" step 2: the scene. On mount Seppo's opening is
+// requested (empty transcript): he mocks the favorite genre and the model picks
+// the metal part, which is then sent back with every later turn. The full
+// transcript, opening included, is resent each time (the route is stateless).
+export default function ScreenScene({ favorite, onReady, onBack }: ScreenSceneProps) {
+  const [genre, setGenre] = useState<MusicGenreId | null>(null);
+  const [isOpening, setIsOpening] = useState(true);
+  const [attempt, setAttempt] = useState(0);
   const [messages, setMessages] = useState<VittuiluMessage[]>([]);
   const [draft, setDraft] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -72,10 +75,47 @@ export default function ScreenScene({ genre, referenceArtist, onReady, onBack }:
   }, [messages, isSending]);
 
   const userCount = messages.filter((m) => m.role === 'user').length;
-  const canSend = !isSending && !ended && draft.trim().length > 0;
+  const canSend = !isOpening && !isSending && !ended && draft.trim().length > 0;
+
+  // One call to /api/scene. `next` is the full transcript to send.
+  const requestReply = async (next: VittuiluMessage[], currentGenre: MusicGenreId | null) => {
+    const res = await fetch('/api/scene', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ favorite, ...(currentGenre ? { genre: currentGenre } : {}), messages: next }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error || typeof data.reply !== 'string') throw new Error(data.error || 'Seppo is unavailable');
+    return data as { reply: string; end_scene?: boolean; genre?: MusicGenreId; scene_summary?: string };
+  };
+
+  // Seppo's opening: requested on mount and again on each retry (`attempt`).
+  // The screen is remounted by the parent for a new answer.
+  useEffect(() => {
+    let cancelled = false;
+    requestReply([], null)
+      .then((data) => {
+        if (cancelled) return;
+        if (!data.genre) throw new Error('Seppo is unavailable');
+        setGenre(data.genre);
+        setMessages([{ role: 'seppo', text: data.reply }]);
+        if (typeof data.scene_summary === 'string') setSummary(data.scene_summary);
+        setIsOpening(false);
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        setError(e instanceof Error ? e.message : 'Seppo is unavailable');
+        setIsOpening(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // requestReply only closes over `favorite`, which is fixed per mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attempt]);
 
   const send = async () => {
-    if (!canSend) return;
+    if (!canSend || !genre) return;
     const text = draft.trim();
     const next: VittuiluMessage[] = [...messages, { role: 'user', text }];
     setMessages(next);
@@ -83,13 +123,7 @@ export default function ScreenScene({ genre, referenceArtist, onReady, onBack }:
     setError(null);
     setIsSending(true);
     try {
-      const res = await fetch('/api/scene', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ genre, ...(referenceArtist ? { referenceArtist } : {}), messages: next }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.error || typeof data.reply !== 'string') throw new Error(data.error || 'Seppo is unavailable');
+      const data = await requestReply(next, genre);
       setMessages([...next, { role: 'seppo', text: data.reply }]);
       if (data.end_scene) setEnded(true);
       if (typeof data.scene_summary === 'string') setSummary(data.scene_summary);
@@ -106,8 +140,8 @@ export default function ScreenScene({ genre, referenceArtist, onReady, onBack }:
   const readyButton = (
     <button
       type="button"
-      onClick={() => onReady(summary)}
-      disabled={isSending}
+      onClick={() => genre && onReady(genre, summary)}
+      disabled={isOpening || isSending || !genre}
       className="w-full max-w-[280px] py-3.5 font-semibold text-sm uppercase rounded-lg active:scale-[0.98] disabled:opacity-50"
       style={{
         transition: `all 0.2s ${EASE}`,
@@ -127,7 +161,7 @@ export default function ScreenScene({ genre, referenceArtist, onReady, onBack }:
   return (
     <div className="flex flex-col max-w-2xl mx-auto animate-[rite-reveal_0.4s_cubic-bezier(0.25,1,0.5,1)_both]">
       <span className="uppercase text-[13px] max-[640px]:text-[14px]" style={EYEBROW_STYLE}>
-        Referral / 05 — {meta.label}
+        Referral / 05 — Music Preparation
       </span>
 
       <div
@@ -135,11 +169,10 @@ export default function ScreenScene({ genre, referenceArtist, onReady, onBack }:
         style={{ border: `1px solid ${DIVIDER_COLOR}`, minHeight: 200 }}
         aria-live="polite"
       >
-        <Bubble role="seppo">{meta.opening}</Bubble>
         {messages.map((m, i) => (
           <Bubble key={i} role={m.role}>{m.text}</Bubble>
         ))}
-        {isSending && (
+        {(isOpening || isSending) && (
           <div className="flex justify-start" role="status" aria-label="Seppo is typing">
             <p className="m-0 px-3.5 py-2.5 text-[13px] rounded-lg" style={{ ...BODY_FONT, color: TEXT_TERTIARY, background: '#f2efe7', border: `1px solid ${DIVIDER_COLOR}` }}>
               Seppo is typing…
@@ -153,7 +186,18 @@ export default function ScreenScene({ genre, referenceArtist, onReady, onBack }:
       </div>
 
       {error && (
-        <p className="m-0 mt-3 text-[13px]" style={{ color: TREATMENT_ACCENT_TEXT }} role="alert">{error}</p>
+        <div className="mt-3 flex items-center gap-3">
+          <p className="m-0 text-[13px]" style={{ color: TREATMENT_ACCENT_TEXT }} role="alert">{error}</p>
+          {!genre && !isOpening && (
+            <button type="button" onClick={() => {
+                setError(null);
+                setIsOpening(true);
+                setAttempt((n) => n + 1);
+              }} className="text-[13px] font-medium uppercase underline" style={{ color: TEXT_SECONDARY }}>
+              Try again
+            </button>
+          )}
+        </div>
       )}
 
       {!ended && (
@@ -175,7 +219,7 @@ export default function ScreenScene({ genre, referenceArtist, onReady, onBack }:
             }}
             maxLength={MAX_SCENE_USER_TEXT}
             rows={2}
-            disabled={isSending}
+            disabled={isOpening || isSending}
             placeholder="Answer Seppo…"
             aria-label="Reply to Seppo"
             className="w-full px-3 py-2.5 text-[15px] max-[640px]:text-[16px] rounded-lg resize-none"
@@ -213,7 +257,7 @@ export default function ScreenScene({ genre, referenceArtist, onReady, onBack }:
           style={{ letterSpacing: '0.05em', color: TEXT_SECONDARY }}
         >
           <ArrowLeft className="h-3 w-3" />
-          Change genre
+          Change answer
         </button>
       </div>
     </div>

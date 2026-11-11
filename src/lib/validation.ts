@@ -120,23 +120,10 @@ export const AnalysisSchema = z.object({
 });
 
 // Curator API request schema
-// A sound reference the patient typed on the genre-first path ("Prepare me for
-// the music"). The charset check and length cap validate the input; they do
-// not stop prompt injection on their own, so the Curator prompt also quotes it
-// as data (see CURATOR_INSTRUCTIONS).
-export const ReferenceArtistSchema = z
-  .string()
-  .trim()
-  .min(1)
-  .max(60)
-  .regex(/^[\p{L}\p{N} &'.,:!()+/-]+$/u, 'Invalid artist name');
-
 // `emotionData` is optional: the genre-first path has no intake at all.
-// `referenceArtist` is optional and additive.
 export const CuratorRequestSchema = z.object({
   analysis: AnalysisSchema,
   emotionData: EmotionDataSchema.optional(),
-  referenceArtist: ReferenceArtistSchema.optional(),
 });
 
 // Curator OUTPUT contract — what the model must return before anything is
@@ -238,33 +225,49 @@ export const VittuiluAssessmentSchema = z.object({
   incident: z.string().trim().min(1).max(500),
 });
 
-// "Prepare me for the music" scene (/api/scene). Stateless like Vittuilubotti:
-// the client resends the transcript and the SERVER derives the turn and the
-// final-turn flag. Seppo's hand-written opening is NOT part of the transcript;
-// the route prepends it from the genre table (lib/music-prep.ts).
+// "Prepare me for the music" scene (/api/scene). The patient answers "What is
+// your favorite music genre?" in free text. Stateless like Vittuilubotti: the
+// client resends the whole transcript and the SERVER derives the turn and the
+// final-turn flag. The first call has no messages: Seppo opens by mocking the
+// answer and the model picks the metal archetype (`genre` in the reply); every
+// later call carries that genre back, so the part stays fixed.
 export const MAX_SCENE_USER_MESSAGES = 3;
 export const MAX_SCENE_USER_TEXT = 300;
 export const MAX_SCENE_SUMMARY_LENGTH = 300;
 
-export const SceneRequestSchema = z.object({
-  genre: z.enum(MUSIC_GENRE_IDS),
-  referenceArtist: ReferenceArtistSchema.optional(),
-  messages: z
-    .array(VittuiluMessageSchema)
-    .min(1)
-    .max(MAX_SCENE_USER_MESSAGES * 2)
-    .superRefine((messages, ctx) => {
-      if (messages[messages.length - 1].role !== 'user') {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Last message must be from the user' });
-      }
-      if (messages.some((m) => m.role === 'user' && m.text.length > MAX_SCENE_USER_TEXT)) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: `User messages are capped at ${MAX_SCENE_USER_TEXT} characters` });
-      }
-      if (messages.filter((m) => m.role === 'user').length > MAX_SCENE_USER_MESSAGES) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Too many user messages' });
-      }
-    }),
-});
+// Free text, but only genre-name characters. The charset and length cap
+// validate input; they do not stop prompt injection, so the prompt also
+// receives the answer JSON-quoted as data.
+export const FavoriteGenreSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(60)
+  .regex(/^[\p{L}\p{N} &'.,:!()+/-]+$/u, 'Invalid genre');
+
+export const SceneRequestSchema = z
+  .object({
+    favorite: FavoriteGenreSchema,
+    genre: z.enum(MUSIC_GENRE_IDS).optional(),
+    // Empty on the first call. Afterwards it starts with Seppo's own opening
+    // and ends on a user message.
+    messages: z.array(VittuiluMessageSchema).max(MAX_SCENE_USER_MESSAGES * 2),
+  })
+  .superRefine((req, ctx) => {
+    const { messages, genre } = req;
+    if (messages.length === 0) return;
+    if (!genre) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'genre is required once the scene has started' });
+    if (messages[0].role !== 'seppo') ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Transcript must start with Seppo' });
+    if (messages[messages.length - 1].role !== 'user') {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Last message must be from the user' });
+    }
+    if (messages.some((m) => m.role === 'user' && m.text.length > MAX_SCENE_USER_TEXT)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: `User messages are capped at ${MAX_SCENE_USER_TEXT} characters` });
+    }
+    if (messages.filter((m) => m.role === 'user').length > MAX_SCENE_USER_MESSAGES) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Too many user messages' });
+    }
+  });
 
 // Scene OUTPUT contract. `scene_summary` is optional and best-effort: it only
 // feeds Seppo's artist notes, so a missing or malformed one never costs the
@@ -272,6 +275,8 @@ export const SceneRequestSchema = z.object({
 export const SceneReplySchema = z.object({
   reply: z.string().trim().min(1).max(MAX_VITTUILU_REPLY_TEXT),
   end_scene: z.boolean().optional().default(false),
+  // Only read on the opening reply, where the model picks the part.
+  genre: z.enum(MUSIC_GENRE_IDS).optional().catch(undefined),
   scene_summary: z
     .preprocess((v) => (typeof v === 'string' ? v.trim().slice(0, MAX_SCENE_SUMMARY_LENGTH) : undefined), z.string().min(1).optional())
     .catch(undefined),

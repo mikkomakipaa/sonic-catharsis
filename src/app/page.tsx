@@ -108,11 +108,12 @@ export default function Home() {
   // after a too-calm reading, or the intake form via the front-page button.
   const [provokeOrigin, setProvokeOrigin] = useState<'selection' | 'analysis'>('analysis');
 
-  // "Prepare me for the music": the genre-first path. Set once a genre is
-  // picked; it skips the diagnosis entirely (no Stage, no Matcher). Cleared by
+  // "Prepare me for the music": the genre-first path. The patient's free-text
+  // favorite genre goes to Seppo; `musicGenre` is the metal part he picked, set
+  // when the patient is ready for the soundtrack. It skips the diagnosis entirely (no Stage, no Matcher). Cleared by
   // resetSelections and when stepping back to the intake.
   const [musicGenre, setMusicGenre] = useState<MusicGenreId | null>(null);
-  const [referenceArtist, setReferenceArtist] = useState<string | undefined>(undefined);
+  const [favoriteGenre, setFavoriteGenre] = useState<string>('');
 
   // Held between the analysis and descent steps: the curator call needs both,
   // but it only fires once the user chooses to descend, not automatically.
@@ -343,7 +344,7 @@ export default function Home() {
   // the Curator (no Matcher, no diagnosis), with the optional sound reference.
   // Seppo annotates it; `scene` is his one-line note on the act, when there was
   // one. Notes are decoration: a failure just renders the list without them.
-  const prescribeForMusic = async (genreId: MusicGenreId, artist?: string, scene?: string) => {
+  const prescribeForMusic = async (genreId: MusicGenreId, scene?: string) => {
     const genre = getMusicGenre(genreId);
     setStep('descent');
     setPlaylist(null);
@@ -359,7 +360,6 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           analysis: { subgenre: genre.subgenre, sonic_profile: genre.sonicProfile },
-          ...(artist ? { referenceArtist: artist } : {}),
         }),
       });
       const curatorData = await curatorResponse.json();
@@ -392,15 +392,14 @@ export default function Home() {
     }
   };
 
-  const startMusicScene = (genreId: MusicGenreId, artist?: string) => {
-    setMusicGenre(genreId);
-    setReferenceArtist(artist);
+  const startMusicScene = (favorite: string) => {
+    setFavoriteGenre(favorite);
     setStep('scene');
   };
 
   const leaveMusicPath = () => {
     setMusicGenre(null);
-    setReferenceArtist(undefined);
+    setFavoriteGenre('');
     setPlaylist(null);
     setReasoning(null);
     setSubgenre(null);
@@ -409,7 +408,7 @@ export default function Home() {
 
   const resetSelections = () => {
     setMusicGenre(null);
-    setReferenceArtist(undefined);
+    setFavoriteGenre('');
     setStep('selection');
     setSelection(null);
     setIncidentText('');
@@ -626,15 +625,17 @@ export default function Home() {
         )}
 
         {step === 'music' && (
-          <ScreenMusic onPick={startMusicScene} onBack={leaveMusicPath} />
+          <ScreenMusic initial={favoriteGenre} onSubmit={startMusicScene} onBack={leaveMusicPath} />
         )}
 
-        {step === 'scene' && musicGenre && (
+        {step === 'scene' && (
           <ScreenScene
-            key={musicGenre}
-            genre={musicGenre}
-            referenceArtist={referenceArtist}
-            onReady={(summary) => void prescribeForMusic(musicGenre, referenceArtist, summary)}
+            key={favoriteGenre}
+            favorite={favoriteGenre}
+            onReady={(genre, summary) => {
+              setMusicGenre(genre);
+              void prescribeForMusic(genre, summary);
+            }}
             onBack={() => setStep('music')}
           />
         )}
@@ -651,7 +652,7 @@ export default function Home() {
             subgenre={subgenre}
             onReset={resetSelections}
             onBack={() => (musicGenre ? setStep('music') : setStep('analysis'))}
-            backLabel={musicGenre ? 'Back to genres' : undefined}
+            backLabel={musicGenre ? 'Back to the question' : undefined}
             diagnosis={!musicGenre}
           />
         )}

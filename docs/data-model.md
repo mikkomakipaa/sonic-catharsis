@@ -238,24 +238,26 @@ Failure or a 20 s timeout is silent: the prescription renders without notes.
 
 ### 6.2 Genre-first path — "Prepare me for the music"
 
-No diagnosis exists on this path, so none of §3–§5 applies. The patient picks
-one of five genres (`MUSIC_GENRES`, `src/lib/music-prep.ts`: `thrash | doom |
-technical | black | power`); each carries a fixed Curator `subgenre` and
-`sonicProfile` and a hand-written opening line. Nothing varies the profile.
+No diagnosis exists on this path, so none of §3–§5 applies. The patient answers
+"What is your favorite music genre?" in free text (`FavoriteGenreSchema`).
+Seppo mocks it, and the scene model picks one of five metal archetypes
+(`MUSIC_GENRES`, `src/lib/music-prep.ts`: `thrash | doom | technical | black |
+power`), each with a fixed Curator `subgenre` and `sonicProfile`. A non-metal
+answer is caricatured and the patient is pointed to the closest-cousin metal
+archetype. Nothing varies the profile.
 
-- **Scene** — `POST /api/scene` with `{ genre, referenceArtist?, messages }`
-  (`SceneRequestSchema`; ≤3 user messages, each ≤300 chars, last message from
-  the user, Seppo's opening NOT included: the server prepends it). Reply
-  `{ reply, end_scene, scene_summary? }` (`SceneReplySchema`). Turn and final
-  turn are derived server-side.
+- **Scene** — `POST /api/scene` with `{ favorite, genre?, messages }`
+  (`SceneRequestSchema`). The first call has `messages: []` and no `genre`: the
+  model writes Seppo's opening and returns the `genre` it chose. Later calls
+  send the full transcript (starting with Seppo's opening, ending on a user
+  message; ≤3 user messages, each ≤300 chars) plus that `genre`, which the
+  server keeps fixed. Reply `{ reply, end_scene, genre, scene_summary? }`
+  (`SceneReplySchema`). Turn and final turn are derived server-side.
 - **Prescription** — `POST /api/curator` with `{ analysis: { subgenre,
-  sonic_profile }, referenceArtist? }` (`emotionData` omitted; it is optional
-  in `CuratorRequestSchema`). `referenceArtist` (`ReferenceArtistSchema`) is a
-  sound reference, not a guaranteed inclusion; the selected genre wins on
-  conflict; the route passes it JSON-quoted.
+  sonic_profile } }` (`emotionData` omitted; it is optional in
+  `CuratorRequestSchema`).
 - **Notes** — `POST /api/seppo-notes` with `{ artists, subgenre, scene? }`;
-  `scene` is the optional one-line `scene_summary` and is absent when the
-  patient leaves before replying.
+  `scene` is the optional one-line `scene_summary`.
 - The prescription omits Stage, severity, intensity and the Vitutus study QR.
 
 ## 7. Rendered types
