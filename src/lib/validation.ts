@@ -231,7 +231,7 @@ export const VittuiluAssessmentSchema = z.object({
 // final-turn flag. The first call has no messages: Seppo opens by mocking the
 // answer and the model picks the metal archetype (`genre` in the reply); every
 // later call carries that genre back, so the part stays fixed.
-export const MAX_SCENE_USER_MESSAGES = 2;
+export const MAX_SCENE_USER_MESSAGES = 1;
 export const MAX_SCENE_USER_TEXT = 300;
 export const MAX_SCENE_SUMMARY_LENGTH = 300;
 

@@ -463,7 +463,7 @@ describe('/api/scene', () => {
     expect(json).toEqual({ reply: 'Pending.', end_scene: false, genre: 'doom', scene_summary: 'Seppo mocked the patient.' });
     const call = create.mock.calls[0][0];
     expect(call.input).toContain('favorite_genre: "Finnish iskelmä"');
-    expect(call.input).toContain('turn: 0 of 2');
+    expect(call.input).toContain('turn: 0 of 1');
     expect(call.instructions).toContain('genre id "power"');
     expect(call.instructions).toContain('genre id "doom"');
   });
@@ -475,24 +475,18 @@ describe('/api/scene', () => {
     expect(create).toHaveBeenCalledTimes(2);
   });
 
-  it('later turns: fix the part, derive the turn, and ignore a different genre from the model', async () => {
+  it('the reply is the finale: fixes the part, derives the turn, closes the scene, ignores a different genre from the model', async () => {
     create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'Pending.', end_scene: false, scene_summary: 'x', genre: 'power' }) });
     const res = await send({ favorite: 'pop', genre: 'doom', messages: [seppo('opening'), user('hello')] });
     const json = await res.json();
     expect(json.genre).toBe('doom');
+    expect(json.end_scene).toBe(true);
     const call = create.mock.calls[0][0];
-    expect(call.input).toContain('turn: 1 of 2');
-    expect(call.input).toContain('is_final_turn: false');
+    expect(call.input).toContain('turn: 1 of 1');
+    expect(call.input).toContain('is_final_turn: true');
     expect(call.input).toContain('Seppo: opening');
     expect(call.instructions).toContain('DOOM / FUNERAL DOOM');
     expect(call.instructions).not.toContain('POWER / FOLK');
-  });
-
-  it('closes the scene on the second user reply whatever the model says', async () => {
-    create.mockResolvedValue(ok);
-    const res = await send({ favorite: 'pop', genre: 'power', messages: [seppo('o'), user('a'), seppo('b'), user('c')] });
-    expect(create.mock.calls[0][0].input).toContain('is_final_turn: true');
-    expect((await res.json()).end_scene).toBe(true);
   });
 
   it('still answers when the model omits or botches the optional summary', async () => {

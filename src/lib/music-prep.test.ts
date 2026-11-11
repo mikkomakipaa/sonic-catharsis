@@ -60,14 +60,13 @@ describe('schemas', () => {
     }
   });
 
-  it('shapes the transcript: empty opening call, then Seppo first, user last, 2 replies max', () => {
+  it('shapes the transcript: empty opening call, then Seppo first, user last, 1 reply max', () => {
     const u = (text: string) => ({ role: 'user', text });
     const s = (text: string) => ({ role: 'seppo', text });
     const base = { favorite: 'pop', genre: 'doom' };
     expect(SceneRequestSchema.safeParse({ favorite: 'pop', messages: [] }).success).toBe(true);
     expect(SceneRequestSchema.safeParse({ ...base, messages: [s('o'), u('a')] }).success).toBe(true);
-    expect(SceneRequestSchema.safeParse({ ...base, messages: [s('o'), u('a'), s('b'), u('c')] }).success).toBe(true);
-    expect(SceneRequestSchema.safeParse({ ...base, messages: [s('o'), u('a'), s('b'), u('c'), s('d'), u('e')] }).success).toBe(false);
+    expect(SceneRequestSchema.safeParse({ ...base, messages: [s('o'), u('a'), s('b'), u('c')] }).success).toBe(false);
     expect(SceneRequestSchema.safeParse({ ...base, messages: [s('o')] }).success).toBe(false); // must end on the user
     expect(SceneRequestSchema.safeParse({ ...base, messages: [u('a')] }).success).toBe(false); // must start with Seppo
     expect(SceneRequestSchema.safeParse({ favorite: 'pop', messages: [s('o'), u('a')] }).success).toBe(false); // genre required

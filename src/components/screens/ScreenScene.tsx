@@ -227,7 +227,7 @@ export default function ScreenScene({ favorite, onReady, onBack }: ScreenScenePr
           />
           <div className="flex items-center justify-between">
             <span className="text-[13px]" style={{ color: TEXT_SECONDARY }}>
-              {userCount} / {MAX_SCENE_USER_MESSAGES} replies · {draft.length} / {MAX_SCENE_USER_TEXT}
+              {userCount} / {MAX_SCENE_USER_MESSAGES} {MAX_SCENE_USER_MESSAGES === 1 ? 'reply' : 'replies'} · {draft.length} / {MAX_SCENE_USER_TEXT}
             </span>
             <button
               type="submit"
