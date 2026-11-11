@@ -10,8 +10,7 @@ import ScreenDescent from '@/components/screens/ScreenDescent';
 import ScreenProvoke from '@/components/screens/ScreenProvoke';
 import ScreenVittuilu from '@/components/screens/ScreenVittuilu';
 import ScreenMusic from '@/components/screens/ScreenMusic';
-import ScreenScene from '@/components/screens/ScreenScene';
-import { getMusicGenre, type MusicGenreId } from '@/lib/music-prep';
+import ScreenScene, { type SceneSound } from '@/components/screens/ScreenScene';
 import type { VittuiluAssessment } from '@/lib/validation';
 import { SEPPO_STIMULUS, Stimulus, pickSession, shouldOfferProvocation } from '@/lib/provocations';
 import {
@@ -109,10 +108,10 @@ export default function Home() {
   const [provokeOrigin, setProvokeOrigin] = useState<'selection' | 'analysis'>('analysis');
 
   // "Prepare me for the music": the genre-first path. The patient's free-text
-  // favorite genre goes to Seppo; `musicGenre` is the metal part he picked, set
-  // when the patient is ready for the soundtrack. It skips the diagnosis entirely (no Stage, no Matcher). Cleared by
+  // favorite genre goes to Seppo; `musicPath` is set when the patient is ready for the
+  // soundtrack (Seppo's opening has then chosen the sound). It skips the diagnosis entirely (no Stage, no Matcher). Cleared by
   // resetSelections and when stepping back to the intake.
-  const [musicGenre, setMusicGenre] = useState<MusicGenreId | null>(null);
+  const [musicPath, setMusicPath] = useState(false);
   const [favoriteGenre, setFavoriteGenre] = useState<string>('');
 
   // Held between the analysis and descent steps: the curator call needs both,
@@ -340,16 +339,15 @@ export default function Home() {
     }
   };
 
-  // Genre-first prescription: the genre's fixed table entry goes straight to
-  // the Curator (no Matcher, no diagnosis), with the optional sound reference.
-  // Seppo annotates it; `scene` is his one-line note on the act, when there was
+  // Genre-first prescription: the sound Seppo's opening chose (subgenre +
+  // sonic profile, the model's own pick) goes straight to the Curator (no
+  // Matcher, no diagnosis). Seppo annotates it; `scene` is his one-line note on the act, when there was
   // one. Notes are decoration: a failure just renders the list without them.
-  const prescribeForMusic = async (genreId: MusicGenreId, scene?: string) => {
-    const genre = getMusicGenre(genreId);
+  const prescribeForMusic = async (sound: SceneSound, scene?: string) => {
     setStep('descent');
     setPlaylist(null);
-    setSubgenre(genre.subgenre);
-    setReasoning(genre.label);
+    setSubgenre(sound.subgenre);
+    setReasoning(sound.subgenre);
     setIsAnalyzing(false);
     setIsProcessing(true);
     const loadingStartedAt = performance.now();
@@ -359,7 +357,7 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          analysis: { subgenre: genre.subgenre, sonic_profile: genre.sonicProfile },
+          analysis: { subgenre: sound.subgenre, sonic_profile: sound.sonic_profile },
         }),
       });
       const curatorData = await curatorResponse.json();
@@ -371,13 +369,13 @@ export default function Home() {
         );
         const notes = await postArtistNotes('/api/seppo-notes', {
           artists: names,
-          subgenre: genre.subgenre,
+          subgenre: sound.subgenre,
           ...(scene ? { scene } : {}),
         });
         setPlaylist({
           id: `ai-generated-${Date.now()}`,
           name: 'Curated Artists',
-          description: `Curated artists for ${genre.label}`,
+          description: `Curated artists for ${sound.subgenre}`,
           tracks: buildTracks(names, notes, true),
         });
       }
@@ -398,7 +396,7 @@ export default function Home() {
   };
 
   const leaveMusicPath = () => {
-    setMusicGenre(null);
+    setMusicPath(false);
     setFavoriteGenre('');
     setPlaylist(null);
     setReasoning(null);
@@ -407,7 +405,7 @@ export default function Home() {
   };
 
   const resetSelections = () => {
-    setMusicGenre(null);
+    setMusicPath(false);
     setFavoriteGenre('');
     setStep('selection');
     setSelection(null);
@@ -632,9 +630,9 @@ export default function Home() {
           <ScreenScene
             key={favoriteGenre}
             favorite={favoriteGenre}
-            onReady={(genre, summary) => {
-              setMusicGenre(genre);
-              void prescribeForMusic(genre, summary);
+            onReady={(sound, summary) => {
+              setMusicPath(true);
+              void prescribeForMusic(sound, summary);
             }}
             onBack={() => setStep('music')}
           />
@@ -642,18 +640,18 @@ export default function Home() {
 
         {step === 'descent' && (
           <ScreenDescent
-            stage={musicGenre ? null : stage}
-            selection={musicGenre ? null : selection}
-            triggerLabel={musicGenre ? getMusicGenre(musicGenre).label : triggerLabel}
+            stage={musicPath ? null : stage}
+            selection={musicPath ? null : selection}
+            triggerLabel={musicPath ? favoriteGenre : triggerLabel}
             playlist={playlist}
             isProcessing={isProcessing}
             isAnalyzing={isAnalyzing}
             reasoning={reasoning}
             subgenre={subgenre}
             onReset={resetSelections}
-            onBack={() => (musicGenre ? setStep('music') : setStep('analysis'))}
-            backLabel={musicGenre ? 'Back to the question' : undefined}
-            diagnosis={!musicGenre}
+            onBack={() => (musicPath ? setStep('music') : setStep('analysis'))}
+            backLabel={musicPath ? 'Back to the question' : undefined}
+            diagnosis={!musicPath}
           />
         )}
       </div>

@@ -240,21 +240,24 @@ Failure or a 20 s timeout is silent: the prescription renders without notes.
 
 No diagnosis exists on this path, so none of §3–§5 applies. The patient answers
 "What is your favorite music genre?" in free text (`FavoriteGenreSchema`).
-Seppo mocks it, and the scene model picks one of five metal archetypes
-(`MUSIC_GENRES`, `src/lib/music-prep.ts`: `thrash | doom | technical | black |
-power`), each with a fixed Curator `subgenre` and `sonicProfile`. A non-metal
-answer is caricatured and the patient is pointed to the closest-cousin metal
-archetype. Nothing varies the profile.
+Seppo mocks it (the usual listener, pinned on the patient). On the opening the
+scene model returns two decisions: the performance archetype (`genre`, one of
+`thrash | doom | technical | black | power`, `MUSIC_GENRES` in
+`src/lib/music-prep.ts`) and **the sound**, `subgenre` + `sonic_profile`
+(§4 tokens): the closest real subgenre for a metal answer, the complete
+musical opposite for a non-metal one. If the model's sound is missing or
+invalid the route substitutes the archetype's table entry.
 
 - **Scene** — `POST /api/scene` with `{ favorite, genre?, messages }`
   (`SceneRequestSchema`). The first call has `messages: []` and no `genre`: the
-  model writes Seppo's opening and returns the `genre` it chose. Later calls
+  model writes Seppo's opening and returns the `genre` it chose plus
+  `subgenre` and `sonic_profile` (opening only). Later calls
   send the full transcript (starting with Seppo's opening, ending on a user
   message; ≤1 user message, ≤300 chars) plus that `genre`, which the
   server keeps fixed. Reply `{ reply, end_scene, genre, scene_summary? }`
   (`SceneReplySchema`). Turn and final turn are derived server-side.
 - **Prescription** — `POST /api/curator` with `{ analysis: { subgenre,
-  sonic_profile } }` (`emotionData` omitted; it is optional in
+  sonic_profile } }` (the AI-chosen sound) (`emotionData` omitted; it is optional in
   `CuratorRequestSchema`).
 - **Notes** — `POST /api/seppo-notes` with `{ artists, subgenre, scene? }`;
   `scene` is the optional one-line `scene_summary`.

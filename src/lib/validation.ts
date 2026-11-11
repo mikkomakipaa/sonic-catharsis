@@ -275,8 +275,13 @@ export const SceneRequestSchema = z
 export const SceneReplySchema = z.object({
   reply: z.string().trim().min(1).max(MAX_VITTUILU_REPLY_TEXT),
   end_scene: z.boolean().optional().default(false),
-  // Only read on the opening reply, where the model picks the part.
+  // Only read on the opening reply, where the model picks the part AND the
+  // sound: a real metal subgenre and its five-axis profile, which go to the
+  // Curator. Each is optional and degrades to undefined, so a botched one never
+  // costs the reply; the route then falls back to the genre table's entry.
   genre: z.enum(MUSIC_GENRE_IDS).optional().catch(undefined),
+  subgenre: SubgenreSchema.optional().catch(undefined),
+  sonic_profile: SonicProfileSchema.optional().catch(undefined),
   scene_summary: z
     .preprocess((v) => (typeof v === 'string' ? v.trim().slice(0, MAX_SCENE_SUMMARY_LENGTH) : undefined), z.string().min(1).optional())
     .catch(undefined),

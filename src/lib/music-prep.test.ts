@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { MUSIC_GENRES, MUSIC_GENRE_IDS, getMusicGenre } from './music-prep';
 import { SCENE_PERFORMANCE_BRIEFS, sceneInstructions } from './prompts';
-import { FavoriteGenreSchema, SceneRequestSchema, SonicProfileSchema, SubgenreSchema } from './validation';
+import { ActivationLevels, AgencyLevels, CognitiveDensityLevels, FrictionLevels, WeightLevels, FavoriteGenreSchema, SceneRequestSchema, SonicProfileSchema, SubgenreSchema } from './validation';
 
 describe('music genre table', () => {
   it('has one entry per id, in id order', () => {
@@ -43,10 +43,19 @@ describe('scene prompt', () => {
     expect(opening).not.toContain('{{PART}}');
   });
 
-  it('mocks the usual listener, keeps it off identity, and points non-metal answers to proper metal', () => {
+  it('lets the model pick the sound on the opening, with the profile tokens from the schema', () => {
+    const opening = sceneInstructions();
+    expect(opening).toContain('"subgenre"');
+    for (const tokens of [ActivationLevels, AgencyLevels, FrictionLevels, CognitiveDensityLevels, WeightLevels]) {
+      for (const t of tokens) expect(opening).toContain(t);
+    }
+    expect(sceneInstructions('doom')).not.toContain('The sound (opening only)');
+  });
+
+  it('mocks the usual listener, keeps it off identity, and points non-metal answers to the complete musical opposite in metal', () => {
     expect(sceneInstructions()).toContain('STEREOTYPE of the typical listener');
     expect(sceneInstructions()).toMatch(/NEVER the listener's age/);
-    expect(sceneInstructions()).toMatch(/NOT metal[\s\S]*proper metal/);
+    expect(sceneInstructions()).toMatch(/NOT metal[\s\S]*COMPLETE MUSICAL OPPOSITE/);
   });
 });
 

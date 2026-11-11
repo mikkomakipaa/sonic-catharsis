@@ -460,12 +460,30 @@ describe('/api/scene', () => {
     const res = await send({ favorite: 'Finnish iskelmä', messages: [] });
     const json = await res.json();
     expect(res.status).toBe(200);
-    expect(json).toEqual({ reply: 'Pending.', end_scene: false, genre: 'doom', scene_summary: 'Seppo mocked the patient.' });
+    expect(json).toMatchObject({ reply: 'Pending.', end_scene: false, genre: 'doom', scene_summary: 'Seppo mocked the patient.' });
+    expect(json).not.toHaveProperty('injected');
     const call = create.mock.calls[0][0];
     expect(call.input).toContain('favorite_genre: "Finnish iskelmä"');
     expect(call.input).toContain('turn: 0 of 1');
     expect(call.instructions).toContain('genre id "power"');
     expect(call.instructions).toContain('genre id "doom"');
+  });
+
+  it('opening: hands over the model\'s own subgenre and sonic profile for the Curator', async () => {
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'Pending.', end_scene: false, scene_summary: 'x', genre: 'doom', subgenre: 'Funeral doom metal', sonic_profile }) });
+    const json = await (await send({ favorite: 'synth pop', messages: [] })).json();
+    expect(json.subgenre).toBe('Funeral doom metal');
+    expect(json.sonic_profile).toEqual(sonic_profile);
+    const call = create.mock.calls[0][0];
+    expect(call.instructions).toContain('MUSICAL OPPOSITE');
+    expect(call.text.format.schema.required).toEqual(expect.arrayContaining(['subgenre', 'sonic_profile']));
+  });
+
+  it('opening: falls back to the part\'s table entry when the sound is unusable', async () => {
+    create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'Pending.', end_scene: false, genre: 'doom', subgenre: '<script>', sonic_profile: { activation: 'loud' } }) });
+    const json = await (await send({ favorite: 'synth pop', messages: [] })).json();
+    expect(json.subgenre).toBe('Doom metal / funeral doom');
+    expect(json.sonic_profile).toMatchObject({ weight: 'crushing' });
   });
 
   it('opening: retries and fails when the model names no part', async () => {
@@ -481,6 +499,8 @@ describe('/api/scene', () => {
     const json = await res.json();
     expect(json.genre).toBe('doom');
     expect(json.end_scene).toBe(true);
+    expect(json).not.toHaveProperty('subgenre');
+    expect(create.mock.calls[0][0].text.format.schema.required).not.toContain('subgenre');
     const call = create.mock.calls[0][0];
     expect(call.input).toContain('turn: 1 of 1');
     expect(call.input).toContain('is_final_turn: true');
@@ -492,7 +512,8 @@ describe('/api/scene', () => {
   it('still answers when the model omits or botches the optional summary', async () => {
     create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'Pending.', end_scene: false, scene_summary: 42, genre: 'black' }) });
     const json = await (await send({ favorite: 'pop', messages: [] })).json();
-    expect(json).toEqual({ reply: 'Pending.', end_scene: false, genre: 'black' });
+    expect(json).toMatchObject({ reply: 'Pending.', end_scene: false, genre: 'black', subgenre: 'Black metal' });
+    expect(json).not.toHaveProperty('scene_summary');
   });
 
   it('returns 500 with a bland error when the model never produces a valid reply', async () => {
