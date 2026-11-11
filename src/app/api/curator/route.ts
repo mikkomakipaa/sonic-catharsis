@@ -24,9 +24,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // emotionData is validated (CuratorRequestSchema) but intentionally
+    // emotionData is validated (CuratorRequestSchema, optional: the
+    // genre-first path has none) but intentionally
     // unused — see the comment below.
-    const { analysis } = validation.data!;
+    const { analysis, referenceArtist } = validation.data!;
 
     // Always non-empty: SubgenreSchema requires min(1).
     const subgenre = analysis.subgenre;
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
       () => getOpenAI().responses.create({
         model: CURATOR_MODEL,
         instructions: CURATOR_INSTRUCTIONS,
-        input: `subgenre: ${subgenre}\nactivation: ${sonicProfile.activation}\nagency: ${sonicProfile.agency}\nfriction: ${sonicProfile.friction}\ncognitive_density: ${sonicProfile.cognitive_density}\nweight: ${sonicProfile.weight}`,
+        input: `subgenre: ${subgenre}\nactivation: ${sonicProfile.activation}\nagency: ${sonicProfile.agency}\nfriction: ${sonicProfile.friction}\ncognitive_density: ${sonicProfile.cognitive_density}\nweight: ${sonicProfile.weight}${referenceArtist ? `\nreference_artist: ${JSON.stringify(referenceArtist)}` : ''}`,
       }),
       (json) => {
         const parsed = CuratorArtistsSchema.safeParse(json.Selection);
