@@ -6,8 +6,6 @@ AI pipeline derives a sonic profile from what you actually typed, picks a
 metal subgenre, and names seven real bands to treat it. If you turn out to be
 too calm to treat, the clinic provokes you.
 
-<img width="1287" height="797" alt="image" src="https://github.com/user-attachments/assets/ca3659ee-5793-461c-a853-9f2a5354a7a4" />
-
 ## How it works
 
 The app is a short ritual, presented as pages of one case file:
