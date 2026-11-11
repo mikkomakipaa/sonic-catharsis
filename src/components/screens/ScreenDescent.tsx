@@ -6,7 +6,8 @@ import { Playlist, TriggerSelection } from '@/types';
 import ResultsPanel from '@/components/panels/ResultsPanel';
 
 interface ScreenDescentProps {
-  stage: Stage;
+  // null on the genre-first path: no diagnosis, so no Stage.
+  stage: Stage | null;
   selection: TriggerSelection | null;
   triggerLabel: string | null;
   playlist: Playlist | null;
@@ -16,6 +17,8 @@ interface ScreenDescentProps {
   subgenre: string | null;
   onReset: () => void;
   onBack: () => void;
+  backLabel?: string;
+  diagnosis?: boolean;
 }
 
 export default function ScreenDescent({
@@ -29,6 +32,8 @@ export default function ScreenDescent({
   subgenre,
   onReset,
   onBack,
+  backLabel = 'Back to Diagnosis',
+  diagnosis = true,
 }: ScreenDescentProps) {
   return (
     <div className="flex flex-col max-w-3xl mx-auto animate-[rite-reveal_0.6s_cubic-bezier(0.25,1,0.5,1)_both]">
@@ -44,6 +49,7 @@ export default function ScreenDescent({
         stage={stage}
         subgenre={subgenre}
         intensity={selection?.intensity}
+        diagnosis={diagnosis}
       />
 
       {playlist && (
@@ -56,7 +62,7 @@ export default function ScreenDescent({
             onMouseLeave={(e) => (e.currentTarget.style.color = '#5c584f')}
           >
             <ArrowLeft className="h-3 w-3" />
-            Back to Diagnosis
+            {backLabel}
           </button>
           <button
             onClick={onReset}

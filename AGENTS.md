@@ -107,6 +107,14 @@ The application uses a **sequential two-agent pipeline** orchestrated from
    - **Seppo annotates the prescription.** When the reading came through Seppo (`provokedBy === SEPPO_STIMULUS`), `beginDescent` (`src/app/page.tsx`) calls `/api/seppo-notes` (while the loading screen is still up, so the list appears once in its final layout; 20 s timeout) (`SEPPO_ARTIST_NOTES_INSTRUCTIONS`) with the artist names, subgenre and incident. One short remark per artist lands in `Track.seppoNote` and renders under the band name in `ResultsPanel`. Failure or timeout is silent (list renders without notes); the Curator never sees the incident. See `docs/data-model.md` §6.1. Everyone else gets the physician's indication instead (`/api/physician-notes`, same contract, `Track.physicianNote`). Add both routes to the WAF rate limit too
    - Same route rules apply: no payload logging, unauthenticated paid-model route covered by the Vercel WAF rate limit (add this route to that rule)
 
+5. **Prepare me for the music** (`/api/scene`, `src/app/api/scene/route.ts`) — the genre-first path, entered from the intake's "Prepare me for the music" button (beside "Not angry? Let the clinic fix that"). **There is no diagnosis on this path: no Stage, no intensity, no Matcher call, no study QR.**
+   - Flow: `ScreenMusic` (genre picker + optional reference artist; picking a genre starts the scene) → `ScreenScene` (Seppo's hand-written opening from `MUSIC_GENRES[].opening` is on screen instantly, no model call; up to `MAX_SCENE_USER_MESSAGES` = 3 user replies; "Ready for the soundtrack" is available from the first screen) → `prescribeForMusic` (`page.tsx`): `/api/curator` with the genre's fixed `{ subgenre, sonic_profile }` (no `emotionData`) → `/api/seppo-notes` → `ScreenDescent` with `diagnosis={false}`, `stage={null}`
+   - `src/lib/music-prep.ts` is the genre table: id, label, Curator `subgenre`, fixed `sonicProfile`, opening line. Five genres = five performance archetypes. **Nothing else varies the sonic profile** (there is no dose). Per-genre performance briefs live in `SCENE_PERFORMANCE_BRIEFS` (`src/lib/prompts.ts`); a test keeps ids in sync. Each genre is a different *performance* (thrash = manager inventing rules, doom = bureaucrat explaining nothing progresses, technical = consultant with contradictory dependencies, black = cold official, power = absurdly heroic coach), never a louder roast. Review sample scenes for all five when editing a brief
+   - Stateless like Vittuilubotti: the client resends the transcript (without the opening); the server derives `turn`/`is_final_turn` and prepends the opening from the table itself. Model output `{ reply, end_scene, scene_summary }` (`SceneReplySchema`); `scene_summary` is optional, best-effort, and only feeds Seppo's artist notes (`scene` field on `/api/seppo-notes`). Leaving early costs no extra model call
+   - `referenceArtist` (`ReferenceArtistSchema`: ≤60 chars, name characters only) is a **sound reference**: it may steer the Curator's picks but need not appear, and the selected genre wins on conflict. The regex validates input; it does not stop prompt injection, so the Curator and scene prompts also receive it JSON-quoted as data. `CuratorRequestSchema.emotionData` is now optional for this path
+   - Shared hard limits: `seppoSafetyLimits()` in `prompts.ts` is used by both Seppo prompts
+   - Same route rules: no payload logging; unauthenticated paid-model route, **add `/api/scene` to the Vercel WAF rate limit**
+
 **Critical Flow**: User Input (incident + trigger + intensity [+ symptoms/duration]) → Matcher (subgenre + sonic_profile + cause/choice) → Curator (7 artists) → UI Display (`ScreenDescent` → `ResultsPanel`)
 
 **There is no `data/` directory anymore.** All emotion→genre calibration
@@ -117,12 +125,13 @@ one no-JSON-drift invariant this section exists to document.
 
 ### UI Architecture
 
-Four screens, orchestrated by `src/app/page.tsx` via a `Step` union
-(`'selection' | 'analysis' | 'provoke' | 'vittuilu' | 'descent'`):
+Screens are orchestrated by `src/app/page.tsx` via a `Step` union
+(`'selection' | 'analysis' | 'provoke' | 'vittuilu' | 'music' | 'scene' | 'descent'`):
 
 - **`ScreenSelection.tsx`** → `panels/StateOfMindPanel.tsx` — incident text, `ClassificationGrid.tsx` (trigger picker), `IntensitySlider.tsx`, `SymptomChecklist.tsx`, `DurationSelect.tsx`
 - **`ScreenAnalysis.tsx`** — loading/diagnosis view while the Matcher call is in flight (`DiagnosticReceipt.tsx`, `StageHeader.tsx`, `DescentRail.tsx`)
 - **`ScreenProvoke.tsx`** — Provoke Me: one stimulus at a time, "Joko vituttaa?" yes/no; the 3rd no escalates straight to Seppo. A session is `pickSession()`: a figure plate (`StimulusPlate.tsx`), then the audio stimulus (`AudioStimulus.tsx`: click-to-play synthesized bad recorder, `lib/recorder-clip.ts`, never autoplays), then the irritation UI (`IrritationStimulus.tsx`: a video that never loads: buffer bar stalled at 99%, lying ETA, a plain "Reload" button that sends the bar back to 62%, `lib/irritation-loader.ts`; the real yes/no buttons stay outside it). The audio and UI stimuli (`kind: 'audio' | 'ui'`) live outside the `STIMULI` pool. Reached only from the Epicrisis "Referral / 03", which `shouldOfferProvocation()` (`src/lib/provocations.ts`) shows for Level 0 (Pseudo-vitutus) and Stage I. See `docs/data-model.md` §3.1
+- **`ScreenMusic.tsx`** / **`ScreenScene.tsx`** — "Prepare me for the music" (see Two-Agent System §5). `musicGenre` state in `page.tsx` marks the path; `ScreenDescent` then gets `stage={null}`, `selection={null}`, `diagnosis={false}` and a "Back to genres" label
 - **`ScreenDescent.tsx`** → `panels/ResultsPanel.tsx` — final cause/choice/subgenre + curated artist list; `PrescriptionCalibration.tsx` for the (theatrical, not data-driven) curator-loading calibration display; `StudyQr.tsx` for the Vitutus study QR + link in the header
 
 Shared chrome: `RiteHeader.tsx`. Design tokens (colors, typography, spacing,
@@ -311,6 +320,7 @@ src/
 │       ├── matcher/route.ts         # Agent 1: incident+trigger+intensity → subgenre + sonic_profile
 │       ├── curator/route.ts         # Agent 2: subgenre + sonic_profile → 7 artists
 │       ├── physician-notes/route.ts # the physician's one-line indication per artist (non-Seppo path)
+│       ├── scene/route.ts           # "Prepare me for the music": stateless Seppo scene (genre-first path)
 │       ├── seppo-notes/route.ts     # Seppo's one-line remark per prescribed artist (Seppo path only)
 │       └── vittuilu/route.ts        # Seppo the vittuilubotti: stateless multi-turn rant chat
 ├── components/
@@ -347,6 +357,7 @@ src/
 │   ├── theme.ts                     # Design tokens + STAGES + getActiveStage() severity formula
 │   ├── symptoms.ts                  # PHYSICAL_SYMPTOMS (optional intake field)
 │   ├── duration.ts                  # DURATION_TIERS (optional intake field)
+│   ├── music-prep.ts                # genre-first path: MUSIC_GENRES (subgenre, fixed sonic profile, opening line)
 │   ├── provocations.ts              # Provoke Me: STIMULI, AUDIO_/IRRITATION_STIMULUS, shouldOfferProvocation(), pickStimuli(), pickSession()
 │   ├── recorder-clip.ts             # synthesized bad-recorder "Hot Cross Buns" (pure samples)
 │   ├── irritation-loader.ts         # progress curve, lying ETA, setback (pure)

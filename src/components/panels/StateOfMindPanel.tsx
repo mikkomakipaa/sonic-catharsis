@@ -34,6 +34,7 @@ interface StateOfMindPanelProps {
   onSubmit: () => void;
   onReset: () => void;
   onProvoke: () => void;
+  onPrepareMusic: () => void;
 }
 
 // Single shared style for all three "question eyebrow" headers on this
@@ -73,6 +74,7 @@ export default function StateOfMindPanel({
   onSubmit,
   onReset,
   onProvoke,
+  onPrepareMusic,
 }: StateOfMindPanelProps) {
   const showReset = Boolean(selection || incidentText);
   const intensitySectionRef = useRef<HTMLDivElement>(null);
@@ -318,21 +320,39 @@ export default function StateOfMindPanel({
           shouldn't have to invent a grievance before the clinic can help. */}
       <div className="mt-10 w-full max-w-2xl flex flex-col items-center">
         <div className="h-px w-16" style={{ background: DIVIDER_COLOR }} />
-        <button
-          type="button"
-          onClick={onProvoke}
-          disabled={isProcessing}
-          className="mt-5 px-5 py-2.5 text-[13px] font-medium uppercase rounded-lg active:scale-[0.98] hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
-          style={{
-            letterSpacing: '0.05em',
-            color: '#47433b',
-            background: '#f2efe7',
-            border: '1px solid #e6e2d8',
-            transition: `all 0.2s ${EASE}`,
-          }}
-        >
-          Not angry? Let the clinic fix that
-        </button>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-3 max-[480px]:flex-col max-[480px]:w-full max-[480px]:[&>button]:w-full">
+          <button
+            type="button"
+            onClick={onProvoke}
+            disabled={isProcessing}
+            className="px-5 py-2.5 text-[13px] font-medium uppercase rounded-lg active:scale-[0.98] hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
+            style={{
+              letterSpacing: '0.05em',
+              color: '#47433b',
+              background: '#f2efe7',
+              border: '1px solid #e6e2d8',
+              transition: `all 0.2s ${EASE}`,
+            }}
+          >
+            Not angry? Let the clinic fix that
+          </button>
+          {/* The genre-first path: pick the music, Seppo sets the mood. */}
+          <button
+            type="button"
+            onClick={onPrepareMusic}
+            disabled={isProcessing}
+            className="px-5 py-2.5 text-[13px] font-medium uppercase rounded-lg active:scale-[0.98] hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
+            style={{
+              letterSpacing: '0.05em',
+              color: '#47433b',
+              background: '#f2efe7',
+              border: '1px solid #e6e2d8',
+              transition: `all 0.2s ${EASE}`,
+            }}
+          >
+            Prepare me for the music
+          </button>
+        </div>
       </div>
     </div>
   );
