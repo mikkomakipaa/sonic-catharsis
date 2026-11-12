@@ -65,11 +65,6 @@ export const EmotionDataSchema = z.object({
   chatNote: z.string().max(300).nullable().optional()
 });
 
-// Matcher API request schema
-export const MatcherRequestSchema = z.object({
-  emotionData: EmotionDataSchema
-});
-
 // Sonic profile: 5 closed-vocabulary dimensions the Matcher derives from
 // incident text + trigger + intensity, calibrating both subgenre choice
 // and the Curator's picks within that subgenre. Each is an ordered enum
@@ -110,6 +105,12 @@ export const SubgenreSchema = z
   .min(1)
   .max(120)
   .regex(/^[\p{L}\p{N} &'/:,.()-]+$/u, 'Invalid subgenre');
+
+// Recent genres are bounded, validated data used only to reduce repetition.
+export const MatcherRequestSchema = z.object({
+  emotionData: EmotionDataSchema,
+  recentSubgenres: z.array(SubgenreSchema).max(3).optional().default([]),
+});
 
 export const AnalysisSchema = z.object({
   subgenre: SubgenreSchema,
@@ -170,7 +171,7 @@ export const SeppoNotesSchema = z.array(z.object({
 // derives the turn number and the final-turn flag from it, so a client can't
 // skip the cap. The opening greeting is hardcoded in the UI and is not part
 // of the transcript.
-export const MAX_VITTUILU_USER_MESSAGES = 3;
+export const MAX_VITTUILU_USER_MESSAGES = 2;
 export const MAX_VITTUILU_USER_TEXT = 300;
 export const MAX_VITTUILU_REPLY_TEXT = 1200;
 
@@ -193,6 +194,7 @@ export const VittuiluIntakeSchema = z.object({
 });
 
 export const VittuiluRequestSchema = z.object({
+  direct: z.boolean().optional().default(false),
   intake: VittuiluIntakeSchema.optional(),
   messages: z
     .array(VittuiluMessageSchema)

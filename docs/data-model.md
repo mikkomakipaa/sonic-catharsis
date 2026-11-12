@@ -95,6 +95,10 @@ claim otherwise in generated copy.
 `SURFACE` (`index: 0`, roman `—`) is a 10th pseudo-stage used before any
 trigger is selected — it's not part of the I-IX scale.
 
+### Direct Seppo consultation
+
+The intake page's “Not angry? Let the clinic fix that” opens a short incident form with an example placeholder. The required text (up to 300 characters) becomes the first user message in a direct Seppo consultation, and the client requests his opening immediately. No stimulus is shown. The incident counts as the first of the two user messages; Seppo infers trigger, intensity, duration and supported symptoms from the injustice and conversation, preserves its specific details in the final assessment, and if his assessment is unavailable, the patient returns to the intake with their incident preserved and the other fields unset; the existing final assessment and prescription flow follows. The direct request supplies `direct: true` to `/api/vittuilu`, selecting instructions that do not assume prior stimuli. The diagnosis referral below remains available separately.
+
 ### 3.1 Provoke Me (stimulus plates)
 
 When a reading is too calm to treat — `PSEUDO_VITUTUS_STAGE` ("Level 0") or
@@ -154,6 +158,9 @@ sake. Every value must be exactly one of these tokens — no synonyms, no
 combined values — enforced by `SonicProfileSchema` (Zod `z.enum`).
 
 ## 5. Matcher — request / response contract
+
+The browser keeps up to three recent prescribed subgenre names in local storage (no incident text). It sends them with subsequent Matcher requests; the route asks for a fitting alternative and retries once if the model repeats an exact recent name. If both attempts repeat, the last valid result is used. The Level 0 special prescription is exempt. History begins when this feature is in use.
+
 
 **Request** (`EmotionDataSchema`, POSTed as `{ emotionData }` to
 `/api/matcher`):

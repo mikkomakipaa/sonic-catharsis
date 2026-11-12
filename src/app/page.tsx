@@ -9,6 +9,7 @@ import ScreenAnalysis from '@/components/screens/ScreenAnalysis';
 import ScreenDescent from '@/components/screens/ScreenDescent';
 import ScreenProvoke from '@/components/screens/ScreenProvoke';
 import ScreenVittuilu from '@/components/screens/ScreenVittuilu';
+import ScreenInjustice from '@/components/screens/ScreenInjustice';
 import ScreenMusic from '@/components/screens/ScreenMusic';
 import ScreenScene, { type SceneSound } from '@/components/screens/ScreenScene';
 import type { VittuiluAssessment } from '@/lib/validation';
@@ -20,7 +21,21 @@ import {
 } from '@/lib/theme';
 
 type ArtistItem = string | { artist?: string; name?: string; link?: string };
-type Step = 'selection' | 'analysis' | 'provoke' | 'vittuilu' | 'music' | 'scene' | 'descent';
+type Step = 'injustice' | 'selection' | 'analysis' | 'provoke' | 'vittuilu' | 'music' | 'scene' | 'descent';
+
+// Store only genre names, not the patient's incident or assessment.
+const RECENT_SUBGENRES_KEY = 'sonic-catharsis-recent-subgenres';
+function getRecentSubgenres(): string[] {
+  try {
+    const value: unknown = JSON.parse(localStorage.getItem(RECENT_SUBGENRES_KEY) || '[]');
+    return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string' && item.length > 0 && item.length <= 120 && /^[\p{L}\p{N} &'/:,.()-]+$/u.test(item)).slice(0, 3) : [];
+  } catch { return []; }
+}
+function rememberSubgenre(genre: string) {
+  try {
+    localStorage.setItem(RECENT_SUBGENRES_KEY, JSON.stringify([genre, ...getRecentSubgenres().filter((item) => item.toLowerCase() !== genre.toLowerCase())].slice(0, 3)));
+  } catch { /* Storage is optional. */ }
+}
 
 // The clinical loading documents are intentional feedback, not a flash of
 // chrome. Fast model responses stay visible long enough to complete their
@@ -105,6 +120,8 @@ export default function Home() {
   const [provokedBy, setProvokedBy] = useState<Stimulus | null>(null);
   // Where Provoke Me was entered from, so "back" returns there: the Epicrisis
   // after a too-calm reading, or the intake form via the front-page button.
+  const [directIncident, setDirectIncident] = useState('');
+  const [directConsultation, setDirectConsultation] = useState(false);
   const [provokeOrigin, setProvokeOrigin] = useState<'selection' | 'analysis'>('analysis');
 
   // "Prepare me for the music": the genre-first path. The patient's free-text
@@ -200,7 +217,7 @@ export default function Home() {
       const matcherResponse = await fetch('/api/matcher', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emotionData }),
+        body: JSON.stringify({ emotionData, recentSubgenres: getRecentSubgenres() }),
       });
 
       const matcherData = await matcherResponse.json();
@@ -209,6 +226,7 @@ export default function Home() {
         throw new Error(matcherData.error);
       }
 
+      if (typeof matcherData.subgenre === 'string' && matcherData.subgenre) rememberSubgenre(matcherData.subgenre);
       setReasoning(matcherData.reasoning);
       setCause(matcherData.cause || matcherData.reasoning);
       setChoice(matcherData.choice || '');
@@ -405,6 +423,8 @@ export default function Home() {
   };
 
   const resetSelections = () => {
+    setDirectIncident('');
+    setDirectConsultation(false);
     setMusicPath(false);
     setFavoriteGenre('');
     setStep('selection');
@@ -442,10 +462,10 @@ export default function Home() {
   // patient still dials in intensity and duration themselves — the clinic
   // provides the grievance, not the reading. Symptoms are cleared so the
   // previous (possibly pseudo-vitutus) profile doesn't pin the new reading.
-  const prefillFromStimulus = (stimulus: Stimulus) => {
+  const prefillFromStimulus = (stimulus: Stimulus, incident = stimulus.incident) => {
     goBackToSelection();
     setSelection({ trigger: stimulus.trigger, intensity: null });
-    setIncidentText(stimulus.incident);
+    setIncidentText(incident);
     setSymptoms([]);
     setDuration(null);
     setSubgenre(null);
@@ -480,7 +500,7 @@ export default function Home() {
   // (Seppo) has the assessor model read the intensity off its incident, with
   // duration "just now" and no symptoms; if the assessor is unavailable, fall
   // back to the pre-filled form.
-  const acceptStimulus = async (stimulus: Stimulus, chatNote?: string) => {
+  const acceptStimulus = async (stimulus: Stimulus, chatNote?: string, incident = stimulus.incident) => {
     goBackToSelection();
     setStep('analysis');
     setIsAnalyzing(true);
@@ -492,7 +512,7 @@ export default function Home() {
         const res = await fetch('/api/assess', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ trigger: stimulus.trigger, incident: stimulus.incident }),
+          body: JSON.stringify({ trigger: stimulus.trigger, incident }),
         });
         const data = await res.json();
         if (!res.ok || data.error || typeof data.intensity !== 'number') throw new Error(data.error || 'Assessment unavailable');
@@ -501,18 +521,18 @@ export default function Home() {
 
       const sel: TriggerSelection = { trigger: stimulus.trigger, intensity: reading.intensity };
       setSelection(sel);
-      setIncidentText(stimulus.incident);
+      setIncidentText(incident);
       setSymptoms(reading.symptoms);
       setDuration(reading.duration);
       setProvokedBy(stimulus);
       await startAssistant({
-        input: { selection: sel, incidentText: stimulus.incident, symptoms: reading.symptoms, duration: reading.duration, provoked: true, chatNote },
+        input: { selection: sel, incidentText: incident, symptoms: reading.symptoms, duration: reading.duration, provoked: true, chatNote },
       });
     } catch (error) {
       console.error('Error assessing stimulus:', error);
       setIsAnalyzing(false);
       setIsProcessing(false);
-      prefillFromStimulus(stimulus);
+      prefillFromStimulus(stimulus, incident);
     }
   };
 
@@ -574,7 +594,7 @@ export default function Home() {
             canSubmit={canSubmit}
             onSubmit={() => void startAssistant()}
             onReset={clearInputs}
-            onProvoke={() => startProvocation('selection')}
+            onProvoke={() => { setDirectConsultation(true); setStep('injustice'); }}
             onPrepareMusic={() => setStep('music')}
           />
         )}
@@ -600,24 +620,41 @@ export default function Home() {
           <ScreenProvoke
             stimuli={provokeStimuli}
             onConfirm={(s) => void acceptStimulus(s)}
-            onEscalate={() => setStep('vittuilu')}
+            onEscalate={() => { setDirectConsultation(false); setStep('vittuilu'); }}
             onBack={() => setStep(provokeOrigin)}
             backLabel={provokeOrigin === 'selection' ? 'Back to intake' : 'Back to Epicrisis'}
           />
         )}
 
+        {step === 'injustice' && (
+          <ScreenInjustice initial={directIncident} onBack={() => setStep('selection')} onSubmit={(incident) => { setDirectIncident(incident); setStep('vittuilu'); }} />
+        )}
+
         {step === 'vittuilu' && (
           <ScreenVittuilu
+            initialMessage={directConsultation ? directIncident : undefined}
             intake={{
-              event: incidentText.trim() || null,
-              trigger: selection?.trigger ?? null,
-              intensity: selection?.intensity ?? null,
-              symptoms,
-              duration,
+              event: directConsultation ? null : incidentText.trim() || null,
+              trigger: directConsultation ? null : selection?.trigger ?? null,
+              intensity: directConsultation ? null : selection?.intensity ?? null,
+              symptoms: directConsultation ? [] : symptoms,
+              duration: directConsultation ? null : duration,
             }}
-            onConfirm={(note) => void acceptStimulus(SEPPO_STIMULUS, note)}
+            onConfirm={(note) => {
+              if (directConsultation) {
+                goBackToSelection();
+                setSelection(null);
+                setIncidentText(directIncident);
+                setSymptoms([]);
+                setDuration(null);
+                setProvokedBy(null);
+              } else {
+                void acceptStimulus(SEPPO_STIMULUS, note);
+              }
+            }}
             onAssessed={(a) => void prescribeFromSeppo(a)}
-            onBack={() => setStep(provokeOrigin)}
+            onBack={() => setStep(directConsultation ? 'injustice' : provokeOrigin)}
+            backLabel={directConsultation ? 'Back to your injustice' : 'Back to Epicrisis'}
             onReset={resetSelections}
           />
         )}
