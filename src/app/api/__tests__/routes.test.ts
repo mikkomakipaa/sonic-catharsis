@@ -265,8 +265,8 @@ describe('/api/vittuilu', () => {
     expect(call.instructions).toContain("infer each independently");
     expect(call.instructions).toContain("estimate intensity from the patient's own words");
     expect(call.instructions).toContain("infer only symptoms reasonably supported");
-    expect(call.instructions).toContain('English input gets English throughout');
-    expect(call.input).toContain('Respond entirely in the language of the latest User message');
+    expect(call.instructions).toContain('naturally sprinkle in Finnish swear words');
+    expect(call.input).toContain('brief Finnish swear words are welcome');
     expect(call.instructions).not.toContain('What they sat through');
   });
 
