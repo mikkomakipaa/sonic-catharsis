@@ -235,14 +235,16 @@ export default function ScreenVittuilu({ intake, initialMessage, backLabel = 'Ba
         </form>
       ) : (
         <div className="flex flex-col items-center gap-4 mt-8 pt-5" style={{ borderTop: `1px solid ${DIVIDER_COLOR}` }}>
-          <div className="text-center">
-            <p className="m-0 text-[22px] font-bold" style={{ color: TEXT_PRIMARY }} lang="fi">
-              Joko vituttaa?
-            </p>
-            <p className="m-0 mt-1 text-[13px]" style={{ color: TEXT_SECONDARY }}>
-              Report any change in condition following the consultation.
-            </p>
-          </div>
+          {!initialMessage && (
+            <div className="text-center">
+              <p className="m-0 text-[22px] font-bold" style={{ color: TEXT_PRIMARY }} lang="fi">
+                Joko vituttaa?
+              </p>
+              <p className="m-0 mt-1 text-[13px]" style={{ color: TEXT_SECONDARY }}>
+                Report any change in condition following the consultation.
+              </p>
+            </div>
+          )}
           <button
             // Seppo's verdict when he filed a valid one, else the plain re-assessment
             // (which still carries his note). Nothing moves on until this is pressed,

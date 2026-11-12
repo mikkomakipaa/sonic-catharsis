@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       () => getOpenAI().responses.create({
         model: VITTUILU_MODEL,
         instructions: direct ? DIRECT_VITTUILU_INSTRUCTIONS : VITTUILUBOTTI_INSTRUCTIONS,
-        input: `${direct ? '' : `stimuli_declined: ${MAX_STIMULI_PER_SESSION}\n`}turn: ${turn} of ${MAX_VITTUILU_USER_MESSAGES}\nis_final_turn: ${isFinalTurn}\n${renderIntake(intake)}transcript:\n${transcript}\n\nRespond entirely in the language of the latest User message; if ambiguous, follow the user's earlier messages. Do not switch languages for the persona.`,
+        input: `${direct ? '' : `stimuli_declined: ${MAX_STIMULI_PER_SESSION}\n`}turn: ${turn} of ${MAX_VITTUILU_USER_MESSAGES}\nis_final_turn: ${isFinalTurn}\n${renderIntake(intake)}transcript:\n${transcript}\n\nRespond in the language of the latest User message; if ambiguous, follow the user's earlier messages. In English replies, brief Finnish swear words are welcome, but keep the sentences in English.`,
         text: { format: replyFormat(isFinalTurn) },
         temperature: 1,
         max_output_tokens: 900,
