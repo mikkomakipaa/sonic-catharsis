@@ -12,24 +12,9 @@ interface ClassificationGridProps {
   disabled?: boolean;
 }
 
-// A pseudo-clinical intake checklist, not a wheel or field: 8 cells (the 8
-// frustration categories) laid out as a plain grid — 3 columns on desktop,
-// 2 on mobile (an even 2x4, no leftover row) — each a thin-line checkbox +
-// label. Visually a form someone filled out in a hurry, not another emotion
-// selector — see lib/trigger.ts. Single selection only, despite the
-// checkbox glyph (role="radiogroup"/"radio" — the checkbox look is a tone
-// choice, the behavior is still one-of-many).
+// Single-choice trigger categories, displayed as a responsive radio grid.
 function selectionFor(type: TriggerType, tier: number | null): TriggerSelection {
   return { trigger: type, intensity: tier };
-}
-
-// Custom thin-line check — never the OS checkbox glyph.
-function CheckMark({ className, style }: { className?: string; style?: React.CSSProperties }) {
-  return (
-    <svg className={className} style={style} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3.5 8.5 L6.5 11.5 L12.5 4.5" />
-    </svg>
-  );
 }
 
 export default function ClassificationGrid({ onSelectionChange, selection, disabled = false }: ClassificationGridProps) {
@@ -108,21 +93,17 @@ export default function ClassificationGrid({ onSelectionChange, selection, disab
                 transition: `background 0.2s ${EASE}`,
               }}
             >
-              {/* Thin-line checkbox — never the OS glyph. Mobile size
-                  trimmed from 26px to 22px alongside the row padding above,
-                  so the checkbox reads as part of a checklist rather than
-                  the row's dominant visual element. */}
               <span
-                className="relative flex items-center justify-center shrink-0 rounded-[3px] max-[640px]:!h-[22px] max-[640px]:!w-[22px]"
+                aria-hidden="true"
+                className="relative flex items-center justify-center shrink-0 rounded-full max-[640px]:!h-[22px] max-[640px]:!w-[22px]"
                 style={{
                   width: '15px',
                   height: '15px',
                   border: `1.4px solid ${isSelected ? '#2f2e2b' : '#8a867a'}`,
-                  background: isSelected ? '#2f2e2b' : 'transparent',
-                  transition: `background 0.2s ${EASE}, border-color 0.2s ${EASE}`,
+                  transition: `border-color 0.2s ${EASE}`,
                 }}
               >
-                {isSelected && <CheckMark className="w-3 h-3 max-[640px]:!h-3.5 max-[640px]:!w-3.5" style={{ color: '#f7f5f0' }} />}
+                {isSelected && <span className="h-2 w-2 max-[640px]:h-3 max-[640px]:w-3 rounded-full" style={{ background: '#2f2e2b' }} />}
               </span>
 
               <span

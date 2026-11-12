@@ -1,61 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import { MUSIC_GENRES, MUSIC_GENRE_IDS, getMusicGenre } from './music-prep';
 import { SCENE_PERFORMANCE_BRIEFS, sceneInstructions } from './prompts';
-import { ActivationLevels, AgencyLevels, CognitiveDensityLevels, FrictionLevels, WeightLevels, FavoriteGenreSchema, SceneRequestSchema, SonicProfileSchema, SubgenreSchema } from './validation';
-
-describe('music genre table', () => {
-  it('has one entry per id, in id order', () => {
-    expect(MUSIC_GENRES.map((g) => g.id)).toEqual([...MUSIC_GENRE_IDS]);
-  });
-
-  it.each(MUSIC_GENRES.map((g) => [g.id, g] as const))('%s feeds the Curator valid input', (_id, g) => {
-    expect(SubgenreSchema.safeParse(g.subgenre).success).toBe(true);
-    expect(SonicProfileSchema.safeParse(g.sonicProfile).success).toBe(true);
-  });
-
-  it('gives every genre its own profile and performance brief', () => {
-    expect(new Set(MUSIC_GENRES.map((g) => JSON.stringify(g.sonicProfile))).size).toBe(MUSIC_GENRES.length);
-    expect(Object.keys(SCENE_PERFORMANCE_BRIEFS).sort()).toEqual([...MUSIC_GENRE_IDS].sort());
-    expect(new Set(Object.values(SCENE_PERFORMANCE_BRIEFS)).size).toBe(MUSIC_GENRES.length);
-  });
-
-  it('looks genres up by id', () => {
-    expect(getMusicGenre('black').subgenre).toBe('Black metal');
-  });
-});
+import { ActivationLevels, AgencyLevels, CognitiveDensityLevels, FrictionLevels, WeightLevels, FavoriteGenreSchema, SceneRequestSchema } from './validation';
 
 describe('scene prompt', () => {
-  it('fixes the part once a genre is known: only that brief, plus the shared safety limits', () => {
-    const doom = sceneInstructions('doom');
-    expect(doom).toContain(SCENE_PERFORMANCE_BRIEFS.doom);
-    expect(doom).not.toContain(SCENE_PERFORMANCE_BRIEFS.power);
-    expect(doom).not.toContain('{{PART}}');
-    expect(doom).toContain('end_scene true');
-    expect(doom).toContain('09 2525 0111');
+  it('offers examples as optional inspiration only on the opening', () => {
+    const opening = sceneInstructions();
+    expect(opening).toContain('combine them or invent another');
+    for (const brief of Object.values(SCENE_PERFORMANCE_BRIEFS)) expect(opening).toContain(brief);
+    expect(sceneInstructions(false)).not.toContain(SCENE_PERFORMANCE_BRIEFS.doom);
+    expect(sceneInstructions(false)).toContain('Keep the performance supplied');
   });
 
-  it('lets the model choose among all five parts for the opening', () => {
+  it('defines a comic diagnosis and sound using the profile tokens', () => {
     const opening = sceneInstructions();
-    for (const id of MUSIC_GENRE_IDS) {
-      expect(opening).toContain(SCENE_PERFORMANCE_BRIEFS[id]);
-      expect(opening).toContain(`genre id "${id}"`);
-    }
-    expect(opening).not.toContain('{{PART}}');
-  });
-
-  it('lets the model pick the sound on the opening, with the profile tokens from the schema', () => {
-    const opening = sceneInstructions();
-    expect(opening).toContain('"subgenre"');
+    expect(opening).toContain('not a real assessment');
+    expect(opening).toContain('not restricted to the examples');
+    expect(opening).toContain('if the patient names metal or a recognizable metal subgenre');
+    expect(opening).toContain('non-metal for a metal favorite, metal for a non-metal favorite');
+    expect(opening).not.toContain('COMPLETE MUSICAL OPPOSITE');
+    expect(opening).not.toContain('keep mocking them in that character on every turn');
     for (const tokens of [ActivationLevels, AgencyLevels, FrictionLevels, CognitiveDensityLevels, WeightLevels]) {
       for (const t of tokens) expect(opening).toContain(t);
     }
-    expect(sceneInstructions('doom')).not.toContain('The sound (opening only)');
-  });
-
-  it('mocks the usual listener, keeps it off identity, and points non-metal answers to the complete musical opposite in metal', () => {
-    expect(sceneInstructions()).toContain('STEREOTYPE of the typical listener');
-    expect(sceneInstructions()).toMatch(/NEVER the listener's age/);
-    expect(sceneInstructions()).toMatch(/NOT metal[\s\S]*COMPLETE MUSICAL OPPOSITE/);
   });
 });
 
@@ -72,13 +38,14 @@ describe('schemas', () => {
   it('shapes the transcript: empty opening call, then Seppo first, user last, 1 reply max', () => {
     const u = (text: string) => ({ role: 'user', text });
     const s = (text: string) => ({ role: 'seppo', text });
-    const base = { favorite: 'pop', genre: 'doom' };
+    const base = { favorite: 'pop', performance: 'A weary clerk', subgenre: 'Sludge metal' };
     expect(SceneRequestSchema.safeParse({ favorite: 'pop', messages: [] }).success).toBe(true);
     expect(SceneRequestSchema.safeParse({ ...base, messages: [s('o'), u('a')] }).success).toBe(true);
     expect(SceneRequestSchema.safeParse({ ...base, messages: [s('o'), u('a'), s('b'), u('c')] }).success).toBe(false);
     expect(SceneRequestSchema.safeParse({ ...base, messages: [s('o')] }).success).toBe(false); // must end on the user
     expect(SceneRequestSchema.safeParse({ ...base, messages: [u('a')] }).success).toBe(false); // must start with Seppo
-    expect(SceneRequestSchema.safeParse({ favorite: 'pop', messages: [s('o'), u('a')] }).success).toBe(false); // genre required
-    expect(SceneRequestSchema.safeParse({ favorite: 'pop', genre: 'polka', messages: [] }).success).toBe(false);
+    expect(SceneRequestSchema.safeParse({ favorite: 'pop', messages: [s('o'), u('a')] }).success).toBe(false); // performance and subgenre required
+    expect(SceneRequestSchema.safeParse({ ...base, messages: [] }).success).toBe(false);
+    expect(SceneRequestSchema.safeParse({ ...base, performance: 'x'.repeat(201), messages: [s('o'), u('a')] }).success).toBe(false);
   });
 });

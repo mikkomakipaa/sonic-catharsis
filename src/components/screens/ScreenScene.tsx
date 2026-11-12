@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import type { VittuiluMessage } from '@/lib/validation';
+import { sceneNotesContext } from '@/lib/scene-notes-context';
 import { MAX_SCENE_USER_MESSAGES, MAX_SCENE_USER_TEXT } from '@/lib/validation';
-import type { MusicGenreId } from '@/lib/music-prep';
 import type { z } from 'zod';
 import type { SonicProfileSchema } from '@/lib/validation';
 
 // What the opening decides about the prescription: the model's own pick.
 export interface SceneSound {
-  genre: MusicGenreId;
+  performance: string;
   subgenre: string;
   sonic_profile: z.infer<typeof SonicProfileSchema>;
 }
@@ -63,13 +63,10 @@ function Bubble({ role, children }: { role: VittuiluMessage['role']; children: R
   );
 }
 
-// "Prepare me for the music" step 2: the scene. On mount Seppo's opening is
-// requested (empty transcript): he mocks the favorite genre and the model picks
-// the metal part, which is then sent back with every later turn. The full
-// transcript, opening included, is resent each time (the route is stateless).
+// The opening invents a performance and sound. Later calls resend that
+// context and the full transcript, so the stateless route can continue it.
 export default function ScreenScene({ favorite, onReady, onBack }: ScreenSceneProps) {
   const [sound, setSound] = useState<SceneSound | null>(null);
-  const genre = sound?.genre ?? null;
   const [isOpening, setIsOpening] = useState(true);
   const [attempt, setAttempt] = useState(0);
   const [messages, setMessages] = useState<VittuiluMessage[]>([]);
@@ -88,15 +85,15 @@ export default function ScreenScene({ favorite, onReady, onBack }: ScreenScenePr
   const canSend = !isOpening && !isSending && !ended && draft.trim().length > 0;
 
   // One call to /api/scene. `next` is the full transcript to send.
-  const requestReply = async (next: VittuiluMessage[], currentGenre: MusicGenreId | null) => {
+  const requestReply = async (next: VittuiluMessage[], currentSound: SceneSound | null) => {
     const res = await fetch('/api/scene', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ favorite, ...(currentGenre ? { genre: currentGenre } : {}), messages: next }),
+      body: JSON.stringify({ favorite, ...(currentSound ? { performance: currentSound.performance, subgenre: currentSound.subgenre, ...(summary ? { scene_summary: summary } : {}) } : {}), messages: next }),
     });
     const data = await res.json();
     if (!res.ok || data.error || typeof data.reply !== 'string') throw new Error(data.error || 'Seppo is unavailable');
-    return data as { reply: string; end_scene?: boolean; genre?: MusicGenreId; subgenre?: string; sonic_profile?: SceneSound['sonic_profile']; scene_summary?: string };
+    return data as { reply: string; end_scene?: boolean; performance?: string; subgenre?: string; sonic_profile?: SceneSound['sonic_profile']; scene_summary?: string };
   };
 
   // Seppo's opening: requested on mount and again on each retry (`attempt`).
@@ -106,8 +103,8 @@ export default function ScreenScene({ favorite, onReady, onBack }: ScreenScenePr
     requestReply([], null)
       .then((data) => {
         if (cancelled) return;
-        if (!data.genre || !data.subgenre || !data.sonic_profile) throw new Error('Seppo is unavailable');
-        setSound({ genre: data.genre, subgenre: data.subgenre, sonic_profile: data.sonic_profile });
+        if (!data.performance || !data.subgenre || !data.sonic_profile) throw new Error('Seppo is unavailable');
+        setSound({ performance: data.performance, subgenre: data.subgenre, sonic_profile: data.sonic_profile });
         setMessages([{ role: 'seppo', text: data.reply }]);
         if (typeof data.scene_summary === 'string') setSummary(data.scene_summary);
         setIsOpening(false);
@@ -125,7 +122,7 @@ export default function ScreenScene({ favorite, onReady, onBack }: ScreenScenePr
   }, [attempt]);
 
   const send = async () => {
-    if (!canSend || !genre) return;
+    if (!canSend || !sound) return;
     const text = draft.trim();
     const next: VittuiluMessage[] = [...messages, { role: 'user', text }];
     setMessages(next);
@@ -133,7 +130,7 @@ export default function ScreenScene({ favorite, onReady, onBack }: ScreenScenePr
     setError(null);
     setIsSending(true);
     try {
-      const data = await requestReply(next, genre);
+      const data = await requestReply(next, sound);
       setMessages([...next, { role: 'seppo', text: data.reply }]);
       if (data.end_scene) setEnded(true);
       if (typeof data.scene_summary === 'string') setSummary(data.scene_summary);
@@ -150,7 +147,7 @@ export default function ScreenScene({ favorite, onReady, onBack }: ScreenScenePr
   const readyButton = (
     <button
       type="button"
-      onClick={() => sound && onReady(sound, summary)}
+      onClick={() => sound && onReady(sound, sceneNotesContext(summary, messages))}
       disabled={isOpening || isSending || !sound}
       className="w-full max-w-[280px] py-3.5 font-semibold text-sm uppercase rounded-lg active:scale-[0.98] disabled:opacity-50"
       style={{
@@ -198,7 +195,7 @@ export default function ScreenScene({ favorite, onReady, onBack }: ScreenScenePr
       {error && (
         <div className="mt-3 flex items-center gap-3">
           <p className="m-0 text-[13px]" style={{ color: TREATMENT_ACCENT_TEXT }} role="alert">{error}</p>
-          {!genre && !isOpening && (
+          {!sound && !isOpening && (
             <button type="button" onClick={() => {
                 setError(null);
                 setIsOpening(true);
