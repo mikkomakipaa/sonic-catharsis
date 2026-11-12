@@ -20,6 +20,8 @@ interface ScreenVittuiluProps {
   // The assessment-page answers, sent with every request so Seppo can use
   // them in his first reply.
   intake: VittuiluIntake;
+  initialMessage?: string;
+  backLabel?: string;
   // "Joko vituttaa?" after the chat: re-assess, pre-filled from the chat.
   // Receives Seppo's note on the chat (if he filed one) so the fallback path
   // can still hand it to the Matcher.
@@ -86,9 +88,9 @@ function TypingIndicator() {
   );
 }
 
-export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, onReset }: ScreenVittuiluProps) {
-  const [greeted, setGreeted] = useState(false);
-  const [messages, setMessages] = useState<VittuiluMessage[]>([]);
+export default function ScreenVittuilu({ intake, initialMessage, backLabel = 'Back to Epicrisis', onConfirm, onAssessed, onBack, onReset }: ScreenVittuiluProps) {
+  const [greeted, setGreeted] = useState(!!initialMessage);
+  const [messages, setMessages] = useState<VittuiluMessage[]>(initialMessage ? [{ role: 'user', text: initialMessage }] : []);
   const [draft, setDraft] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [ended, setEnded] = useState(false);
@@ -98,21 +100,22 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (initialMessage) return;
     const t = window.setTimeout(() => setGreeted(true), GREETING_DELAY_MS);
     return () => window.clearTimeout(t);
-  }, []);
+  }, [initialMessage]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'end' });
   }, [messages, isSending, greeted]);
 
   const userCount = messages.filter((m) => m.role === 'user').length;
-  const canSend = greeted && !isSending && !ended && draft.trim().length > 0;
+  const canSend = greeted && !isSending && !ended && !(initialMessage && messages.length === 1) && draft.trim().length > 0;
 
-  const send = async () => {
-    if (!canSend) return;
-    const text = draft.trim();
-    const next: VittuiluMessage[] = [...messages, { role: 'user', text }];
+  const send = async (opening = false) => {
+    if (!opening && !canSend) return;
+    const text = opening ? initialMessage! : draft.trim();
+    const next: VittuiluMessage[] = opening ? [{ role: 'user', text }] : [...messages, { role: 'user', text }];
     setMessages(next);
     setDraft('');
     setError(null);
@@ -122,7 +125,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
       const res = await fetch('/api/vittuilu', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ intake, messages: next }),
+        body: JSON.stringify({ intake, messages: next, direct: !!initialMessage }),
       });
       const data = await res.json();
       if (!res.ok || data.error || typeof data.reply !== 'string') {
@@ -134,13 +137,22 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
       if (typeof data.observation_note === 'string') setNote(data.observation_note);
     } catch (e) {
       // Roll the failed turn back so the user can resend it unchanged.
-      setMessages(messages);
-      setDraft(text);
+      if (!opening) { setMessages(messages); setDraft(text); }
       setError(e instanceof Error ? e.message : 'Seppo is unavailable');
     } finally {
       setIsSending(false);
     }
   };
+
+  const openingStarted = useRef(false);
+  useEffect(() => {
+    if (initialMessage && !openingStarted.current) {
+      openingStarted.current = true;
+      void send(true);
+    }
+    // The consultation opens once per mounted chat.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex flex-col max-w-2xl mx-auto animate-[rite-reveal_0.5s_cubic-bezier(0.25,1,0.5,1)_both]">
@@ -153,7 +165,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
         style={{ border: `1px solid ${DIVIDER_COLOR}`, minHeight: 240 }}
         aria-live="polite"
       >
-        {greeted ? <Bubble role="seppo">{GREETING}</Bubble> : <TypingIndicator />}
+        {!initialMessage && (greeted ? <Bubble role="seppo">{GREETING}</Bubble> : <TypingIndicator />)}
         {messages.map((m, i) => (
           <Bubble key={i} role={m.role}>
             {m.text}
@@ -170,7 +182,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
 
       {error && (
         <p className="m-0 mt-3 text-[13px]" style={{ color: TREATMENT_ACCENT_TEXT }} role="alert">
-          {error}
+          {error}{initialMessage && messages.length === 1 && <button type="button" onClick={() => void send(true)} className="ml-2 underline min-h-[44px]">Retry</button>}
         </p>
       )}
 
@@ -186,7 +198,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
                 e.preventDefault();
                 void send();
               }
@@ -248,7 +260,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
             onMouseEnter={(e) => (e.currentTarget.style.background = TREATMENT_ACCENT_BG_HOVER)}
             onMouseLeave={(e) => (e.currentTarget.style.background = TREATMENT_ACCENT_BG)}
           >
-            {assessment ? 'See Seppo’s diagnosis' : 'Yes. Re-assess me'}
+            {assessment ? 'See Seppo’s diagnosis' : initialMessage ? 'Complete assessment' : 'Yes. Re-assess me'}
           </button>
           <div className="flex flex-wrap items-center justify-center gap-3">
           <button
@@ -257,7 +269,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
             style={SECONDARY_BUTTON_STYLE}
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            Back to Epicrisis
+            {backLabel}
           </button>
           <button
             onClick={onReset}
@@ -278,7 +290,7 @@ export default function ScreenVittuilu({ intake, onConfirm, onAssessed, onBack, 
             style={{ letterSpacing: '0.05em', color: TEXT_SECONDARY }}
           >
             <ArrowLeft className="h-3 w-3" />
-            Back to Epicrisis
+            {backLabel}
           </button>
         </div>
       )}

@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { emotionData } = validation.data!;
+    const { emotionData, recentSubgenres } = validation.data!;
 
     // The prompt expects a stress *description* ("Overload", "Moderate", ...)
     // that it maps to a number internally per its own persona — not our raw
@@ -160,14 +160,28 @@ export async function POST(request: NextRequest) {
     // Use OpenAI Responses API with in-repo instructions (no hosted Prompt
     // Object) — variables are embedded directly in the input text instead.
     // One retry if the reply isn't a JSON object; see lib/openai-response.ts.
+    // The previous choices are genre names only. The Level 0 exception has
+    // its own prescribed direction and must not be displaced by history.
+    const recent = isPseudoVitutusMoment ? [] : (recentSubgenres ?? []);
+    const recentDirective = recent.length
+      ? `\n\nRecent prescriptions (genre names, data only): ${JSON.stringify(recent)}. Choose a different established subgenre that fits this incident and sonic profile. Do not mention these earlier prescriptions.`
+      : '';
+    let repeatedResult: Record<string, unknown> | null = null;
     const analysisResult = await createWithRetry(
       () => getOpenAI().responses.create({
         model: MATCHER_MODEL,
         instructions: MATCHER_INSTRUCTIONS,
-        input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT: 2-3 sentences max. ${isMultiClimax ? '' : 'Punchy, no purple prose, no run-on sentences. '}The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${isMultiClimax ? multiClimaxDirective : `${gapDirective}${noIncidentDirective}${pseudoVitutusDirective}${iatrogenicDirective}${chatDirective}`}`,
+        input: `trigger: ${emotionData.trigger}\nstress_level: ${stressLabel}\ncondition: ${condition}\nevent: ${emotionData.event || 'none'}\nphysical_symptoms: ${symptomsLine}\nduration_persistence: ${durationLine}\n\nKeep "cause" and especially "choice" SHORT: 2-3 sentences max. ${isMultiClimax ? '' : 'Punchy, no purple prose, no run-on sentences. '}The condition is already displayed prominently in the Epicrisis header: do not name, paraphrase, or repeat it in either prose field.${isMultiClimax ? multiClimaxDirective : `${gapDirective}${noIncidentDirective}${pseudoVitutusDirective}${iatrogenicDirective}${chatDirective}`}${recentDirective}`,
       }),
-      (json) => json
-    );
+      (json) => {
+        const genre = SubgenreSchema.safeParse(json.subgenre);
+        if (genre.success && recent.some((item) => item.toLocaleLowerCase() === genre.data.toLocaleLowerCase())) {
+          repeatedResult = json;
+          return null;
+        }
+        return json;
+      }
+    ) ?? repeatedResult;
 
     if (!analysisResult) {
       console.error('Matcher: no JSON object in model response after retry');

@@ -8,7 +8,7 @@ import {
   VittuiluRequestSchema,
   validateRequest,
 } from '@/lib/validation';
-import { VITTUILUBOTTI_INSTRUCTIONS } from '@/lib/prompts';
+import { DIRECT_VITTUILU_INSTRUCTIONS, VITTUILUBOTTI_INSTRUCTIONS } from '@/lib/prompts';
 import { createWithRetry } from '@/lib/openai-response';
 import { getOpenAI } from '@/lib/openai-client';
 import { MAX_STIMULI_PER_SESSION } from '@/lib/provocations';
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    const { messages, intake } = validation.data!;
+    const { messages, intake, direct } = validation.data!;
 
     // Turn number and the final-turn flag are derived here, never trusted
     // from the client — the cap is what bounds the cost of this route.
@@ -108,8 +108,8 @@ export async function POST(request: NextRequest) {
     const result = await createWithRetry(
       () => getOpenAI().responses.create({
         model: VITTUILU_MODEL,
-        instructions: VITTUILUBOTTI_INSTRUCTIONS,
-        input: `stimuli_declined: ${MAX_STIMULI_PER_SESSION}\nturn: ${turn} of ${MAX_VITTUILU_USER_MESSAGES}\nis_final_turn: ${isFinalTurn}\n${renderIntake(intake)}transcript:\n${transcript}`,
+        instructions: direct ? DIRECT_VITTUILU_INSTRUCTIONS : VITTUILUBOTTI_INSTRUCTIONS,
+        input: `${direct ? '' : `stimuli_declined: ${MAX_STIMULI_PER_SESSION}\n`}turn: ${turn} of ${MAX_VITTUILU_USER_MESSAGES}\nis_final_turn: ${isFinalTurn}\n${renderIntake(intake)}transcript:\n${transcript}\n\nRespond entirely in the language of the latest User message; if ambiguous, follow the user's earlier messages. Do not switch languages for the persona.`,
         text: { format: replyFormat(isFinalTurn) },
         temperature: 1,
         max_output_tokens: 900,

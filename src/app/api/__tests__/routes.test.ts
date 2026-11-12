@@ -32,6 +32,22 @@ describe('/api/matcher', () => {
     expect(create).not.toHaveBeenCalled();
   });
 
+  it('retries a recently prescribed subgenre with a request for variety', async () => {
+    const output = (subgenre: string) => ({ output_text: JSON.stringify({ subgenre, sonic_profile, cause: 'Because.', choice: 'Sound.' }) });
+    create.mockResolvedValueOnce(output('grindcore')).mockResolvedValueOnce(output('sludge metal'));
+    const res = await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData, recentSubgenres: ['Grindcore'] })));
+    expect((await res.json()).analysis.subgenre).toBe('sludge metal');
+    expect(create).toHaveBeenCalledTimes(2);
+    expect(create.mock.calls[0][0].input).toContain('Recent prescriptions');
+  });
+
+  it('keeps a repeated valid choice if both attempts repeat', async () => {
+    create.mockResolvedValue({ output_text: JSON.stringify({ subgenre: 'grindcore', sonic_profile, cause: 'Because.', choice: 'Sound.' }) });
+    const res = await matcherPOST(post('/api/matcher', JSON.stringify({ emotionData, recentSubgenres: ['grindcore'] })));
+    expect((await res.json()).analysis.subgenre).toBe('grindcore');
+    expect(create).toHaveBeenCalledTimes(2);
+  });
+
   it('strips unknown keys and falls back to the anchor for an invalid model subgenre', async () => {
     create.mockResolvedValue({
       output_text: JSON.stringify({ subgenre: 'x'.repeat(500), sonic_profile, cause: 'Because.', choice: 'Loud.', injected: 'nope' }),
@@ -201,8 +217,8 @@ describe('/api/vittuilu', () => {
 
   it('rejects an over-long user message and too many user messages', async () => {
     expect((await send([user('a'.repeat(301))])).status).toBe(400);
-    const four = Array.from({ length: 4 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
-    expect((await send(four)).status).toBe(400);
+    const three = Array.from({ length: 3 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
+    expect((await send(three)).status).toBe(400);
     expect(create).not.toHaveBeenCalled();
   });
 
@@ -213,10 +229,11 @@ describe('/api/vittuilu', () => {
     expect(mid).toMatchObject({ type: 'json_schema', strict: true });
     expect(Object.keys(mid.schema.properties)).toEqual(['reply', 'end_chat']);
 
-    const finalMsgs = Array.from({ length: 3 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
+    const finalMsgs = Array.from({ length: 2 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
     await send(finalMsgs);
     const fin = create.mock.calls.at(-1)![0].text.format;
     expect(Object.keys(fin.schema.properties)).toEqual(['reply', 'end_chat', 'assessment', 'observation_note']);
+    expect(create.mock.calls.at(-1)![0].instructions).toContain('# Assessment (final turn only)');
     expect(fin.schema.required).toEqual(Object.keys(fin.schema.properties));
     const verdict = fin.schema.properties.assessment.anyOf[0];
     expect(verdict.properties.trigger.enum).toContain('injustice');
@@ -225,19 +242,37 @@ describe('/api/vittuilu', () => {
 
   it('returns only reply, end_chat and no assessment mid-chat, and derives the turn server-side', async () => {
     create.mockResolvedValue(ok);
-    const res = await send([user('hei'), seppo('vittu'), user('moi taas')]);
+    const res = await send([user('hei')]);
     const json = await res.json();
     expect(res.status).toBe(200);
     expect(json).toEqual({ reply: 'SIIS MITÄ VITTUA?!', end_chat: false, assessment: null });
     const input = create.mock.calls[0][0].input as string;
-    expect(input).toContain('turn: 2 of 3');
+    expect(input).toContain('turn: 1 of 2');
     expect(input).toContain('is_final_turn: false');
     expect(input).toContain('stimuli_declined: 3');
   });
 
+  it('opens a direct consultation from the incident without inventing stimuli', async () => {
+    create.mockResolvedValue(ok);
+    const res = await vittuiluPOST(post('/api/vittuilu', JSON.stringify({ direct: true, messages: [user('The printer jammed again.')] })));
+    expect(res.status).toBe(200);
+    const call = create.mock.calls[0][0];
+    expect(call.input).toContain('User: The printer jammed again.');
+    expect(call.input).not.toContain('stimuli_declined');
+    expect(call.instructions).toContain('react directly to the incident');
+    expect(call.instructions).toContain('# Assessment (final turn only)');
+    expect(call.instructions).toContain("Preserve the original grievance");
+    expect(call.instructions).toContain("infer each independently");
+    expect(call.instructions).toContain("estimate intensity from the patient's own words");
+    expect(call.instructions).toContain("infer only symptoms reasonably supported");
+    expect(call.instructions).toContain('English input gets English throughout');
+    expect(call.input).toContain('Respond entirely in the language of the latest User message');
+    expect(call.instructions).not.toContain('What they sat through');
+  });
+
   it('forces end_chat on the final user message even if the model does not', async () => {
     create.mockResolvedValue(ok);
-    const msgs = Array.from({ length: 3 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
+    const msgs = Array.from({ length: 2 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
     const res = await send(msgs);
     expect((await res.json()).end_chat).toBe(true);
     expect(create.mock.calls[0][0].input).toContain('is_final_turn: true');
@@ -245,7 +280,7 @@ describe('/api/vittuilu', () => {
 
   it('returns Seppo\'s assessment on the final turn only, and degrades an invalid one to null', async () => {
     const assessment = { trigger: 'conflict', intensity: 7, symptoms: ['muscle_tension'], duration: 'about_hour', incident: 'A support agent screamed at me.' };
-    const finalMsgs = Array.from({ length: 3 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
+    const finalMsgs = Array.from({ length: 2 }, (_, i) => [user(`m${i}`), seppo('r')]).flat().slice(0, -1);
     create.mockResolvedValue({ output_text: JSON.stringify({ reply: 'LOPPU', end_chat: true, assessment }) });
     expect((await (await send(finalMsgs)).json()).assessment).toEqual(assessment);
     // The note is a separate top-level key: attached to the verdict and also sent on its own.
